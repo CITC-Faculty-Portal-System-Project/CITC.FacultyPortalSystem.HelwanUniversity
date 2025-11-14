@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ICIT.FacultyPortalSystem.API.Factories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -22,7 +23,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddSwaggerGen();
             services.Configure<ApiBehaviorOptions>(options =>
             {
-                //options.InvalidModelStateResponseFactory = ApiResponseFactory.CustomValidationErrorResponse;
+                options.InvalidModelStateResponseFactory = ApiResponseFactory.CustomValidationErrorResponse;
             });
             return services;
         }
