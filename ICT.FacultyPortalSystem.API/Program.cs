@@ -25,6 +25,8 @@ namespace ICIT.FacultyPortalSystem.API
             #endregion
             var app = builder.Build();
 
+            app.UseExceptionHandlingMiddlewares();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwaggerMiddlewares();
