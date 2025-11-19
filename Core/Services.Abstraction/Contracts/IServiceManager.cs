@@ -2,5 +2,8 @@
 {
     public interface IServiceManager
     {
+        public IAuthenticationService AuthenticationService { get; }
+        public ICacheService CacheService { get; }
+        public IEmailService EmailService { get; }
     }
 }
