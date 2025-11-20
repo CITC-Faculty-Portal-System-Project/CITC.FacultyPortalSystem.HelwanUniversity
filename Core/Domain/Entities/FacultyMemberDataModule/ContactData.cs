@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entities.FacultyMemberData
+namespace Domain.Entities.FacultyMemberDataModule
 {
     public class ContactData : BaseEntity<int>
     {

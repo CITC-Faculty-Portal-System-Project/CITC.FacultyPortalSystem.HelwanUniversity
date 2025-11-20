@@ -1,4 +1,5 @@
-﻿
+﻿using Domain.Entities.FacultyMemberDataModule;
+using Domain.Entities.ProjectsAndCommitteesModule;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
@@ -81,19 +82,29 @@ namespace Presistence.Data
         public DbSet<PersonalData> PersonalData { get; set; }
         public DbSet<IdentificationCard> IdentificationCard { get; set; }
         public DbSet<SocialMediaPlatforms> SocialMediaPlatforms { get; set; }
-        public DbSet<Specialization> Specializations { get; set; }
-        public DbSet<Department> Departments { get; set; }
-        public DbSet<Faculty> Faculties { get; set; }
-        public DbSet<FieldOfStudy> FieldOfStudies { get; set; }
-        public DbSet<University> Universities { get; set; }
         public DbSet<FacultyMember> FacultyMembers { get; set; }
 
         #endregion
 
-        #region ResearchesModule DbSets
-        public DbSet<Theses> Theses { get; set; }
-        public DbSet<ThesesSupervision> ThesesSupervisions { get; set; }
-        public DbSet<ThesesSupervisor> ThesesSupervisors { get; set; }
+        #region ScientificProgressionModule DbSets
+        public DbSet<AcademicQualifications> AcademicQualifications { get; set; }
+        public DbSet<JobRanks> JobRanks { get; set; }
+        public DbSet<AdministrativePositions> AdministrativePositions { get; set; }
         #endregion
+
+        #region MissionsModule DbSets
+        public DbSet<ConferencesAndSeminars> ConferencesAndSeminars { get; set; }
+        public DbSet<ScientificMissions> ScientificMissions { get; set; }
+        public DbSet<TrainingPrograms> TrainingPrograms { get; set; }
+        #endregion
+
+        #region ProjectsAndCommitteesModule DbSets
+        public DbSet<CommitteesAndAssociations> CommitteesAndAssociations { get; set; }
+        public DbSet<ReviewingArticles> ReviewingArticles { get; set; }
+        public DbSet<ParticipationInMagazines> ParticipationInMagazines { get; set; }
+        public DbSet<Projects> Projects { get; set; }
+        #endregion
+
+        public DbSet<Lookup> Lookups { get; set; }
     }
 }

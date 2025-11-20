@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.FacultyMemberData
+﻿namespace Domain.Entities.FacultyMemberDataModule
 {
     public class SocialMediaPlatforms : BaseEntity<int>
     {

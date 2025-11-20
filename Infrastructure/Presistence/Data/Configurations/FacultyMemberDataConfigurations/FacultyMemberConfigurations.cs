@@ -1,5 +1,4 @@
-﻿
-using Domain.Entities.ResearchesModule.Theses_Supervision;
+﻿using Domain.Entities.FacultyMemberDataModule;
 
 namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {

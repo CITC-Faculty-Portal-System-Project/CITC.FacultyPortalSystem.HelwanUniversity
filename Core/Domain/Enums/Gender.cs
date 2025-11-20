@@ -2,7 +2,7 @@
 {
     public enum Gender
     {
-        ذكر = 1,
-        أنثي = 2
+        Male = 1,
+        Female = 2
     }
 }
