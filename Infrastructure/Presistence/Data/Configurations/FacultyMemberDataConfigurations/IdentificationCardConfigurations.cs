@@ -1,4 +1,6 @@
 ﻿
+using Domain.Entities.FacultyMemberDataModule;
+
 namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {
     public class IdentificationCardConfigurations : IEntityTypeConfiguration<IdentificationCard>
@@ -26,7 +28,7 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.HasOne(ic => ic.FacultyMember)
                .WithOne(fm => fm.IdentificationCard)
                .HasForeignKey<IdentificationCard>(ic => ic.FacultyMemberId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
             #endregion
         }
     }

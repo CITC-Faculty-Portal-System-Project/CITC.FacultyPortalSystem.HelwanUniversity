@@ -1,5 +1,5 @@
 ﻿using Domain.Contracts;
-using Domain.Entities.FacultyMemberData;
+using Domain.Entities.FacultyMemberDataModule;
 using Domain.Entities.IdentityModule;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;

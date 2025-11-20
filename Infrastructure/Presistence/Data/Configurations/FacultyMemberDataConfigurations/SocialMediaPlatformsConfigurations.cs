@@ -1,4 +1,6 @@
 ﻿
+using Domain.Entities.FacultyMemberDataModule;
+
 namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {
     public class SocialMediaPlatformsConfigurations : IEntityTypeConfiguration<SocialMediaPlatforms>
@@ -35,7 +37,7 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.HasOne(sm => sm.FacultyMember)
                .WithOne(fm => fm.SocialMediaPlatforms)
                .HasForeignKey<SocialMediaPlatforms>(sm => sm.FacultyMemberId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
             #endregion
         }
     }

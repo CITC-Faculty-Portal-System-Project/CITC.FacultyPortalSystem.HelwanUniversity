@@ -1,5 +1,4 @@
-﻿
-namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
+﻿namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {
     public class ContactDataConfigurations : IEntityTypeConfiguration<ContactData>
     {
@@ -34,7 +33,7 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.HasOne(cd => cd.FacultyMember)
                .WithOne(fm => fm.ContactData)
                .HasForeignKey<ContactData>(cd => cd.FacultyMemberId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
             #endregion
         }
     }
