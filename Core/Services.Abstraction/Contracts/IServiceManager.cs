@@ -5,5 +5,6 @@
         public IAuthenticationService AuthenticationService { get; }
         public ICacheService CacheService { get; }
         public IEmailService EmailService { get; }
+        public IFacultyMemberDataService FacultyMemberDataService { get; }
     }
 }

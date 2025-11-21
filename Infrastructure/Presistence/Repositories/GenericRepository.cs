@@ -25,7 +25,7 @@
         public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecifications<TEntity, TKey> specifications)
             => await SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).ToListAsync();
 
-        public async Task<TEntity?> GetByIdAsync(ISpecifications<TEntity, TKey> specifications)
+        public async Task<TEntity?> GetAsync(ISpecifications<TEntity, TKey> specifications)
             => await SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).FirstOrDefaultAsync();
 
         public async Task<int> CountAsync(ISpecifications<TEntity, TKey> specifications)
