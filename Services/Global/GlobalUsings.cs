@@ -4,3 +4,6 @@ global using Shared.Common;
 global using AutoMapper;
 global using Services.Abstraction.Contracts;
 global using Domain.Exceptions;
+global using Shared;
+global using Services.Specifications.FacultyMemberDataModule;
+global using Domain.Entities.FacultyMemberDataModule;

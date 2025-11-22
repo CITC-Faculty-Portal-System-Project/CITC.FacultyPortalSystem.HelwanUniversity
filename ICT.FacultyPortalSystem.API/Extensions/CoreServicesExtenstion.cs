@@ -29,6 +29,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IFacultyMemberDataService>()
             );
 
+            services.AddScoped<IScientificProgressionService, ScientificProgressionService>();
+            services.AddScoped<Func<IScientificProgressionService>>(provider =>
+            () => provider.GetRequiredService<IScientificProgressionService>()
+            );
+
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
             return services;
