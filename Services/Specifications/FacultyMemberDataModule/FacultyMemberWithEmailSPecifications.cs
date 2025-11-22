@@ -2,9 +2,9 @@
 
 namespace Services.Specifications.FacultyMemberDataModule
 {
-    internal class FacultyMemberWithEmailSPecifications : BaseSpecifications<FacultyMember, Guid>
+    internal class FacultyMemberWithEmailSpecifications : BaseSpecifications<FacultyMember, Guid>
     {
-        public FacultyMemberWithEmailSPecifications(string email) : base(fm => fm.Email == email)
+        public FacultyMemberWithEmailSpecifications(string email) : base(fm => fm.Email == email)
         {
 
         }
