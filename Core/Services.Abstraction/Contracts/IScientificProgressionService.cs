@@ -15,7 +15,7 @@ namespace Services.Abstraction.Contracts
 
         #region Job Ranks
         public Task<PaginatedResult<JobRankResponseDto>> GetAllJobRanksAsync(JobRanksSpecificationsParameters parameters);
-        public Task<JobRankResponseDto> GetJobRankById(int id);
+        public Task<JobRankResponseDto> GetJobRankByIdAsync(int id);
         public Task<JobRankResponseDto> CreateJobRankAsync(string facultyMemberEmail, JobRankCreateDto jobRanksCreateDto);
         public Task<JobRankResponseDto> UpdateJobRankAsync(int jobRankId, string facultyMemberEmail, JobRankUpdateDto jobRanksUpdateDto);
         public Task DeleteJobRankAsync(int jobRankId, string facultyMemberEmail);
@@ -23,7 +23,7 @@ namespace Services.Abstraction.Contracts
 
         #region Administrative Positions
         public Task<PaginatedResult<AdministrativePositionDto>> GetAllAdministrativePositionsAsync(AdministrativePositionsSpecificationParameters parameters);
-        public Task<AdministrativePositionDto> GetAdministrativePositionById(int id);
+        public Task<AdministrativePositionDto> GetAdministrativePositionByIdAsync(int id);
         public Task<AdministrativePositionDto> CreateAdministrativePositionAsync(string facultyMemberEmail, AdministrativePositionCreateDto administrativePositionCreateDto);
         public Task<AdministrativePositionDto> UpdateAdministrativePositionAsync(int administrativePositionId, string facultyMemberEmail, AdministrativePositionDto administrativePositionUpdateDto);
         public Task DeleteAdministrativePositionAsync(int administrativePositionId, string facultyMemberEmail);
