@@ -1,4 +1,5 @@
-﻿using Shared.Common;
+﻿using Services.Abstraction.Contracts;
+using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -27,6 +28,32 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IFacultyMemberDataService, FacultyMemberDataService>();
             services.AddScoped<Func<IFacultyMemberDataService>>(provider =>
             () => provider.GetRequiredService<IFacultyMemberDataService>()
+            );
+
+            services.AddScoped<ILookUpItemService, LookUpItemService>();
+            services.AddScoped<Func<ILookUpItemService>>(provider =>
+            () => provider.GetRequiredService<ILookUpItemService>()
+            );
+
+            services.AddScoped<IMissionService, MissionService>();
+            services.AddScoped<Func<IMissionService>>(provider =>
+            () => provider.GetRequiredService<IMissionService>()
+            );
+
+
+            services.AddScoped<ISeminarsAndConfrencesService, SeminarsAndConferncesService>();
+            services.AddScoped<Func<ISeminarsAndConfrencesService>>(provider =>
+            () => provider.GetRequiredService<ISeminarsAndConfrencesService>()
+            );
+
+            services.AddScoped<IScientificProgressionService, ScientificProgressionService>();
+            services.AddScoped<Func<IScientificProgressionService>>(provider =>
+            () => provider.GetRequiredService<IScientificProgressionService>()
+            );
+
+            services.AddScoped<IProjectsAndCommitteesService, ProjectsAndCommitteesService>();
+            services.AddScoped<Func<IProjectsAndCommitteesService>>(provider =>
+            () => provider.GetRequiredService<IProjectsAndCommitteesService>()
             );
 
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();

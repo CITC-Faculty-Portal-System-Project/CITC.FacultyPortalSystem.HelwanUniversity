@@ -28,7 +28,6 @@ namespace Presistence.Data.Configurations
             builder.Property(x => x.SortOrder)
                 .IsRequired();
 
-            builder.HasIndex(x => new { x.Type, x.Key }).IsUnique();
 
         }
     }

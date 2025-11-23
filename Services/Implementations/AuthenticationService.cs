@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Services.Specifications.FacultyMemberDataModule;
 using Shared.Dtos.IdentityModule;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -20,7 +21,9 @@ namespace Services.Implementations
         IEmailService _emailService,
         IOptions<JwtOptions> _options,
         IUnitOfWork _unitOfWork,
-        IRegistrationClientService _registrationClient
+        IRegistrationClientService _registrationClient,
+        IHttpContextAccessor _httpContextAccessor,
+        SignInManager<User> _signInManager
         ) : IAuthenticationService
     {
         #region Helper Methods
@@ -132,6 +135,15 @@ namespace Services.Implementations
                 NationalNumber = externalUser.NationalNumber
             };
 
+
+            var secification = new FacultyMemberWithEmailSPecifications(email);
+            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+            var member = await facultyMemberRepo.GetAsync(secification);
+            if (member is not null)
+                throw new UserAlreadyExistsException("This Member is Already Registered");
+
+
+
             var result = await _userManager.CreateAsync(newUser, password);
             if (!result.Succeeded)
             {
@@ -165,15 +177,14 @@ namespace Services.Implementations
                 NationalNumber = newUser.NationalNumber ?? ""
             };
 
-            await _unitOfWork.GetRepository<FacultyMember, Guid>()
-                    .AddAsync(facultyMember);
+            await facultyMemberRepo.AddAsync(facultyMember);
             await _unitOfWork.SaveChangesAsync();
 
-            return new UserResultDto(newUser.UserName ?? "", await CreateTokenAsync(newUser), newUser.Email ?? ""); ;
+            return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? ""); ;
         }
 
         //Login
-        public async Task<UserResultDto> LoginAsync(LoginDto loginDto)
+        public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user is null) throw new UnauthorizedException();
@@ -181,7 +192,9 @@ namespace Services.Implementations
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (!result) throw new UnauthorizedException();
 
-            return new UserResultDto(user.UserName ?? "", await CreateTokenAsync(user), user.Email ?? "");
+
+            var token = await CreateTokenAsync(user);
+            return (token);
         }
 
         //CheckEmail
@@ -243,8 +256,19 @@ namespace Services.Implementations
         {
             var user = await _userManager.FindByEmailAsync(userEmail)
                 ?? throw new UserNotFoundException(userEmail);
-            return new UserResultDto(user.UserName ?? "", await CreateTokenAsync(user), user.Email ?? "");
+            return new UserResultDto(UserName: user.UserName ?? "", user.Email ?? "" , 
+                user.Id);
         }
+
+        public string GetLoggedUserEmail()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            var email = user.FindFirst(ClaimTypes.Email)?.Value.ToString();
+
+            return email;
+
+        }
+
         #endregion
     }
 }

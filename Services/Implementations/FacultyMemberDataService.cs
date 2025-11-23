@@ -13,7 +13,7 @@ namespace Services.Implementations
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
             var specifications = new PersonalDataWithIncludesSpecifications(facultyMemberEmail);
             var personalData = await personalDataRepo.GetAsync(specifications) ?? throw new NotFoundException("Personal Data is Not Found.");
-
+           
             //Map Response to Dto
             var personalDataResult = _mapper.Map<PersonalDataResponseDto>(personalData);
 
@@ -149,7 +149,7 @@ namespace Services.Implementations
 
             //Load Faculty Member to Attach New Card
             var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var facultyMemberSpecifications = new FacultyMemberWithEmailSPecifications(facultyMemberEmail);
+            var facultyMemberSpecifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
             var facultyMember = await facultyMemberRepo.GetAsync(facultyMemberSpecifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
 
             //Create New Empty Identification Card
@@ -203,7 +203,7 @@ namespace Services.Implementations
 
             //Load Faculty Member to Attach New Social Media Platforms Data
             var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var facultyMemberSpecifications = new FacultyMemberWithEmailSPecifications(facultyMemberEmail);
+            var facultyMemberSpecifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
             var facultyMember = await facultyMemberRepo.GetAsync(facultyMemberSpecifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
 
             //Create New Empty Social Media Platforms

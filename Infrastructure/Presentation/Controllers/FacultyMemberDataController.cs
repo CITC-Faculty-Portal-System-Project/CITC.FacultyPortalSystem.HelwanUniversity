@@ -1,7 +1,4 @@
-﻿using Presentation.Attributes;
-using Services.Abstraction.Contracts;
-using Shared.Dtos.FacultyMemberDataModule;
-using Shared.Dtos.IdentityModule;
+﻿using Shared.Dtos.FacultyMemberDataModule;
 
 namespace Presentation.Controllers
 {
@@ -20,7 +17,7 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.FacultyMemberDataService.FetchPersonalDataAsync(personalDataCreateDto));
 
         [ProducesResponseType(typeof(PersonalDataResponseDto), StatusCodes.Status200OK)]
-        [HttpPost("UpdatePersonalData")]
+        [HttpPut("UpdatePersonalData")]
         public async Task<ActionResult<PersonalDataResponseDto>> UpdatePersonalDataAsync([FromQuery] string facultyMemberEmail, PersonalDataUpdateDto personalDataUpdateDto)
             => Ok(await _serviceManager.FacultyMemberDataService.UpdatePersonalDataAsync(facultyMemberEmail, personalDataUpdateDto));
         #endregion
@@ -38,7 +35,7 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.FacultyMemberDataService.FetchContactDataAsync(nationalNumber, contactDataCreateDto));
 
         [ProducesResponseType(typeof(ContactDataResponseDto), StatusCodes.Status200OK)]
-        [HttpPost("UpdateContactData")]
+        [HttpPut("UpdateContactData")]
         public async Task<ActionResult<ContactDataResponseDto>> UpdateContactDataAsync([FromQuery] string facultyMemberEmail, ContactDataUpdateDto contactDataUpdateDto)
             => Ok(await _serviceManager.FacultyMemberDataService.UpdateContactDataAsync(facultyMemberEmail, contactDataUpdateDto));
         #endregion
@@ -51,7 +48,7 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.FacultyMemberDataService.GetIdentificationCardAsync(facultyMemberEmail));
 
         [ProducesResponseType(typeof(IdentificationCardDto), StatusCodes.Status200OK)]
-        [HttpPost("UpdateIdentificationCard")]
+        [HttpPut("UpdateIdentificationCard")]
         public async Task<ActionResult<IdentificationCardDto>> UpdateIdentificationCardAsync([FromQuery] string facultyMemberEmail, IdentificationCardDto identificationCardDto)
             => Ok(await _serviceManager.FacultyMemberDataService.UpdateIdentificationCardAsync(facultyMemberEmail, identificationCardDto));
         #endregion
@@ -64,7 +61,7 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.FacultyMemberDataService.GetSocialMediaPlatformsAsync(facultyMemberEmail));
 
         [ProducesResponseType(typeof(SocialMediaPlatformsDto), StatusCodes.Status200OK)]
-        [HttpPost("UpdateSocialMediaPlatforms")]
+        [HttpPut("UpdateSocialMediaPlatforms")]
         public async Task<ActionResult<SocialMediaPlatformsDto>> UpdateSocialMediaPlatformsAsync([FromQuery] string facultyMemberEmail, SocialMediaPlatformsDto socialMediaPlatformsDto)
             => Ok(await _serviceManager.FacultyMemberDataService.UpdateSocialMediaPlatformsAsync(facultyMemberEmail, socialMediaPlatformsDto));
         #endregion
