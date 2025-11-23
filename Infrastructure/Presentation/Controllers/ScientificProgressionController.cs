@@ -1,4 +1,5 @@
-﻿using Shared.Dtos.ScientificProgressionModule;
+﻿using Shared;
+using Shared.Dtos.ScientificProgressionModule;
 using Shared.SpecificationParameters.ScientificProgressionModule;
 
 
@@ -7,7 +8,7 @@ namespace Presentation.Controllers
     public class ScientificProgressionController(IServiceManager _serviceManager) : ApiController
     {
         #region Academic Qualifications
-        [ProducesResponseType(typeof(AcademicQualificationResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedResult<AcademicQualificationResponseDto>), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("AcademicQualifications")]
         public async Task<ActionResult<AcademicQualificationResponseDto>> GetAllAcademicQualificationsAsync([FromQuery] AcademicQualificationsSpecificationParamters paramters)
@@ -39,7 +40,7 @@ namespace Presentation.Controllers
         #endregion
 
         #region Job Ranks
-        [ProducesResponseType(typeof(JobRankResponseDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedResult<JobRankResponseDto>), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("JobRanks")]
         public async Task<ActionResult<JobRankResponseDto>> GetAllJobRanksAsync([FromQuery] JobRanksSpecificationsParameters paramters)
@@ -71,7 +72,7 @@ namespace Presentation.Controllers
         #endregion
 
         #region Administrative Positions
-        [ProducesResponseType(typeof(AdministrativePositionDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PaginatedResult<AdministrativePositionDto>), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("AdministrativePosition")]
         public async Task<ActionResult<AdministrativePositionDto>> GetAllAdministrativePositionsAsync([FromQuery] AdministrativePositionsSpecificationParameters paramters)
