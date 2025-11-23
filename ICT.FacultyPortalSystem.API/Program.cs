@@ -23,6 +23,7 @@ namespace ICIT.FacultyPortalSystem.API
             #region Pipelines - Middlewares
 
             #endregion
+            
             var app = builder.Build();
 
             app.UseExceptionHandlingMiddlewares();

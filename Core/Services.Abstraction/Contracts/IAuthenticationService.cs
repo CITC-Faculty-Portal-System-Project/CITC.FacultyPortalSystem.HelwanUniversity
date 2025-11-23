@@ -27,5 +27,9 @@ namespace Services.Abstraction.Contracts
 
         //Reset Password
         Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto, string email);
+
+        //Getting Current Logged User Email Without the need from user to pass the email to end-point
+        public string GetLoggedUserEmail();
+
     }
 }

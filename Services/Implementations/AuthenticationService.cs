@@ -20,7 +20,8 @@ namespace Services.Implementations
         IEmailService _emailService,
         IOptions<JwtOptions> _options,
         IUnitOfWork _unitOfWork,
-        IRegistrationClientService _registrationClient
+        IRegistrationClientService _registrationClient,
+        IHttpContextAccessor _httpContextAccessor
         ) : IAuthenticationService
     {
         #region Helper Methods
@@ -243,8 +244,19 @@ namespace Services.Implementations
         {
             var user = await _userManager.FindByEmailAsync(userEmail)
                 ?? throw new UserNotFoundException(userEmail);
-            return new UserResultDto(user.UserName ?? "", await CreateTokenAsync(user), user.Email ?? "");
+            return new UserResultDto(user.UserName ?? "", await CreateTokenAsync(user), user.Email ?? "" , 
+                user.Id);
         }
+
+        public string GetLoggedUserEmail()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            var email = user.FindFirst(ClaimTypes.Email)?.Value.ToString();
+
+            return email;
+
+        }
+
         #endregion
     }
 }

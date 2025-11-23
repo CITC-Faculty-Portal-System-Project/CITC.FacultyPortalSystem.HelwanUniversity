@@ -2,6 +2,7 @@
 {
     public record UserResultDto(string UserName,
         string Token,
-        string Email
+        string Email,
+        Guid UserId = default
     );
 }
