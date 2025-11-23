@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Presistence.Data;
 
@@ -11,9 +12,11 @@ using Presistence.Data;
 namespace Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    partial class StoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251122175125_CompostionsDataSeeding")]
+    partial class CompostionsDataSeeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1327,58 +1330,6 @@ namespace Presistence.Data.Migrations
                         },
                         new
                         {
-                            Id = new Guid("40404040-4040-4040-4040-404040404040"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "CONTRIBUTION",
-                            SortOrder = 1,
-                            Type = "ContributionTypes",
-                            ValueAr = "تبرعات",
-                            ValueEn = "Donations",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("40404040-4040-4040-4040-404040404041"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "CONTRIBUTION",
-                            SortOrder = 2,
-                            Type = "ContributionTypes",
-                            ValueAr = "اتفاقيات",
-                            ValueEn = "Agreements",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("40404040-4040-4040-4040-404040404042"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "CONTRIBUTION",
-                            SortOrder = 3,
-                            Type = "ContributionTypes",
-                            ValueAr = "نشاط طلابي",
-                            ValueEn = "Student activity",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("40404040-4040-4040-4040-404040404043"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "CONTRIBUTION",
-                            SortOrder = 4,
-                            Type = "ContributionTypes",
-                            ValueAr = "اخرى",
-                            ValueEn = "Other",
-                            VersionNo = 0
-                        },
-                        new
-                        {
                             Id = new Guid("66666666-6666-6666-6666-666666666661"),
                             CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             CreatedBy = "Helwan Faculty Portal System",
@@ -1843,136 +1794,6 @@ namespace Presistence.Data.Migrations
                             Type = "MagazineParticipationRole",
                             ValueAr = "محكم",
                             ValueEn = "ReFree",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303030"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 1,
-                            Type = "Rewards",
-                            ValueAr = "جائزة الدولة التقديرية",
-                            ValueEn = "State Appreciation Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303031"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 2,
-                            Type = "Rewards",
-                            ValueAr = "جائزة الدولة للتفوق العلم",
-                            ValueEn = "State Award for Scientific Excellence",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303032"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 3,
-                            Type = "Rewards",
-                            ValueAr = "جائزة الدولة التشجيعية",
-                            ValueEn = "State Incentive Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303033"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 4,
-                            Type = "Rewards",
-                            ValueAr = "جائزة النيل التشجيعية",
-                            ValueEn = "Nile Encouragement Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303034"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 5,
-                            Type = "Rewards",
-                            ValueAr = "جائزة الجامعة التقديرية",
-                            ValueEn = "University Appreciation Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303035"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 6,
-                            Type = "Rewards",
-                            ValueAr = "جائزة المنصورة الطبية",
-                            ValueEn = "Mansoura Medical Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303036"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 7,
-                            Type = "Rewards",
-                            ValueAr = "جائزة احسن رسالة دكتوراه",
-                            ValueEn = "Best PhD Dissertation Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303037"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 8,
-                            Type = "Rewards",
-                            ValueAr = "جائزة احسن رسالة ماجستير",
-                            ValueEn = "Best Master's Thesis Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303038"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 9,
-                            Type = "Rewards",
-                            ValueAr = "جائزة عبد الحميد شومان",
-                            ValueEn = "Abdul Hameed Shoman Award",
-                            VersionNo = 0
-                        },
-                        new
-                        {
-                            Id = new Guid("30303030-3030-3030-3030-303030303039"),
-                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CreatedBy = "Helwan Faculty Portal System",
-                            IsDeleted = false,
-                            Key = "REWARDS",
-                            SortOrder = 10,
-                            Type = "Rewards",
-                            ValueAr = "اخرى",
-                            ValueEn = "Other",
                             VersionNo = 0
                         });
                 });
