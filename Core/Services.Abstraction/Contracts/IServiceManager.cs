@@ -9,5 +9,7 @@
         public ILookUpItemService LookUpItemService { get; }
         public IMissionService MissionService { get; }
         public ISeminarsAndConfrencesService SeminarsAndConfrencesService { get; }
+        public IScientificProgressionService ScientificProgressionService { get; }
+        public IProjectsAndCommitteesService ProjectsAndCommitteesService { get; }
     }
 }

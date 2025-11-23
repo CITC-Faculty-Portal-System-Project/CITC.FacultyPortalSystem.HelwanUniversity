@@ -9,7 +9,8 @@ namespace Services.Implementations
         , Func<ILookUpItemService> _lookUpItemSerivce
         , Func<IMissionService> _missionService
         , Func<ISeminarsAndConfrencesService> _seminarsAndConfernces
-        ) : IServiceManager
+        , Func<IScientificProgressionService> _scientificProgressionFactory
+        , Func<IProjectsAndCommitteesService> _ProjectsAndCommitteesFactory) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
 
@@ -21,5 +22,9 @@ namespace Services.Implementations
         public ILookUpItemService LookUpItemService => _lookUpItemSerivce.Invoke();
         public IMissionService MissionService => _missionService.Invoke();
         public ISeminarsAndConfrencesService SeminarsAndConfrencesService => _seminarsAndConfernces.Invoke();
+
+        public IScientificProgressionService ScientificProgressionService => _scientificProgressionFactory.Invoke();
+
+        public IProjectsAndCommitteesService ProjectsAndCommitteesService => _ProjectsAndCommitteesFactory.Invoke();
     }
 }

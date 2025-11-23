@@ -6,3 +6,6 @@ global using Services.Abstraction.Contracts;
 global using Domain.Exceptions;
 global using Domain.Enums;
 global using Shared.Dtos;
+global using Shared;
+global using Services.Specifications.FacultyMemberDataModule;
+global using Domain.Entities.FacultyMemberDataModule;
