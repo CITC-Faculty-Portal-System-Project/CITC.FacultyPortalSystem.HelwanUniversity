@@ -1,8 +1,10 @@
-﻿using Presentation.Attributes;
+﻿using Microsoft.AspNetCore.Authorization;
+using Presentation.Attributes;
 using Services.Abstraction.Contracts;
 using Shared.Dtos.LookUpItem;
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class LookUpItemsController(IServiceManager _serviceManager) : ApiController
     {
         [ProducesResponseType(typeof(LookUpItemResponseDto), StatusCodes.Status200OK)]

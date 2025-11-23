@@ -1,8 +1,9 @@
 ﻿namespace Shared.Dtos.IdentityModule
 {
-    public record UserResultDto(string UserName,
-        string Token,
+    public record UserResultDto(
+        string UserName,
         string Email,
-        Guid UserId = default
+        Guid UserId = default,
+        string? Token = default
     );
 }

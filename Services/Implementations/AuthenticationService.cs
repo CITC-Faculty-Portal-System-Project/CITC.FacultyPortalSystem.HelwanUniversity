@@ -21,7 +21,8 @@ namespace Services.Implementations
         IOptions<JwtOptions> _options,
         IUnitOfWork _unitOfWork,
         IRegistrationClientService _registrationClient,
-        IHttpContextAccessor _httpContextAccessor
+        IHttpContextAccessor _httpContextAccessor,
+        SignInManager<User> _signInManager
         ) : IAuthenticationService
     {
         #region Helper Methods
@@ -170,19 +171,27 @@ namespace Services.Implementations
                     .AddAsync(facultyMember);
             await _unitOfWork.SaveChangesAsync();
 
-            return new UserResultDto(newUser.UserName ?? "", await CreateTokenAsync(newUser), newUser.Email ?? ""); ;
+            return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? ""); ;
         }
 
         //Login
-        public async Task<UserResultDto> LoginAsync(LoginDto loginDto)
+        public async Task<string> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user is null) throw new UnauthorizedException();
 
-            var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-            if (!result) throw new UnauthorizedException();
+            //var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+            var result = await _signInManager.PasswordSignInAsync(
+                user.UserName,
+                loginDto.Password,
+                isPersistent: false,
+                lockoutOnFailure: false
 
-            return new UserResultDto(user.UserName ?? "", await CreateTokenAsync(user), user.Email ?? "");
+             );
+
+            if (!result.Succeeded) throw new UnauthorizedException();
+
+            return ("Logged In!");
         }
 
         //CheckEmail
@@ -244,7 +253,7 @@ namespace Services.Implementations
         {
             var user = await _userManager.FindByEmailAsync(userEmail)
                 ?? throw new UserNotFoundException(userEmail);
-            return new UserResultDto(user.UserName ?? "", await CreateTokenAsync(user), user.Email ?? "" , 
+            return new UserResultDto(UserName: user.UserName ?? "", user.Email ?? "" , 
                 user.Id);
         }
 

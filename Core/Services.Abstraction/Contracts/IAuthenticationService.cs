@@ -8,7 +8,7 @@ namespace Services.Abstraction.Contracts
         Task<UserResultDto> RegisterAsync(RegisterDto registerDto);
 
         //Login ==> return UserResultDto [UserName, Token, Email] ==> Take Parameters [NationalNumber]
-        Task<UserResultDto> LoginAsync(LoginDto loginDto);
+        Task<string> LoginAsync(LoginDto loginDto);
 
         //Get Current User
         Task<UserResultDto> GetCurrentUserAsync(string userEmail);
