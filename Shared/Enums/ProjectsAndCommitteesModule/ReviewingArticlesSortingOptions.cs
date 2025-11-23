@@ -1,6 +1,6 @@
 ﻿namespace Shared.Enums.ProjectsAndCommitteesModule
 {
-    public enum ReviewingArticlesSortOptions
+    public enum ReviewingArticlesSortingOptions
     {
         DateAsc = 1,
         DateDesc = 2,

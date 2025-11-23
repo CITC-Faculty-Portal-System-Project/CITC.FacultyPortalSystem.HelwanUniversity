@@ -1,6 +1,6 @@
 ﻿namespace Shared.Dtos.ProjectsAndCommitteesModule
 {
-    public class CommitteesAndAssociationsCreateDto
+    public class CommitteeOrAssociationCreateDto
     {
         public string NameOfCommitteeOrAssociation { get; set; } = string.Empty;
         public Guid TypeOfCommitteeOrAssociationId { get; set; } 

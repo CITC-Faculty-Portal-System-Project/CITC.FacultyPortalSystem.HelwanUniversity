@@ -130,7 +130,7 @@ namespace Services.Implementations
 
         }
 
-        public async Task<JobRankResponseDto> GetJobRankById(int id)
+        public async Task<JobRankResponseDto> GetJobRankByIdAsync(int id)
         {
             //Load Job Rank Data
             var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
@@ -228,7 +228,7 @@ namespace Services.Implementations
             return new PaginatedResult<AdministrativePositionDto>(parameters.PageIndex, currentPageCount, totalCount, administrativePositionsResult);
         }
 
-        public async Task<AdministrativePositionDto> GetAdministrativePositionById(int id)
+        public async Task<AdministrativePositionDto> GetAdministrativePositionByIdAsync(int id)
         {
             //Load Administrative Position
             var administrativePositionsRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();

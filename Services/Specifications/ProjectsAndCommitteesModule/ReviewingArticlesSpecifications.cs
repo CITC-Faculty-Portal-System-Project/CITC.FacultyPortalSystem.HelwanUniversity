@@ -18,16 +18,16 @@ namespace Services.Specifications.ProjectsAndCommitteesModule
 
             switch (parameters.Sort)
             {
-                case ReviewingArticlesSortOptions.DateAsc:
+                case ReviewingArticlesSortingOptions.DateAsc:
                     AddOrderBy(caa => caa.ReviewingDate);
                     break;
-                case ReviewingArticlesSortOptions.DateDesc:
+                case ReviewingArticlesSortingOptions.DateDesc:
                     AddOrderByDescending(caa => caa.ReviewingDate);
                     break;
-                case ReviewingArticlesSortOptions.NameAsc:
+                case ReviewingArticlesSortingOptions.NameAsc:
                     AddOrderBy(caa => caa.TitleOfArticle);
                     break;
-                case ReviewingArticlesSortOptions.NameDesc:
+                case ReviewingArticlesSortingOptions.NameDesc:
                     AddOrderByDescending(caa => caa.TitleOfArticle);
                     break;
                 default:

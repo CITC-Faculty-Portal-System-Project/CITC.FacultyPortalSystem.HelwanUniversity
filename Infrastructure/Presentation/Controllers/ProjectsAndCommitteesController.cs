@@ -10,23 +10,23 @@ namespace Presentation.Controllers
         [ProducesResponseType(typeof(PaginatedResult<CommitteesAndAssociationsResponseDto>), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("CommitteesAndAssociations")]
-        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync([FromQuery] CommitteesAndAssociationsSpecificationsParameters parameters)
+        public async Task<ActionResult<PaginatedResult<CommitteesAndAssociationsResponseDto>>> GetAllCommitteesAndAssociationsAsync([FromQuery] CommitteesAndAssociationsSpecificationsParameters parameters)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllCommitteesAndAssociationsAsync(parameters));
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("CommitteeOrAssociation/{id:int}")]
-        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> GetAdministrativePositionById(int id)
-            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetCommitteeOrAssociationById(id));
+        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> GetCommitteeOrAssociationByIdAsync(int id)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetCommitteeOrAssociationByIdAsync(id));
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
         [HttpPost("CreateCommitteeOrAssociation")]
-        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> CreateAdministrativePositionAsync([FromQuery] string facultyMemberEmail, CommitteesAndAssociationsCreateDto committeesAndAssociationsCreateDto)
+        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> CreateCommitteeOrAssociationAsync([FromQuery] string facultyMemberEmail, CommitteeOrAssociationCreateDto committeesAndAssociationsCreateDto)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.CreateCommitteeOrAssociationAsync(facultyMemberEmail, committeesAndAssociationsCreateDto));
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
         [HttpPut("UpdateCommitteeOrAssociation")]
-        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> UpdateAdministrativePositionAsync([FromQuery] int committeeOrAssociationId, [FromQuery] string facultyMemberEmail, CommitteesAndAssociationsUpdateDto committeesAndAssociationsUpdateDto)
+        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> UpdateCommitteeOrAssociationAsync([FromQuery] int committeeOrAssociationId, [FromQuery] string facultyMemberEmail, CommitteeOrAssociationUpdateDto committeesAndAssociationsUpdateDto)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateCommitteeOrAssociationAsync(committeeOrAssociationId, facultyMemberEmail, committeesAndAssociationsUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -42,14 +42,14 @@ namespace Presentation.Controllers
         [ProducesResponseType(typeof(PaginatedResult<ReviewingArticlesDto>), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("ReviewingArticles")]
-        public async Task<ActionResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync([FromQuery] ReviewingArticlesSpecificationsParameters parameters)
+        public async Task<ActionResult<PaginatedResult<ReviewingArticlesDto>>> GetAllReviewingArticlesAsync([FromQuery] ReviewingArticlesSpecificationsParameters parameters)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllReviewingArticlesAsync(parameters));
 
         [ProducesResponseType(typeof(ReviewingArticlesDto), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("ReviewingArticle/{id:int}")]
-        public async Task<ActionResult<ReviewingArticlesDto>> GetReviewingArticleById(int id)
-            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetReviewingArticleById(id));
+        public async Task<ActionResult<ReviewingArticlesDto>> GetReviewingArticleByIdAsync(int id)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetReviewingArticleByIdAsync(id));
 
         [ProducesResponseType(typeof(ReviewingArticlesDto), StatusCodes.Status200OK)]
         [HttpPost("CreateReviewingArticle")]
@@ -66,6 +66,70 @@ namespace Presentation.Controllers
         public async Task<ActionResult> DeleteReviewingArticleAsync(int id, [FromQuery] string facultyMemberEmail)
         {
             await _serviceManager.ProjectsAndCommitteesService.DeleteReviewingArticleAsync(id, facultyMemberEmail);
+            return NoContent();
+        }
+        #endregion
+
+        #region Participation In Magazines
+        [ProducesResponseType(typeof(PaginatedResult<ParticipationInMagazinesResponseDto>), StatusCodes.Status200OK)]
+        [RedisCache]
+        [HttpGet("ParticipationInMagazines")]
+        public async Task<ActionResult<PaginatedResult<ParticipationInMagazinesResponseDto>>> GetAllParticipationInMagazinesAsync([FromQuery] ParticipationInMagazinesSpecificationsParameters parameters)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllParticipationInMagazinesAsync(parameters));
+
+        [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
+        [RedisCache]
+        [HttpGet("ParticipationInMagazine/{id:int}")]
+        public async Task<ActionResult<ParticipationInMagazinesResponseDto>> GetParticipationInMagazineByIdAsync(int id)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetParticipationInMagazineByIdAsync(id));
+
+        [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
+        [HttpPost("CreateParticipationInMagazine")]
+        public async Task<ActionResult<ParticipationInMagazinesResponseDto>> CreateParticipationInMagazineAsync([FromQuery] string facultyMemberEmail, ParticipationInMagazineCreateDto participationInMagazineCreateDto)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.CreateParticipationInMagazineAsync(facultyMemberEmail, participationInMagazineCreateDto));
+
+        [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
+        [HttpPut("UpdateParticipationInMagazine")]
+        public async Task<ActionResult<ParticipationInMagazinesResponseDto>> UpdateParticipationInMagazineAsync([FromQuery] int reviewingArticleId, [FromQuery] string facultyMemberEmail, ParticipationInMagazineUpdateDto participationInMagazineUpdateDto)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateParticipationInMagazineAsync(reviewingArticleId, facultyMemberEmail, participationInMagazineUpdateDto));
+
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpDelete("DeleteParticipationInMagazine/{id:int}")]
+        public async Task<ActionResult> DeleteParticipationInMagazineAsync(int id, [FromQuery] string facultyMemberEmail)
+        {
+            await _serviceManager.ProjectsAndCommitteesService.DeleteParticipationInMagazineAsync(id, facultyMemberEmail);
+            return NoContent();
+        }
+        #endregion
+
+        #region Projects
+        [ProducesResponseType(typeof(PaginatedResult<ProjectsResponseDto>), StatusCodes.Status200OK)]
+        [RedisCache]
+        [HttpGet("Projects")]
+        public async Task<ActionResult<PaginatedResult<ProjectsResponseDto>>> GetAllProjectsAsync([FromQuery] ProjectsSpecifcationsParameters parameters)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllProjectsAsync(parameters));
+
+        [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
+        [RedisCache]
+        [HttpGet("Project/{id:int}")]
+        public async Task<ActionResult<ProjectsResponseDto>> GetProjectByIdAsync(int id)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.GetProjectByIdAsync(id));
+
+        [ProducesResponseType(typeof(ProjectsResponseDto), StatusCodes.Status200OK)]
+        [HttpPost("CreateProject")]
+        public async Task<ActionResult<ProjectsResponseDto>> CreateProjectAsync([FromQuery] string facultyMemberEmail, ProjectCreateDto projectCreateDto)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.CreateProjectAsync(facultyMemberEmail, projectCreateDto));
+
+        [ProducesResponseType(typeof(ProjectsResponseDto), StatusCodes.Status200OK)]
+        [HttpPut("UpdateProject")]
+        public async Task<ActionResult<ProjectsResponseDto>> UpdateProjectAsync([FromQuery] int reviewingArticleId, [FromQuery] string facultyMemberEmail, ProjectUpdateDto projectUpdateDto)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateProjectAsync(reviewingArticleId, facultyMemberEmail, projectUpdateDto));
+
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpDelete("DeleteProject/{id:int}")]
+        public async Task<ActionResult> DeleteProjectAsync(int id, [FromQuery] string facultyMemberEmail)
+        {
+            await _serviceManager.ProjectsAndCommitteesService.DeleteProjectAsync(id, facultyMemberEmail);
             return NoContent();
         }
         #endregion
