@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.IdentityModule;
+using Messaging.AsyncMessaging.Publisher;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             {
                 return ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection")!);
             });
+
+            services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
             services.AddSingleton(new JsonSerializerOptions
             {

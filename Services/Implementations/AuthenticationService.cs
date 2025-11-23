@@ -20,7 +20,8 @@ namespace Services.Implementations
         IEmailService _emailService,
         IOptions<JwtOptions> _options,
         IUnitOfWork _unitOfWork,
-        IRegistrationClientService _registrationClient
+        IRegistrationClientService _registrationClient,
+        INationalNumberPubClient _nationalNumberPubClient
         ) : IAuthenticationService
     {
         #region Helper Methods
@@ -169,7 +170,10 @@ namespace Services.Implementations
                     .AddAsync(facultyMember);
             await _unitOfWork.SaveChangesAsync();
 
-            return new UserResultDto(newUser.UserName ?? "", await CreateTokenAsync(newUser), newUser.Email ?? ""); ;
+            _nationalNumberPubClient.PublishUserNationalNumber(registerDto.NationalNumber);
+
+
+			return new UserResultDto(newUser.UserName ?? "", await CreateTokenAsync(newUser), newUser.Email ?? ""); ;
         }
 
         //Login
