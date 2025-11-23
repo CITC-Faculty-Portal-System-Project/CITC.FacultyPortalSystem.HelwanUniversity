@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Services.Specifications.FacultyMemberDataModule;
 using Shared.Dtos.IdentityModule;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -134,6 +135,15 @@ namespace Services.Implementations
                 NationalNumber = externalUser.NationalNumber
             };
 
+
+            var secification = new FacultyMemberWithEmailSPecifications(email);
+            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+            var member = await facultyMemberRepo.GetAsync(secification);
+            if (member is not null)
+                throw new UserAlreadyExistsException("This Member is Already Registered");
+
+
+
             var result = await _userManager.CreateAsync(newUser, password);
             if (!result.Succeeded)
             {
@@ -167,8 +177,7 @@ namespace Services.Implementations
                 NationalNumber = newUser.NationalNumber ?? ""
             };
 
-            await _unitOfWork.GetRepository<FacultyMember, Guid>()
-                    .AddAsync(facultyMember);
+            await facultyMemberRepo.AddAsync(facultyMember);
             await _unitOfWork.SaveChangesAsync();
 
             return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? ""); ;
@@ -180,18 +189,12 @@ namespace Services.Implementations
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user is null) throw new UnauthorizedException();
 
-            //var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-            var result = await _signInManager.PasswordSignInAsync(
-                user.UserName,
-                loginDto.Password,
-                isPersistent: false,
-                lockoutOnFailure: false
+            var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+            if (!result) throw new UnauthorizedException();
 
-             );
 
-            if (!result.Succeeded) throw new UnauthorizedException();
-
-            return ("Logged In!");
+            var token = await CreateTokenAsync(user);
+            return (token);
         }
 
         //CheckEmail
