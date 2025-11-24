@@ -37,6 +37,8 @@ namespace ICIT.FacultyPortalSystem.API
 
             app.UseStaticFiles();
 
+            app.UseRouting();
+            
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
