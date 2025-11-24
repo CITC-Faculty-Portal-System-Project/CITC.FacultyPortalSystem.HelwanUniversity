@@ -22,19 +22,19 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(AcademicQualificationResponseDto), StatusCodes.Status200OK)]
         [HttpPost("CreateAcademicQualification")]
-        public async Task<ActionResult<AcademicQualificationResponseDto>> CreateAcademicQualificationAsync([FromQuery] string facultyMemberEmail, AcademicQualificationCreateDto academicQualificationCreateDto)
-            => Ok(await _serviceManager.ScientificProgressionService.CreateAcademicQualificationAsync(facultyMemberEmail, academicQualificationCreateDto));
+        public async Task<ActionResult<AcademicQualificationResponseDto>> CreateAcademicQualificationAsync(AcademicQualificationCreateDto academicQualificationCreateDto)
+            => Ok(await _serviceManager.ScientificProgressionService.CreateAcademicQualificationAsync(academicQualificationCreateDto));
 
         [ProducesResponseType(typeof(AcademicQualificationResponseDto), StatusCodes.Status200OK)]
-        [HttpPut("UpdateAcademicQualification")]
-        public async Task<ActionResult<AcademicQualificationResponseDto>> UpdateAcademicQualificationAsync([FromQuery] int academicQualificationId, [FromQuery] string facultyMemberEmail, AcademicQualificationsUpdateDto academicQualificationsUpdateDto)
-            => Ok(await _serviceManager.ScientificProgressionService.UpdateAcademicQualificationAsync(academicQualificationId, facultyMemberEmail, academicQualificationsUpdateDto));
+        [HttpPut("UpdateAcademicQualification/{academicQualificationId:int}")]
+        public async Task<ActionResult<AcademicQualificationResponseDto>> UpdateAcademicQualificationAsync(int academicQualificationId, AcademicQualificationsUpdateDto academicQualificationsUpdateDto)
+            => Ok(await _serviceManager.ScientificProgressionService.UpdateAcademicQualificationAsync(academicQualificationId, academicQualificationsUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteAcademicQualification/{id:int}")]
-        public async Task<ActionResult> DeleteAcademicQualificationAsync(int id, [FromQuery] string facultyMemberEmail)
+        public async Task<ActionResult> DeleteAcademicQualificationAsync(int id)
         {
-            await _serviceManager.ScientificProgressionService.DeleteAcademicQualificationAsync(id, facultyMemberEmail);
+            await _serviceManager.ScientificProgressionService.DeleteAcademicQualificationAsync(id);
             return NoContent();
         }
         #endregion
@@ -54,19 +54,19 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(JobRankResponseDto), StatusCodes.Status200OK)]
         [HttpPost("CreateJobRank")]
-        public async Task<ActionResult<JobRankResponseDto>> CreateJobRankAsync([FromQuery] string facultyMemberEmail, JobRankCreateDto jobRankCreateDto)
-            => Ok(await _serviceManager.ScientificProgressionService.CreateJobRankAsync(facultyMemberEmail, jobRankCreateDto));
+        public async Task<ActionResult<JobRankResponseDto>> CreateJobRankAsync(JobRankCreateDto jobRankCreateDto)
+            => Ok(await _serviceManager.ScientificProgressionService.CreateJobRankAsync(jobRankCreateDto));
 
         [ProducesResponseType(typeof(JobRankResponseDto), StatusCodes.Status200OK)]
-        [HttpPut("UpdateJobRank")]
-        public async Task<ActionResult<JobRankResponseDto>> UpdateJobRankAsync([FromQuery] int jobRankId, [FromQuery] string facultyMemberEmail, JobRankUpdateDto jobRankUpdateDto)
-            => Ok(await _serviceManager.ScientificProgressionService.UpdateJobRankAsync(jobRankId, facultyMemberEmail, jobRankUpdateDto));
+        [HttpPut("UpdateJobRank/{jobRankId:int}")]
+        public async Task<ActionResult<JobRankResponseDto>> UpdateJobRankAsync(int jobRankId, JobRankUpdateDto jobRankUpdateDto)
+            => Ok(await _serviceManager.ScientificProgressionService.UpdateJobRankAsync(jobRankId, jobRankUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteJobRank/{id:int}")]
         public async Task<ActionResult> DeleteJobRankAsync(int id, [FromQuery] string facultyMemberEmail)
         {
-            await _serviceManager.ScientificProgressionService.DeleteJobRankAsync(id, facultyMemberEmail);
+            await _serviceManager.ScientificProgressionService.DeleteJobRankAsync(id);
             return NoContent();
         }
         #endregion
@@ -86,19 +86,19 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(AdministrativePositionDto), StatusCodes.Status200OK)]
         [HttpPost("CreateAdministrativePosition")]
-        public async Task<ActionResult<AdministrativePositionDto>> CreateAdministrativePositionAsync([FromQuery] string facultyMemberEmail, AdministrativePositionCreateDto administrativePositionCreateDto)
-            => Ok(await _serviceManager.ScientificProgressionService.CreateAdministrativePositionAsync(facultyMemberEmail, administrativePositionCreateDto));
+        public async Task<ActionResult<AdministrativePositionDto>> CreateAdministrativePositionAsync(AdministrativePositionCreateDto administrativePositionCreateDto)
+            => Ok(await _serviceManager.ScientificProgressionService.CreateAdministrativePositionAsync(administrativePositionCreateDto));
 
         [ProducesResponseType(typeof(AdministrativePositionDto), StatusCodes.Status200OK)]
-        [HttpPut("UpdateAdministrativePosition")]
-        public async Task<ActionResult<AdministrativePositionDto>> UpdateAdministrativePositionAsync([FromQuery] int administrativePositionId, [FromQuery] string facultyMemberEmail, AdministrativePositionDto administrativePositionUpdateDto)
-            => Ok(await _serviceManager.ScientificProgressionService.UpdateAdministrativePositionAsync(administrativePositionId, facultyMemberEmail, administrativePositionUpdateDto));
+        [HttpPut("UpdateAdministrativePosition/{administrativePositionId:int}")]
+        public async Task<ActionResult<AdministrativePositionDto>> UpdateAdministrativePositionAsync(int administrativePositionId, AdministrativePositionDto administrativePositionUpdateDto)
+            => Ok(await _serviceManager.ScientificProgressionService.UpdateAdministrativePositionAsync(administrativePositionId, administrativePositionUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteAdministrativePosition/{id:int}")]
-        public async Task<ActionResult> DeleteAdministrativePositionAsync(int id, [FromQuery] string facultyMemberEmail)
+        public async Task<ActionResult> DeleteAdministrativePositionAsync(int id)
         {
-            await _serviceManager.ScientificProgressionService.DeleteAdministrativePositionAsync(id, facultyMemberEmail);
+            await _serviceManager.ScientificProgressionService.DeleteAdministrativePositionAsync(id);
             return NoContent();
         }
         #endregion

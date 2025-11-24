@@ -5,11 +5,18 @@ using Shared.SpecificationParameters.ScientificProgressionModule;
 
 namespace Services.Implementations
 {
-    public class ScientificProgressionService(IUnitOfWork _unitOfWork, IMapper _mapper) : IScientificProgressionService
+    public class ScientificProgressionService(IUnitOfWork _unitOfWork, IMapper _mapper, IAuthenticationService _authenticationService) : IScientificProgressionService
     {
         #region Academic Qualifications
         public async Task<PaginatedResult<AcademicQualificationResponseDto>> GetAllAcademicQualificationsAsync(AcademicQualificationsSpecificationParamters parameters)
         {
+            //Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Academic Qualification.");
+
+            parameters.FacultyMemberEmail = currentUser.Email;
+
             //Load Academic Qualifications Data
             var academicQualificationsRepo = _unitOfWork.GetRepository<AcademicQualifications, int>();
             var specifications = new AcademicQualificationsSpecifications(parameters);
@@ -33,10 +40,18 @@ namespace Services.Implementations
         }
         public async Task<AcademicQualificationResponseDto> GetAcademicQualificationByIdAsync(int id)
         {
+            //Get Current User Email
+            var currentUser = await _authenticationService
+                 .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                 throw new UnauthorizedAccessException("Can't Access The Academic Qualification.");
+
             //Load Academic Qualification Data
             var academicQualificationsRepo = _unitOfWork.GetRepository<AcademicQualifications, int>();
             var specifications = new AcademicQualificationsSpecifications(id);
             var academicQualificaion = await academicQualificationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Academic Qualifications are Not Found");
+
+            if (academicQualificaion.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Cannot Access this Academic Qualification.");
 
             //Map The Result to Dto
             var academicQualificationResult = _mapper.Map<AcademicQualificationResponseDto>(academicQualificaion);
@@ -46,16 +61,14 @@ namespace Services.Implementations
 
         }
 
-        public async Task<AcademicQualificationResponseDto> CreateAcademicQualificationAsync(string facultyMemberEmail, AcademicQualificationCreateDto academicQualificationCreateDto)
+        public async Task<AcademicQualificationResponseDto> CreateAcademicQualificationAsync(AcademicQualificationCreateDto academicQualificationCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             //Map Dto to Entity and Add FacultyMemberId
             var academicQualification = _mapper.Map<AcademicQualifications>(academicQualificationCreateDto);
-            academicQualification.FacultyMemberId = facultyMember.Id;
+            academicQualification.FacultyMemberId = currentUser.UserId;
 
             //Add and Save to Database
             var academicQualificationsRepo = _unitOfWork.GetRepository<AcademicQualifications, int>();
@@ -66,15 +79,17 @@ namespace Services.Implementations
             return _mapper.Map<AcademicQualificationResponseDto>(academicQualification);
         }
 
-        public async Task<AcademicQualificationResponseDto> UpdateAcademicQualificationAsync(int academicQualificationId, string facultyMemberEmail, AcademicQualificationsUpdateDto academicQualificationsUpdateDto)
+        public async Task<AcademicQualificationResponseDto> UpdateAcademicQualificationAsync(int academicQualificationId, AcademicQualificationsUpdateDto academicQualificationsUpdateDto)
         {
             //Load Academic Qualification Data
             var academicQualificationsRepo = _unitOfWork.GetRepository<AcademicQualifications, int>();
             var specifications = new AcademicQualificationsSpecifications(academicQualificationId);
             var academicQualification = await academicQualificationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Academic Qualification is Not Found.");
 
-            if (academicQualification.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+            
+            if (academicQualification.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Update this Academic Qualification.");
 
             //Map Dto to Entity
             _mapper.Map(academicQualificationsUpdateDto, academicQualification);
@@ -87,14 +102,16 @@ namespace Services.Implementations
             return _mapper.Map<AcademicQualificationResponseDto>(academicQualification);
         }
 
-        public async Task DeleteAcademicQualificationAsync(int academicQualificationId, string facultyMemberEmail)
+        public async Task DeleteAcademicQualificationAsync(int academicQualificationId)
         {
             //Load Academic Qualification Data
             var academicQualificationsRepo = _unitOfWork.GetRepository<AcademicQualifications, int>();
             var specifications = new AcademicQualificationsSpecifications(academicQualificationId);
             var academicQualification = await academicQualificationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Academic Qualification is Not Found.");
 
-            if (academicQualification.FacultyMember?.Email != facultyMemberEmail)
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (academicQualification.FacultyMemberId != currentUser.UserId)
                 throw new UnauthorizedAccessException("Cannot Delete This Record.");
 
             //Apply Soft Delete
@@ -108,6 +125,13 @@ namespace Services.Implementations
         #region Job Ranks
         public async Task<PaginatedResult<JobRankResponseDto>> GetAllJobRanksAsync(JobRanksSpecificationsParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Job Rank.");
+
+            parameters.FacultyMemberEmail = currentUser.Email;
+
             //Load Job Ranks Data
             var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
             var specifications = new JobRanksSpecifications(parameters);
@@ -132,10 +156,18 @@ namespace Services.Implementations
 
         public async Task<JobRankResponseDto> GetJobRankByIdAsync(int id)
         {
+            //Get Current User Email
+            var currentUser = await _authenticationService
+                 .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                 throw new UnauthorizedAccessException("Can't Access The Job Rank.");
+
             //Load Job Rank Data
             var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
             var specifications = new JobRanksSpecifications(id);
             var jobRank = await jobRanksRepo.GetAsync(specifications) ?? throw new NotFoundException("Job Rank is Not Found.");
+
+            if (jobRank.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Cannot Access this Job Rank.");
 
             //Map To Dto
             var jobRankResult = _mapper.Map<JobRankResponseDto>(jobRank);
@@ -144,16 +176,14 @@ namespace Services.Implementations
             return jobRankResult;
         }
 
-        public async Task<JobRankResponseDto> CreateJobRankAsync(string facultyMemberEmail, JobRankCreateDto jobRanksCreateDto)
+        public async Task<JobRankResponseDto> CreateJobRankAsync(JobRankCreateDto jobRanksCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             //Map Dto to Entity and Add FacultyMemberId
             var jobRank = _mapper.Map<JobRanks>(jobRanksCreateDto);
-            jobRank.FacultyMemberId = facultyMember.Id;
+            jobRank.FacultyMemberId = currentUser.UserId;
 
             //Add and Save to Database
             var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
@@ -165,15 +195,18 @@ namespace Services.Implementations
 
         }
 
-        public async Task<JobRankResponseDto> UpdateJobRankAsync(int jobRankId, string facultyMemberEmail, JobRankUpdateDto jobRanksUpdateDto)
+        public async Task<JobRankResponseDto> UpdateJobRankAsync(int jobRankId, JobRankUpdateDto jobRanksUpdateDto)
         {
             //Load Job Rank Data
             var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
             var specifications = new JobRanksSpecifications(jobRankId);
             var jobRank = await jobRanksRepo.GetAsync(specifications) ?? throw new NotFoundException("Job Rank is Not Found.");
 
-            if (jobRank.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (jobRank.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Update this Job Rank.");
 
             //Map Dto to Entity
             _mapper.Map(jobRanksUpdateDto, jobRank);
@@ -186,15 +219,18 @@ namespace Services.Implementations
             return _mapper.Map<JobRankResponseDto>(jobRank);
         }
 
-        public async Task DeleteJobRankAsync(int jobRankId, string facultyMemberEmail)
+        public async Task DeleteJobRankAsync(int jobRankId)
         {
             //Load Job Rank Data
             var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
             var specifications = new JobRanksSpecifications(jobRankId);
             var jobRank = await jobRanksRepo.GetAsync(specifications) ?? throw new NotFoundException("Job Rank is Not Found.");
 
-            if (jobRank.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (jobRank.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Delete this Job Rank.");
 
             //Apply Soft Delete
             jobRank.IsDeleted = true;
@@ -207,6 +243,13 @@ namespace Services.Implementations
         #region Administrative Positions
         public async Task<PaginatedResult<AdministrativePositionDto>> GetAllAdministrativePositionsAsync(AdministrativePositionsSpecificationParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Administrative Positions.");
+
+            parameters.FacultyMemberEmail = currentUser.Email;
+
             //Load Administrative Positions Data
             var administrativePositionsRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();
             var specifications  = new AdministrativePositionsSpecifications(parameters);
@@ -230,10 +273,18 @@ namespace Services.Implementations
 
         public async Task<AdministrativePositionDto> GetAdministrativePositionByIdAsync(int id)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Administrative Position.");
+
             //Load Administrative Position
             var administrativePositionsRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();
             var specifications = new AdministrativePositionsSpecifications(id);
             var administrativePosition = await administrativePositionsRepo.GetAsync(specifications) ?? throw new NotFoundException("Administrative Position is Not Found.");
+
+            if (administrativePosition.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Cannot Access This Administrative Position.");
 
             //Map To Dto
             var administrativePositionResult = _mapper.Map<AdministrativePositionDto>(administrativePosition);
@@ -242,16 +293,14 @@ namespace Services.Implementations
             return administrativePositionResult;
         }
 
-        public async Task<AdministrativePositionDto> CreateAdministrativePositionAsync(string facultyMemberEmail, AdministrativePositionCreateDto administrativePositionCreateDto)
+        public async Task<AdministrativePositionDto> CreateAdministrativePositionAsync(AdministrativePositionCreateDto administrativePositionCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             //Map Dto To Entity and Add Faculty Member Id
             var administrativePosition = _mapper.Map<AdministrativePositions>(administrativePositionCreateDto);
-            administrativePosition.FacultyMemberId = facultyMember.Id;
+            administrativePosition.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
             var administrativePositionsRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();
@@ -263,15 +312,18 @@ namespace Services.Implementations
 
         }
 
-        public async Task<AdministrativePositionDto> UpdateAdministrativePositionAsync(int administrativePositionId, string facultyMemberEmail, AdministrativePositionDto administrativePositionUpdateDto)
+        public async Task<AdministrativePositionDto> UpdateAdministrativePositionAsync(int administrativePositionId, AdministrativePositionDto administrativePositionUpdateDto)
         {
             //Load Administrative Position Data
             var administrativePositionsRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();
             var specifications = new AdministrativePositionsSpecifications(administrativePositionId);
             var administrativePosition = await administrativePositionsRepo.GetAsync(specifications) ?? throw new NotFoundException("Administrative Position is Not Found");
 
-            if (administrativePosition.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (administrativePosition.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Update This Administrative Position.");
 
             //Map Dto To Entity
             _mapper.Map(administrativePositionUpdateDto, administrativePosition);
@@ -284,15 +336,18 @@ namespace Services.Implementations
             return _mapper.Map<AdministrativePositionDto>(administrativePosition);
         }
 
-        public async Task DeleteAdministrativePositionAsync(int administrativePositionId, string facultyMemberEmail)
+        public async Task DeleteAdministrativePositionAsync(int administrativePositionId)
         {
             //Load Administrative Position Data
             var administrativePositionsRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();
             var specifications = new AdministrativePositionsSpecifications(administrativePositionId);
             var administrativePosition = await administrativePositionsRepo.GetAsync(specifications) ?? throw new NotFoundException("Administrative Position is Not Found");
 
-            if (administrativePosition.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (administrativePosition.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Delete This Administrative Position.");
 
             //Apply Soft Delete
             administrativePosition.IsDeleted = true;

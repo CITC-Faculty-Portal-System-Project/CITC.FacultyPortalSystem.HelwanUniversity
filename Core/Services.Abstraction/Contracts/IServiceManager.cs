@@ -7,8 +7,7 @@
         public IEmailService EmailService { get; }
         public IFacultyMemberDataService FacultyMemberDataService { get; }
         public ILookUpItemService LookUpItemService { get; }
-        public IMissionService MissionService { get; }
-        public ISeminarsAndConfrencesService SeminarsAndConfrencesService { get; }
+        public IMissionsService MissionsService { get; }
         public IScientificProgressionService ScientificProgressionService { get; }
         public IProjectsAndCommitteesService ProjectsAndCommitteesService { get; }
     }

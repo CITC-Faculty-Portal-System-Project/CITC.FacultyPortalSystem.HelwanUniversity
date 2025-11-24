@@ -22,8 +22,7 @@ namespace Services.Implementations
         IOptions<JwtOptions> _options,
         IUnitOfWork _unitOfWork,
         IRegistrationClientService _registrationClient,
-        IHttpContextAccessor _httpContextAccessor,
-        SignInManager<User> _signInManager
+        IHttpContextAccessor _httpContextAccessor
         ) : IAuthenticationService
     {
         #region Helper Methods
@@ -136,7 +135,7 @@ namespace Services.Implementations
             };
 
 
-            var secification = new FacultyMemberWithEmailSPecifications(email);
+            var secification = new FacultyMemberWithEmailSpecifications(email);
             var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
             var member = await facultyMemberRepo.GetAsync(secification);
             if (member is not null)

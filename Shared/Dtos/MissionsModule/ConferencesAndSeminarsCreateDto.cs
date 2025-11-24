@@ -1,8 +1,8 @@
-﻿using Shared.Enums.DTORequired.ConfrencesAndSeminarsModule;
+﻿using Shared.Enums.MissionsModule;
 using System.ComponentModel.DataAnnotations;
-namespace Shared.Dtos.ConfrencesAndSeminarsModule
+namespace Shared.Dtos.MissionsModule
 {
-    public record ConfrencesAndSeminarsAddDto : BaseAddDto
+    public record ConferencesAndSeminarsCreateDto 
     {
         [Required(ErrorMessage = "You Must Enter a Type")]
         public ConferenceOrSeminar Type { get; set; }
@@ -21,5 +21,7 @@ namespace Shared.Dtos.ConfrencesAndSeminarsModule
         [Required(ErrorMessage = "You Must Enter a Venue")] 
         public string Venue { get; set; } = string.Empty;
         public string? Notes { get; set; } = string.Empty;
+
+        public Guid FacultyMemberId { get; set; }
     }
 }
