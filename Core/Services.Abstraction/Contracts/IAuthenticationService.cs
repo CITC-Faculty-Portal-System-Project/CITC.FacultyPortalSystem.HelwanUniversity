@@ -8,7 +8,7 @@ namespace Services.Abstraction.Contracts
         Task<UserResultDto> RegisterAsync(RegisterDto registerDto);
 
         //Login ==> return UserResultDto [UserName, Token, Email] ==> Take Parameters [NationalNumber]
-        Task<UserResultDto> LoginAsync(LoginDto loginDto);
+        Task<string> LoginAsync(LoginDto loginDto);
 
         //Get Current User
         Task<UserResultDto> GetCurrentUserAsync(string userEmail);
@@ -27,5 +27,9 @@ namespace Services.Abstraction.Contracts
 
         //Reset Password
         Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto, string email);
+
+        //Getting Current Logged User Email Without the need from user to pass the email to end-point
+        public string GetLoggedUserEmail();
+
     }
 }

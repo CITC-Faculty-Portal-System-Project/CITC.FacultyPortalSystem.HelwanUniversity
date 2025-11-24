@@ -14,8 +14,22 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(UserResultDto), StatusCodes.Status200OK)]
         [HttpPost("Login")]
-        public async Task<ActionResult<UserResultDto>> LoginAsync(LoginDto loginDto)
-            => Ok(await _serviceManager.AuthenticationService.LoginAsync(loginDto));
+        public async Task<ActionResult<string>> LoginAsync(LoginDto loginDto)
+        {
+            var token = await _serviceManager.AuthenticationService.LoginAsync(loginDto);
+            var cookieOptions = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(30)
+            };
+
+            Response.Cookies.Append("jwtToken", token, cookieOptions);
+            return Ok("Logged In");
+        }
+
+
 
         [ProducesResponseType(typeof(ResetPasswordDto), StatusCodes.Status200OK)]
         [HttpPost("ResetPassword")]

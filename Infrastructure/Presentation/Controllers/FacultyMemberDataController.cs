@@ -8,8 +8,8 @@ namespace Presentation.Controllers
         [ProducesResponseType(typeof(PersonalDataResponseDto), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("PersonalData")]
-        public async Task<ActionResult<PersonalDataResponseDto>> GetPersonalDataAsync([FromQuery] string facultyMemberEmail)
-            => Ok(await _serviceManager.FacultyMemberDataService.GetPersonalDataAsync(facultyMemberEmail));
+        public async Task<ActionResult<PersonalDataResponseDto>> GetPersonalDataAsync()
+            => Ok(await _serviceManager.FacultyMemberDataService.GetPersonalDataAsync());
 
         [ProducesResponseType(typeof(PersonalDataResponseDto), StatusCodes.Status200OK)]
         [HttpPost("FetchPersonalData")]
@@ -18,16 +18,16 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(PersonalDataResponseDto), StatusCodes.Status200OK)]
         [HttpPut("UpdatePersonalData")]
-        public async Task<ActionResult<PersonalDataResponseDto>> UpdatePersonalDataAsync([FromQuery] string facultyMemberEmail, PersonalDataUpdateDto personalDataUpdateDto)
-            => Ok(await _serviceManager.FacultyMemberDataService.UpdatePersonalDataAsync(facultyMemberEmail, personalDataUpdateDto));
+        public async Task<ActionResult<PersonalDataResponseDto>> UpdatePersonalDataAsync(PersonalDataUpdateDto personalDataUpdateDto)
+            => Ok(await _serviceManager.FacultyMemberDataService.UpdatePersonalDataAsync(personalDataUpdateDto));
         #endregion
 
         #region Contact Data
         [ProducesResponseType(typeof(ContactDataResponseDto), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("ContactData")]
-        public async Task<ActionResult<ContactDataResponseDto>> GetContactDataAsync([FromQuery] string facultyMemberEmail)
-            => Ok(await _serviceManager.FacultyMemberDataService.GetContactDataAsync(facultyMemberEmail));
+        public async Task<ActionResult<ContactDataResponseDto>> GetContactDataAsync()
+            => Ok(await _serviceManager.FacultyMemberDataService.GetContactDataAsync());
 
         [ProducesResponseType(typeof(ContactDataResponseDto), StatusCodes.Status200OK)]
         [HttpPost("FetchContactData")]
@@ -36,34 +36,34 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(ContactDataResponseDto), StatusCodes.Status200OK)]
         [HttpPut("UpdateContactData")]
-        public async Task<ActionResult<ContactDataResponseDto>> UpdateContactDataAsync([FromQuery] string facultyMemberEmail, ContactDataUpdateDto contactDataUpdateDto)
-            => Ok(await _serviceManager.FacultyMemberDataService.UpdateContactDataAsync(facultyMemberEmail, contactDataUpdateDto));
+        public async Task<ActionResult<ContactDataResponseDto>> UpdateContactDataAsync(ContactDataUpdateDto contactDataUpdateDto)
+            => Ok(await _serviceManager.FacultyMemberDataService.UpdateContactDataAsync(contactDataUpdateDto));
         #endregion
 
         #region Identification Card
         [ProducesResponseType(typeof(IdentificationCardDto), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("IdentificationCard")]
-        public async Task<ActionResult<IdentificationCardDto>> GetIdentificationCardAsync([FromQuery] string facultyMemberEmail)
-            => Ok(await _serviceManager.FacultyMemberDataService.GetIdentificationCardAsync(facultyMemberEmail));
+        public async Task<ActionResult<IdentificationCardDto>> GetIdentificationCardAsync()
+            => Ok(await _serviceManager.FacultyMemberDataService.GetIdentificationCardAsync());
 
         [ProducesResponseType(typeof(IdentificationCardDto), StatusCodes.Status200OK)]
         [HttpPut("UpdateIdentificationCard")]
-        public async Task<ActionResult<IdentificationCardDto>> UpdateIdentificationCardAsync([FromQuery] string facultyMemberEmail, IdentificationCardDto identificationCardDto)
-            => Ok(await _serviceManager.FacultyMemberDataService.UpdateIdentificationCardAsync(facultyMemberEmail, identificationCardDto));
+        public async Task<ActionResult<IdentificationCardDto>> UpdateIdentificationCardAsync(IdentificationCardDto identificationCardDto)
+            => Ok(await _serviceManager.FacultyMemberDataService.UpdateIdentificationCardAsync(identificationCardDto));
         #endregion
 
         #region Social Media
         [ProducesResponseType(typeof(SocialMediaPlatformsDto), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("SocialMediaPlatforms")]
-        public async Task<ActionResult<SocialMediaPlatformsDto>> GetSocialMediaOlatformsAsync([FromQuery] string facultyMemberEmail)
-            => Ok(await _serviceManager.FacultyMemberDataService.GetSocialMediaPlatformsAsync(facultyMemberEmail));
+        public async Task<ActionResult<SocialMediaPlatformsDto>> GetSocialMediaOlatformsAsync()
+            => Ok(await _serviceManager.FacultyMemberDataService.GetSocialMediaPlatformsAsync());
 
         [ProducesResponseType(typeof(SocialMediaPlatformsDto), StatusCodes.Status200OK)]
         [HttpPut("UpdateSocialMediaPlatforms")]
-        public async Task<ActionResult<SocialMediaPlatformsDto>> UpdateSocialMediaPlatformsAsync([FromQuery] string facultyMemberEmail, SocialMediaPlatformsDto socialMediaPlatformsDto)
-            => Ok(await _serviceManager.FacultyMemberDataService.UpdateSocialMediaPlatformsAsync(facultyMemberEmail, socialMediaPlatformsDto));
+        public async Task<ActionResult<SocialMediaPlatformsDto>> UpdateSocialMediaPlatformsAsync(SocialMediaPlatformsDto socialMediaPlatformsDto)
+            => Ok(await _serviceManager.FacultyMemberDataService.UpdateSocialMediaPlatformsAsync(socialMediaPlatformsDto));
         #endregion
     }
 }

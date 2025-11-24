@@ -1,4 +1,5 @@
-﻿using Shared.Common;
+﻿using Services.Abstraction.Contracts;
+using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -29,9 +30,24 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IFacultyMemberDataService>()
             );
 
+            services.AddScoped<ILookUpItemService, LookUpItemService>();
+            services.AddScoped<Func<ILookUpItemService>>(provider =>
+            () => provider.GetRequiredService<ILookUpItemService>()
+            );
+
+            services.AddScoped<IMissionsService, MissionsService>();
+            services.AddScoped<Func<IMissionsService>>(provider =>
+            () => provider.GetRequiredService<IMissionsService>()
+            );
+
             services.AddScoped<IScientificProgressionService, ScientificProgressionService>();
             services.AddScoped<Func<IScientificProgressionService>>(provider =>
             () => provider.GetRequiredService<IScientificProgressionService>()
+            );
+
+            services.AddScoped<IProjectsAndCommitteesService, ProjectsAndCommitteesService>();
+            services.AddScoped<Func<IProjectsAndCommitteesService>>(provider =>
+            () => provider.GetRequiredService<IProjectsAndCommitteesService>()
             );
 
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();

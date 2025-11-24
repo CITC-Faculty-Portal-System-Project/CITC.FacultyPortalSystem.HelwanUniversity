@@ -6,7 +6,10 @@ namespace Services.Implementations
         , Func<ICacheService> _cacheFactory
         , Func<IEmailService> _emailFactory
         , Func<IFacultyMemberDataService> _facultyMemberDataFactory
-        , Func<IScientificProgressionService> _scientificProgressionFactory) : IServiceManager
+        , Func<ILookUpItemService> _lookUpItemSerivce
+        , Func<IMissionsService> _missionService
+        , Func<IScientificProgressionService> _scientificProgressionFactory
+        , Func<IProjectsAndCommitteesService> _ProjectsAndCommitteesFactory) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
 
@@ -15,7 +18,11 @@ namespace Services.Implementations
         public IEmailService EmailService => _emailFactory.Invoke();
 
         public IFacultyMemberDataService FacultyMemberDataService => _facultyMemberDataFactory.Invoke();
+        public ILookUpItemService LookUpItemService => _lookUpItemSerivce.Invoke();
+        public IMissionsService MissionsService => _missionService.Invoke();
 
         public IScientificProgressionService ScientificProgressionService => _scientificProgressionFactory.Invoke();
+
+        public IProjectsAndCommitteesService ProjectsAndCommitteesService => _ProjectsAndCommitteesFactory.Invoke();
     }
 }

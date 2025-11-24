@@ -6,6 +6,9 @@
         public ICacheService CacheService { get; }
         public IEmailService EmailService { get; }
         public IFacultyMemberDataService FacultyMemberDataService { get; }
+        public ILookUpItemService LookUpItemService { get; }
+        public IMissionsService MissionsService { get; }
         public IScientificProgressionService ScientificProgressionService { get; }
+        public IProjectsAndCommitteesService ProjectsAndCommitteesService { get; }
     }
 }

@@ -39,6 +39,7 @@
             {
                 NotFoundException => StatusCodes.Status404NotFound,
                 UnauthorizedException => StatusCodes.Status401Unauthorized,
+                UserAlreadyExistsException => StatusCodes.Status409Conflict,
                 ValidationException validationException => HandleValidationException(validationException, response),
                 (_) => StatusCodes.Status500InternalServerError
             };

@@ -1,0 +1,24 @@
+﻿using Domain.Entities.ProjectsAndCommitteesModule;
+using Shared.SpecificationParameters.ProjectsAndCommitteesModule;
+
+namespace Services.Specifications.ProjectsAndCommitteesModule
+{
+    internal class ProjectsCountSpecifications : BaseSpecifications<Projects, int>
+    {
+        public ProjectsCountSpecifications(ProjectsSpecifcationsParameters parameters)
+            : base(p =>
+                  (!p.IsDeleted &&
+                    p.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                  (string.IsNullOrEmpty(parameters.Search) ||
+                   p.NameOfProject.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
+                   p.TypeOfProject.ValueAr.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
+                   p.TypeOfProject.ValueEn.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
+                   p.ParticipationRole.ValueAr.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
+                   p.ParticipationRole.ValueEn.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
+                   p.FinancingAuthority.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))
+            )
+        {
+
+        }
+    }
+}

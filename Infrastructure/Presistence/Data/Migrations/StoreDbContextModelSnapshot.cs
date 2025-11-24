@@ -490,10 +490,1491 @@ namespace Presistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Type", "Key")
-                        .IsUnique();
-
                     b.ToTable("Lookups", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "BACHELOR",
+                            SortOrder = 1,
+                            Type = "AcademicQualification",
+                            ValueAr = "ليسانس",
+                            ValueEn = "Bachelor's degree",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111112"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "BACHELOR",
+                            SortOrder = 2,
+                            Type = "AcademicQualification",
+                            ValueAr = "بكالوريوس",
+                            ValueEn = "Bachelor's",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111113"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 3,
+                            Type = "AcademicQualification",
+                            ValueAr = "دبلوم الدراسات العليا",
+                            ValueEn = "Postgraduate Diploma",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111114"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 4,
+                            Type = "AcademicQualification",
+                            ValueAr = "ماجستير",
+                            ValueEn = "Master Degree",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111115"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 5,
+                            Type = "AcademicQualification",
+                            ValueAr = "كورسات مكافئة للماجستير",
+                            ValueEn = "Courses equivalent to a master's degree",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111116"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 6,
+                            Type = "AcademicQualification",
+                            ValueAr = "الدكتوراه",
+                            ValueEn = "PHD",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111117"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 7,
+                            Type = "AcademicQualification",
+                            ValueAr = "دكتوراة العلوم",
+                            ValueEn = "Ph.D. of Science",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111118"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 8,
+                            Type = "AcademicQualification",
+                            ValueAr = "دكتوراة العلوم",
+                            ValueEn = "Ph.D. of Science",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111119"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 9,
+                            Type = "AcademicQualification",
+                            ValueAr = "العالمية",
+                            ValueEn = "Global",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111120"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 10,
+                            Type = "AcademicQualification",
+                            ValueAr = "الاجازة العالية",
+                            ValueEn = "Higher Degree Qualification",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111121"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 11,
+                            Type = "AcademicQualification",
+                            ValueAr = "الزمالة",
+                            ValueEn = "Fellowship",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111122"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 12,
+                            Type = "AcademicQualification",
+                            ValueAr = "دبلوم عام",
+                            ValueEn = "General diploma",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111123"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 13,
+                            Type = "AcademicQualification",
+                            ValueAr = "دبلوم خاص",
+                            ValueEn = "Special diploma",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111124"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 14,
+                            Type = "AcademicQualification",
+                            ValueAr = "دبلوم مهني",
+                            ValueEn = "Professional diploma",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111125"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 15,
+                            Type = "AcademicQualification",
+                            ValueAr = "دبلوم تفرغ",
+                            ValueEn = "Sabbatical diploma",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111126"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 16,
+                            Type = "AcademicQualification",
+                            ValueAr = "دبلوم تأهيلي",
+                            ValueEn = "Qualifying diploma",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111127"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "HIGHER STUDIES",
+                            SortOrder = 17,
+                            Type = "AcademicQualification",
+                            ValueAr = "الكانديدات",
+                            ValueEn = "Candidae",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222221"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EXCELLENT",
+                            SortOrder = 1,
+                            Type = "AcademicGrade",
+                            ValueAr = "ممتاز مع مرتبة الشرف",
+                            ValueEn = "Excellent with honors",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EXCELLENT",
+                            SortOrder = 2,
+                            Type = "AcademicGrade",
+                            ValueAr = "ممتاز",
+                            ValueEn = "Excellent",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222223"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "VERY GOOD",
+                            SortOrder = 3,
+                            Type = "AcademicGrade",
+                            ValueAr = "جيد جدا مع مرتبة الشرف",
+                            ValueEn = "Very good with honors",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222224"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "VERY GOOD",
+                            SortOrder = 4,
+                            Type = "AcademicGrade",
+                            ValueAr = "جيد جدا",
+                            ValueEn = "Very good",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222225"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "GOOD",
+                            SortOrder = 5,
+                            Type = "AcademicGrade",
+                            ValueAr = "جيد",
+                            ValueEn = "Good",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222226"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "ACCEPTABLE",
+                            SortOrder = 6,
+                            Type = "AcademicGrade",
+                            ValueAr = "مقبول",
+                            ValueEn = "Acceptable",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222227"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "FAIL",
+                            SortOrder = 7,
+                            Type = "AcademicGrade",
+                            ValueAr = "راسب",
+                            ValueEn = "Fail",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333331"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MISSION",
+                            SortOrder = 1,
+                            Type = "Dispatch",
+                            ValueAr = "بعثة داخلية",
+                            ValueEn = "Internal mission",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333332"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MISSION",
+                            SortOrder = 2,
+                            Type = "Dispatch",
+                            ValueAr = "بعثة خارجية",
+                            ValueEn = "Foreign mission",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "SUPERVISION",
+                            SortOrder = 3,
+                            Type = "Dispatch",
+                            ValueAr = "اشراف مشترك",
+                            ValueEn = "Joint supervision",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333334"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "SCHOLARSHIP",
+                            SortOrder = 4,
+                            Type = "Dispatch",
+                            ValueAr = "منحة شخصية",
+                            ValueEn = "Personal scholarship",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444441"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 1,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "معيد",
+                            ValueEn = "Demonstrator",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444442"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 2,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "مدرس مساعد",
+                            ValueEn = "Assistant teacher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444443"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 3,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "مدرس",
+                            ValueEn = "Teacher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444444"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 4,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ مساعد",
+                            ValueEn = "Assistant professor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444445"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 5,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ",
+                            ValueEn = "Professor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444446"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 6,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ متفرغ",
+                            ValueEn = "Full-time professor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444447"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 7,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ غير متفرغ",
+                            ValueEn = "Part-time professor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444448"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 8,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "زميل",
+                            ValueEn = "Peer",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444449"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 9,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استشاري مساعد",
+                            ValueEn = "Assistant consultant",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444450"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 10,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استشاري",
+                            ValueEn = "Consultative",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444451"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 11,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ مساعد متفرغ",
+                            ValueEn = "Full-time Assistant Professor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444452"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 12,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "مدرس متفرغ",
+                            ValueEn = "Full time teacher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444453"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 13,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ مساعد لقب علمي",
+                            ValueEn = "Assistant Professor (academic title)",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444454"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 14,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ لقب علمي",
+                            ValueEn = "Professor is a scientific title",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444455"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 15,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "مساعد باحث",
+                            ValueEn = "Research assistant",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444456"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 16,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "باحث مساعد",
+                            ValueEn = "Assistant researcher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444457"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 17,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "باحث",
+                            ValueEn = "Researcher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444458"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 18,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "باحث اول",
+                            ValueEn = "Senior researcher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444459"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 19,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "رئيس بحوث",
+                            ValueEn = "Head of Research",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444460"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 20,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ مساعد غير متفرغ",
+                            ValueEn = "Part-time Assistant Professor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444461"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 21,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "زميل متفرغ",
+                            ValueEn = "Full-time colleague",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444462"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 22,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "مدرس غير متفرغ",
+                            ValueEn = "Part-time teacher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444463"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 23,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "استاذ مشارك",
+                            ValueEn = "Associate Professor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("44444444-4444-4444-4444-444444444464"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "EMPLOYEMENT",
+                            SortOrder = 24,
+                            Type = "EmploymentDegrees",
+                            ValueAr = "اخرى",
+                            ValueEn = "Other",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("20202020-2020-2020-2020-202020202020"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "AUTHORROLE",
+                            SortOrder = 1,
+                            Type = "AuthorRole",
+                            ValueAr = "مؤلف",
+                            ValueEn = "Author",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("20202020-2020-2020-2020-202020202021"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "AUTHORROLE",
+                            SortOrder = 2,
+                            Type = "AuthorRole",
+                            ValueAr = "مترجم",
+                            ValueEn = "Trasnlator",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("20202020-2020-2020-2020-202020202022"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "AUTHORROLE",
+                            SortOrder = 3,
+                            Type = "AuthorRole",
+                            ValueAr = "مراجع",
+                            ValueEn = "Revisor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("20202020-2020-2020-2020-202020202023"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "AUTHORROLE",
+                            SortOrder = 4,
+                            Type = "AuthorRole",
+                            ValueAr = "مترجم/مراجع",
+                            ValueEn = "Translator/Revisor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("20202020-2020-2020-2020-202020202024"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "AUTHORROLE",
+                            SortOrder = 5,
+                            Type = "AuthorRole",
+                            ValueAr = "محرر كتاب",
+                            ValueEn = "Book editor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("20202020-2020-2020-2020-202020202025"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "AUTHORROLE",
+                            SortOrder = 6,
+                            Type = "AuthorRole",
+                            ValueAr = "مؤلف فصل",
+                            ValueEn = "Chapter author",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555551"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTCIPATION",
+                            SortOrder = 1,
+                            Type = "SmemiarParticipationType",
+                            ValueAr = "المخطط للمؤتمر",
+                            ValueEn = "Conference planner",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555552"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTCIPATION",
+                            SortOrder = 2,
+                            Type = "SmemiarParticipationType",
+                            ValueAr = "المراجع الرئيسي",
+                            ValueEn = "Main reviewer",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555553"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTCIPATION",
+                            SortOrder = 3,
+                            Type = "SmemiarParticipationType",
+                            ValueAr = "المتحدث",
+                            ValueEn = "Speaker",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555554"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTCIPATION",
+                            SortOrder = 4,
+                            Type = "SmemiarParticipationType",
+                            ValueAr = "مقدم البحث",
+                            ValueEn = "Research presenter",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555555"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTCIPATION",
+                            SortOrder = 5,
+                            Type = "SmemiarParticipationType",
+                            ValueAr = "حضر فقط",
+                            ValueEn = "Just attended",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("55555555-5555-5555-5555-555555555556"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTCIPATION",
+                            SortOrder = 6,
+                            Type = "SmemiarParticipationType",
+                            ValueAr = "اخرى",
+                            ValueEn = "Other",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("40404040-4040-4040-4040-404040404040"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "CONTRIBUTION",
+                            SortOrder = 1,
+                            Type = "ContributionTypes",
+                            ValueAr = "تبرعات",
+                            ValueEn = "Donations",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("40404040-4040-4040-4040-404040404041"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "CONTRIBUTION",
+                            SortOrder = 2,
+                            Type = "ContributionTypes",
+                            ValueAr = "اتفاقيات",
+                            ValueEn = "Agreements",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("40404040-4040-4040-4040-404040404042"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "CONTRIBUTION",
+                            SortOrder = 3,
+                            Type = "ContributionTypes",
+                            ValueAr = "نشاط طلابي",
+                            ValueEn = "Student activity",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("40404040-4040-4040-4040-404040404043"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "CONTRIBUTION",
+                            SortOrder = 4,
+                            Type = "ContributionTypes",
+                            ValueAr = "اخرى",
+                            ValueEn = "Other",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666661"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 1,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "رئيس مجلس الادارة",
+                            ValueEn = "Chairman of the Board of Directors",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666662"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 2,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "رئيس اللجنة",
+                            ValueEn = "Chairman of the Committee",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666663"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 3,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "مدير",
+                            ValueEn = "Boss",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666664"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 4,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "منسق",
+                            ValueEn = "Coordinator",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666665"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 5,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "مقرر",
+                            ValueEn = "Decidor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666666"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 6,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "مشرف",
+                            ValueEn = "Supervisor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666667"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 7,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "استشاري",
+                            ValueEn = "Consultative",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666668"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 8,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "سكرتير",
+                            ValueEn = "Secretary",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666669"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 9,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "مراجع",
+                            ValueEn = "Revisor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666670"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 10,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "عضو مجلس ادارة",
+                            ValueEn = "Member of the Board of Directors",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666671"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 11,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "عضو مجلس تحرير",
+                            ValueEn = "Editorial board member",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666672"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 12,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "عضو مؤسس",
+                            ValueEn = "Founding member",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666673"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 13,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "عضو عامل",
+                            ValueEn = "Active member",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666674"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 14,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "عضو",
+                            ValueEn = "Member",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("66666666-6666-6666-6666-666666666675"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PARTICIPATIONTYPES",
+                            SortOrder = 15,
+                            Type = "ComiteeParticipationDegree",
+                            ValueAr = "متحكم",
+                            ValueEn = "Controller",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-7777-7777-7777-777777777771"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "COMITEETYPES",
+                            SortOrder = 1,
+                            Type = "TypeofComitee",
+                            ValueAr = "لجان علمية",
+                            ValueEn = "Scientific committees",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-7777-7777-7777-777777777772"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "COMITEETYPES",
+                            SortOrder = 2,
+                            Type = "TypeofComitee",
+                            ValueAr = "جمعيات",
+                            ValueEn = "Associations",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-7777-7777-7777-777777777773"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "COMITEETYPES",
+                            SortOrder = 3,
+                            Type = "TypeofComitee",
+                            ValueAr = "لجان",
+                            ValueEn = "Committees",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("77777777-7777-7777-7777-777777777774"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "COMITEETYPES",
+                            SortOrder = 4,
+                            Type = "TypeofComitee",
+                            ValueAr = "اخرى",
+                            ValueEn = "Other",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("88888888-8888-8888-8888-888888888881"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTTYPES",
+                            SortOrder = 1,
+                            Type = "ProjectType",
+                            ValueAr = "بحثي",
+                            ValueEn = "Research",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("88888888-8888-8888-8888-888888888882"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTTYPES",
+                            SortOrder = 2,
+                            Type = "ProjectType",
+                            ValueAr = "هندسي",
+                            ValueEn = "Geometric",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("88888888-8888-8888-8888-888888888883"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTTYPES",
+                            SortOrder = 3,
+                            Type = "ProjectType",
+                            ValueAr = "جودة",
+                            ValueEn = "Quality",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("88888888-8888-8888-8888-888888888884"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTTYPES",
+                            SortOrder = 4,
+                            Type = "ProjectType",
+                            ValueAr = "خارجي",
+                            ValueEn = "External",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999091"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTROLES",
+                            SortOrder = 1,
+                            Type = "ProjectRole",
+                            ValueAr = "مدير مشروع",
+                            ValueEn = "Project manager",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999092"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTROLES",
+                            SortOrder = 2,
+                            Type = "ProjectRole",
+                            ValueAr = "مدير تنفيذي",
+                            ValueEn = "Executive Director",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999093"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTROLES",
+                            SortOrder = 3,
+                            Type = "ProjectRole",
+                            ValueAr = "نائب مدير تنفيذي",
+                            ValueEn = "Deputy Executive Director",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999094"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTROLES",
+                            SortOrder = 4,
+                            Type = "ProjectRole",
+                            ValueAr = "باحث رئيسي",
+                            ValueEn = "Principal researcher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999095"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTROLES",
+                            SortOrder = 5,
+                            Type = "ProjectRole",
+                            ValueAr = "باحث مشارك",
+                            ValueEn = "Contributer researcher",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999096"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTROLES",
+                            SortOrder = 6,
+                            Type = "ProjectRole",
+                            ValueAr = "مستشار",
+                            ValueEn = "Consultant",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999097"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "PROJECTROLES",
+                            SortOrder = 7,
+                            Type = "ProjectRole",
+                            ValueAr = "متحكم",
+                            ValueEn = "Controller",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("10101010-1010-1010-1010-101010101010"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MAGAZINEPARTICIPATIONROLE",
+                            SortOrder = 1,
+                            Type = "MagazineParticipationRole",
+                            ValueAr = "رئيس تحرير",
+                            ValueEn = "Editor-in-Chief",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("10101010-1010-1010-1010-101010101011"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MAGAZINEPARTICIPATIONROLE",
+                            SortOrder = 2,
+                            Type = "MagazineParticipationRole",
+                            ValueAr = "مدير تحرير",
+                            ValueEn = "Editorial Director",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("10101010-1010-1010-1010-101010101012"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MAGAZINEPARTICIPATIONROLE",
+                            SortOrder = 3,
+                            Type = "MagazineParticipationRole",
+                            ValueAr = "نائب تحرير",
+                            ValueEn = "Deputy editor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("10101010-1010-1010-1010-101010101013"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MAGAZINEPARTICIPATIONROLE",
+                            SortOrder = 4,
+                            Type = "MagazineParticipationRole",
+                            ValueAr = "عضو",
+                            ValueEn = "Member",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("10101010-1010-1010-1010-101010101014"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MAGAZINEPARTICIPATIONROLE",
+                            SortOrder = 5,
+                            Type = "MagazineParticipationRole",
+                            ValueAr = "محرر",
+                            ValueEn = "Editor",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("10101010-1010-1010-1010-101010101015"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "MAGAZINEPARTICIPATIONROLE",
+                            SortOrder = 6,
+                            Type = "MagazineParticipationRole",
+                            ValueAr = "محكم",
+                            ValueEn = "ReFree",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303030"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 1,
+                            Type = "Rewards",
+                            ValueAr = "جائزة الدولة التقديرية",
+                            ValueEn = "State Appreciation Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303031"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 2,
+                            Type = "Rewards",
+                            ValueAr = "جائزة الدولة للتفوق العلم",
+                            ValueEn = "State Award for Scientific Excellence",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303032"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 3,
+                            Type = "Rewards",
+                            ValueAr = "جائزة الدولة التشجيعية",
+                            ValueEn = "State Incentive Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303033"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 4,
+                            Type = "Rewards",
+                            ValueAr = "جائزة النيل التشجيعية",
+                            ValueEn = "Nile Encouragement Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303034"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 5,
+                            Type = "Rewards",
+                            ValueAr = "جائزة الجامعة التقديرية",
+                            ValueEn = "University Appreciation Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303035"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 6,
+                            Type = "Rewards",
+                            ValueAr = "جائزة المنصورة الطبية",
+                            ValueEn = "Mansoura Medical Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303036"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 7,
+                            Type = "Rewards",
+                            ValueAr = "جائزة احسن رسالة دكتوراه",
+                            ValueEn = "Best PhD Dissertation Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303037"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 8,
+                            Type = "Rewards",
+                            ValueAr = "جائزة احسن رسالة ماجستير",
+                            ValueEn = "Best Master's Thesis Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303038"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 9,
+                            Type = "Rewards",
+                            ValueAr = "جائزة عبد الحميد شومان",
+                            ValueEn = "Abdul Hameed Shoman Award",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("30303030-3030-3030-3030-303030303039"),
+                            CreatedAt = new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "Helwan Faculty Portal System",
+                            IsDeleted = false,
+                            Key = "REWARDS",
+                            SortOrder = 10,
+                            Type = "Rewards",
+                            ValueAr = "اخرى",
+                            ValueEn = "Other",
+                            VersionNo = 0
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.MissionsModule.ConferencesAndSeminars", b =>
