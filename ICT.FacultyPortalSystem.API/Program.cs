@@ -33,7 +33,7 @@ namespace ICIT.FacultyPortalSystem.API
                 app.UseSwaggerMiddlewares();
             }
 
-            app.UseHttpsRedirection();
+       //     app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
