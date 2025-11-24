@@ -22,6 +22,7 @@ namespace Services.Implementations
         IOptions<JwtOptions> _options,
         IUnitOfWork _unitOfWork,
         IRegistrationClientService _registrationClient,
+        INationalNumberPubClient _nationalNumberPubClient
         IHttpContextAccessor _httpContextAccessor
         ) : IAuthenticationService
     {
@@ -179,7 +180,12 @@ namespace Services.Implementations
             await facultyMemberRepo.AddAsync(facultyMember);
             await _unitOfWork.SaveChangesAsync();
 
-            return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? ""); ;
+
+            _nationalNumberPubClient.PublishUserNationalNumber(registerDto.NationalNumber);
+
+    			return new UserResultDto(newUser.UserName ?? ""; 
+          await CreateTokenAsync(newUser), newUser.Email ?? "");
+            return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? "");
         }
 
         //Login
