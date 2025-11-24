@@ -22,13 +22,13 @@ namespace Services.Specifications.MissionsModule
                     AddOrderBy(sm => sm.MissionName);
                     break;
                 case ScientificMissionsSortingOptions.NameDesc:
-                    AddOrderByDescending(p => p.MissionName);
+                    AddOrderByDescending(sm => sm.MissionName);
                     break;
                 case ScientificMissionsSortingOptions.DateAsc:
-                    AddOrderBy(p => p.StartDate);
+                    AddOrderBy(sm => sm.StartDate);
                     break;
                 case ScientificMissionsSortingOptions.DateDesc:
-                    AddOrderByDescending(p => p.StartDate);
+                    AddOrderByDescending(sm => sm.StartDate);
                     break;
                 default:
                     break;

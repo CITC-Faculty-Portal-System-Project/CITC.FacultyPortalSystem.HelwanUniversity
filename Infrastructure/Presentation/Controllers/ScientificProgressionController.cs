@@ -1,10 +1,12 @@
-﻿using Shared;
+﻿using Microsoft.AspNetCore.Authorization;
+using Shared;
 using Shared.Dtos.ScientificProgressionModule;
 using Shared.SpecificationParameters.ScientificProgressionModule;
 
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class ScientificProgressionController(IServiceManager _serviceManager) : ApiController
     {
         #region Academic Qualifications
