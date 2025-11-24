@@ -22,7 +22,16 @@ namespace Services.MappingProfiles
 
             CreateMap<ConferencesAndSeminarsCreateDto, ConferencesAndSeminars>();
             CreateMap<ConferencesAndSeminarsUpdateDto, ConferencesAndSeminars>();
-                    
+
+            #endregion
+
+            #region Training Programs
+            CreateMap<TrainingPrograms, TrainingProgramsResponseDto>()
+                .ForMember(dest => dest.ParticipationType, opt => opt.MapFrom(src => src.ParticipationType))
+                .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type));
+
+            CreateMap<TrainingProgramsCreateDto, TrainingPrograms>();
+            CreateMap<TrainingProgramsUpdateDto, TrainingPrograms>();
             #endregion
 
         }

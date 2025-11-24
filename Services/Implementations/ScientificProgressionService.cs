@@ -13,7 +13,7 @@ namespace Services.Implementations
             //Get Current User Email
             var currentUser = await _authenticationService
                             .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                            throw new UnauthorizedAccessException("You Cannot Access This Academic Qualification.");
+                            throw new UnauthorizedAccessException("You Cannot Access The Academic Qualifications.");
 
             parameters.FacultyMemberEmail = currentUser.Email;
 
@@ -128,7 +128,7 @@ namespace Services.Implementations
             // Get Current User Email
             var currentUser = await _authenticationService
                             .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                            throw new UnauthorizedAccessException("You Cannot Access This Job Rank.");
+                            throw new UnauthorizedAccessException("You Cannot Access The Job Ranks.");
 
             parameters.FacultyMemberEmail = currentUser.Email;
 
@@ -246,7 +246,7 @@ namespace Services.Implementations
             // Get Current User Email
             var currentUser = await _authenticationService
                             .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                            throw new UnauthorizedAccessException("You Cannot Access This Administrative Positions.");
+                            throw new UnauthorizedAccessException("You Cannot Access The Administrative Positions.");
 
             parameters.FacultyMemberEmail = currentUser.Email;
 

@@ -5,6 +5,7 @@ namespace Shared.Dtos.MissionsModule
 {
     public record ConferencesAndSeminarsResponseDto
     {
+        public int Id { get; set; }
         public ConferenceOrSeminar Type { get; set; }
         public LocalOrInternational LocalOrInternational { get; set; }
         public string Name { get; set; } = string.Empty;

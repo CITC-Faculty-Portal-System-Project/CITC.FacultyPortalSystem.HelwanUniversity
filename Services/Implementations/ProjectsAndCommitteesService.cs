@@ -1,15 +1,23 @@
 ﻿using Domain.Entities.ProjectsAndCommitteesModule;
+using Domain.Entities.ScientificProgressionModule;
 using Services.Specifications.ProjectsAndCommitteesModule;
 using Shared.Dtos.ProjectsAndCommitteesModule;
 using Shared.SpecificationParameters.ProjectsAndCommitteesModule;
 
 namespace Services.Implementations
 {
-    public class ProjectsAndCommitteesService(IUnitOfWork _unitOfWork, IMapper _mapper) : IProjectsAndCommitteesService
+    public class ProjectsAndCommitteesService(IUnitOfWork _unitOfWork, IMapper _mapper, IAuthenticationService _authenticationService) : IProjectsAndCommitteesService
     {
         #region Committees And Associations
         public async Task<PaginatedResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync(CommitteesAndAssociationsSpecificationsParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access Committees And Associations.");
+
+            parameters.FacultyMemberEmail = currentUser.Email;
+
             //Load Committees And Associations Data
             var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
             var specifications = new CommitteesAndAssociationsSpecifications(parameters);
@@ -33,10 +41,18 @@ namespace Services.Implementations
 
         public async Task<CommitteesAndAssociationsResponseDto> GetCommitteeOrAssociationByIdAsync(int id)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Committee Or Association.");
+
             //Load Committee Or Association Data
             var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
             var specifications = new CommitteesAndAssociationsSpecifications(id);
             var committeeOrAssociation = await committeesAndAssociationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Committee Or Association is Not Found.");
+
+            if (committeeOrAssociation.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Cannot Access This Committee Or Association.");
 
             //Map To Dto
             var committeeOrAssociationResult = _mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
@@ -45,16 +61,14 @@ namespace Services.Implementations
             return committeeOrAssociationResult;
         }
 
-        public async Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(string facultyMemberEmail, CommitteeOrAssociationCreateDto committeeOrAssociationCreateDto)
+        public async Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(CommitteeOrAssociationCreateDto committeeOrAssociationCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             //Map Dto To Entity and Add Faculty Member Id
             var committeeOrAssociation = _mapper.Map<CommitteesAndAssociations>(committeeOrAssociationCreateDto);
-            committeeOrAssociation.FacultyMemberId = facultyMember.Id;
+            committeeOrAssociation.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
             var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
@@ -64,15 +78,18 @@ namespace Services.Implementations
             //Return The Mapped Data To Response Dto
             return _mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
         }
-        public async Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(int committeeOrAssociationId, string facultyMemberEmail, CommitteeOrAssociationUpdateDto committeeOrAssociationUpdateDto)
+        public async Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(int committeeOrAssociationId, CommitteeOrAssociationUpdateDto committeeOrAssociationUpdateDto)
         {
             //Load Committee Or Association Data
             var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
             var specifications = new CommitteesAndAssociationsSpecifications(committeeOrAssociationId);
             var committeeOrAssociation = await committeesAndAssociationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Committee Or Association is Not Found.");
 
-            if (committeeOrAssociation.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (committeeOrAssociation.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Update This Committee Or Association.");
 
             //Map Dto To Entity
             _mapper.Map(committeeOrAssociationUpdateDto, committeeOrAssociation);
@@ -85,15 +102,18 @@ namespace Services.Implementations
             return _mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
         }
 
-        public async Task DeleteCommitteeOrAssociationAsync(int committeeOrAssociationId, string facultyMemberEmail)
+        public async Task DeleteCommitteeOrAssociationAsync(int committeeOrAssociationId)
         {
             //Load Committee Or Association Data
             var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
             var specifications = new CommitteesAndAssociationsSpecifications(committeeOrAssociationId);
             var committeeOrAssociation = await committeesAndAssociationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Committee Or Association is Not Found.");
 
-            if (committeeOrAssociation.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (committeeOrAssociation.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Delete This Committee Or Association.");
 
             //Apply Soft Delete
             committeeOrAssociation.IsDeleted = true;
@@ -106,6 +126,13 @@ namespace Services.Implementations
         #region Reviewing Articles
         public async Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(ReviewingArticlesSpecificationsParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Reviewing Articles.");
+
+            parameters.FacultyMemberEmail = currentUser.Email;
+
             //Load Reviewing Articles Data
             var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
             var specifications = new ReviewingArticlesSpecifications(parameters);
@@ -129,10 +156,18 @@ namespace Services.Implementations
 
         public async Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(int id)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Reviewing Article.");
+
             //Load Reviewing Article
             var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
             var specifications = new ReviewingArticlesSpecifications(id);
             var reviewingArticle = await reviewingArticlesRepo.GetAsync(specifications) ?? throw new NotFoundException("Article is Not Found.");
+
+            if (reviewingArticle.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Cannot Access This Reviwing Article.");
 
             //Map To Dto
             var reviewingArticleResult = _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
@@ -141,16 +176,14 @@ namespace Services.Implementations
             return reviewingArticleResult;
         }
 
-        public async Task<ReviewingArticlesDto> CreateReviewingArticleAsync(string facultyMemberEmail, ReviewingArticleCreateDto reviewingArticleCreateDto)
+        public async Task<ReviewingArticlesDto> CreateReviewingArticleAsync(ReviewingArticleCreateDto reviewingArticleCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             //Map Dto To Entity and Add Faculty Member Id
             var reviewingArticle = _mapper.Map<ReviewingArticles>(reviewingArticleCreateDto);
-            reviewingArticle.FacultyMemberId = facultyMember.Id;
+            reviewingArticle.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
             var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
@@ -161,15 +194,18 @@ namespace Services.Implementations
             return _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, string facultyMemberEmail, ReviewingArticlesDto reviewingArticleUpdateDto)
+        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewingArticlesDto reviewingArticleUpdateDto)
         {
             //Load Reviewing Article
             var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
             var specifications = new ReviewingArticlesSpecifications(reviewingArticleId);
             var reviewingArticle = await reviewingArticlesRepo.GetAsync(specifications) ?? throw new NotFoundException("Article is Not Found.");
 
-            if (reviewingArticle.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (reviewingArticle.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Update This Reviewing Article.");
 
             //Map Dto To Entity
             _mapper.Map(reviewingArticleUpdateDto, reviewingArticle);
@@ -182,15 +218,18 @@ namespace Services.Implementations
             return _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task DeleteReviewingArticleAsync(int reviewingArticleId, string facultyMemberEmail)
+        public async Task DeleteReviewingArticleAsync(int reviewingArticleId)
         {
             //Load Reviewing Article
             var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
             var specifications = new ReviewingArticlesSpecifications(reviewingArticleId);
             var reviewingArticle = await reviewingArticlesRepo.GetAsync(specifications) ?? throw new NotFoundException("Article is Not Found.");
 
-            if (reviewingArticle.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (reviewingArticle.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Delete This Reviewing Article.");
 
             //Apply Soft Delete
             reviewingArticle.IsDeleted = true;
@@ -203,6 +242,13 @@ namespace Services.Implementations
         #region Participation In Magazines
         public async Task<PaginatedResult<ParticipationInMagazinesResponseDto>> GetAllParticipationInMagazinesAsync(ParticipationInMagazinesSpecificationsParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access The Participation in Magazines.");
+
+            parameters.FacultyMemberEmail = currentUser.Email;
+
             //Load Participation In Magazines Data
             var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
             var specifications = new ParticipationInMagazinesSpecifications(parameters);
@@ -226,10 +272,18 @@ namespace Services.Implementations
 
         public async Task<ParticipationInMagazinesResponseDto> GetParticipationInMagazineByIdAsync(int id)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Participation in Magazine.");
+
             //Load Participation In Magazine Data
             var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
             var specifications = new ParticipationInMagazinesSpecifications(id);
             var participationInMagazine = await participationInMagazinesRepo.GetAsync(specifications) ?? throw new NotFoundException("Participation in Magazine is Not Found.");
+
+            if (participationInMagazine.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Cannot Access This Participation in Magazine.");
 
             //Map To Dto
             var participationInMagazineResult = _mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
@@ -238,16 +292,14 @@ namespace Services.Implementations
             return participationInMagazineResult;
         }
 
-        public async Task<ParticipationInMagazinesResponseDto> CreateParticipationInMagazineAsync(string facultyMemberEmail, ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
+        public async Task<ParticipationInMagazinesResponseDto> CreateParticipationInMagazineAsync(ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             //Map Dto To Entity and Add Faculty Member Id
             var participationInMagazine = _mapper.Map<ParticipationInMagazines>(participationInMagazinesCreateDto);
-            participationInMagazine.FacultyMemberId = facultyMember.Id;
+            participationInMagazine.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
             var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
@@ -258,15 +310,18 @@ namespace Services.Implementations
             return _mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
         }
 
-        public async Task<ParticipationInMagazinesResponseDto> UpdateParticipationInMagazineAsync(int participationInMagazineId, string facultyMemberEmail, ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
+        public async Task<ParticipationInMagazinesResponseDto> UpdateParticipationInMagazineAsync(int participationInMagazineId, ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
         {
             //Load Participation In Magazine Data
             var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
             var specifications = new ParticipationInMagazinesSpecifications(participationInMagazineId);
             var participationInMagazine = await participationInMagazinesRepo.GetAsync(specifications) ?? throw new NotFoundException("Participation in Magazine is Not Found.");
 
-            if (participationInMagazine.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (participationInMagazine.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Update This Paricipation in Magazine.");
 
             //Map Dto To Entity
             _mapper.Map(participationInMagazinesUpdateDto, participationInMagazine);
@@ -279,15 +334,18 @@ namespace Services.Implementations
             return _mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
         }
 
-        public async Task DeleteParticipationInMagazineAsync(int participationInMagazineId, string facultyMemberEmail)
+        public async Task DeleteParticipationInMagazineAsync(int participationInMagazineId)
         {
             //Load Participation In Magazine Data
             var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
             var specifications = new ParticipationInMagazinesSpecifications(participationInMagazineId);
             var participationInMagazine = await participationInMagazinesRepo.GetAsync(specifications) ?? throw new NotFoundException("Participation in Magazine is Not Found.");
 
-            if (participationInMagazine.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (participationInMagazine.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Delete This Paricipation in Magazine.");
 
             //Apply Soft Delete
             participationInMagazine.IsDeleted = true;
@@ -300,6 +358,13 @@ namespace Services.Implementations
         #region Projects
         public async Task<PaginatedResult<ProjectsResponseDto>> GetAllProjectsAsync(ProjectsSpecifcationsParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access The Projects.");
+
+            parameters.FacultyMemberEmail = currentUser.Email;
+
             //Load Projects Data
             var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
             var specification = new ProjectsSpecifications(parameters);
@@ -323,10 +388,18 @@ namespace Services.Implementations
 
         public async Task<ProjectsResponseDto> GetProjectByIdAsync(int id)
         {
+            // Get Current User Email
+            var currentUser = await _authenticationService
+                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                            throw new UnauthorizedAccessException("You Cannot Access This Project.");
+
             //Load Project Data
             var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
             var specification = new ProjectsSpecifications(id);
             var project = await projectsRepo.GetAsync(specification) ?? throw new NotFoundException("Project is Not Found.");
+
+            if (project.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Cannot Access This Project.");
 
             //Map To Dto
             var projectResult = _mapper.Map<ProjectsResponseDto>(project);
@@ -335,16 +408,14 @@ namespace Services.Implementations
             return projectResult;
         }
 
-        public async Task<ProjectsResponseDto> CreateProjectAsync(string facultyMemberEmail, ProjectCreateDto projectCreateDto)
+        public async Task<ProjectsResponseDto> CreateProjectAsync(ProjectCreateDto projectCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             //Map Dto To Entity and Add Faculty Member Id
             var project = _mapper.Map<Projects>(projectCreateDto);
-            project.FacultyMemberId = facultyMember.Id;
+            project.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
             var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
@@ -355,15 +426,18 @@ namespace Services.Implementations
             return _mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task<ProjectsResponseDto> UpdateProjectAsync(int projectId, string facultyMemberEmail, ProjectUpdateDto projectUpdateDto)
+        public async Task<ProjectsResponseDto> UpdateProjectAsync(int projectId, ProjectUpdateDto projectUpdateDto)
         {
             //Load Project Data
             var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
             var specification = new ProjectsSpecifications(projectId);
             var project = await projectsRepo.GetAsync(specification) ?? throw new NotFoundException("Project is Not Found.");
 
-            if (project.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (project.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Update This Project.");
 
             //Map Dto To Entity
             _mapper.Map(projectUpdateDto, project);
@@ -376,15 +450,18 @@ namespace Services.Implementations
             return _mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task DeleteProjectAsync(int projectId, string facultyMemberEmail)
+        public async Task DeleteProjectAsync(int projectId)
         {
             //Load Project Data
             var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
             var specification = new ProjectsSpecifications(projectId);
             var project = await projectsRepo.GetAsync(specification) ?? throw new NotFoundException("Project is Not Found.");
 
-            if (project.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Get Current User Email
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
+            if (project.FacultyMemberId != currentUser.UserId)
+                throw new UnauthorizedAccessException("You Can't Delete This Project.");
 
             //Apply Soft Delete
             project.IsDeleted = true;

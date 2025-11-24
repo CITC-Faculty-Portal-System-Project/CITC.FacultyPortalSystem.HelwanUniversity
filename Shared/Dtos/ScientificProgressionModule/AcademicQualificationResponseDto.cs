@@ -4,6 +4,7 @@ namespace Shared.Dtos.ScientificProgressionModule
 {
     public record AcademicQualificationResponseDto
     {
+        public int Id { get; set; }
         public LookupItemDto Qualification { get; set; } = null!;
         public string Specialization { get; set; } = string.Empty;
         public LookupItemDto Grade { get; set; } = null!;

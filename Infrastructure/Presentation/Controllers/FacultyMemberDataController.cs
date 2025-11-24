@@ -1,7 +1,9 @@
-﻿using Shared.Dtos.FacultyMemberDataModule;
+﻿using Microsoft.AspNetCore.Authorization;
+using Shared.Dtos.FacultyMemberDataModule;
 
 namespace Presentation.Controllers
 {
+    [Authorize]
     public class FacultyMemberDataController(IServiceManager _serviceManager) : ApiController
     {
         #region Personal Data
