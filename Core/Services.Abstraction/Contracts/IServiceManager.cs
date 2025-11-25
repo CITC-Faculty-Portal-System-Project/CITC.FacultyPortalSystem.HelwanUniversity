@@ -10,5 +10,7 @@
         public IMissionsService MissionsService { get; }
         public IScientificProgressionService ScientificProgressionService { get; }
         public IProjectsAndCommitteesService ProjectsAndCommitteesService { get; }
+
+        //public IExternalDataHandlingService ExternalDataHandlingService { get; }
     }
 }

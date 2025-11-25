@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.IdentityModule;
+using Messaging.AsyncMessaging.Consumer;
 using Messaging.AsyncMessaging.Publisher;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -36,6 +37,10 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             });
 
             services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
+
+
+            services.AddHostedService<ExternalDataConsumerClient>();
+
 
             services.AddSingleton(new JsonSerializerOptions
             {
