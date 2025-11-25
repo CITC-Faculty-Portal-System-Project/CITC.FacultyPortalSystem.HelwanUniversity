@@ -21,8 +21,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 {
                     builder.AllowAnyMethod()
                            .AllowAnyHeader()
-                           //.WithOrigins("frontUrl");
-                           .AllowAnyOrigin();
+                           .WithOrigins("http://localhost:3000")
+                           .AllowCredentials();
                 });
             });
 

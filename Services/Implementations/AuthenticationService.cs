@@ -136,7 +136,7 @@ namespace Services.Implementations
             };
 
 
-            var secification = new FacultyMemberWithEmailSPecifications(email);
+            var secification = new FacultyMemberWithEmailSpecifications(email);
             var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
             var member = await facultyMemberRepo.GetAsync(secification);
             if (member is not null)

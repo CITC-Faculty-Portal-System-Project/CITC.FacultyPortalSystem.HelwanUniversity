@@ -9,7 +9,7 @@ namespace Presentation.Controllers
     {
         [ProducesResponseType(typeof(UserResultDto), StatusCodes.Status200OK)]
         [HttpPost("Register")]
-        public async Task<ActionResult<UserResultDto>> RegisterAsync([FromQuery]RegisterDto registerDto)
+        public async Task<ActionResult<UserResultDto>> RegisterAsync([FromBody]RegisterDto registerDto)
             => Ok(await _serviceManager.AuthenticationService.RegisterAsync(registerDto));
 
         [ProducesResponseType(typeof(UserResultDto), StatusCodes.Status200OK)]
@@ -20,8 +20,8 @@ namespace Presentation.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,
+                Secure = false,
+                SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddDays(30)
             };
 
