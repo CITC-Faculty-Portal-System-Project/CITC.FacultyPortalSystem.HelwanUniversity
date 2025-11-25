@@ -33,11 +33,12 @@ namespace ICIT.FacultyPortalSystem.API
                 app.UseSwaggerMiddlewares();
             }
 
-            //app.UseHttpsRedirection();
-            app.UseRouting();
+       //     app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 
+            app.UseRouting();
+            
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();

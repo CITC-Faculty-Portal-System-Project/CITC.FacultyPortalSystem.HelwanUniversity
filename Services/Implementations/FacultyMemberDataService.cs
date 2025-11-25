@@ -4,11 +4,17 @@ using Shared.Dtos.FacultyMemberDataModule;
 
 namespace Services.Implementations
 {
-    public class FacultyMemberDataService(IUnitOfWork _unitOfWork, IMapper _mapper) : IFacultyMemberDataService
+    public class FacultyMemberDataService(IUnitOfWork _unitOfWork, IMapper _mapper, IAuthenticationService _authenticationService) : IFacultyMemberDataService
     {
         #region Personal Data
-        public async Task<PersonalDataResponseDto?> GetPersonalDataAsync(string facultyMemberEmail)
+        public async Task<PersonalDataResponseDto?> GetPersonalDataAsync()
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Access The Personal Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Personal Data With Includes
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
             var specifications = new PersonalDataWithIncludesSpecifications(facultyMemberEmail);
@@ -53,8 +59,14 @@ namespace Services.Implementations
             return createdDataResult;
         }
 
-        public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(string facultyMemberEmail, PersonalDataUpdateDto personalDataUpdateDto)
+        public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(PersonalDataUpdateDto personalDataUpdateDto)
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Update The Personal Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Personal Data With Includes
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
             var specifications = new PersonalDataWithIncludesSpecifications(facultyMemberEmail);
@@ -74,8 +86,14 @@ namespace Services.Implementations
         #endregion
 
         #region Contact Data
-        public async Task<ContactDataResponseDto?> GetContactDataAsync(string facultyMemberEmail)
+        public async Task<ContactDataResponseDto?> GetContactDataAsync()
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Access The Contact Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Contact Data
             var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
             var specifications = new ContactDataWithFacultyMemberEmailSpecifications(facultyMemberEmail);
@@ -116,8 +134,14 @@ namespace Services.Implementations
             return contactDataResult;
         }
 
-        public async Task<ContactDataResponseDto?> UpdateContactDataAsync(string facultyMemberEmail, ContactDataUpdateDto contactDataUpdateDto)
+        public async Task<ContactDataResponseDto?> UpdateContactDataAsync(ContactDataUpdateDto contactDataUpdateDto)
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Update The Contact Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Contact Data 
             var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
             var specifications = new ContactDataWithFacultyMemberEmailSpecifications(facultyMemberEmail);
@@ -137,8 +161,14 @@ namespace Services.Implementations
         #endregion
 
         #region Identification Card
-        public async Task<IdentificationCardDto> GetIdentificationCardAsync(string facultyMemberEmail)
+        public async Task<IdentificationCardDto> GetIdentificationCardAsync()
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Access The Identification Card Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Identification Card Data
             var identificationCardRepo = _unitOfWork.GetRepository<IdentificationCard, int>();
             var specifications = new IdentificationCardWithFacultyMemberEmailSpecifications(facultyMemberEmail);
@@ -171,8 +201,14 @@ namespace Services.Implementations
             return _mapper.Map<IdentificationCardDto>(newCard);
         }
 
-        public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(string facultyMemberEmail, IdentificationCardDto identificationCardDto)
+        public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(IdentificationCardDto identificationCardDto)
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Update The Identification Card Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Identification Card Data
             var identificationCardRepo = _unitOfWork.GetRepository<IdentificationCard, int>();
             var specifications = new IdentificationCardWithFacultyMemberEmailSpecifications(facultyMemberEmail);
@@ -191,8 +227,14 @@ namespace Services.Implementations
         #endregion
 
         #region Social Media
-        public async Task<SocialMediaPlatformsDto> GetSocialMediaPlatformsAsync(string facultyMemberEmail)
+        public async Task<SocialMediaPlatformsDto> GetSocialMediaPlatformsAsync()
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Access The Social Media Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Social Media Platforms Data
             var socialMediaPlatformsRepo = _unitOfWork.GetRepository<SocialMediaPlatforms, int>();
             var specifications = new SocialMediaWithFacultyMemberEmailSpecifications(facultyMemberEmail);
@@ -228,8 +270,14 @@ namespace Services.Implementations
             return _mapper.Map<SocialMediaPlatformsDto>(newSocialMediaPlatforms);
         }
 
-        public async Task<SocialMediaPlatformsDto> UpdateSocialMediaPlatformsAsync(string facultyMemberEmail, SocialMediaPlatformsDto socialMediaPlatformsDto)
+        public async Task<SocialMediaPlatformsDto> UpdateSocialMediaPlatformsAsync(SocialMediaPlatformsDto socialMediaPlatformsDto)
         {
+            //Get Logged User Email
+            var currentUser = await _authenticationService
+                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                           throw new UnauthorizedAccessException("You Cannot Update The Social Media Data.");
+            var facultyMemberEmail = currentUser.Email;
+
             //Load Social Media Platforms Data
             var socialMediaPlatformsRepo = _unitOfWork.GetRepository<SocialMediaPlatforms, int>();
             var specifications = new SocialMediaWithFacultyMemberEmailSpecifications(facultyMemberEmail);

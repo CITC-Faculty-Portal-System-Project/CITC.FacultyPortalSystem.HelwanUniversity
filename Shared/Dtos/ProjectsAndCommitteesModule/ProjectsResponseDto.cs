@@ -4,6 +4,7 @@ namespace Shared.Dtos.ProjectsAndCommitteesModule
 {
     public record ProjectsResponseDto
     {
+        public int Id { get; set; }
         public LocalOrInternational LocalOrInternational { get; set; }
         public string NameOfProject { get; set; } = string.Empty;
         public LookupItemDto TypeOfProject { get; set; } = null!;

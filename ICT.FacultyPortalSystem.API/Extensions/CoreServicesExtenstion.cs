@@ -35,15 +35,9 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<ILookUpItemService>()
             );
 
-            services.AddScoped<IMissionService, MissionService>();
-            services.AddScoped<Func<IMissionService>>(provider =>
-            () => provider.GetRequiredService<IMissionService>()
-            );
-
-
-            services.AddScoped<ISeminarsAndConfrencesService, SeminarsAndConferncesService>();
-            services.AddScoped<Func<ISeminarsAndConfrencesService>>(provider =>
-            () => provider.GetRequiredService<ISeminarsAndConfrencesService>()
+            services.AddScoped<IMissionsService, MissionsService>();
+            services.AddScoped<Func<IMissionsService>>(provider =>
+            () => provider.GetRequiredService<IMissionsService>()
             );
 
             services.AddScoped<IScientificProgressionService, ScientificProgressionService>();

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Services.Specifications.FacultyMemberDataModule;
+using Shared.Dtos.Auth;
 using Shared.Dtos.IdentityModule;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -22,8 +23,8 @@ namespace Services.Implementations
         IOptions<JwtOptions> _options,
         IUnitOfWork _unitOfWork,
         IRegistrationClientService _registrationClient,
-        IHttpContextAccessor _httpContextAccessor,
-        SignInManager<User> _signInManager
+        INationalNumberPubClient _nationalNumberPubClient,
+        IHttpContextAccessor _httpContextAccessor
         ) : IAuthenticationService
     {
         #region Helper Methods
@@ -180,21 +181,32 @@ namespace Services.Implementations
             await facultyMemberRepo.AddAsync(facultyMember);
             await _unitOfWork.SaveChangesAsync();
 
-            return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? ""); ;
+
+            _nationalNumberPubClient.PublishUserNationalNumber(registerDto.NationalNumber);
+
+            return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? "");
         }
 
         //Login
-        public async Task<string> LoginAsync(LoginDto loginDto)
+        public async Task<LoginClaims> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user is null) throw new UnauthorizedException();
 
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+            var role = await _userManager.GetRolesAsync(user);
             if (!result) throw new UnauthorizedException();
 
 
             var token = await CreateTokenAsync(user);
-            return (token);
+            var response = new LoginClaims
+            {
+                Email = user.Email,
+                Role = role.FirstOrDefault(),
+                UserName = user.UserName,
+                Token = token
+            };
+            return (response);
         }
 
         //CheckEmail
@@ -213,9 +225,9 @@ namespace Services.Implementations
         }
 
         //VerifyOTP
-        public async Task<bool> VerifyOTPAsync(OTPSendDTO otpSendDto, string email)
+        public async Task<bool> VerifyOTPAsync(OTPSendDTO otpSendDto)
         {
-            var otpKey = $"auth:otp:{email.ToLower()}";
+            var otpKey = $"auth:otp:{otpSendDto.Email.ToLower()}";
             var cachedOTP = await _cacheService.GetCachedValueAsync(otpKey);
 
             if (string.IsNullOrWhiteSpace(cachedOTP) || string.IsNullOrWhiteSpace(otpSendDto.Otp))
@@ -225,10 +237,10 @@ namespace Services.Implementations
         }
 
         //ResetPassowrd
-        public async Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto, string email)
+        public async Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto)
         {
-            email = await _cacheService.GetCachedValueAsync($"auth:email:{email.ToLower()}") ?? "";
-            var user = await _userManager.FindByEmailAsync(email ?? "");
+            var email = await _cacheService.GetCachedValueAsync($"auth:email:{passwordDto.Email.ToLower()}") ?? "";
+            var user = await _userManager.FindByEmailAsync(passwordDto.Email ?? "");
             if (user is null) return false;
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);

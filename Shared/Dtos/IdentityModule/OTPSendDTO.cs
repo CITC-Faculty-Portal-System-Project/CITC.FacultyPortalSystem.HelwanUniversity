@@ -7,5 +7,7 @@ namespace Shared.Dtos.IdentityModule
         [Required(ErrorMessage = "Password Can't Be Empty | يمكن ان تكون كلمة المرور المؤقتة فارغة")]
         public string Otp { get; set; } = string.Empty;
 
+        public string Email { get; set; } = string.Empty;
+
     }
 }
