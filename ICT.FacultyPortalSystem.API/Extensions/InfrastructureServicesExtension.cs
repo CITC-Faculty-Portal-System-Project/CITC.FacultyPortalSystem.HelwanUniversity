@@ -73,9 +73,21 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtOptions.Issuer,
-                    ValidAudience = jwtOptions.Audience,
+                    ValidIssuer = jwtOptions?.Issuer,
+                    ValidAudience = jwtOptions?.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Cookies.ContainsKey("jwtToken"))
+                        {
+                            context.Token = context.Request.Cookies["jwtToken"];
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
             services.AddAuthorization();
