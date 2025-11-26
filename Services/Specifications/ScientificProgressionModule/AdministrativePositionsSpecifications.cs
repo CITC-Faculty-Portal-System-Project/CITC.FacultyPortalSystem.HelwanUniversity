@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.ScientificProgressionModule;
+using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Enums.ScientificProgressionModule;
 using Shared.SpecificationParameters.ScientificProgressionModule;
 
@@ -39,6 +40,14 @@ namespace Services.Specifications.ScientificProgressionModule
         public AdministrativePositionsSpecifications(int id) : base(ap => !ap.IsDeleted && ap.Id == id)
         {
 
+        }
+
+        public AdministrativePositionsSpecifications(AdminstrativePostionsFetchingDTO dTO) 
+            : base(ap => !ap.IsDeleted 
+            && ap.FacultyMember.NationalNumber == dTO.NationalNumber && ap.EndDate == DateOnly.Parse(dTO.EndDate)
+            && ap.StartDate == DateOnly.Parse(dTO.StartDate) && ap.Position == dTO.Name)
+        {
+            AddIncludes(ap => ap.FacultyMember);
         }
     }
 }

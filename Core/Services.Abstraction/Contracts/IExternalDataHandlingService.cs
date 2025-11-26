@@ -9,9 +9,9 @@ namespace Services.Abstraction.Contracts
 {
     public interface IExternalDataHandlingService
     {
-        public Task<AcademicQualificationCreateDto> AcademicDataHandle(string? json);
-        public Task ManagerialDataHandle(string? json);
-        public Task EmploymentDataHandle(string? json);
+        public Task<bool> AcademicDataHandle(string? json);
+        public Task<bool> ManagerialDataHandle(string? json);
+        public Task<bool> EmploymentDataHandle(string? json);
 
 
     }
