@@ -32,6 +32,7 @@ namespace Services.MappingProfiles
 
             CreateMap<ProjectCreateDto, Projects>();
             CreateMap<ProjectUpdateDto, Projects>();
+            CreateMap<ReviewArticleUpdateDto, ReviewingArticles>();
         }
     }
 }

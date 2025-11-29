@@ -17,7 +17,7 @@ namespace Services.Abstraction.Contracts
         public Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(ReviewingArticlesSpecificationsParameters parameters);
         public Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(int id);
         public Task<ReviewingArticlesDto> CreateReviewingArticleAsync(ReviewingArticleCreateDto reviewingArticleCreateDto);
-        public Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewingArticlesDto reviewingArticleUpdateDto);
+        public Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewArticleUpdateDto reviewingArticleUpdateDto);
         public Task DeleteReviewingArticleAsync(int reviewingArticleId);
         #endregion
 

@@ -32,8 +32,12 @@ namespace ICIT.FacultyPortalSystem.API
             {
                 app.UseSwaggerMiddlewares();
             }
+            app.UseCookiePolicy(new CookiePolicyOptions
+            {
+                MinimumSameSitePolicy = SameSiteMode.None
+            });
 
-       //     app.UseHttpsRedirection();
+            //     app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 

@@ -194,7 +194,7 @@ namespace Services.Implementations
             return _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewingArticlesDto reviewingArticleUpdateDto)
+        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewArticleUpdateDto reviewingArticleUpdateDto)
         {
             //Load Reviewing Article
             var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();

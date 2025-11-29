@@ -27,8 +27,8 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.ProjectsAndCommitteesService.CreateCommitteeOrAssociationAsync(committeesAndAssociationsCreateDto));
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
-        [HttpPut("UpdateCommitteeOrAssociation")]
-        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> UpdateCommitteeOrAssociationAsync([FromQuery] int committeeOrAssociationId, CommitteeOrAssociationUpdateDto committeesAndAssociationsUpdateDto)
+        [HttpPut("UpdateCommitteeOrAssociation/{committeeOrAssociationId:int}")]
+        public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> UpdateCommitteeOrAssociationAsync( int committeeOrAssociationId, CommitteeOrAssociationUpdateDto committeesAndAssociationsUpdateDto)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateCommitteeOrAssociationAsync(committeeOrAssociationId, committeesAndAssociationsUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -59,8 +59,8 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.ProjectsAndCommitteesService.CreateReviewingArticleAsync(reviewingArticleCreateDto));
 
         [ProducesResponseType(typeof(ReviewingArticlesDto), StatusCodes.Status200OK)]
-        [HttpPut("UpdateReviewingArticle")]
-        public async Task<ActionResult<ReviewingArticlesDto>> UpdateReviewingArticleAsync([FromQuery] int reviewingArticleId, ReviewingArticlesDto reviewingArticlesUpdateDto)
+        [HttpPut("UpdateReviewingArticle/{reviewingArticleId:int}")]
+        public async Task<ActionResult<ReviewingArticlesDto>> UpdateReviewingArticleAsync( int reviewingArticleId, ReviewArticleUpdateDto reviewingArticlesUpdateDto)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateReviewingArticleAsync(reviewingArticleId, reviewingArticlesUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
