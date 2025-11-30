@@ -16,7 +16,7 @@ namespace Services.Specifications.ProjectsAndCommitteesModule
                    pim.TypeOfParticipation.ValueEn.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))
             )
         {
-
+            AddIncludes(P => P.TypeOfParticipation);
             switch (parameters.Sort)
             {
                 case ParticipationInMagazinesSortingOptions.NameAsc:
@@ -34,7 +34,7 @@ namespace Services.Specifications.ProjectsAndCommitteesModule
 
         public ParticipationInMagazinesSpecifications(int id) : base(pim => !pim.IsDeleted && pim.Id == id)
         {
-
+            AddIncludes(P => P.TypeOfParticipation);
         }
     }
 }
