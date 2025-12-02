@@ -13,9 +13,11 @@ namespace Services.Specifications.MissionsModule
                   (string.IsNullOrEmpty(parameters.Search) ||
                    sm.MissionName.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    sm.CountryOrCity.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))
-            )
-        {
 
+            )
+
+        {
+            AddIncludes(sm => sm.FacultyMember);
             switch (parameters.Sort)
             {
                 case ScientificMissionsSortingOptions.NameAsc:
@@ -39,7 +41,7 @@ namespace Services.Specifications.MissionsModule
 
         public ScientificMissionsSpecifications(int id) : base(sm => !sm.IsDeleted && sm.Id == id)
         {
-
+            AddIncludes(sm => sm.FacultyMember);
         }
     }
 }

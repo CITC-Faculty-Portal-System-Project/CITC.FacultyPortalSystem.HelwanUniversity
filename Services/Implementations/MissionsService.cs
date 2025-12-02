@@ -73,7 +73,7 @@ namespace Services.Implementations
             var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
             var specification = new ScientificMissionsSpecifications(id);
             var scientificMission = await scientificMissionsRepo.GetAsync(specification)
-                ?? throw new NotFoundException("Mission isnot Found!");
+                ?? throw new NotFoundException("Mission is not Found!");
 
             var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
             if (scientificMission.FacultyMemberId != currentUser.UserId)
@@ -90,13 +90,15 @@ namespace Services.Implementations
 
         public async Task DeleteScientificMissionAsync(int id)
         {
-            var email = _authenticationService.GetLoggedUserEmail();
+            var currentUser = await _authenticationService
+                    .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
+                    throw new UnauthorizedAccessException("Unable to get this mission");
 
             var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
             var specification = new ScientificMissionsSpecifications(id);
             var scientificMission = await scientificMissionsRepo.GetAsync(specification) ?? throw new NotFoundException("Cannot Find this Mission.");
 
-            if (scientificMission?.FacultyMember?.Email != email)
+            if (scientificMission?.FacultyMember?.Email != currentUser.Email)
                 throw new UnauthorizedAccessException("You Don't Have Acess to Delete this Mission");
 
             scientificMission.IsDeleted = true;
