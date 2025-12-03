@@ -85,9 +85,9 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.ProjectsAndCommitteesService.CreateParticipationInMagazineAsync(participationInMagazineCreateDto));
 
         [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
-        [HttpPut("UpdateParticipationInMagazine")]
-        public async Task<ActionResult<ParticipationInMagazinesResponseDto>> UpdateParticipationInMagazineAsync([FromQuery] int reviewingArticleId, ParticipationInMagazineUpdateDto participationInMagazineUpdateDto)
-            => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateParticipationInMagazineAsync(reviewingArticleId, participationInMagazineUpdateDto));
+        [HttpPut("UpdateParticipationInMagazine/{ParticipationInMagazineId:int}")]
+        public async Task<ActionResult<ParticipationInMagazinesResponseDto>> UpdateParticipationInMagazineAsync(int ParticipationInMagazineId, ParticipationInMagazineUpdateDto participationInMagazineUpdateDto)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateParticipationInMagazineAsync(ParticipationInMagazineId, participationInMagazineUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteParticipationInMagazine/{id:int}")]

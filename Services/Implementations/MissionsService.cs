@@ -110,12 +110,13 @@ namespace Services.Implementations
 
         public async Task DeleteScientificMissionAsync(int id)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var email = _authenticationService.GetLoggedUserEmail();
 
             var scientificMission = await ScientificMissionsRepo.GetAsync(new ScientificMissionsSpecifications(id)) 
                 ?? throw new NotFoundException("Cannot Find this Mission.");
 
-            EnsureOwnership(scientificMission.FacultyMemberId, currentUser.UserId, "Scientific Mission");
+            if (scientificMission?.FacultyMember?.Email != email)
+                throw new UnauthorizedAccessException("You Don't Have Acess to Delete this Mission");
 
             scientificMission.IsDeleted = true;
 
