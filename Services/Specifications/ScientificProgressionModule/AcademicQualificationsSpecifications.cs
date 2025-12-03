@@ -6,10 +6,10 @@ namespace Services.Specifications.ScientificProgressionModule
 {
     internal class AcademicQualificationsSpecifications : BaseSpecifications<AcademicQualifications, int>
     {
-        public AcademicQualificationsSpecifications(AcademicQualificationsSpecificationParamters parameters)
+        public AcademicQualificationsSpecifications(AcademicQualificationsSpecificationParamters parameters, string facultyMemberEmail)
             : base(aq => 
                   (!aq.IsDeleted &&
-                    aq.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    aq.FacultyMember!.Email == facultyMemberEmail) &&
                   (string.IsNullOrEmpty(parameters.Search) || 
                    aq.Qualification.ValueAr.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    aq.Qualification.ValueEn.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))

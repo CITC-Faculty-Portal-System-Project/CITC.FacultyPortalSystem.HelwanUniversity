@@ -6,10 +6,10 @@ namespace Services.Specifications.MissionsModule
 {
     internal class ScientificMissionsCountSpecification : BaseSpecifications<ScientificMissions , int>
     {
-        public ScientificMissionsCountSpecification(ScientificMissionSpecificationParamaters parameters)
+        public ScientificMissionsCountSpecification(ScientificMissionSpecificationParamaters parameters, string facultyMemberEmail)
             : base(sm =>
                   (!sm.IsDeleted &&
-                    sm.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    sm.FacultyMember!.Email == facultyMemberEmail) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    sm.MissionName.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    sm.CountryOrCity.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))

@@ -6,10 +6,10 @@ namespace Services.Specifications.MissionsModule
 {
     internal class ConferncesAndSeminarsCountSpecification : BaseSpecifications<ConferencesAndSeminars , int>
     {
-        public ConferncesAndSeminarsCountSpecification(SeminarsAndConferncesSpecificationParameters parameters)
+        public ConferncesAndSeminarsCountSpecification(SeminarsAndConferncesSpecificationParameters parameters, string facultyMemberEmail)
             : base(cas =>
                   (!cas.IsDeleted &&
-                    cas.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    cas.FacultyMember!.Email == facultyMemberEmail) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    cas.Name.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    cas.OrganizingAuthority.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||

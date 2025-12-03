@@ -9,26 +9,56 @@ namespace Services.Implementations
     public class MissionsService(IUnitOfWork _unitOfWork, IMapper _mapper , IAuthenticationService _authenticationService)
         : IMissionsService
     {
+        #region Helper Methods
+        //Get Current Logged User 
+        private async Task<UserResultDto> GetCurrentUserAsync()
+        {
+            var email = _authenticationService.GetLoggedUserEmail();
+            var user = await _authenticationService.GetCurrentUserAsync(email)
+                       ?? throw new UnauthorizedAccessException("Unauthorized.");
+            return user;
+        }
+
+        //Get Faculty Member By Email
+        private async Task<FacultyMember> GetFacultyMemberByEmailAsync(string email)
+        {
+            var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+            var spec = new FacultyMemberWithEmailSpecifications(email);
+
+            return await repo.GetAsync(spec)
+                   ?? throw new NotFoundException("Faculty Member Not Found.");
+        }
+
+        //Ensure Ownership
+        private static void EnsureOwnership(Guid entityFacultyMemberId, Guid currentUserId, string entityName)
+        {
+            if (entityFacultyMemberId != currentUserId)
+                throw new UnauthorizedAccessException($"You cannot access this {entityName}.");
+        }
+
+        private IGenericRepository<ScientificMissions, int> ScientificMissionsRepo
+            => _unitOfWork.GetRepository<ScientificMissions, int>();
+
+        private IGenericRepository<ConferencesAndSeminars, int> ConferencesAndSeminarsRepo
+            => _unitOfWork.GetRepository<ConferencesAndSeminars, int>();
+
+        private IGenericRepository<TrainingPrograms, int> TrainingProgramsRepo
+            => _unitOfWork.GetRepository<TrainingPrograms, int>();
+        #endregion
+
         #region Scientific Missions
         public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(ScientificMissionSpecificationParamaters parameters)
         {
-            var currentUser = await _authenticationService
-                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                            throw new UnauthorizedAccessException("You Cannot Access The Scientific Mission.");
+            var currentUser = await GetCurrentUserAsync();
 
-            parameters.FacultyMemberEmail = currentUser.Email;
-
-            var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
-            var specification = new ScientificMissionsSpecifications(parameters);
-            var scientificMissions = await scientificMissionsRepo.GetAllAsync(specification) ?? throw new NotFoundException("No Missions are Found.");
+            var scientificMissions = await ScientificMissionsRepo.GetAllAsync(new ScientificMissionsSpecifications(parameters, currentUser.Email)) 
+                ?? throw new NotFoundException("No Missions are Found.");
 
             var scientificMissionsResult = _mapper.Map<IEnumerable<ScientificMissionResponseDto>>(scientificMissions);
 
             var currentPageCount = scientificMissions.Count();
 
-            var countSpecifications = new ScientificMissionsCountSpecification(parameters);
-
-            var totalCount = await scientificMissionsRepo.CountAsync(countSpecifications);
+            var totalCount = await ScientificMissionsRepo.CountAsync(new ScientificMissionsCountSpecification(parameters, currentUser.Email));
 
             return new PaginatedResult<ScientificMissionResponseDto?>(parameters.PageIndex, currentPageCount, totalCount, scientificMissionsResult);
 
@@ -36,32 +66,24 @@ namespace Services.Implementations
 
         public async Task<ScientificMissionResponseDto?> GetScientificMissionByIdAsync(int id)
         {
-            var currentUser = await _authenticationService
-                 .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                 throw new UnauthorizedAccessException("Can't Access The Mission.");
+            var currentUser = await GetCurrentUserAsync();
 
+            var scientificMission = await ScientificMissionsRepo.GetAsync(new ScientificMissionsSpecifications(id)) 
+                ?? throw new NotFoundException("Mission is Not Found.");
 
-            var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
-            var specfifcation = new ScientificMissionsSpecifications(id);
-            var scientificMission = await scientificMissionsRepo.GetAsync(specfifcation) ?? throw new NotFoundException("Mission is Not Found.");
+            EnsureOwnership(scientificMission.FacultyMemberId, currentUser.UserId, "Scientific Mission");
 
-            if (scientificMission.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Cannot Access this Mission.");
-
-            var scientificMissionResult = _mapper.Map<ScientificMissionResponseDto>(scientificMission);
-            return scientificMissionResult;
-
+            return _mapper.Map<ScientificMissionResponseDto>(scientificMission);
         }
+
         public async Task<ScientificMissionResponseDto> CreateScientificMissionAsync(ScientificMissionCreateDto scientificMissionCreateDto)
         {
-            var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
-
-            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+            var currentUser = await GetCurrentUserAsync();
 
             var scientificMission = _mapper.Map<ScientificMissions>(scientificMissionCreateDto);
             scientificMission.FacultyMemberId = currentUser.UserId;
 
-            await scientificMissionsRepo.AddAsync(scientificMission);
+            await ScientificMissionsRepo.AddAsync(scientificMission);
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<ScientificMissionResponseDto>(scientificMission);
@@ -70,18 +92,16 @@ namespace Services.Implementations
 
         public async Task<ScientificMissionResponseDto> UpdateScientificMissionAsync(int id, ScientificMissionUpdateDto scientificMissionUpdateDto)
         {
-            var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
-            var specification = new ScientificMissionsSpecifications(id);
-            var scientificMission = await scientificMissionsRepo.GetAsync(specification)
+            var currentUser = await GetCurrentUserAsync();
+
+            var scientificMission = await ScientificMissionsRepo.GetAsync(new ScientificMissionsSpecifications(id))
                 ?? throw new NotFoundException("Mission isnot Found!");
 
-            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
-            if (scientificMission.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Can't Edit this Mission");
+            EnsureOwnership(scientificMission.FacultyMemberId, currentUser.UserId, "Scientific Mission");
 
             scientificMission = _mapper.Map(scientificMissionUpdateDto, scientificMission);
 
-            scientificMissionsRepo.Update(scientificMission);
+            ScientificMissionsRepo.Update(scientificMission);
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<ScientificMissionResponseDto>(scientificMissionUpdateDto); ;
@@ -90,18 +110,16 @@ namespace Services.Implementations
 
         public async Task DeleteScientificMissionAsync(int id)
         {
-            var email = _authenticationService.GetLoggedUserEmail();
+            var currentUser = await GetCurrentUserAsync();
 
-            var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
-            var specification = new ScientificMissionsSpecifications(id);
-            var scientificMission = await scientificMissionsRepo.GetAsync(specification) ?? throw new NotFoundException("Cannot Find this Mission.");
+            var scientificMission = await ScientificMissionsRepo.GetAsync(new ScientificMissionsSpecifications(id)) 
+                ?? throw new NotFoundException("Cannot Find this Mission.");
 
-            if (scientificMission?.FacultyMember?.Email != email)
-                throw new UnauthorizedAccessException("You Don't Have Acess to Delete this Mission");
+            EnsureOwnership(scientificMission.FacultyMemberId, currentUser.UserId, "Scientific Mission");
 
             scientificMission.IsDeleted = true;
 
-            scientificMissionsRepo.Update(scientificMission);
+            ScientificMissionsRepo.Update(scientificMission);
             await _unitOfWork.SaveChangesAsync();
         }
         #endregion
@@ -109,60 +127,41 @@ namespace Services.Implementations
         #region Seminars And Conferences
         public async Task<PaginatedResult<ConferencesAndSeminarsResponseDto>> GetAllSeminarsAndConferencesAsync(SeminarsAndConferncesSpecificationParameters parameters)
         {
-            var currentUser = await _authenticationService
-                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                            throw new UnauthorizedAccessException("You Cannot Get Confernce Or Seminar");
+            var currentUser = await GetCurrentUserAsync();
 
-            parameters.FacultyMemberEmail = currentUser.Email;
-
-            var conferencesAndSeminarsRepo = _unitOfWork.GetRepository<ConferencesAndSeminars, int>();
-            var specification = new ConferncesAndSeminarsSpecification(parameters);
-            var conferenceOrSeminar = await conferencesAndSeminarsRepo.GetAllAsync(specification) ?? throw new NotFoundException("There are No Seminars");
+            var conferenceOrSeminar = await ConferencesAndSeminarsRepo.GetAllAsync(new ConferncesAndSeminarsSpecification(parameters, currentUser.Email)) 
+                ?? throw new NotFoundException("There are No Seminars");
 
             var conferenceOrSeminarResult = _mapper.Map<IEnumerable<ConferencesAndSeminarsResponseDto>>(conferenceOrSeminar);
 
             var currentPageCount = conferenceOrSeminar.Count();
 
-            var countSpecifications = new ConferncesAndSeminarsCountSpecification(parameters);
-
-            var totalCount = await conferencesAndSeminarsRepo.CountAsync(countSpecifications);
+            var totalCount = await ConferencesAndSeminarsRepo.CountAsync(new ConferncesAndSeminarsCountSpecification(parameters, currentUser.Email));
 
             return new PaginatedResult<ConferencesAndSeminarsResponseDto>(parameters.PageIndex, currentPageCount, totalCount, conferenceOrSeminarResult);
-
         }
 
         public async Task<ConferencesAndSeminarsResponseDto> GetSeminarOrConferenceByIdAsync(int id)
         {
 
-            var currentUser = await _authenticationService
-                        .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                        throw new UnauthorizedAccessException("You Cannot Get Confernce Or Seminar");
+            var currentUser = await GetCurrentUserAsync();
 
+            var conferenceOrSeminar = await ConferencesAndSeminarsRepo.GetAsync(new ConferncesAndSeminarsSpecification(id)) 
+                ?? throw new NotFoundException("Seminar or Conference is Not Found.");
 
-            var conferencesAndSeminarsRepo = _unitOfWork.GetRepository<ConferencesAndSeminars, int>();
-            var specfifcation = new ConferncesAndSeminarsSpecification(id);
-            var conferenceOrSeminar = await conferencesAndSeminarsRepo.GetAsync(specfifcation) ?? throw new NotFoundException("Seminar or Conference is Not Found.");
+            EnsureOwnership(conferenceOrSeminar.FacultyMemberId, currentUser.UserId, "Conference Or Seminar");
 
-            if (conferenceOrSeminar.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Cannot Access this Seminar or Conference.");
-
-            var conferenceOrSeminarResult = _mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
-            return conferenceOrSeminarResult;
-
+            return _mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
         }
 
         public async Task<ConferencesAndSeminarsResponseDto> CreateSeminarOrConferenceAsync(ConferencesAndSeminarsCreateDto conferencesAndSeminarsCreateDto)
         {
-            var currentUser = await _authenticationService
-                    .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                    throw new UnauthorizedAccessException("You Cannot Add Confernce Or Seminar");
-
-            var conferencesAndSeminarsRepo = _unitOfWork.GetRepository<ConferencesAndSeminars, int>();
+            var currentUser = await GetCurrentUserAsync();
 
             var conferenceOrSeminar = _mapper.Map<ConferencesAndSeminars>(conferencesAndSeminarsCreateDto);
             conferenceOrSeminar.FacultyMemberId = currentUser.UserId;
 
-            await conferencesAndSeminarsRepo.AddAsync(conferenceOrSeminar);
+            await ConferencesAndSeminarsRepo.AddAsync(conferenceOrSeminar);
             await _unitOfWork.SaveChangesAsync();
 
             return _mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
@@ -170,20 +169,16 @@ namespace Services.Implementations
 
         public async Task<ConferencesAndSeminarsResponseDto> UpdateSeminarOrConferenceAsync(int id, ConferencesAndSeminarsUpdateDto conferencesAndSeminarsUpdateDto)
         {
-            var currentUser = await _authenticationService
-                                 .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                                 throw new UnauthorizedAccessException("You Cannot Update Confernce Or Seminar");
+            var currentUser = await GetCurrentUserAsync();
 
-            var conferencesAndSeminarsRepo = _unitOfWork.GetRepository<ConferencesAndSeminars, int>();
-            var specfifcation = new ConferncesAndSeminarsSpecification(id);
-            var conferenceOrSeminar = await conferencesAndSeminarsRepo.GetAsync(specfifcation) ?? throw new NotFoundException("Seminar or Conference is Not Found.");
+            var conferenceOrSeminar = await ConferencesAndSeminarsRepo.GetAsync(new ConferncesAndSeminarsSpecification(id)) 
+                ?? throw new NotFoundException("Seminar or Conference is Not Found.");
 
-            if (conferenceOrSeminar.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Cannot Update this Seminars");
+            EnsureOwnership(conferenceOrSeminar.FacultyMemberId, currentUser.UserId, "Conference Or Seminar");
 
             _mapper.Map<ConferencesAndSeminars>(conferencesAndSeminarsUpdateDto);
 
-            conferencesAndSeminarsRepo.Update(conferenceOrSeminar);
+            ConferencesAndSeminarsRepo.Update(conferenceOrSeminar);
             await _unitOfWork.SaveChangesAsync();
 
             var conferenceOrSeminarResult = _mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
@@ -192,18 +187,14 @@ namespace Services.Implementations
 
         public async Task DeleteSeminarOrConferenceAsync(int id)
         {
-            var currentUser = await _authenticationService
-                    .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                    throw new UnauthorizedAccessException("You Cannot Delete Confernce Or Seminar");
+            var currentUser = await GetCurrentUserAsync();
 
-            var conferencesAndSeminarsRepo = _unitOfWork.GetRepository<ConferencesAndSeminars, int>();
-            var specification = new ConferncesAndSeminarsSpecification(id);
-            var conferenceOrSeminar = await conferencesAndSeminarsRepo.GetAsync(specification) ?? throw new NotFoundException("Seminar or Conference is Not Found.");
+            var conferenceOrSeminar = await ConferencesAndSeminarsRepo.GetAsync(new ConferncesAndSeminarsSpecification(id))
+                ?? throw new NotFoundException("Seminar or Conference is Not Found.");
 
-            if (conferenceOrSeminar.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Cannot Delete Confernce Or Seminar");
+            EnsureOwnership(conferenceOrSeminar.FacultyMemberId, currentUser.UserId, "Conference Or Seminar");
 
-            conferencesAndSeminarsRepo.Update(conferenceOrSeminar);
+            ConferencesAndSeminarsRepo.Update(conferenceOrSeminar);
 
             await _unitOfWork.SaveChangesAsync();
         }
@@ -213,16 +204,11 @@ namespace Services.Implementations
         public async Task<PaginatedResult<TrainingProgramsResponseDto>> GetAllTrainingProgramsAsync(TrainingProgramsSpecificationParameters parameters)
         {
             //Get Current User Email
-            var currentUser = await _authenticationService
-                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                            throw new UnauthorizedAccessException("You Cannot Access The Training Programs Data.");
-
-            parameters.FacultyMemberEmail = currentUser.Email;
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Training Programs Data
-            var trainingProgramsRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
-            var specification = new TrainingProgramsSpecifications(parameters);
-            var trainingPrograms = await trainingProgramsRepo.GetAllAsync(specification) ?? throw new NotFoundException("No Training Programs are Found.");
+            var trainingPrograms = await TrainingProgramsRepo.GetAllAsync(new TrainingProgramsSpecifications(parameters, currentUser.Email)) 
+                ?? throw new NotFoundException("No Training Programs are Found.");
 
             //Map Result in IEnumerable Wrapped Dto
             var trainingProgramsResult = _mapper.Map<IEnumerable<TrainingProgramsResponseDto>>(trainingPrograms);
@@ -230,11 +216,8 @@ namespace Services.Implementations
             //Get The Page Size
             var currentPageCount = trainingPrograms.Count();
 
-            //Get Count of The Specifications
-            var countSpecifications = new TrainingProgramsCountSpecifications(parameters);
-
             //Get Total Count
-            var totalCount = await trainingProgramsRepo.CountAsync(countSpecifications);
+            var totalCount = await TrainingProgramsRepo.CountAsync(new TrainingProgramsCountSpecifications(parameters, currentUser.Email));
 
             //Return Paginated Result
             return new PaginatedResult<TrainingProgramsResponseDto>(parameters.PageIndex, currentPageCount, totalCount, trainingProgramsResult);
@@ -243,37 +226,29 @@ namespace Services.Implementations
         public async Task<TrainingProgramsResponseDto> GetTrainingProgramByIdAsync(int id)
         {
             //Get Current User Email
-            var currentUser = await _authenticationService
-                            .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                            throw new UnauthorizedAccessException("You Cannot Access The Academic Qualifications.");
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Training Program Data
-            var trainingProgramsRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
-            var specfifcation = new TrainingProgramsSpecifications(id);
-            var trainingProgram = await trainingProgramsRepo.GetAsync(specfifcation) ?? throw new NotFoundException("Training Program is Not Found.");
+            var trainingProgram = await TrainingProgramsRepo.GetAsync(new TrainingProgramsSpecifications(id)) 
+                ?? throw new NotFoundException("Training Program is Not Found.");
 
-            if(trainingProgram.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Cannot Access this Training Program.");
+            EnsureOwnership(trainingProgram.FacultyMemberId, currentUser.UserId, "Training Program");
 
             //Map To Dto
-            var trainingProgramResult = _mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
-
-            //Return Result Data
-            return trainingProgramResult;
+            return _mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
         }
 
         public async Task<TrainingProgramsResponseDto> CreateTrainingProgramAsync(TrainingProgramsCreateDto trainingProgramsCreateDto)
         {
             //Get Current User Email
-            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+            var currentUser = await GetCurrentUserAsync();
 
             //Map To Entity
             var trainingProgram = _mapper.Map<TrainingPrograms>(trainingProgramsCreateDto);
             trainingProgram.FacultyMemberId = currentUser.UserId;
 
             //Add And Save Training Program Data
-            var trainingProgramsRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
-            await trainingProgramsRepo.AddAsync(trainingProgram);
+            await TrainingProgramsRepo.AddAsync(trainingProgram);
 
             await _unitOfWork.SaveChangesAsync();
 
@@ -283,21 +258,21 @@ namespace Services.Implementations
 
         public async Task<TrainingProgramsResponseDto> UpdateTrainingProgramAsync(int id, TrainingProgramsUpdateDto trainingProgramsUpdateDto)
         {
+            //Get Current User
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Academic Qualification Data
-            var trainingProgramsRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
-            var specifications = new TrainingProgramsSpecifications(id);
-            var trainingProgram = await trainingProgramsRepo.GetAsync(specifications) ?? throw new NotFoundException("Training Program is Not Found.");
+            var trainingProgram = await TrainingProgramsRepo.GetAsync(new TrainingProgramsSpecifications(id)) 
+                ?? throw new NotFoundException("Training Program is Not Found.");
 
-            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
-
-            if (trainingProgram.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Can't Update this Training Program.");
+            //Check OwnerShip of Data
+            EnsureOwnership(trainingProgram.FacultyMemberId, currentUser.UserId, "Training Program");
 
             //Map Dto to Entity
             _mapper.Map(trainingProgramsUpdateDto, trainingProgram);
 
             //Update and Save to Database
-            trainingProgramsRepo.Update(trainingProgram);
+            TrainingProgramsRepo.Update(trainingProgram);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Updated Data
@@ -306,20 +281,20 @@ namespace Services.Implementations
 
         public async Task DeleteTrainingProgramAsync(int id)
         {
+            //Get Current User
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Academic Qualification Data
-            var trainingProgramsRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
-            var specifications = new TrainingProgramsSpecifications(id);
-            var trainingProgram = await trainingProgramsRepo.GetAsync(specifications) ?? throw new NotFoundException("Training Program is Not Found.");
+            var trainingProgram = await TrainingProgramsRepo.GetAsync(new TrainingProgramsSpecifications(id))
+                ?? throw new NotFoundException("Training Program is Not Found.");
 
-            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
-
-            if (trainingProgram.FacultyMemberId != currentUser.UserId)
-                throw new UnauthorizedAccessException("You Can't Delete this Training Program.");
+            //Check OwnerShip of Data
+            EnsureOwnership(trainingProgram.FacultyMemberId, currentUser.UserId, "Training Program");
 
             //Apply Soft Delete
             trainingProgram.IsDeleted = true;
 
-            trainingProgramsRepo.Update(trainingProgram);
+            TrainingProgramsRepo.Update(trainingProgram);
             await _unitOfWork.SaveChangesAsync();
         }
         #endregion

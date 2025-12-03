@@ -1,7 +1,5 @@
-﻿using Domain.Entities.IdentityModule;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Services.Abstraction.Contracts;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;

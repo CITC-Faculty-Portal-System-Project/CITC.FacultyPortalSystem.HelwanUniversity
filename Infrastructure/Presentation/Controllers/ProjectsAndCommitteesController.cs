@@ -10,13 +10,11 @@ namespace Presentation.Controllers
     {
         #region Committees And Associations
         [ProducesResponseType(typeof(PaginatedResult<CommitteesAndAssociationsResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("CommitteesAndAssociations")]
         public async Task<ActionResult<PaginatedResult<CommitteesAndAssociationsResponseDto>>> GetAllCommitteesAndAssociationsAsync([FromQuery] CommitteesAndAssociationsSpecificationsParameters parameters)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllCommitteesAndAssociationsAsync(parameters));
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("CommitteeOrAssociation/{id:int}")]
         public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> GetCommitteeOrAssociationByIdAsync(int id)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetCommitteeOrAssociationByIdAsync(id));
@@ -42,13 +40,11 @@ namespace Presentation.Controllers
 
         #region Reviewing Articles
         [ProducesResponseType(typeof(PaginatedResult<ReviewingArticlesDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ReviewingArticles")]
         public async Task<ActionResult<PaginatedResult<ReviewingArticlesDto>>> GetAllReviewingArticlesAsync([FromQuery] ReviewingArticlesSpecificationsParameters parameters)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllReviewingArticlesAsync(parameters));
 
         [ProducesResponseType(typeof(ReviewingArticlesDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ReviewingArticle/{id:int}")]
         public async Task<ActionResult<ReviewingArticlesDto>> GetReviewingArticleByIdAsync(int id)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetReviewingArticleByIdAsync(id));
@@ -74,13 +70,11 @@ namespace Presentation.Controllers
 
         #region Participation In Magazines
         [ProducesResponseType(typeof(PaginatedResult<ParticipationInMagazinesResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ParticipationInMagazines")]
         public async Task<ActionResult<PaginatedResult<ParticipationInMagazinesResponseDto>>> GetAllParticipationInMagazinesAsync([FromQuery] ParticipationInMagazinesSpecificationsParameters parameters)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllParticipationInMagazinesAsync(parameters));
 
         [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ParticipationInMagazine/{id:int}")]
         public async Task<ActionResult<ParticipationInMagazinesResponseDto>> GetParticipationInMagazineByIdAsync(int id)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetParticipationInMagazineByIdAsync(id));
@@ -106,13 +100,11 @@ namespace Presentation.Controllers
 
         #region Projects
         [ProducesResponseType(typeof(PaginatedResult<ProjectsResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("Projects")]
         public async Task<ActionResult<PaginatedResult<ProjectsResponseDto>>> GetAllProjectsAsync([FromQuery] ProjectsSpecifcationsParameters parameters)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetAllProjectsAsync(parameters));
 
         [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("Project/{id:int}")]
         public async Task<ActionResult<ProjectsResponseDto>> GetProjectByIdAsync(int id)
             => Ok(await _serviceManager.ProjectsAndCommitteesService.GetProjectByIdAsync(id));

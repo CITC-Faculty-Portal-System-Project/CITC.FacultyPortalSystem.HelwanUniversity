@@ -11,13 +11,11 @@ namespace Presentation.Controllers
     {
         #region Academic Qualifications
         [ProducesResponseType(typeof(PaginatedResult<AcademicQualificationResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("AcademicQualifications")]
         public async Task<ActionResult<PaginatedResult<AcademicQualificationResponseDto>>> GetAllAcademicQualificationsAsync([FromQuery] AcademicQualificationsSpecificationParamters paramters)
             => Ok(await _serviceManager.ScientificProgressionService.GetAllAcademicQualificationsAsync(paramters));
 
         [ProducesResponseType(typeof(AcademicQualificationResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("AcademicQualification/{id:int}")]
         public async Task<ActionResult<AcademicQualificationResponseDto>> GetAcademicQualificationByIdAsync(int id)
             => Ok(await _serviceManager.ScientificProgressionService.GetAcademicQualificationByIdAsync(id));
@@ -43,13 +41,11 @@ namespace Presentation.Controllers
 
         #region Job Ranks
         [ProducesResponseType(typeof(PaginatedResult<JobRankResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("JobRanks")]
         public async Task<ActionResult<PaginatedResult<JobRankResponseDto>>> GetAllJobRanksAsync([FromQuery] JobRanksSpecificationsParameters paramters)
             => Ok(await _serviceManager.ScientificProgressionService.GetAllJobRanksAsync(paramters));
 
         [ProducesResponseType(typeof(JobRankResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("JobRank/{id:int}")]
         public async Task<ActionResult<JobRankResponseDto>> GetJobRankByIdAsync(int id)
             => Ok(await _serviceManager.ScientificProgressionService.GetJobRankByIdAsync(id));
@@ -75,13 +71,11 @@ namespace Presentation.Controllers
 
         #region Administrative Positions
         [ProducesResponseType(typeof(PaginatedResult<AdministrativePositionDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("AdministrativePosition")]
         public async Task<ActionResult<PaginatedResult<AdministrativePositionDto>>> GetAllAdministrativePositionsAsync([FromQuery] AdministrativePositionsSpecificationParameters paramters)
             => Ok(await _serviceManager.ScientificProgressionService.GetAllAdministrativePositionsAsync(paramters));
 
         [ProducesResponseType(typeof(AdministrativePositionDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("AdministrativePosition/{id:int}")]
         public async Task<ActionResult<AdministrativePositionDto>> GetAdministrativePositionByIdAsync(int id)
             => Ok(await _serviceManager.ScientificProgressionService.GetAdministrativePositionByIdAsync(id));
