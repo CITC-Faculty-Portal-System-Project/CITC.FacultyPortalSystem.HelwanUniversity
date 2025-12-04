@@ -10,5 +10,7 @@ namespace Shared.Dtos.IdentityModule
         [Required(ErrorMessage = "Password Can't Be Empty | يمكن ان تكون كلمة المرور فارغة")]
         [Compare("NewPassword", ErrorMessage = "Passwords Are Not Identical | كلمات المرور غير متطابقة")]
         public string NewPasswordConifrmed { get; set; } = string.Empty;
+
+        public string Email { get; set; } = string.Empty;
     }
 }

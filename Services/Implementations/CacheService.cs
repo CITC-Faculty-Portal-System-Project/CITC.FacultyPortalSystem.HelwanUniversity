@@ -1,5 +1,4 @@
-﻿
-namespace Services.Implementations
+﻿namespace Services.Implementations
 {
     public class CacheService(ICacheRepository _cacheRepository) : ICacheService
     {

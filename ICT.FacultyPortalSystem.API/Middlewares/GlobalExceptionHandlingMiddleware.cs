@@ -3,13 +3,14 @@
     public class GlobalExceptionHandlingMiddleware(RequestDelegate _next, ILogger<GlobalExceptionHandlingMiddleware> _logger)
     {
         public async Task InvokeAsync(HttpContext context)
-        {
+    {
             try
             {
                 await _next(context);
                 if (context.Response.StatusCode == StatusCodes.Status404NotFound)
                     await HandleNotFoundApiAsync(context);
             }
+
             catch (Exception ex)
             {
                 _logger.LogError($"Something went wrong ==> : {ex.Message}");

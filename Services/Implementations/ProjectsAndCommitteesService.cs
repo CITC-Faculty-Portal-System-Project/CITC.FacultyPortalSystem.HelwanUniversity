@@ -5,15 +5,57 @@ using Shared.SpecificationParameters.ProjectsAndCommitteesModule;
 
 namespace Services.Implementations
 {
-    public class ProjectsAndCommitteesService(IUnitOfWork _unitOfWork, IMapper _mapper) : IProjectsAndCommitteesService
+    public class ProjectsAndCommitteesService(IUnitOfWork _unitOfWork, IMapper _mapper, IAuthenticationService _authenticationService) : IProjectsAndCommitteesService
     {
+        #region Helper Methods
+        //Get Current Logged User 
+        private async Task<UserResultDto> GetCurrentUserAsync()
+        {
+            var email = _authenticationService.GetLoggedUserEmail();
+            var user = await _authenticationService.GetCurrentUserAsync(email)
+                       ?? throw new UnauthorizedAccessException("Unauthorized.");
+            return user;
+        }
+
+        //Get Faculty Member By Email
+        private async Task<FacultyMember> GetFacultyMemberByEmailAsync(string email)
+        {
+            var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+            var spec = new FacultyMemberWithEmailSpecifications(email);
+
+            return await repo.GetAsync(spec)
+                   ?? throw new NotFoundException("Faculty Member Not Found.");
+        }
+
+        //Ensure Ownership
+        private static void EnsureOwnership(Guid entityFacultyMemberId, Guid currentUserId, string entityName)
+        {
+            if (entityFacultyMemberId != currentUserId)
+                throw new UnauthorizedAccessException($"You cannot access this {entityName}.");
+        }
+
+        private IGenericRepository<CommitteesAndAssociations, int> CommitteesAndAssociationsRepo
+            => _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
+
+        private IGenericRepository<ReviewingArticles, int> ReviewingArticlesRepo
+            => _unitOfWork.GetRepository<ReviewingArticles, int>();
+
+        private IGenericRepository<ParticipationInMagazines, int> ParticipationInMagazinesRepo
+            => _unitOfWork.GetRepository<ParticipationInMagazines, int>();
+
+        private IGenericRepository<Projects, int> ProjectsRepo
+            => _unitOfWork.GetRepository<Projects, int>();
+        #endregion
+
         #region Committees And Associations
         public async Task<PaginatedResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync(CommitteesAndAssociationsSpecificationsParameters parameters)
         {
+            // Get Current User 
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Committees And Associations Data
-            var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
-            var specifications = new CommitteesAndAssociationsSpecifications(parameters);
-            var committeesAndAssociations = await committeesAndAssociationsRepo.GetAllAsync(specifications) ?? throw new NotFoundException("No Committee Or Association is Found.");
+            var committeesAndAssociations = await CommitteesAndAssociationsRepo.GetAllAsync(new CommitteesAndAssociationsSpecifications(parameters, currentUser.Email)) 
+                ?? throw new NotFoundException("No Committee Or Association is Found.");
 
             //Map Result in IEnumerable Wrapped Dto
             var committeesAndAssociationsResult = _mapper.Map<IEnumerable<CommitteesAndAssociationsResponseDto>>(committeesAndAssociations);
@@ -21,11 +63,8 @@ namespace Services.Implementations
             //Get The Page Size
             var currentPageCount = committeesAndAssociations.Count();
 
-            //Get Count of The Specifications
-            var countSpecifications = new CommitteesAndAssociationsCountSpecifications(parameters);
-
             //Get Total Count
-            var totalCount = await committeesAndAssociationsRepo.CountAsync(countSpecifications);
+            var totalCount = await CommitteesAndAssociationsRepo.CountAsync(new CommitteesAndAssociationsCountSpecifications(parameters, currentUser.Email));
 
             //Return Paginated Result
             return new PaginatedResult<CommitteesAndAssociationsResponseDto>(parameters.PageIndex, currentPageCount, totalCount, committeesAndAssociationsResult);
@@ -33,72 +72,75 @@ namespace Services.Implementations
 
         public async Task<CommitteesAndAssociationsResponseDto> GetCommitteeOrAssociationByIdAsync(int id)
         {
+            // Get Current User 
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Committee Or Association Data
-            var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
-            var specifications = new CommitteesAndAssociationsSpecifications(id);
-            var committeeOrAssociation = await committeesAndAssociationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Committee Or Association is Not Found.");
+            var committeeOrAssociation = await CommitteesAndAssociationsRepo.GetAsync(new CommitteesAndAssociationsSpecifications(id)) 
+                ?? throw new NotFoundException("Committee Or Association is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(committeeOrAssociation.FacultyMemberId, currentUser.UserId, "Committee Or Association");
 
             //Map To Dto
-            var committeeOrAssociationResult = _mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
-
-            //Return Result Data
-            return committeeOrAssociationResult;
+            return _mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
         }
 
-        public async Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(string facultyMemberEmail, CommitteeOrAssociationCreateDto committeeOrAssociationCreateDto)
+        public async Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(CommitteeOrAssociationCreateDto committeeOrAssociationCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Map Dto To Entity and Add Faculty Member Id
             var committeeOrAssociation = _mapper.Map<CommitteesAndAssociations>(committeeOrAssociationCreateDto);
-            committeeOrAssociation.FacultyMemberId = facultyMember.Id;
+            committeeOrAssociation.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
-            var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
-            await committeesAndAssociationsRepo.AddAsync(committeeOrAssociation);
+            await CommitteesAndAssociationsRepo.AddAsync(committeeOrAssociation);
             await _unitOfWork.SaveChangesAsync();
 
             //Return The Mapped Data To Response Dto
             return _mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
         }
-        public async Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(int committeeOrAssociationId, string facultyMemberEmail, CommitteeOrAssociationUpdateDto committeeOrAssociationUpdateDto)
+        public async Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(int committeeOrAssociationId, CommitteeOrAssociationUpdateDto committeeOrAssociationUpdateDto)
         {
-            //Load Committee Or Association Data
-            var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
-            var specifications = new CommitteesAndAssociationsSpecifications(committeeOrAssociationId);
-            var committeeOrAssociation = await committeesAndAssociationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Committee Or Association is Not Found.");
+            //Get Current User Email
+            var currentUser = await GetCurrentUserAsync();
 
-            if (committeeOrAssociation.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Committee Or Association Data
+            var committeeOrAssociation = await CommitteesAndAssociationsRepo.GetAsync(new CommitteesAndAssociationsSpecifications(committeeOrAssociationId))
+                ?? throw new NotFoundException("Committee Or Association is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(committeeOrAssociation.FacultyMemberId, currentUser.UserId, "Committee Or Association");
 
             //Map Dto To Entity
             _mapper.Map(committeeOrAssociationUpdateDto, committeeOrAssociation);
 
             //Update and Save Updated Data
-            committeesAndAssociationsRepo.Update(committeeOrAssociation);
+            CommitteesAndAssociationsRepo.Update(committeeOrAssociation);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Updated Result
             return _mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
         }
 
-        public async Task DeleteCommitteeOrAssociationAsync(int committeeOrAssociationId, string facultyMemberEmail)
+        public async Task DeleteCommitteeOrAssociationAsync(int committeeOrAssociationId)
         {
-            //Load Committee Or Association Data
-            var committeesAndAssociationsRepo = _unitOfWork.GetRepository<CommitteesAndAssociations, int>();
-            var specifications = new CommitteesAndAssociationsSpecifications(committeeOrAssociationId);
-            var committeeOrAssociation = await committeesAndAssociationsRepo.GetAsync(specifications) ?? throw new NotFoundException("Committee Or Association is Not Found.");
+            //Get Current User
+            var currentUser = await GetCurrentUserAsync();
 
-            if (committeeOrAssociation.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Committee Or Association Data
+            var committeeOrAssociation = await CommitteesAndAssociationsRepo.GetAsync(new CommitteesAndAssociationsSpecifications(committeeOrAssociationId)) 
+                ?? throw new NotFoundException("Committee Or Association is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(committeeOrAssociation.FacultyMemberId, currentUser.UserId, "Committee Or Association");
 
             //Apply Soft Delete
             committeeOrAssociation.IsDeleted = true;
 
-            committeesAndAssociationsRepo.Update(committeeOrAssociation);
+            CommitteesAndAssociationsRepo.Update(committeeOrAssociation);
             await _unitOfWork.SaveChangesAsync();
         }
         #endregion
@@ -106,10 +148,12 @@ namespace Services.Implementations
         #region Reviewing Articles
         public async Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(ReviewingArticlesSpecificationsParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Reviewing Articles Data
-            var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
-            var specifications = new ReviewingArticlesSpecifications(parameters);
-            var reviewingArticles = await reviewingArticlesRepo.GetAllAsync(specifications) ?? throw new NotFoundException("No Articles are Found.");
+            var reviewingArticles = await ReviewingArticlesRepo.GetAllAsync(new ReviewingArticlesSpecifications(parameters, currentUser.Email))
+                ?? throw new NotFoundException("No Articles are Found.");
 
             //Map Result in IEnumerable Wrapped Dto
             var reviewingArticlesResult = _mapper.Map<IEnumerable<ReviewingArticlesDto>>(reviewingArticles);
@@ -117,11 +161,8 @@ namespace Services.Implementations
             //Get The Page Size
             var currentPageCount = reviewingArticles.Count();
 
-            //Get Count of The Specifications
-            var countSpecifications = new ReviewingArticlesCountSpecifications(parameters);
-
             //Get Total Count
-            var totalCount = await reviewingArticlesRepo.CountAsync(countSpecifications);
+            var totalCount = await ReviewingArticlesRepo.CountAsync(new ReviewingArticlesCountSpecifications(parameters, currentUser.Email));
 
             //Return Paginated Result
             return new PaginatedResult<ReviewingArticlesDto>(parameters.PageIndex, currentPageCount, totalCount, reviewingArticlesResult);
@@ -129,73 +170,75 @@ namespace Services.Implementations
 
         public async Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(int id)
         {
+            // Get Current User
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Reviewing Article
-            var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
-            var specifications = new ReviewingArticlesSpecifications(id);
-            var reviewingArticle = await reviewingArticlesRepo.GetAsync(specifications) ?? throw new NotFoundException("Article is Not Found.");
+            var reviewingArticle = await ReviewingArticlesRepo.GetAsync(new ReviewingArticlesSpecifications(id)) 
+                ?? throw new NotFoundException("Article is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, "Reviewing Article");
 
             //Map To Dto
-            var reviewingArticleResult = _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
-
-            //Return Mapped Data
-            return reviewingArticleResult;
+            return _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task<ReviewingArticlesDto> CreateReviewingArticleAsync(string facultyMemberEmail, ReviewingArticleCreateDto reviewingArticleCreateDto)
+        public async Task<ReviewingArticlesDto> CreateReviewingArticleAsync(ReviewingArticleCreateDto reviewingArticleCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User
+            var currentUser = await GetCurrentUserAsync();
 
             //Map Dto To Entity and Add Faculty Member Id
             var reviewingArticle = _mapper.Map<ReviewingArticles>(reviewingArticleCreateDto);
-            reviewingArticle.FacultyMemberId = facultyMember.Id;
+            reviewingArticle.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
-            var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
-            await reviewingArticlesRepo.AddAsync(reviewingArticle);
+            await ReviewingArticlesRepo.AddAsync(reviewingArticle);
             await _unitOfWork.SaveChangesAsync();
 
             //Return The Mapped Data To Response Dto
             return _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, string facultyMemberEmail, ReviewingArticlesDto reviewingArticleUpdateDto)
+        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewArticleUpdateDto reviewingArticleUpdateDto)
         {
-            //Load Reviewing Article
-            var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
-            var specifications = new ReviewingArticlesSpecifications(reviewingArticleId);
-            var reviewingArticle = await reviewingArticlesRepo.GetAsync(specifications) ?? throw new NotFoundException("Article is Not Found.");
+            //Get Current User
+            var currentUser = await GetCurrentUserAsync();
 
-            if (reviewingArticle.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Reviewing Article
+            var reviewingArticle = await ReviewingArticlesRepo.GetAsync(new ReviewingArticlesSpecifications(reviewingArticleId)) 
+                ?? throw new NotFoundException("Article is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, "Reviewing Article");
 
             //Map Dto To Entity
             _mapper.Map(reviewingArticleUpdateDto, reviewingArticle);
 
             //Update and Save Updated Data
-            reviewingArticlesRepo.Update(reviewingArticle);
+            ReviewingArticlesRepo.Update(reviewingArticle);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Updated Result
             return _mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task DeleteReviewingArticleAsync(int reviewingArticleId, string facultyMemberEmail)
+        public async Task DeleteReviewingArticleAsync(int reviewingArticleId)
         {
-            //Load Reviewing Article
-            var reviewingArticlesRepo = _unitOfWork.GetRepository<ReviewingArticles, int>();
-            var specifications = new ReviewingArticlesSpecifications(reviewingArticleId);
-            var reviewingArticle = await reviewingArticlesRepo.GetAsync(specifications) ?? throw new NotFoundException("Article is Not Found.");
+            //Get Current User Email
+            var currentUser = await GetCurrentUserAsync();
 
-            if (reviewingArticle.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Reviewing Article
+            var reviewingArticle = await ReviewingArticlesRepo.GetAsync(new ReviewingArticlesSpecifications(reviewingArticleId)) 
+                ?? throw new NotFoundException("Article is Not Found.");
+
+            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, "Reviewing Article");
 
             //Apply Soft Delete
             reviewingArticle.IsDeleted = true;
 
-            reviewingArticlesRepo.Update(reviewingArticle);
+            ReviewingArticlesRepo.Update(reviewingArticle);
             await _unitOfWork.SaveChangesAsync();
         }
         #endregion
@@ -203,10 +246,12 @@ namespace Services.Implementations
         #region Participation In Magazines
         public async Task<PaginatedResult<ParticipationInMagazinesResponseDto>> GetAllParticipationInMagazinesAsync(ParticipationInMagazinesSpecificationsParameters parameters)
         {
+            // Get Current User Email
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Participation In Magazines Data
-            var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
-            var specifications = new ParticipationInMagazinesSpecifications(parameters);
-            var participationInMagazines = await participationInMagazinesRepo.GetAllAsync(specifications) ?? throw new NotFoundException("Participation in Magazines are Not Found.");
+            var participationInMagazines = await ParticipationInMagazinesRepo.GetAllAsync(new ParticipationInMagazinesSpecifications(parameters, currentUser.Email)) 
+                ?? throw new NotFoundException("Participation in Magazines are Not Found.");
 
             //Map Result in IEnumerable Wrapped Dto
             var participationIndMagazinesResult = _mapper.Map<IEnumerable<ParticipationInMagazinesResponseDto>>(participationInMagazines);
@@ -214,11 +259,8 @@ namespace Services.Implementations
             //Get The Page Size
             var currentPageSize = participationInMagazines.Count();
 
-            //Get Count of The Specifications
-            var countSpecifications = new ParticipationInMagazinesCountSpecifications(parameters);
-
             //Get Total Count
-            var totalCount = await participationInMagazinesRepo.CountAsync(countSpecifications);
+            var totalCount = await ParticipationInMagazinesRepo.CountAsync(new ParticipationInMagazinesCountSpecifications(parameters, currentUser.Email));
 
             //Return Paginated Result
             return new PaginatedResult<ParticipationInMagazinesResponseDto>(parameters.PageIndex, currentPageSize, totalCount, participationIndMagazinesResult);
@@ -226,73 +268,76 @@ namespace Services.Implementations
 
         public async Task<ParticipationInMagazinesResponseDto> GetParticipationInMagazineByIdAsync(int id)
         {
+            // Get Current User 
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Participation In Magazine Data
-            var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
-            var specifications = new ParticipationInMagazinesSpecifications(id);
-            var participationInMagazine = await participationInMagazinesRepo.GetAsync(specifications) ?? throw new NotFoundException("Participation in Magazine is Not Found.");
+            var participationInMagazine = await ParticipationInMagazinesRepo.GetAsync(new ParticipationInMagazinesSpecifications(id)) 
+                ?? throw new NotFoundException("Participation in Magazine is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, "Participation In Magazine");
 
             //Map To Dto
-            var participationInMagazineResult = _mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
-
-            //Return Mapped Data
-            return participationInMagazineResult;
+            return _mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
         }
 
-        public async Task<ParticipationInMagazinesResponseDto> CreateParticipationInMagazineAsync(string facultyMemberEmail, ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
+        public async Task<ParticipationInMagazinesResponseDto> CreateParticipationInMagazineAsync(ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Map Dto To Entity and Add Faculty Member Id
             var participationInMagazine = _mapper.Map<ParticipationInMagazines>(participationInMagazinesCreateDto);
-            participationInMagazine.FacultyMemberId = facultyMember.Id;
+            participationInMagazine.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
-            var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
-            await participationInMagazinesRepo.AddAsync(participationInMagazine);
+            await ParticipationInMagazinesRepo.AddAsync(participationInMagazine);
             await _unitOfWork.SaveChangesAsync();
 
             //Return The Mapped Data To Response Dto
             return _mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
         }
 
-        public async Task<ParticipationInMagazinesResponseDto> UpdateParticipationInMagazineAsync(int participationInMagazineId, string facultyMemberEmail, ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
+        public async Task<ParticipationInMagazinesResponseDto> UpdateParticipationInMagazineAsync(int participationInMagazineId, ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
         {
-            //Load Participation In Magazine Data
-            var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
-            var specifications = new ParticipationInMagazinesSpecifications(participationInMagazineId);
-            var participationInMagazine = await participationInMagazinesRepo.GetAsync(specifications) ?? throw new NotFoundException("Participation in Magazine is Not Found.");
+            //Get Current User 
+            var currentUser = await GetCurrentUserAsync();
 
-            if (participationInMagazine.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Participation In Magazine Data
+            var participationInMagazine = await ParticipationInMagazinesRepo.GetAsync(new ParticipationInMagazinesSpecifications(participationInMagazineId)) 
+                ?? throw new NotFoundException("Participation in Magazine is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, "Participation In Magazine");
 
             //Map Dto To Entity
             _mapper.Map(participationInMagazinesUpdateDto, participationInMagazine);
 
             //Update and Save Updated Data
-            participationInMagazinesRepo.Update(participationInMagazine);
+            ParticipationInMagazinesRepo.Update(participationInMagazine);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Updated Result
             return _mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
         }
 
-        public async Task DeleteParticipationInMagazineAsync(int participationInMagazineId, string facultyMemberEmail)
+        public async Task DeleteParticipationInMagazineAsync(int participationInMagazineId)
         {
-            //Load Participation In Magazine Data
-            var participationInMagazinesRepo = _unitOfWork.GetRepository<ParticipationInMagazines, int>();
-            var specifications = new ParticipationInMagazinesSpecifications(participationInMagazineId);
-            var participationInMagazine = await participationInMagazinesRepo.GetAsync(specifications) ?? throw new NotFoundException("Participation in Magazine is Not Found.");
+            //Get Current User 
+            var currentUser = await GetCurrentUserAsync();
 
-            if (participationInMagazine.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Participation In Magazine Data
+            var participationInMagazine = await ParticipationInMagazinesRepo.GetAsync(new ParticipationInMagazinesSpecifications(participationInMagazineId))
+                ?? throw new NotFoundException("Participation in Magazine is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, "Participation In Magazine");
 
             //Apply Soft Delete
             participationInMagazine.IsDeleted = true;
 
-            participationInMagazinesRepo.Update(participationInMagazine);
+            ParticipationInMagazinesRepo.Update(participationInMagazine);
             await _unitOfWork.SaveChangesAsync();
         }
         #endregion
@@ -300,10 +345,12 @@ namespace Services.Implementations
         #region Projects
         public async Task<PaginatedResult<ProjectsResponseDto>> GetAllProjectsAsync(ProjectsSpecifcationsParameters parameters)
         {
+            // Get Current User
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Projects Data
-            var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
-            var specification = new ProjectsSpecifications(parameters);
-            var projects = await projectsRepo.GetAllAsync(specification) ?? throw new NotFoundException("Projects are Not Found.");
+            var projects = await ProjectsRepo.GetAllAsync(new ProjectsSpecifications(parameters, currentUser.Email)) 
+                ?? throw new NotFoundException("Projects are Not Found.");
 
             //Map Result In IEnumerable Wrapped Dto
             var projectsResult = _mapper.Map<IEnumerable<ProjectsResponseDto>>(projects);
@@ -311,11 +358,8 @@ namespace Services.Implementations
             //Get The Page Size
             var currentPageCount = projects.Count();
 
-            //Get Count of The Specifications
-            var countSpecifications = new ProjectsCountSpecifications(parameters);
-
             //Get Total Count
-            var totalCount = await projectsRepo.CountAsync(countSpecifications);
+            var totalCount = await ProjectsRepo.CountAsync(new ProjectsCountSpecifications(parameters, currentUser.Email));
 
             //Return Paginated Result
             return new PaginatedResult<ProjectsResponseDto>(parameters.PageIndex, currentPageCount, totalCount, projectsResult);
@@ -323,73 +367,75 @@ namespace Services.Implementations
 
         public async Task<ProjectsResponseDto> GetProjectByIdAsync(int id)
         {
+            // Get Current User 
+            var currentUser = await GetCurrentUserAsync();
+
             //Load Project Data
-            var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
-            var specification = new ProjectsSpecifications(id);
-            var project = await projectsRepo.GetAsync(specification) ?? throw new NotFoundException("Project is Not Found.");
+            var project = await ProjectsRepo.GetAsync(new ProjectsSpecifications(id)) ?? throw new NotFoundException("Project is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(project.FacultyMemberId, currentUser.UserId, "Project");
 
             //Map To Dto
-            var projectResult = _mapper.Map<ProjectsResponseDto>(project);
-
-            //Return Mapped Result
-            return projectResult;
+            return _mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task<ProjectsResponseDto> CreateProjectAsync(string facultyMemberEmail, ProjectCreateDto projectCreateDto)
+        public async Task<ProjectsResponseDto> CreateProjectAsync(ProjectCreateDto projectCreateDto)
         {
-            //Load Faculty Member Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            // Get Current User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Map Dto To Entity and Add Faculty Member Id
             var project = _mapper.Map<Projects>(projectCreateDto);
-            project.FacultyMemberId = facultyMember.Id;
+            project.FacultyMemberId = currentUser.UserId;
 
             //Add and Save To Database
-            var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
-            await projectsRepo.AddAsync(project);
+            await ProjectsRepo.AddAsync(project);
             await _unitOfWork.SaveChangesAsync();
 
             //Return The Mapped Data To Response Dto
             return _mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task<ProjectsResponseDto> UpdateProjectAsync(int projectId, string facultyMemberEmail, ProjectUpdateDto projectUpdateDto)
+        public async Task<ProjectsResponseDto> UpdateProjectAsync(int projectId, ProjectUpdateDto projectUpdateDto)
         {
-            //Load Project Data
-            var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
-            var specification = new ProjectsSpecifications(projectId);
-            var project = await projectsRepo.GetAsync(specification) ?? throw new NotFoundException("Project is Not Found.");
+            //Get Current User 
+            var currentUser = await GetCurrentUserAsync();
 
-            if (project.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Project Data
+            var project = await ProjectsRepo.GetAsync(new ProjectsSpecifications(projectId)) 
+                ?? throw new NotFoundException("Project is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(project.FacultyMemberId, currentUser.UserId, "Project");
 
             //Map Dto To Entity
             _mapper.Map(projectUpdateDto, project);
 
             //Update and Save Updated Data
-            projectsRepo.Update(project);
+            ProjectsRepo.Update(project);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Updated Result
             return _mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task DeleteProjectAsync(int projectId, string facultyMemberEmail)
+        public async Task DeleteProjectAsync(int projectId)
         {
-            //Load Project Data
-            var projectsRepo = _unitOfWork.GetRepository<Projects, int>();
-            var specification = new ProjectsSpecifications(projectId);
-            var project = await projectsRepo.GetAsync(specification) ?? throw new NotFoundException("Project is Not Found.");
+            //Get Current User 
+            var currentUser = await GetCurrentUserAsync();
 
-            if (project.FacultyMember?.Email != facultyMemberEmail)
-                throw new UnauthorizedAccessException("Cannot Update This Record.");
+            //Load Project Data
+            var project = await ProjectsRepo.GetAsync(new ProjectsSpecifications(projectId))
+                ?? throw new NotFoundException("Project is Not Found.");
+
+            //Ensure Ownership of Data
+            EnsureOwnership(project.FacultyMemberId, currentUser.UserId, "Project");
 
             //Apply Soft Delete
             project.IsDeleted = true;
 
-            projectsRepo.Update(project);
+            ProjectsRepo.Update(project);
             await _unitOfWork.SaveChangesAsync();
         }
         #endregion

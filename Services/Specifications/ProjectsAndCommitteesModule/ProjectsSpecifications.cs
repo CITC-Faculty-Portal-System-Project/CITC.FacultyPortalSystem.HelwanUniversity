@@ -6,10 +6,10 @@ namespace Services.Specifications.ProjectsAndCommitteesModule
 {
     internal class ProjectsSpecifications : BaseSpecifications<Projects, int>
     {
-        public ProjectsSpecifications(ProjectsSpecifcationsParameters parameters)
+        public ProjectsSpecifications(ProjectsSpecifcationsParameters parameters, string facultyMemberId)
             : base(p =>
                   (!p.IsDeleted &&
-                    p.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    p.FacultyMember!.Email == facultyMemberId) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    p.NameOfProject.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    p.TypeOfProject.ValueAr.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||

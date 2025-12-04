@@ -6,29 +6,31 @@ namespace Services.Specifications.MissionsModule
 {
     internal class ScientificMissionsSpecifications : BaseSpecifications<ScientificMissions, int>
     {
-        public ScientificMissionsSpecifications(ScientificMissionSpecificationParamaters parameters)
+        public ScientificMissionsSpecifications(ScientificMissionSpecificationParamaters parameters, string facultyMemberEmail)
             : base(sm =>
                   (!sm.IsDeleted &&
-                    sm.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    sm.FacultyMember!.Email == facultyMemberEmail) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    sm.MissionName.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    sm.CountryOrCity.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))
-            )
-        {
 
+            )
+
+        {
+            AddIncludes(sm => sm.FacultyMember);
             switch (parameters.Sort)
             {
                 case ScientificMissionsSortingOptions.NameAsc:
                     AddOrderBy(sm => sm.MissionName);
                     break;
                 case ScientificMissionsSortingOptions.NameDesc:
-                    AddOrderByDescending(p => p.MissionName);
+                    AddOrderByDescending(sm => sm.MissionName);
                     break;
                 case ScientificMissionsSortingOptions.DateAsc:
-                    AddOrderBy(p => p.StartDate);
+                    AddOrderBy(sm => sm.StartDate);
                     break;
                 case ScientificMissionsSortingOptions.DateDesc:
-                    AddOrderByDescending(p => p.StartDate);
+                    AddOrderByDescending(sm => sm.StartDate);
                     break;
                 default:
                     break;
@@ -39,7 +41,7 @@ namespace Services.Specifications.MissionsModule
 
         public ScientificMissionsSpecifications(int id) : base(sm => !sm.IsDeleted && sm.Id == id)
         {
-
+            AddIncludes(sm => sm.FacultyMember);
         }
     }
 }

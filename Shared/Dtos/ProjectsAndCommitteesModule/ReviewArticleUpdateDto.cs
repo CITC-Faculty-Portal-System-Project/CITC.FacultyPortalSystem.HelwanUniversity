@@ -1,8 +1,13 @@
-﻿namespace Shared.Dtos.ProjectsAndCommitteesModule
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Shared.Dtos.ProjectsAndCommitteesModule
 {
-    public record ReviewingArticlesDto
+    public record ReviewArticleUpdateDto
     {
-        public int Id { get; set; }
         public string TitleOfArticle { get; set; } = string.Empty;
         public string Authority { get; set; } = string.Empty;
         public DateOnly ReviewingDate { get; set; }

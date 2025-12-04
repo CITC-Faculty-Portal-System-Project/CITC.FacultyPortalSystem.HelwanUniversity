@@ -1,4 +1,5 @@
-﻿using Shared.Dtos.IdentityModule;
+﻿using Shared.Dtos.Auth;
+using Shared.Dtos.IdentityModule;
 
 namespace Services.Abstraction.Contracts
 {
@@ -8,7 +9,7 @@ namespace Services.Abstraction.Contracts
         Task<UserResultDto> RegisterAsync(RegisterDto registerDto);
 
         //Login ==> return UserResultDto [UserName, Token, Email] ==> Take Parameters [NationalNumber]
-        Task<string> LoginAsync(LoginDto loginDto);
+        Task<LoginClaims> LoginAsync(LoginDto loginDto);
 
         //Get Current User
         Task<UserResultDto> GetCurrentUserAsync(string userEmail);
@@ -23,10 +24,10 @@ namespace Services.Abstraction.Contracts
         Task ConfirmEmail(string userEmail);
 
         //Verify OTP 
-        Task<bool> VerifyOTPAsync(OTPSendDTO otpSendDto, string email);
+        Task<bool> VerifyOTPAsync(OTPSendDTO otpSendDto);
 
         //Reset Password
-        Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto, string email);
+        Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto);
 
         //Getting Current Logged User Email Without the need from user to pass the email to end-point
         public string GetLoggedUserEmail();

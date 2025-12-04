@@ -6,10 +6,10 @@ namespace Services.Specifications.ProjectsAndCommitteesModule
 {
     internal class ReviewingArticlesSpecifications : BaseSpecifications<ReviewingArticles, int>
     {
-        public ReviewingArticlesSpecifications(ReviewingArticlesSpecificationsParameters parameters) 
+        public ReviewingArticlesSpecifications(ReviewingArticlesSpecificationsParameters parameters, string facultyMemberId) 
             : base(ra =>
                   (!ra.IsDeleted &&
-                    ra.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    ra.FacultyMember!.Email == facultyMemberId) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    ra.TitleOfArticle.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    ra.Authority.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))

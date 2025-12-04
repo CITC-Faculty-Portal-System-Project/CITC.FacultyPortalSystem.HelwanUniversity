@@ -11,13 +11,11 @@ namespace Presentation.Controllers
     {
         #region Scientific Missions
         [ProducesResponseType(typeof(PaginatedResult<ScientificMissionResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ScientificMissions")]
         public async Task<ActionResult<PaginatedResult<ScientificMissionResponseDto>>> GetAllScientificMissionsAsync([FromQuery] ScientificMissionSpecificationParamaters paramaters)
              => Ok(await _serviceManager.MissionsService.GetAllScientificMissionsAsync(paramaters));
 
         [ProducesResponseType(typeof(ScientificMissionResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ScientificMission/{id:int}")]
         public async Task<ActionResult<ScientificMissionResponseDto>> GetScientificMissionByIdAsync(int id)
             => Ok(await _serviceManager.MissionsService.GetScientificMissionByIdAsync(id));
@@ -35,18 +33,19 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteScientificMission/{id:int}")]
         public async Task<ActionResult> DeleteScientificMissionAsync(int id)
-             => Ok(await _serviceManager.MissionsService.DeleteScientificMissionAsync(id));
+        {
+            await _serviceManager.MissionsService.DeleteScientificMissionAsync(id);
+            return NoContent();
+        }
         #endregion
 
         #region Seminars And Conferences
         [ProducesResponseType(typeof(PaginatedResult<ConferencesAndSeminarsResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ConferncesAndSeminars")]
-        public async Task<ActionResult<PaginatedResult<ConferencesAndSeminarsResponseDto>>> GetAllSeminarsAndConferencesAsync(SeminarsAndConferncesSpecificationParameters parameters)
+        public async Task<ActionResult<PaginatedResult<ConferencesAndSeminarsResponseDto>>> GetAllSeminarsAndConferencesAsync([FromQuery] SeminarsAndConferncesSpecificationParameters parameters)
            => Ok(await _serviceManager.MissionsService.GetAllSeminarsAndConferencesAsync(parameters));
 
         [ProducesResponseType(typeof(ConferencesAndSeminarsResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ConfernceOrSeminar/{id:int}")]
         public async Task<ActionResult<ConferencesAndSeminarsResponseDto>> GetSeminarOrConferenceByIdAsync(int id)
            => Ok(await _serviceManager.MissionsService.GetSeminarOrConferenceByIdAsync(id));
@@ -64,7 +63,40 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteConferncesOrSeminars/{id:int}")]
         public async Task<ActionResult<bool>> DeleteSeminarOrConferenceAsync(int id)
-           => Ok(await _serviceManager.MissionsService.DeleteSeminarOrConferenceAsync(id));
+        {
+            await _serviceManager.MissionsService.DeleteSeminarOrConferenceAsync(id);
+            return NoContent();
+        }
+        #endregion
+
+        #region Training Programs
+        [ProducesResponseType(typeof(PaginatedResult<TrainingProgramsResponseDto>), StatusCodes.Status200OK)]
+        [HttpGet("TrainingPrograms")]
+        public async Task<ActionResult<PaginatedResult<TrainingProgramsResponseDto>>> GetAllTrainingProgramsAsync(TrainingProgramsSpecificationParameters parameters)
+           => Ok(await _serviceManager.MissionsService.GetAllTrainingProgramsAsync(parameters));
+
+        [ProducesResponseType(typeof(TrainingProgramsResponseDto), StatusCodes.Status200OK)]
+        [HttpGet("TrainingProgram/{id:int}")]
+        public async Task<ActionResult<TrainingProgramsResponseDto>> GetTrainingProgramByIdAsync(int id)
+           => Ok(await _serviceManager.MissionsService.GetTrainingProgramByIdAsync(id));
+
+        [ProducesResponseType(typeof(TrainingProgramsResponseDto), StatusCodes.Status200OK)]
+        [HttpPost("CreateTrainingProgram")]
+        public async Task<ActionResult<TrainingProgramsResponseDto>> CreateTrainingProgramAsync(TrainingProgramsCreateDto trainingProgramsCreateDto)
+            => Ok(await _serviceManager.MissionsService.CreateTrainingProgramAsync(trainingProgramsCreateDto));
+
+        [ProducesResponseType(typeof(TrainingProgramsResponseDto), StatusCodes.Status200OK)]
+        [HttpPut("UpdateTrainingProgram/{id:int}")]
+        public async Task<ActionResult<TrainingProgramsResponseDto>> UpdateTrainingProgramAsync(int id, TrainingProgramsUpdateDto trainingProgramsUpdateDto)
+           => Ok(await _serviceManager.MissionsService.UpdateTrainingProgramAsync(id, trainingProgramsUpdateDto));
+
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpDelete("DeleteTrainingProgram/{id:int}")]
+        public async Task<ActionResult<bool>> DeleteTrainingProgramAsync(int id)
+        {
+            await _serviceManager.MissionsService.DeleteTrainingProgramAsync(id);
+            return NoContent();
+        }
         #endregion
     }
 }

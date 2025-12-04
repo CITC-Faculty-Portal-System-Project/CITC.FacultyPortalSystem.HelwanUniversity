@@ -1,7 +1,5 @@
-﻿using Domain.Entities.IdentityModule;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Services.Abstraction.Contracts;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -175,7 +173,7 @@ namespace Services.Implementations
 
             await SendAsync(email, "رمز إعادة التعيين", html);
 
-            await _cacheService.SetCachedValueAsync($"auth:otp:{email.ToLower()}", otp.ToString(), TimeSpan.FromMinutes(5));
+            await _cacheService.SetCachedValueAsync($"auth:otp:{otp}", otp.ToString(), TimeSpan.FromMinutes(5));
             await _cacheService.SetCachedValueAsync($"auth:email:{email.ToLower()}", email, TimeSpan.FromMinutes(15));
         }
     }
