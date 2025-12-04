@@ -6,10 +6,10 @@ namespace Services.Specifications.MissionsModule
 {
     internal class TrainingProgramsSpecifications : BaseSpecifications<TrainingPrograms, int>
     {
-        public TrainingProgramsSpecifications(TrainingProgramsSpecificationParameters parameters) 
+        public TrainingProgramsSpecifications(TrainingProgramsSpecificationParameters parameters, string facultyMemberEmail) 
             : base(tp =>
                   (!tp.IsDeleted &&
-                    tp.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    tp.FacultyMember!.Email == facultyMemberEmail) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    tp.TrainingProgramName.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    tp.OrganizingAuthority.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||

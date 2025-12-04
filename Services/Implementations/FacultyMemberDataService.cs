@@ -1,25 +1,68 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
-using Services.Specifications.FacultyMemberDataModule;
-using Shared.Dtos.FacultyMemberDataModule;
+﻿using Shared.Dtos.FacultyMemberDataModule;
+using Shared.Dtos.IdentityModule;
 
 namespace Services.Implementations
 {
     public class FacultyMemberDataService(IUnitOfWork _unitOfWork, IMapper _mapper, IAuthenticationService _authenticationService) : IFacultyMemberDataService
     {
+        #region Helper Methods
+        //Get Current Logged User 
+        private async Task<UserResultDto> GetCurrentUserAsync()
+        {
+            var email = _authenticationService.GetLoggedUserEmail();
+            var user = await _authenticationService.GetCurrentUserAsync(email)
+                       ?? throw new UnauthorizedAccessException("Unauthorized.");
+            return user;
+        }
+
+        //Get Faculty Member By Email
+        private async Task<FacultyMember> GetFacultyMemberByEmailAsync(string email)
+        {
+            var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+            var spec = new FacultyMemberWithEmailSpecifications(email);
+
+            return await repo.GetAsync(spec)
+                   ?? throw new NotFoundException("Faculty Member Not Found.");
+        }
+
+        //Get Faculty Member By National Number
+        private async Task<FacultyMember> GetFacultyMemberByNationalNumberAsync(string nationalNumber)
+        {
+            var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+            var spec = new FacultyMemberWithNationalNumberSpecifications(nationalNumber);
+
+            return await repo.GetAsync(spec)
+                   ?? throw new NotFoundException("Faculty Member Not Found.");
+        }
+
+        //Get Repositories
+        private IGenericRepository<PersonalData, int> PersonalDataRepo
+            => _unitOfWork.GetRepository<PersonalData, int>();
+
+        private IGenericRepository<ContactData, int> ContactDataRepo
+            => _unitOfWork.GetRepository<ContactData, int>();
+
+        private IGenericRepository<IdentificationCard, int> IdentificationCardRepo
+            => _unitOfWork.GetRepository<IdentificationCard, int>();
+
+        private IGenericRepository<SocialMediaPlatforms, int> SocialMediaRepo
+            => _unitOfWork.GetRepository<SocialMediaPlatforms, int>();
+
+        private IGenericRepository<FacultyMember, Guid> FacultyMemberRepo
+            => _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+        #endregion
+
         #region Personal Data
         public async Task<PersonalDataResponseDto?> GetPersonalDataAsync()
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Access The Personal Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Personal Data With Includes
-            var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
-            var specifications = new PersonalDataWithIncludesSpecifications(facultyMemberEmail);
-            var personalData = await personalDataRepo.GetAsync(specifications) ?? throw new NotFoundException("Personal Data is Not Found.");
-           
+            var personalData = await PersonalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email))
+                ?? throw new NotFoundException("Personal Data is Not Found.");
+
             //Map Response to Dto
             var personalDataResult = _mapper.Map<PersonalDataResponseDto>(personalData);
 
@@ -31,52 +74,20 @@ namespace Services.Implementations
 
         }
 
-        public async Task<PersonalDataResponseDto?> FetchPersonalDataAsync(PersonalDataCreateDto personalDataCreateDto)
-        {
-            //Load The Faculty Member with The National Number
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithNationalNumberSpecifications(personalDataCreateDto.NationalNumber);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
-
-            //Load Personal Data If Already Exist
-            var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
-            var existingSpec = new PersonalDataWithIncludesSpecifications(facultyMember.Email);
-            var existingPersonalData = await personalDataRepo.GetAsync(existingSpec);
-
-            if (existingPersonalData != null)
-                return _mapper.Map<PersonalDataResponseDto>(existingPersonalData);
-
-            //Map The Dto to The PersonalData Entity and add FacultyMemberId Manually
-            var personalData = _mapper.Map<PersonalData>(personalDataCreateDto);
-            personalData.FacultyMemberId = facultyMember.Id;
-
-            //Add and Save The Data to Database
-            await personalDataRepo.AddAsync(personalData);
-            await _unitOfWork.SaveChangesAsync();
-
-            //Return Result
-            var createdDataResult = _mapper.Map<PersonalDataResponseDto>(personalData);
-            return createdDataResult;
-        }
-
         public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(PersonalDataUpdateDto personalDataUpdateDto)
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Update The Personal Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Personal Data With Includes
-            var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
-            var specifications = new PersonalDataWithIncludesSpecifications(facultyMemberEmail);
-            var personalData = await personalDataRepo.GetAsync(specifications) ?? throw new NotFoundException("Personal Data is Not Found.");
+            var personalData = await PersonalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email)) 
+                ?? throw new NotFoundException("Personal Data is Not Found.");
 
             //Map Updated Data to Personal Data Entity
             _mapper.Map(personalDataUpdateDto, personalData);
 
             //Update The Data to Database
-            personalDataRepo.Update(personalData);
+            PersonalDataRepo.Update(personalData);
             await _unitOfWork.SaveChangesAsync();
 
             //Return The Updated Data
@@ -88,16 +99,12 @@ namespace Services.Implementations
         #region Contact Data
         public async Task<ContactDataResponseDto?> GetContactDataAsync()
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Access The Contact Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser= await GetCurrentUserAsync();
 
             //Load Contact Data
-            var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
-            var specifications = new ContactDataWithFacultyMemberEmailSpecifications(facultyMemberEmail);
-            var contactData = await contactDataRepo.GetAsync(specifications) ?? throw new NotFoundException("Contact Data is Not Found.");
+            var contactData = await ContactDataRepo.GetAsync(new ContactDataWithFacultyMemberEmailSpecifications(currentUser.Email)) 
+                ?? throw new NotFoundException("Contact Data is Not Found.");
 
             //Map Response to Dto
             var contactDataResult = _mapper.Map<ContactDataResponseDto>(contactData);
@@ -106,52 +113,20 @@ namespace Services.Implementations
             return contactDataResult;
         }
 
-        public async Task<ContactDataResponseDto?> FetchContactDataAsync(string nationalNumber, ContactDataCreateDto contactDataCreateDto)
-        {
-            //Load The Faculty Member with The National Number
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var specifications = new FacultyMemberWithNationalNumberSpecifications(nationalNumber);
-            var facultyMember = await facultyMemberRepo.GetAsync(specifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
-
-            //Load Contact Data If Already Exist
-            var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
-            var existingSpec = new ContactDataWithFacultyMemberEmailSpecifications(facultyMember.Email);
-            var existingContactData = await contactDataRepo.GetAsync(existingSpec);
-
-            if (existingContactData != null)
-                return _mapper.Map<ContactDataResponseDto>(existingContactData);
-
-            //Map The Dto to The ContactData Entity and add FacultyMemberId Manually
-            var contactData = _mapper.Map<ContactData>(contactDataCreateDto);
-            contactData.FacultyMemberId = facultyMember.Id;
-
-            //Add and Save The Data to Database
-            await contactDataRepo.AddAsync(contactData);
-            await _unitOfWork.SaveChangesAsync();
-
-            //Return Result
-            var contactDataResult = _mapper.Map<ContactDataResponseDto>(contactData);
-            return contactDataResult;
-        }
-
         public async Task<ContactDataResponseDto?> UpdateContactDataAsync(ContactDataUpdateDto contactDataUpdateDto)
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Update The Contact Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Contact Data 
-            var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
-            var specifications = new ContactDataWithFacultyMemberEmailSpecifications(facultyMemberEmail);
-            var contactData = await contactDataRepo.GetAsync(specifications) ?? throw new NotFoundException("Contact Data is Not Found.");
+            var contactData = await ContactDataRepo.GetAsync(new ContactDataWithFacultyMemberEmailSpecifications(currentUser.Email)) 
+                ?? throw new NotFoundException("Contact Data is Not Found.");
 
             //Map Updated Data to Contact Data Entity
             _mapper.Map(contactDataUpdateDto, contactData);
 
             //Update The Data to Database
-            contactDataRepo.Update(contactData);
+            ContactDataRepo.Update(contactData);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Updated Data
@@ -163,24 +138,17 @@ namespace Services.Implementations
         #region Identification Card
         public async Task<IdentificationCardDto> GetIdentificationCardAsync()
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Access The Identification Card Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Identification Card Data
-            var identificationCardRepo = _unitOfWork.GetRepository<IdentificationCard, int>();
-            var specifications = new IdentificationCardWithFacultyMemberEmailSpecifications(facultyMemberEmail);
-            var identificationCard = await identificationCardRepo.GetAsync(specifications);
+            var identificationCard = await IdentificationCardRepo.GetAsync(new IdentificationCardWithFacultyMemberEmailSpecifications(currentUser.Email));
 
             if (identificationCard is not null)
                 return _mapper.Map<IdentificationCardDto>(identificationCard);
 
             //Load Faculty Member to Attach New Card
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var facultyMemberSpecifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(facultyMemberSpecifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            var facultyMember = await GetFacultyMemberByEmailAsync(currentUser.Email) ?? throw new NotFoundException("Faculty Member is Not Found.");
 
             //Create New Empty Identification Card
             var newCard = new IdentificationCard
@@ -194,7 +162,7 @@ namespace Services.Implementations
             };
 
             //Save Identification Card
-            await identificationCardRepo.AddAsync(newCard);
+            await IdentificationCardRepo.AddAsync(newCard);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Mapped Dto
@@ -203,22 +171,18 @@ namespace Services.Implementations
 
         public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(IdentificationCardDto identificationCardDto)
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Update The Identification Card Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Identification Card Data
-            var identificationCardRepo = _unitOfWork.GetRepository<IdentificationCard, int>();
-            var specifications = new IdentificationCardWithFacultyMemberEmailSpecifications(facultyMemberEmail);
-            var identificationCard = await identificationCardRepo.GetAsync(specifications) ?? throw new NotFoundException("Identification Card is Not Found.");
+            var identificationCard = await IdentificationCardRepo.GetAsync(new IdentificationCardWithFacultyMemberEmailSpecifications(currentUser.Email)) 
+                ?? throw new NotFoundException("Identification Card is Not Found.");
 
             //Map Updated Data to Entity
             _mapper.Map(identificationCardDto, identificationCard);
 
             //Update and Save Updated Data to Database
-            identificationCardRepo.Update(identificationCard);
+            IdentificationCardRepo.Update(identificationCard);
             await _unitOfWork.SaveChangesAsync();
 
             //Return The Updated Data
@@ -229,24 +193,17 @@ namespace Services.Implementations
         #region Social Media
         public async Task<SocialMediaPlatformsDto> GetSocialMediaPlatformsAsync()
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Access The Social Media Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Social Media Platforms Data
-            var socialMediaPlatformsRepo = _unitOfWork.GetRepository<SocialMediaPlatforms, int>();
-            var specifications = new SocialMediaWithFacultyMemberEmailSpecifications(facultyMemberEmail);
-            var socialMediaPlatforms = await socialMediaPlatformsRepo.GetAsync(specifications);
+            var socialMediaPlatforms = await SocialMediaRepo.GetAsync(new SocialMediaWithFacultyMemberEmailSpecifications(currentUser.Email));
 
             if (socialMediaPlatforms is not null)
                 return _mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
 
             //Load Faculty Member to Attach New Social Media Platforms Data
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var facultyMemberSpecifications = new FacultyMemberWithEmailSpecifications(facultyMemberEmail);
-            var facultyMember = await facultyMemberRepo.GetAsync(facultyMemberSpecifications) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            var facultyMember = await GetFacultyMemberByEmailAsync(currentUser.Email) ?? throw new NotFoundException("Faculty Member is Not Found.");
 
             //Create New Empty Social Media Platforms
             var newSocialMediaPlatforms = new SocialMediaPlatforms
@@ -263,7 +220,7 @@ namespace Services.Implementations
             };
 
             //Save Social Media Platforms Data
-            await socialMediaPlatformsRepo.AddAsync(newSocialMediaPlatforms);
+            await SocialMediaRepo.AddAsync(newSocialMediaPlatforms);
             await _unitOfWork.SaveChangesAsync();
 
             //Return Mapped Dto
@@ -272,22 +229,18 @@ namespace Services.Implementations
 
         public async Task<SocialMediaPlatformsDto> UpdateSocialMediaPlatformsAsync(SocialMediaPlatformsDto socialMediaPlatformsDto)
         {
-            //Get Logged User Email
-            var currentUser = await _authenticationService
-                           .GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail()) ??
-                           throw new UnauthorizedAccessException("You Cannot Update The Social Media Data.");
-            var facultyMemberEmail = currentUser.Email;
+            //Get Logged User 
+            var currentUser = await GetCurrentUserAsync();
 
             //Load Social Media Platforms Data
-            var socialMediaPlatformsRepo = _unitOfWork.GetRepository<SocialMediaPlatforms, int>();
-            var specifications = new SocialMediaWithFacultyMemberEmailSpecifications(facultyMemberEmail);
-            var socialMediaPlatforms = await socialMediaPlatformsRepo.GetAsync(specifications) ?? throw new NotFoundException("Social Media Platforms Are Not Found.");
+            var socialMediaPlatforms = await SocialMediaRepo.GetAsync(new SocialMediaWithFacultyMemberEmailSpecifications(currentUser.Email)) 
+                ?? throw new NotFoundException("Social Media Platforms Are Not Found.");
 
             //Map Updated Data to Entity
             _mapper.Map(socialMediaPlatformsDto, socialMediaPlatforms);
 
             //Update and Save Updated Data to Database
-            socialMediaPlatformsRepo.Update(socialMediaPlatforms);
+            SocialMediaRepo.Update(socialMediaPlatforms);
             await _unitOfWork.SaveChangesAsync();
 
             //Return The Updated Data

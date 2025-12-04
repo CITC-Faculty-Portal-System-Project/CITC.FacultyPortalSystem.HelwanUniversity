@@ -6,10 +6,10 @@ namespace Services.Specifications.ProjectsAndCommitteesModule
 {
     internal class ParticipationInMagazinesSpecifications : BaseSpecifications<ParticipationInMagazines, int>
     {
-        public ParticipationInMagazinesSpecifications(ParticipationInMagazinesSpecificationsParameters parameters)
+        public ParticipationInMagazinesSpecifications(ParticipationInMagazinesSpecificationsParameters parameters, string facultyMemberId)
             : base(pim =>
                   (!pim.IsDeleted &&
-                    pim.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    pim.FacultyMember!.Email == facultyMemberId) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    pim.NameOfMagazine.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    pim.TypeOfParticipation.ValueAr.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||

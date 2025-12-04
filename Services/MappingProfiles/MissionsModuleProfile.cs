@@ -10,8 +10,12 @@ namespace Services.MappingProfiles
             #region Scientific Missions
             CreateMap<ScientificMissions, ScientificMissionResponseDto>();
 
-            CreateMap<ScientificMissionCreateDto, ScientificMissions>();
+            CreateMap<ScientificMissionCreateDto, ScientificMissions>()
+         .ForMember(dest => dest.MissionName, opt => opt.MapFrom(src => src.name))
+         .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Description));
             CreateMap<ScientificMissionUpdateDto, ScientificMissions>();
+
+            CreateMap<ScientificMissionUpdateDto, ScientificMissionResponseDto>();
             #endregion
 
             #region Seminars And Conferences

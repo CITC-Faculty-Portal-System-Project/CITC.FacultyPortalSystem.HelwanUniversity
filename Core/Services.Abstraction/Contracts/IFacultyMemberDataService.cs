@@ -6,13 +6,11 @@ namespace Services.Abstraction.Contracts
     {
         #region Personal Data
         public Task<PersonalDataResponseDto?> GetPersonalDataAsync();
-        public Task<PersonalDataResponseDto?> FetchPersonalDataAsync(PersonalDataCreateDto personalDataCreateDto);
         public Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(PersonalDataUpdateDto personalDataUpdateDto);
         #endregion
 
         #region Contact Data
         public Task<ContactDataResponseDto?> GetContactDataAsync();
-        public Task<ContactDataResponseDto?> FetchContactDataAsync(string nationalNumber, ContactDataCreateDto contactDataCreateDto);
         public Task<ContactDataResponseDto?> UpdateContactDataAsync(ContactDataUpdateDto contactDataUpdateDto);
         #endregion
 

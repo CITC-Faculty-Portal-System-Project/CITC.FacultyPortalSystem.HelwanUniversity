@@ -6,10 +6,10 @@ namespace Services.Specifications.ScientificProgressionModule
 {
     internal class AdministrativePositionsSpecifications : BaseSpecifications<AdministrativePositions, int>
     {
-        public AdministrativePositionsSpecifications(AdministrativePositionsSpecificationParameters parameters) 
+        public AdministrativePositionsSpecifications(AdministrativePositionsSpecificationParameters parameters, string facultyMemberEmail) 
             : base(ap =>
                   (!ap.IsDeleted &&
-                    ap.FacultyMember!.Email == parameters.FacultyMemberEmail) &&
+                    ap.FacultyMember!.Email == facultyMemberEmail) &&
                   (string.IsNullOrEmpty(parameters.Search) ||
                    ap.Position.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))
             )

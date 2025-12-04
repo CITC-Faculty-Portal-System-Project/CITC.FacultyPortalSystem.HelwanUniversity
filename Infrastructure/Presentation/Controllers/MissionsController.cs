@@ -11,13 +11,11 @@ namespace Presentation.Controllers
     {
         #region Scientific Missions
         [ProducesResponseType(typeof(PaginatedResult<ScientificMissionResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ScientificMissions")]
         public async Task<ActionResult<PaginatedResult<ScientificMissionResponseDto>>> GetAllScientificMissionsAsync([FromQuery] ScientificMissionSpecificationParamaters paramaters)
              => Ok(await _serviceManager.MissionsService.GetAllScientificMissionsAsync(paramaters));
 
         [ProducesResponseType(typeof(ScientificMissionResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ScientificMission/{id:int}")]
         public async Task<ActionResult<ScientificMissionResponseDto>> GetScientificMissionByIdAsync(int id)
             => Ok(await _serviceManager.MissionsService.GetScientificMissionByIdAsync(id));
@@ -43,13 +41,11 @@ namespace Presentation.Controllers
 
         #region Seminars And Conferences
         [ProducesResponseType(typeof(PaginatedResult<ConferencesAndSeminarsResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ConferncesAndSeminars")]
-        public async Task<ActionResult<PaginatedResult<ConferencesAndSeminarsResponseDto>>> GetAllSeminarsAndConferencesAsync(SeminarsAndConferncesSpecificationParameters parameters)
+        public async Task<ActionResult<PaginatedResult<ConferencesAndSeminarsResponseDto>>> GetAllSeminarsAndConferencesAsync([FromQuery] SeminarsAndConferncesSpecificationParameters parameters)
            => Ok(await _serviceManager.MissionsService.GetAllSeminarsAndConferencesAsync(parameters));
 
         [ProducesResponseType(typeof(ConferencesAndSeminarsResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("ConfernceOrSeminar/{id:int}")]
         public async Task<ActionResult<ConferencesAndSeminarsResponseDto>> GetSeminarOrConferenceByIdAsync(int id)
            => Ok(await _serviceManager.MissionsService.GetSeminarOrConferenceByIdAsync(id));
@@ -75,13 +71,11 @@ namespace Presentation.Controllers
 
         #region Training Programs
         [ProducesResponseType(typeof(PaginatedResult<TrainingProgramsResponseDto>), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("TrainingPrograms")]
         public async Task<ActionResult<PaginatedResult<TrainingProgramsResponseDto>>> GetAllTrainingProgramsAsync(TrainingProgramsSpecificationParameters parameters)
            => Ok(await _serviceManager.MissionsService.GetAllTrainingProgramsAsync(parameters));
 
         [ProducesResponseType(typeof(TrainingProgramsResponseDto), StatusCodes.Status200OK)]
-        [RedisCache]
         [HttpGet("TrainingProgram/{id:int}")]
         public async Task<ActionResult<TrainingProgramsResponseDto>> GetTrainingProgramByIdAsync(int id)
            => Ok(await _serviceManager.MissionsService.GetTrainingProgramByIdAsync(id));
