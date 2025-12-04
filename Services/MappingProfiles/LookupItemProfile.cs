@@ -8,8 +8,8 @@ namespace Services.MappingProfiles
         {
             CreateMap<Lookup, LookupItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ValueAr, opt => opt.MapFrom(src => src.ValueAr))
-                .ForMember(dest => dest.ValueEn, opt => opt.MapFrom(src => src.ValueEn));
+                .ForMember(dest => Regex.Unescape(dest.ValueAr), opt => opt.MapFrom(src => Regex.Unescape(src.ValueAr)))
+                .ForMember(dest => Regex.Unescape(dest.ValueEn), opt => opt.MapFrom(src => Regex.Unescape(src.ValueEn)));
          
         }
     }
