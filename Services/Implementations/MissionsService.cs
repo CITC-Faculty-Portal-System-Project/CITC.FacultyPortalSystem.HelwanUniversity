@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.MissionsModule;
+using Domain.Entities.ScientificProgressionModule;
 using Services.Specifications.MissionsModule;
 using Shared.Dtos.MissionsModule;
 using Shared.SpceificationParameters.MissionsModule;
@@ -90,14 +91,15 @@ namespace Services.Implementations
 
         public async Task DeleteScientificMissionAsync(int id)
         {
-            var email = _authenticationService.GetLoggedUserEmail();
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
             var scientificMissionsRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
             var specification = new ScientificMissionsSpecifications(id);
             var scientificMission = await scientificMissionsRepo.GetAsync(specification) ?? throw new NotFoundException("Cannot Find this Mission.");
 
-            if (scientificMission?.FacultyMember?.Email != email)
-                throw new UnauthorizedAccessException("You Don't Have Acess to Delete this Mission");
+            
+            if (scientificMission.FacultyMemberId != currentUser.UserId)
+                    throw new UnauthorizedAccessException("You Don't Have Acess to Delete this Mission");
 
             scientificMission.IsDeleted = true;
 

@@ -66,7 +66,7 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteJobRank/{id:int}")]
-        public async Task<ActionResult> DeleteJobRankAsync(int id, [FromQuery] string facultyMemberEmail)
+        public async Task<ActionResult> DeleteJobRankAsync(int id)
         {
             await _serviceManager.ScientificProgressionService.DeleteJobRankAsync(id);
             return NoContent();
