@@ -19,9 +19,8 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                    .OnDelete(DeleteBehavior.Cascade);
 
             
-            builder.HasOne(ss => ss.Theses)
-                   .WithMany()
-                   .HasForeignKey(ss => ss.ThesesId);
+            builder.HasIndex(ss => new {ss.SupervisorId , ss.ThesesId});
+
         }
     }
 }

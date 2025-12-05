@@ -17,10 +17,8 @@
         public Guid FacultyMemberId { get; set; }
         public FacultyMember? FacultyMember { get; set; }
         public ICollection<ResearcherResearch>? ExternalResearches { get; set; }
-        public ICollection<ResearchIndex>? ResearchIndices { get; set; }
         public ICollection<ResearchCite>? ResearchCites { get; set; }
         public ICollection<ResearcherInterest>? ResearcherInterests { get; set; }
-        public ICollection<ResearchContribution>? ResearchContributions { get; set; }
 
     }
 }

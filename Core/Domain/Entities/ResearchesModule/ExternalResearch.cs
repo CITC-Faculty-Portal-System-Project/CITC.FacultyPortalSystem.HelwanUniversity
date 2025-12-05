@@ -12,5 +12,7 @@
         public int NoOfCititations { get; set; }
         public bool IsConfirmed { get; set; }
         public ICollection<ResearcherResearch>? Researchers { get; set; }
+        public ICollection<ResearchIndex>? Indcies { get; set; }
+        public ICollection<ResearchContribution>? Contributions { get; set; }
     }
 }

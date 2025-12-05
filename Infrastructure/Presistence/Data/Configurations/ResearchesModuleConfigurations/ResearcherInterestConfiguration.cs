@@ -6,18 +6,29 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
     {
         public void Configure(EntityTypeBuilder<ResearcherInterest> builder)
         {
-            builder.HasOne<Researcher>()
-                   .WithMany()
+
+            #region ConfiguringProperties
+
+            builder.Property(e => e.Name)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+            #endregion
+
+            #region ConfiguringRelations
+
+            builder.HasOne(r => r.Researcher)
+                   .WithMany(r => r.ResearcherInterests)
                    .HasForeignKey(ri => ri.ResearcherId)
                    .OnDelete(DeleteBehavior.Cascade);
 
+            #endregion
 
-            builder.HasOne<ExternalResearch>()
-                   .WithMany()
-                   .HasForeignKey(ri => ri.ExternalResearchId);
+            #region AddingIndcies
 
+            builder.HasIndex(ri => ri.Name);
 
-
+            #endregion
         }
     }
 }
