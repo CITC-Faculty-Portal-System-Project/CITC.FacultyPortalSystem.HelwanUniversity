@@ -1,5 +1,7 @@
-﻿using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.HigherStuidesModule;
+using Domain.Entities.MissionsModule;
 using Domain.Entities.ProjectsAndCommitteesModule;
+using Domain.Entities.ResearchesModule;
 using Domain.Entities.ScientificProgressionModule;
 using System.ComponentModel.DataAnnotations;
 
@@ -39,6 +41,21 @@ namespace Domain.Entities.FacultyMemberDataModule
         public ICollection<ReviewingArticles> ReviewingArticles { get; set; } = new HashSet<ReviewingArticles>();
         public ICollection<ParticipationInMagazines> ParticipationInMagazines { get; set; } = new HashSet<ParticipationInMagazines>();
         public ICollection<Projects> Projects { get; set; } = new HashSet<Projects>();
+        #endregion
+
+        #region ResarchesModule
+
+        [NotMapped]
+        public Researcher? Researcher { get; set; }
+        public ICollection<InternalSystemResearch>? InternalSystemResearches { get; set; }
+
+        #endregion
+
+        #region HigherStudiesModule
+
+        public ICollection<Supervising>? Supervisings { get; set; }
+        public ICollection<Thesis>? Theses { get; set; }
+
         #endregion
 
         #endregion

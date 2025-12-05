@@ -11,11 +11,14 @@
         //Add
         Task AddAsync(TEntity entity);
 
+        Task AddRangeAsync(IEnumerable<TEntity> entity);
+
         //Update
         void Update(TEntity entity);
 
         //Remove
         void Delete(TEntity entity);
+
 
         #region Specifications
         Task<IEnumerable<TEntity>> GetAllAsync(ISpecifications<TEntity, TKey> specifications);

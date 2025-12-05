@@ -1,6 +1,8 @@
 ﻿using Domain.Entities.ScientificProgressionModule;
+using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Enums.ScientificProgressionModule;
 using Shared.SpecificationParameters.ScientificProgressionModule;
+using System.Security.Cryptography;
 
 namespace Services.Specifications.ScientificProgressionModule
 {
@@ -39,6 +41,20 @@ namespace Services.Specifications.ScientificProgressionModule
             AddIncludes(aq => aq.Qualification);
             AddIncludes(aq => aq.Grade);
             AddIncludes(aq => aq.DispatchType);
+        }
+
+
+        public AcademicQualificationsSpecifications(AcademicQualificationFetchingDTO dTO) 
+            : base(aq => aq.Qualification.ValueAr == dTO.Qualification && 
+                  aq.Specialization == dTO.Specialization && aq.CountryOrCity == dTO.CountryCity
+            && aq.UniversityOrFaculty == dTO.UniversityFaculty && aq.DispatchType.ValueAr == dTO.Dispatch
+            && aq.Grade.ValueAr == dTO.Grade && aq.FacultyMember.NationalNumber == dTO.NationalNumber)
+        {
+            AddIncludes(aq => aq.Qualification);
+            AddIncludes(aq => aq.Grade);
+            AddIncludes(aq => aq.DispatchType);
+            AddIncludes(aq => aq.FacultyMember);
+
         }
     }
 }
