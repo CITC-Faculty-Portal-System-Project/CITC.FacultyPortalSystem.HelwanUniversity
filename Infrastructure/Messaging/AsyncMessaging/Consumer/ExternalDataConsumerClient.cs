@@ -1,19 +1,14 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualBasic;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Services.Abstraction.Contracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Messaging.AsyncMessaging.Consumer
 {
-    public class ExternalDataConsumerClient : BackgroundService
+	public class ExternalDataConsumerClient : BackgroundService
     {
 
         private IConnection _connection;
