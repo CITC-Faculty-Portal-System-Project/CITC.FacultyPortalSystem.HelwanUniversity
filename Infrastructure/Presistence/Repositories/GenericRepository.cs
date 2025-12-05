@@ -15,6 +15,10 @@
         public async Task AddAsync(TEntity entity)
          => await _dbContext.AddAsync(entity);
 
+        public async Task AddRangeAsync(IEnumerable<TEntity> entity)
+            => await _dbContext.AddRangeAsync(entity);
+
+
         public void Update(TEntity entity)
             => _dbContext.Set<TEntity>().Update(entity);
 

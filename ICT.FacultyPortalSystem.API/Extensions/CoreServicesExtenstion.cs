@@ -50,6 +50,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IProjectsAndCommitteesService>()
             );
 
+            services.AddScoped<IExternalDataHandlingService, ExternalDataHandlingService>();
+
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
             return services;

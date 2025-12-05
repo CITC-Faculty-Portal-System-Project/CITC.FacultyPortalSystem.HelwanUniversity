@@ -7,7 +7,8 @@
         , Func<ILookUpItemService> _lookUpItemSerivce
         , Func<IMissionsService> _missionService
         , Func<IScientificProgressionService> _scientificProgressionFactory
-        , Func<IProjectsAndCommitteesService> _ProjectsAndCommitteesFactory) : IServiceManager
+        , Func<IProjectsAndCommitteesService> _ProjectsAndCommitteesFactory
+        /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
 
@@ -22,5 +23,7 @@
         public IScientificProgressionService ScientificProgressionService => _scientificProgressionFactory.Invoke();
 
         public IProjectsAndCommitteesService ProjectsAndCommitteesService => _ProjectsAndCommitteesFactory.Invoke();
+
+        //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
     }
 }
