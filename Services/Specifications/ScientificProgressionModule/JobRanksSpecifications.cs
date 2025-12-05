@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.ScientificProgressionModule;
+using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Enums.ScientificProgressionModule;
 using Shared.SpecificationParameters.ScientificProgressionModule;
 namespace Services.Specifications.ScientificProgressionModule
@@ -34,5 +35,17 @@ namespace Services.Specifications.ScientificProgressionModule
         {
             AddIncludes(jr => jr.JobRank);
         }
+
+        public JobRanksSpecifications(JobRanksFetchingDTO dTO)
+            : base(jr => jr.DateOfJobRank.ToString() == dTO.PromotionDate && 
+                  jr.JobRank.ValueAr == dTO.Name || jr.JobRank.ValueEn == dTO.Name && 
+                  jr.FacultyMember.NationalNumber == dTO.NationalNumber)
+        {
+
+            AddIncludes(jr => jr.JobRank);
+            AddIncludes(jr => jr.FacultyMember);
+        }
+
+
     }
 }

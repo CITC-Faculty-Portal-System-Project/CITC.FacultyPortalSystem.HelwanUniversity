@@ -1,5 +1,7 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
+using Domain.Entities.HigherStuidesModule;
 using Domain.Entities.ProjectsAndCommitteesModule;
+using Domain.Entities.ResearchesModule;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
@@ -103,6 +105,30 @@ namespace Presistence.Data
         public DbSet<ReviewingArticles> ReviewingArticles { get; set; }
         public DbSet<ParticipationInMagazines> ParticipationInMagazines { get; set; }
         public DbSet<Projects> Projects { get; set; }
+        #endregion
+
+        #region ResearchModule DbSets
+
+        public DbSet<Researcher> Researchers { get; set; }
+        public DbSet<ResearchContribution> ResearchContributions { get; set; }
+        public DbSet<ResearcherInterest> ResearchersInterests { get; set; }
+        public DbSet<ResearcherResearch> ResearchersResearches { get; set; }
+        public DbSet<ResearchIndex> ResearchesIndices { get; set; }
+        public DbSet<ExternalResearch> ExternalResearches { get; set; }
+        public DbSet<InternalSystemResearch> InternalSystemResearches { get; set; }
+        public DbSet<InternalSystemResearchContributor> InternalSystemResearchesContributors { get; set; }
+        public DbSet<InternalSystemResearchContributorsResearches> InternalSystemResearchesContributorsResearches { get; set; }
+        public DbSet<ResearchCite> ResearchesCites { get; set; }
+
+        #endregion
+
+        #region HigherStudiesModule DbSets
+
+        public DbSet<Supervising> Supervisings { get; set; }
+        public DbSet<Supervisor> Supervisors { get; set; }
+        public DbSet<SupervisorThesesSupervising> SupervisorThesesSupervisings { get; set; }
+        public DbSet<Thesis> Theses { get; set; }
+
         #endregion
 
         public DbSet<Lookup> Lookups { get; set; }
