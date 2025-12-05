@@ -1,6 +1,7 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.IdentityModule;
 using Messaging.AsyncMessaging.Publisher;
+using Messaging.AsyncMessaging.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             });
 
             services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
+			services.Configure<RabbitMQPublishSettings>(
+                configuration.GetSection("RabbitMQ"));
 
             services.AddSingleton(new JsonSerializerOptions
             {
