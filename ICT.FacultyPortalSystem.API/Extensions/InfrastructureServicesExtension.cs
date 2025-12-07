@@ -38,8 +38,12 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             });
 
             services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
+
 			services.Configure<RabbitMQPublishSettings>(
-                configuration.GetSection("RabbitMQ"));
+                configuration.GetSection("RabbitMQPublisher"));
+
+            services.Configure<RabbitMQConsumerSettings>(
+                configuration.GetSection("RabbitMQConsumer"));
 
 
             services.AddHostedService<ExternalDataConsumerClient>();
