@@ -18,7 +18,7 @@ namespace Messaging.AsyncMessaging.Consumer.Helpers
 				new QueueArgs(RabbitMQConstants.ManagerialPositionQueue,RabbitMQConstants.ManagerialPositionRoutingKey),
 				new QueueArgs(RabbitMQConstants.ContactDataQueue,RabbitMQConstants.ContactDataRoutingKey),
 				new QueueArgs(RabbitMQConstants.PersonalDataQueue,RabbitMQConstants.PersonalDataRoutingKey),
-				new QueueArgs(RabbitMQConstants.SpecializationQueue,RabbitMQConstants.SpecializationRoutingKey),
+				//new QueueArgs(RabbitMQConstants.SpecializationQueue,RabbitMQConstants.SpecializationRoutingKey),
 				new QueueArgs(RabbitMQConstants.ScientificDutyQueue,RabbitMQConstants.ScientificDutyRoutingKey),
 				new QueueArgs(RabbitMQConstants.TrainingProgramQueue,RabbitMQConstants.TrainingProgramRoutingKey),
 				new QueueArgs(RabbitMQConstants.ThesisSupervisionQueue,RabbitMQConstants.ThesisSupervisionRoutingKey),

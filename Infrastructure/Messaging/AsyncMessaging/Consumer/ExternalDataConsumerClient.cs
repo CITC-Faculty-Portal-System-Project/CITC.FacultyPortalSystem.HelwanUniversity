@@ -270,9 +270,9 @@ namespace Messaging.AsyncMessaging.Consumer
 				case RabbitMQConstants.PersonalDataRoutingKey:
 					//await service.PersonalDataHandle(message);
 					break;
-				case RabbitMQConstants.SpecializationRoutingKey:
+				/*case RabbitMQConstants.SpecializationRoutingKey:
 					//await service.SpecializationDataHandle(message);
-					break;
+					break;*/
 				case RabbitMQConstants.ScientificDutyRoutingKey:
 					//await service.ScientificDutyDataHandle(message);
 					break;
