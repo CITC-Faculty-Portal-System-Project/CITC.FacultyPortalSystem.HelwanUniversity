@@ -42,10 +42,16 @@ namespace Services.Specifications.ScientificProgressionModule
 
         }
 
-        public AdministrativePositionsSpecifications(AdminstrativePostionsFetchingDTO dTO) 
-            : base(ap => !ap.IsDeleted 
-            && ap.FacultyMember.NationalNumber == dTO.NationalNumber && ap.EndDate == DateOnly.Parse(dTO.EndDate)
-            && ap.StartDate == DateOnly.Parse(dTO.StartDate) && ap.Position == dTO.Name)
+        public AdministrativePositionsSpecifications(AdminstrativePostionsFetchingDTO dTO)
+      : base(ap =>
+          !ap.IsDeleted
+          && ap.FacultyMember.NationalNumber == dTO.NationalNumber
+          && (string.IsNullOrEmpty(dTO.EndDate)
+              ? ap.EndDate == null 
+              : ap.EndDate == DateOnly.Parse(dTO.EndDate))
+          && ap.StartDate == DateOnly.Parse(dTO.StartDate)
+          && (string.IsNullOrEmpty(dTO.Name) || ap.Position == dTO.Name)
+      )
         {
             AddIncludes(ap => ap.FacultyMember);
         }

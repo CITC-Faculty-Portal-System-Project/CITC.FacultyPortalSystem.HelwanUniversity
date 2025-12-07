@@ -262,10 +262,10 @@ namespace Messaging.AsyncMessaging.Consumer
 					await service.EmploymentDataHandle(message);
 					break;
 				case RabbitMQConstants.ManagerialPositionRoutingKey:
-					//await service.ManagerialDataHandle(message);
+				    await service.ManagerialDataHandle(message);
 					break;
 				case RabbitMQConstants.ContactDataRoutingKey:
-					//await service.ContactDataHandle(message);
+				    await service.ContactDataHandle(message);
 					break;
 				case RabbitMQConstants.PersonalDataRoutingKey:
 					//await service.PersonalDataHandle(message);

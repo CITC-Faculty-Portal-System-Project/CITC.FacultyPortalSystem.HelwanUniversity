@@ -2,6 +2,7 @@
 using Services.Specifications.LookUpItems;
 using Services.Specifications.ScientificProgressionModule;
 using Shared.Dtos.DataFetchingFromExternalService;
+using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Dtos.ScientificProgressionModule;
 using System;
 using System.Collections.Generic;
@@ -83,12 +84,60 @@ namespace Services.Implementations
 
          }
 
-		public Task<bool> ContactDataHandle(string? json)
+		public async Task<bool> ContactDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
 
-		public async Task<bool> EmploymentDataHandle(string? json)
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<ContactDataFetchingDTO>>(json, options);
+            var dataAddRequest = new List<ContactDataCreateDTO>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+                foreach (var item in listResult)
+                {
+                    var contactDataSpecification = new ContactDataWithExternalServiceSpecification(item);
+                    var data = await contactDataRepo.GetAllAsync(contactDataSpecification);
+
+                    if (data.Any())
+                        continue;
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentContactData = new ContactDataCreateDTO
+                    {
+                        Address = item.Address,
+                        AlternativeEmail = item.PersonalEmail,
+                        FaxNumber = item.FaxNumber,
+                        HomePhoneNumber = item.HomePhoneNumber,
+                        MainPhoneNumber = item.MainPhoneNumber,
+                        OfficialEmail = item.OfficialEmail,
+                        PersonalEmail = item.PersonalEmail,
+                        WorkPhoneNumber = item.WorkPhoneNumber,
+                        FacultyMemberId = member.Id
+                    };
+
+                    dataAddRequest.Add(currentContactData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<ContactData>>(dataAddRequest);
+                await contactDataRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> EmploymentDataHandle(string? json)
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("JSON is null or empty.", nameof(json));
@@ -163,6 +212,7 @@ namespace Services.Implementations
                 {
                     var adminstrativePositionSpecification = new AdministrativePositionsSpecifications(item);
                     var data = await adminstrativePositionRepo.GetAllAsync(adminstrativePositionSpecification);
+                    
                     if (data.Any())
                         continue;
 
@@ -172,8 +222,10 @@ namespace Services.Implementations
                     var currentAdminstrtivePosition = new AdministrativePositionCreateDto
                     {
                        StartDate = DateOnly.Parse(item.StartDate),
-                       EndDate = DateOnly.Parse(item.EndDate),
-                       FacultyMemberId = member.Id,
+                       EndDate = (string.IsNullOrEmpty(item.EndDate)
+                                      ?  null
+                                      : DateOnly.Parse(item.EndDate)),
+                        FacultyMemberId = member.Id,
                        Notes = item.Description,
                        Position = item.Name,
                     };
@@ -192,10 +244,11 @@ namespace Services.Implementations
 
 		public Task<bool> PersonalDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            throw new NotImplementedException();
 
-		public Task<bool> ScientificDutyDataHandle(string? json)
+        }
+
+        public Task<bool> ScientificDutyDataHandle(string? json)
 		{
 			throw new NotImplementedException();
 		}

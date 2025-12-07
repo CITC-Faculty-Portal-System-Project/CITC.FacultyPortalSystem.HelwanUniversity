@@ -19,6 +19,7 @@ namespace Services.MappingProfiles
             CreateMap<PersonalDataUpdateDto, PersonalData>();
 
             CreateMap<ContactData, ContactDataResponseDto>();
+            CreateMap<ContactDataCreateDTO, ContactData>();
             CreateMap<ContactDataUpdateDto, ContactData>();
 
             CreateMap<IdentificationCardDto, IdentificationCard>().ReverseMap();

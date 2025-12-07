@@ -11,6 +11,7 @@ namespace Messaging.AsyncMessaging.Consumer.Helpers
 	{
 		public const string ExchangeName = "data_exchange";
 
+
 		//Academic Qualification Queue :
 		public const string AcademicQualificationQueue = "AcademicQualification-queue";
 		public const string AcademicQualificationRoutingKey = "academicQualificationsRK";
