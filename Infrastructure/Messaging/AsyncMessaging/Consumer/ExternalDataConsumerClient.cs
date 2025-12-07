@@ -1,14 +1,18 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Messaging.AsyncMessaging.Consumer.Helpers;
+using Messaging.AsyncMessaging.Settings;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Services.Abstraction.Contracts;
 using System.Text;
+using System.Threading.Channels;
 
 namespace Messaging.AsyncMessaging.Consumer
 {
-	public class ExternalDataConsumerClient : BackgroundService
+    /*public class ExternalDataConsumerClient : BackgroundService
     {
 
         private IConnection _connection;
@@ -118,5 +122,174 @@ namespace Messaging.AsyncMessaging.Consumer
             _connection?.Close();
             base.Dispose();
         }
-    }
+    }*/
+
+    public class ExternalDataConsumerClient : BackgroundService
+    {
+        private readonly IServiceScopeFactory _scopeFactory;
+        private readonly RabbitMQConsumerSettings _settings;
+        private IConnection? _connection;
+        private List<IModel> _channels = new();
+
+
+        public ExternalDataConsumerClient(IOptions<RabbitMQConsumerSettings> options, IServiceScopeFactory scopeFactory)
+        {
+            _scopeFactory = scopeFactory;
+            _settings = options.Value;
+        }
+
+        public override Task StartAsync(CancellationToken cancellationToken)
+        {
+            try
+            {
+                InitializeRabbitMQ();
+                return base.StartAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"==> Error during RabbitMQ Initialization: {ex.Message}");
+				throw;
+			}
+        }
+
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            try
+            {
+                StartConsumers(stoppingToken);
+                return Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"==> Error during starting consumers: {ex.Message}");
+                throw;
+            }
+        }
+
+		public override void Dispose()
+		{
+			try
+			{
+				foreach (var channel in _channels)
+				{
+					if (channel.IsOpen) channel.Close();
+					channel.Dispose();
+				}
+
+				_connection?.Close();
+				_connection?.Dispose();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"==> Error during disposal: {ex.Message}");
+			}
+
+			base.Dispose();
+		}
+
+
+		#region Helpers
+		private void InitializeRabbitMQ()
+        {
+            var factory = new ConnectionFactory
+            {
+                HostName = _settings.Host,
+                Port = _settings.Port,
+                UserName = _settings.Username,
+                Password = _settings.Password
+            };
+
+            _connection = factory.CreateConnection();
+
+			using var setupChannel = _connection.CreateModel();
+			setupChannel.ExchangeDeclare(RabbitMQConstants.ExchangeName, ExchangeType.Direct, durable: true);
+
+			var queues = QueueInitializer.InitializeQueues();
+
+			foreach (var queue in queues)
+			{
+				setupChannel.QueueDeclare(queue.QueueName, durable: true, exclusive: false, autoDelete: false);
+				setupChannel.QueueBind(queue.QueueName, RabbitMQConstants.ExchangeName, queue.RoutingKey);
+			}
+		}
+
+        private void StartConsumers(CancellationToken cancellationToken)
+        {
+            var queues = QueueInitializer.InitializeQueues();
+
+            foreach(var queue in queues)
+            {
+				var channel = _connection!.CreateModel();
+				_channels.Add(channel);
+				StartConsumer(channel, queue.QueueName,queue.RoutingKey);
+			}
+		}
+
+        private void StartConsumer(IModel channel, string queueName, string routingKey)
+        {
+            var consumer = new EventingBasicConsumer(channel);
+
+			consumer.Received += async (sender, ea) =>
+			{
+				var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+				try
+				{
+					await HandleMessageAsync(ea.RoutingKey, message);
+					channel.BasicAck(ea.DeliveryTag, multiple: false);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine($"==> Error processing message from '{queueName}': {ex.Message}");
+					channel.BasicNack(ea.DeliveryTag, multiple: false, requeue: true);
+				}
+			};
+
+			channel.BasicConsume(queue: queueName, autoAck: false, consumer);
+		}
+
+        //Can be later moved into a separate Class
+		private async Task HandleMessageAsync(string routingKey, string message)
+		{
+			using var scope = _scopeFactory.CreateScope();
+			var service = scope.ServiceProvider.GetRequiredService<IExternalDataHandlingService>();
+
+			switch (routingKey)
+			{
+				case RabbitMQConstants.AcademicQualificationRoutingKey:
+					await service.AcademicDataHandle(message);
+					break;
+				case RabbitMQConstants.EmploymentDegreeRoutingKey:
+					await service.EmploymentDataHandle(message);
+					break;
+				case RabbitMQConstants.ManagerialPositionRoutingKey:
+					//await service.ManagerialDataHandle(message);
+					break;
+				case RabbitMQConstants.ContactDataRoutingKey:
+					//await service.ContactDataHandle(message);
+					break;
+				case RabbitMQConstants.PersonalDataRoutingKey:
+					//await service.PersonalDataHandle(message);
+					break;
+				case RabbitMQConstants.SpecializationRoutingKey:
+					//await service.SpecializationDataHandle(message);
+					break;
+				case RabbitMQConstants.ScientificDutyRoutingKey:
+					//await service.ScientificDutyDataHandle(message);
+					break;
+				case RabbitMQConstants.TrainingProgramRoutingKey:
+					//await service.TrainingProgramDataHandle(message);
+					break;
+				case RabbitMQConstants.ThesisSupervisionRoutingKey:
+					//await service.ThesisSupervisingDataHandle(message);
+					break;
+				case RabbitMQConstants.ThesisDataRoutingKey:
+					//await service.ThesisDataHandle(message);
+					break;
+				default:
+					throw new InvalidOperationException($"Unknown routing key: {routingKey}");
+			}
+		}
+		#endregion
+
+	}
 }

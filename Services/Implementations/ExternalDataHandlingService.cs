@@ -83,7 +83,12 @@ namespace Services.Implementations
 
          }
 
-        public async Task<bool> EmploymentDataHandle(string? json)
+		public Task<bool> ContactDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+
+		public async Task<bool> EmploymentDataHandle(string? json)
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("JSON is null or empty.", nameof(json));
@@ -184,5 +189,35 @@ namespace Services.Implementations
             return false;
 
         }
-    }
+
+		public Task<bool> PersonalDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> ScientificDutyDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> SpecializationDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> ThesisDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> ThesisSupervisingDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+
+		public Task<bool> TrainingProgramDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }
