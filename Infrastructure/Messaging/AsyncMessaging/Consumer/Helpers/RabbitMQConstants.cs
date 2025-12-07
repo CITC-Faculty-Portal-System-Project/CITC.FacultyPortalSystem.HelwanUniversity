@@ -32,9 +32,9 @@ namespace Messaging.AsyncMessaging.Consumer.Helpers
 		public const string PersonalDataQueue = "PersonalData-queue";
 		public const string PersonalDataRoutingKey = "personalDataRK";
 
-		//Specialization Queue :
+		/*//Specialization Queue :
 		public const string SpecializationQueue = "SpecializationData-queue";
-		public const string SpecializationRoutingKey = "specializationDataRK";
+		public const string SpecializationRoutingKey = "specializationDataRK";*/
 
 		//Scientific Duty Queue :
 		public const string ScientificDutyQueue = "ScientificDutyData-queue";

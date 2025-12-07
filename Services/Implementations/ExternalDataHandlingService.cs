@@ -253,10 +253,10 @@ namespace Services.Implementations
 			throw new NotImplementedException();
 		}
 
-		public Task<bool> SpecializationDataHandle(string? json)
+		/*public Task<bool> SpecializationDataHandle(string? json)
 		{
 			throw new NotImplementedException();
-		}
+		}*/
 
 		public Task<bool> ThesisDataHandle(string? json)
 		{

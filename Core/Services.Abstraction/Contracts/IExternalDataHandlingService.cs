@@ -14,7 +14,7 @@ namespace Services.Abstraction.Contracts
         public Task<bool> EmploymentDataHandle(string? json);
         public Task<bool> ContactDataHandle(string? json);
         public Task<bool> PersonalDataHandle(string? json);
-        public Task<bool> SpecializationDataHandle(string? json);
+        //public Task<bool> SpecializationDataHandle(string? json);
         public Task<bool> ScientificDutyDataHandle(string? json);
         public Task<bool> TrainingProgramDataHandle(string? json);
         public Task<bool> ThesisSupervisingDataHandle(string? json);
