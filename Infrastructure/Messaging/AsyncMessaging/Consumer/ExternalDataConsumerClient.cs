@@ -275,10 +275,10 @@ namespace Messaging.AsyncMessaging.Consumer
 					break;*/
 				
                 case RabbitMQConstants.ScientificDutyRoutingKey:
-					//await service.ScientificDutyDataHandle(message);
+					await service.ScientificDutyDataHandle(message);
 					break;
 				case RabbitMQConstants.TrainingProgramRoutingKey:
-					//await service.TrainingProgramDataHandle(message);
+					await service.TrainingProgramDataHandle(message);
 					break;
 				case RabbitMQConstants.ThesisSupervisionRoutingKey:
 					//await service.ThesisSupervisingDataHandle(message);

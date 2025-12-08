@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.MissionsModule;
+using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Enums.MissionsModule;
 using Shared.SpecificationParameters.MissionsModule;
 
@@ -41,6 +42,15 @@ namespace Services.Specifications.MissionsModule
         public TrainingProgramsSpecifications(int id) : base(tp => !tp.IsDeleted && tp.Id == id)
         {
 
+        }
+
+        public TrainingProgramsSpecifications(TrainingProgramsFetchingDTO trainingProgramsFetchingDTO) 
+            : base(tp => tp.StartDate == trainingProgramsFetchingDTO.StartDate && tp.EndDate == trainingProgramsFetchingDTO.EndDate
+            && tp.TrainingProgramName == trainingProgramsFetchingDTO.Name && tp.Description == trainingProgramsFetchingDTO.Description
+            && tp.OrganizingAuthority == trainingProgramsFetchingDTO.OrganizerName && tp.Venue == trainingProgramsFetchingDTO.ProgramPlace
+            && tp.FacultyMember.NationalNumber == trainingProgramsFetchingDTO.NationalNumber)
+        {
+            AddIncludes(tp => tp.FacultyMember);
         }
     }
 }

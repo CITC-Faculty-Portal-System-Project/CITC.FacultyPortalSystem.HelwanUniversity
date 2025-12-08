@@ -16,5 +16,6 @@
         public string? GeneralSpecialization { get; set; }
         public string? AccurateSpecialization { get; set; }
         public string NationalNumber { get; set; } = string.Empty;
+        public string University { get; set; } = string.Empty;
     }
 }

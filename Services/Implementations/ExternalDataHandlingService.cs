@@ -1,9 +1,14 @@
-﻿using Domain.Entities.ScientificProgressionModule;
+﻿using Domain.Entities.MissionsModule;
+using Domain.Entities.ScientificProgressionModule;
+using Shared.Enums;
 using Services.Specifications.LookUpItems;
+using Services.Specifications.MissionsModule;
 using Services.Specifications.ScientificProgressionModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.FacultyMemberDataModule;
+using Shared.Dtos.MissionsModule;
 using Shared.Dtos.ScientificProgressionModule;
+using Shared.Enums.MissionsModule;
 using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
@@ -287,7 +292,7 @@ namespace Services.Implementations
                     var fieldSpecification = new LookUpItemNameSpecification(item.FieldOfStudy);
                     var field = await lookUpRepo.GetAsync(fieldSpecification);
 
-                    var universitySpecification = new LookUpItemNameSpecification(item.FacultyName);
+                    var universitySpecification = new LookUpItemNameSpecification(item.University);
                     var university = await lookUpRepo.GetAsync(universitySpecification);
 
                     var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
@@ -325,17 +330,64 @@ namespace Services.Implementations
 
         }
 
-        public Task<bool> ScientificDutyDataHandle(string? json)
+        public async Task<bool> ScientificDutyDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
 
-		/*public Task<bool> SpecializationDataHandle(string? json)
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<SceintificMissionsFetchingDTO>>(json, options);
+            var dataAddRequest = new List<ScientificMissionCreateDto>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var missionRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+
+                foreach (var item in listResult)
+                {
+                    var missionSpecification = new ScientificMissionsSpecifications(item);
+                    var data = await missionRepo.GetAllAsync(missionSpecification);
+                    
+                    if (data.Any())
+                        continue;
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentData = new ScientificMissionCreateDto
+                    {
+                        StartDate = item.StartDate,
+                        CountryOrCity = item.CountryCity,
+                        Description = item.Description,
+                        EndDate = item.EndDate,
+                        FacultyMemberId = member.Id,
+                        name = item.Name,
+                        UniversityOrFaculty = item.UniversityFaculty
+                    };
+
+                    dataAddRequest.Add(currentData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<ScientificMissions>>(dataAddRequest);
+                await missionRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
+        /*public Task<bool> SpecializationDataHandle(string? json)
 		{
 			throw new NotImplementedException();
 		}*/
 
-		public Task<bool> ThesisDataHandle(string? json)
+        public Task<bool> ThesisDataHandle(string? json)
 		{
 			throw new NotImplementedException();
 		}
@@ -345,9 +397,65 @@ namespace Services.Implementations
 			throw new NotImplementedException();
 		}
 
-		public Task<bool> TrainingProgramDataHandle(string? json)
+		public async Task<bool> TrainingProgramDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<TrainingProgramsFetchingDTO>>(json, options);
+            var dataAddRequest = new List<TrainingProgramsCreateDto>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var trainingRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+
+                foreach (var item in listResult)
+                {
+                    var trainingSpecification = new TrainingProgramsSpecifications(item);
+                    var data = await trainingRepo.GetAllAsync(trainingSpecification);
+
+                    if (data.Any())
+                        continue;
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentData = new TrainingProgramsCreateDto
+                    {
+                        StartDate = item.StartDate,
+                        Description = item.Description,
+                        EndDate = item.EndDate,
+                        FacultyMemberId = member.Id,
+                        OrganizingAuthority = item.OrganizerName,
+                        ParticipationType =
+                            (item.ParticipationType?.Trim() == "محاضر")
+                            ? TrainingProgramParticipationType.lecturer
+                            : TrainingProgramParticipationType.listener,
+
+                        TrainingProgramName = item.Name,
+                        Venue = item.ProgramPlace,
+                        Type = (item.ProgramType?.Trim() == "في التخصص")
+                            ? TrainingProgramType.InTheSpecialty
+                            : TrainingProgramType.OutTheSpecialty,
+
+                    };
+
+                    dataAddRequest.Add(currentData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<TrainingPrograms>>(dataAddRequest);
+                await trainingRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
 	}
 }
