@@ -115,9 +115,9 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.ProjectsAndCommitteesService.CreateProjectAsync(projectCreateDto));
 
         [ProducesResponseType(typeof(ProjectsResponseDto), StatusCodes.Status200OK)]
-        [HttpPut("UpdateProject")]
-        public async Task<ActionResult<ProjectsResponseDto>> UpdateProjectAsync([FromQuery] int reviewingArticleId, ProjectUpdateDto projectUpdateDto)
-            => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateProjectAsync(reviewingArticleId, projectUpdateDto));
+        [HttpPut("UpdateProject/{projectId:int}")]
+        public async Task<ActionResult<ProjectsResponseDto>> UpdateProjectAsync( int projectId, ProjectUpdateDto projectUpdateDto)
+            => Ok(await _serviceManager.ProjectsAndCommitteesService.UpdateProjectAsync(projectId, projectUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteProject/{id:int}")]

@@ -72,7 +72,7 @@ namespace Presentation.Controllers
         #region Training Programs
         [ProducesResponseType(typeof(PaginatedResult<TrainingProgramsResponseDto>), StatusCodes.Status200OK)]
         [HttpGet("TrainingPrograms")]
-        public async Task<ActionResult<PaginatedResult<TrainingProgramsResponseDto>>> GetAllTrainingProgramsAsync(TrainingProgramsSpecificationParameters parameters)
+        public async Task<ActionResult<PaginatedResult<TrainingProgramsResponseDto>>> GetAllTrainingProgramsAsync([FromQuery]TrainingProgramsSpecificationParameters parameters)
            => Ok(await _serviceManager.MissionsService.GetAllTrainingProgramsAsync(parameters));
 
         [ProducesResponseType(typeof(TrainingProgramsResponseDto), StatusCodes.Status200OK)]
