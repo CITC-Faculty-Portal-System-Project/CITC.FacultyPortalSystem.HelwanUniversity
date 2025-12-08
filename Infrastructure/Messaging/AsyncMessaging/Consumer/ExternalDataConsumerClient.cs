@@ -268,12 +268,13 @@ namespace Messaging.AsyncMessaging.Consumer
 				    await service.ContactDataHandle(message);
 					break;
 				case RabbitMQConstants.PersonalDataRoutingKey:
-					//await service.PersonalDataHandle(message);
+					await service.PersonalDataHandle(message);
 					break;
 				/*case RabbitMQConstants.SpecializationRoutingKey:
 					//await service.SpecializationDataHandle(message);
 					break;*/
-				case RabbitMQConstants.ScientificDutyRoutingKey:
+				
+                case RabbitMQConstants.ScientificDutyRoutingKey:
 					//await service.ScientificDutyDataHandle(message);
 					break;
 				case RabbitMQConstants.TrainingProgramRoutingKey:

@@ -242,9 +242,86 @@ namespace Services.Implementations
 
         }
 
-		public Task<bool> PersonalDataHandle(string? json)
+		public async Task<bool> PersonalDataHandle(string? json)
 		{
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<PersonalDataFetchingDTO>>(json, options);
+            var dataAddRequest = new List<PersonalDataCreateDTO>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
+                var lookUpRepo = _unitOfWork.GetRepository<Lookup, Guid>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+                
+                foreach (var item in listResult)
+                {
+                    var personalDataSpecification = new PersonalDataWithIncludesSpecifications(item);
+                    var data = await personalDataRepo.GetAllAsync(personalDataSpecification);
+                    if (data.Any())
+                        continue;
+
+                    var titleSpecification = new LookUpItemNameSpecification(item.Title);
+                    var title = await lookUpRepo.GetAsync(titleSpecification);
+
+                    var genderSpecification = new LookUpItemNameSpecification(item.Gender);
+                    var gender = await lookUpRepo.GetAsync(titleSpecification);
+
+                    var materialStatusSpecification = new LookUpItemNameSpecification(item.SocialStatus);
+                    var materialStatus = await lookUpRepo.GetAsync(titleSpecification);
+
+                    var facultySpecification = new LookUpItemNameSpecification(item.FacultyName);
+                    var faculty = await lookUpRepo.GetAsync(facultySpecification);
+
+                    var departmentSpecification = new LookUpItemNameSpecification(item.Department);
+                    var department = await lookUpRepo.GetAsync(departmentSpecification);
+
+                    var fieldSpecification = new LookUpItemNameSpecification(item.FieldOfStudy);
+                    var field = await lookUpRepo.GetAsync(fieldSpecification);
+
+                    var universitySpecification = new LookUpItemNameSpecification(item.FacultyName);
+                    var university = await lookUpRepo.GetAsync(universitySpecification);
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentData = new PersonalDataCreateDTO
+                    {
+                        DepartmentId = department.Id,
+                        BirthDate = item.BirthDate,
+                        AccurateSpecialization = item.AccurateSpecialization,
+                        GeneralSpecialization = item.GeneralSpecialization,
+                        MaritalStatusId = materialStatus.Id,
+                        AuthorityId = faculty.Id,
+                        UniversityId = university.Id,
+                        BirthPlace = item.BirthPlace,
+                        CompositionTopics = item.CompositionTopics,
+                        FieldId = field.Id,
+                        GenderId = gender.Id,
+                        Name = item.Name,
+                        NameInComposition = item.NameInCompositions,
+                        TitleId = title.Id,
+                        FacultyMemberId = member.Id
+                    };
+
+                    dataAddRequest.Add(currentData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<PersonalData>>(dataAddRequest);
+                await personalDataRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+
 
         }
 

@@ -593,7 +593,392 @@ namespace Presistence.Data.Configurations.DropMenusConfigurations
                 SortOrder = 6,
                 CreatedBy = "Helwan Faculty Portal System",
                 CreatedAt = new DateTime(2025, 12, 7)
+            },
+
+            #endregion
+
+            #region FacultiesDataSeeding
+
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500060"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الهندسة - حلوان",
+                ValueEn = "Faculty of Engineering - Helwan",
+                SortOrder = 1,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500061"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الهندسة بالمطرية",
+                ValueEn = "Faculty of Engineering - Mataria",
+                SortOrder = 2,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500062"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الحاسبات والذكاء الاصطناعي",
+                ValueEn = "Faculty of Computers and Artificial Intelligence",
+                SortOrder = 3,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500063"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية التجارة وإدارة الأعمال",
+                ValueEn = "Faculty of Commerce and Business Administration",
+                SortOrder = 4,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500064"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية السياحة والفنادق",
+                ValueEn = "Faculty of Tourism and Hotels",
+                SortOrder = 5,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500065"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الفنون الجميلة",
+                ValueEn = "Faculty of Fine Arts",
+                SortOrder = 6,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500066"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الفنون التطبيقية",
+                ValueEn = "Faculty of Applied Arts",
+                SortOrder = 7,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500067"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية التربية",
+                ValueEn = "Faculty of Education",
+                SortOrder = 8,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500068"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية التربية الفنية",
+                ValueEn = "Faculty of Art Education",
+                SortOrder = 9,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500069"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية التربية الموسيقية",
+                ValueEn = "Faculty of Music Education",
+                SortOrder = 10,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500070"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الاقتصاد المنزلي",
+                ValueEn = "Faculty of Home Economics",
+                SortOrder = 11,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500071"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الآداب",
+                ValueEn = "Faculty of Arts",
+                SortOrder = 12,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500072"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية العلوم",
+                ValueEn = "Faculty of Science",
+                SortOrder = 13,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500073"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية الصيدلة",
+                ValueEn = "Faculty of Pharmacy",
+                SortOrder = 14,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500074"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية التمريض",
+                ValueEn = "Faculty of Nursing",
+                SortOrder = 15,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500075"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية التربية الرياضية بنين",
+                ValueEn = "Faculty of Physical Education - Men",
+                SortOrder = 16,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500076"),
+                Type = LookupTypes.Faculty.ToString(),
+                Key = "HELWAN_UNIVERSITY_FACULTIES",
+                ValueAr = "كلية التربية الرياضية بنات",
+                ValueEn = "Faculty of Physical Education - Women",
+                SortOrder = 17,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+
+
+            #endregion
+
+            #region StudyFieldsSeeding
+
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500080"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "علوم البيانات",
+                SortOrder = 1,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500081"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "الذكاء الاصطناعي",
+                SortOrder = 2,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500082"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "هندسة البرمجيات",
+                SortOrder = 3,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500083"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "نظم المعلومات",
+                SortOrder = 4,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500084"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "علوم الحاسوب",
+                SortOrder = 5,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500085"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "الشبكات وأمن المعلومات",
+                SortOrder = 6,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500086"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "إدارة الأعمال",
+                SortOrder = 7,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500087"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "المالية والمحاسبة",
+                SortOrder = 8,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500088"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "التسويق الرقمي",
+                SortOrder = 9,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500089"),
+                Type = LookupTypes.StudyField.ToString(),
+                Key = "STUDY_FIELDS",
+                ValueAr = "الهندسة الكهربائية",
+                SortOrder = 10,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+
+
+            #endregion
+
+            #region DepartmentsDataSeeding
+
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500090"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم النظم الموزعة",
+                SortOrder = 1,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500099"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم البرمجيات",
+                SortOrder = 2,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500091"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم الذكاء الاصطناعي",
+                SortOrder = 3,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500092"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم الشبكات وأمن المعلومات",
+                SortOrder = 4,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500093"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم نظم المعلومات",
+                SortOrder = 5,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500094"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم علوم البيانات",
+                SortOrder = 6,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500095"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم هندسة البرمجيات",
+                SortOrder = 7,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
+            },
+            new Lookup
+            {
+                Id = Guid.Parse("50505050-5050-5050-5050-505050500096"),
+                Type = LookupTypes.Department.ToString(),
+                Key = "DEPARTMENTS",
+                ValueAr = "قسم علوم الحاسوب",
+                SortOrder = 8,
+                CreatedBy = "Helwan Faculty Portal System",
+                CreatedAt = new DateTime(2025, 12, 7)
             }
+
 
             #endregion
 
