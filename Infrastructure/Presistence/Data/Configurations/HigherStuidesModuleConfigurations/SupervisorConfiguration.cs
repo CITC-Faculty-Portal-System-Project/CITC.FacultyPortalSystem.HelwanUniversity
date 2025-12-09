@@ -29,10 +29,16 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                   .HasForeignKey(s => s.JobLevelId)
                   .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(ss => ss.Theses)
+              .WithMany(t => t.Supervisors)
+              .HasForeignKey(ss => ss.ThesesId)
+              .OnDelete(DeleteBehavior.Cascade);
+
+
             #endregion
 
             #region AddingIndecies
-           
+
             builder.HasIndex(s => s.Name);
 
             #endregion

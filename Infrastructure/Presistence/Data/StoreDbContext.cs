@@ -126,7 +126,6 @@ namespace Presistence.Data
 
         public DbSet<Supervising> Supervisings { get; set; }
         public DbSet<Supervisor> Supervisors { get; set; }
-        public DbSet<SupervisorThesesSupervising> SupervisorThesesSupervisings { get; set; }
         public DbSet<Thesis> Theses { get; set; }
 
         #endregion

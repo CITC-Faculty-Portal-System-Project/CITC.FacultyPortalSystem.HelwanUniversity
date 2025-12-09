@@ -8,8 +8,8 @@ namespace Shared.Dtos.DataFetchingFromExternalService
 {
     public record AdminstrativePostionsFetchingDTO
     {
-        public string StartDate { get; set; } = string.Empty;
-        public string? EndDate { get; set; } = string.Empty;
+        public DateOnly StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; } = string.Empty;
         public string NationalNumber { get; set; } = string.Empty;

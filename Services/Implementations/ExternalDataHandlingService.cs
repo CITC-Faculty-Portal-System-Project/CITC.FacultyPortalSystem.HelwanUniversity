@@ -1,385 +1,206 @@
 ﻿using Domain.Entities.MissionsModule;
 using Domain.Entities.ScientificProgressionModule;
-using Shared.Enums;
-using Services.Specifications.LookUpItems;
 using Services.Specifications.MissionsModule;
 using Services.Specifications.ScientificProgressionModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Dtos.MissionsModule;
 using Shared.Dtos.ScientificProgressionModule;
-using Shared.Enums.MissionsModule;
-using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
+using Shared.Dtos.HigherStudiesModule;
+using Domain.Entities.HigherStuidesModule;
+using Services.Specifications.HigherStudiesModule;
+using Services.Helpers.ExternalDataFetchingServiceHelpers;
 
 namespace Services.Implementations
 {
-    public class ExternalDataHandlingService(IUnitOfWork _unitOfWork , IMapper _mapper) : IExternalDataHandlingService
+    public class ExternalDataHandlingService(IUnitOfWork _unitOfWork , IMapper _mapper 
+        , IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper 
+        _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper) : IExternalDataHandlingService
     {
         public async Task<bool> AcademicDataHandle(string? json)
         {
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentException("JSON is null or empty.", nameof(json));
+            var academicRepo = _unitOfWork.GetRepository<AcademicQualifications, int>();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var listResult = JsonSerializer.Deserialize<List<AcademicQualificationFetchingDTO>>(json, options);
-            var dataAddRequest = new List<AcademicQualificationCreateDto>();
-
-            if (listResult != null && listResult.Any())
-            {
-                var academicRepo = _unitOfWork.GetRepository<AcademicQualifications, int>();
-                var dispatchRepo = _unitOfWork.GetRepository<Lookup, Guid>();
-                var gradeRepo = _unitOfWork.GetRepository<Lookup, Guid>();
-                var qualificationRepo = _unitOfWork.GetRepository<Lookup, Guid>();
-                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-
-
-
-
-                foreach (var item in listResult)
+            return await BulkHelper.HandleAsync<
+                AcademicQualificationFetchingDTO,
+                AcademicQualificationCreateDto,
+                AcademicQualifications, 
+                int
+            >(
+                json,
+                async item =>
                 {
-                    var qualificationSpecification = new AcademicQualificationsSpecifications(item);
-                    var data = await academicRepo.GetAllAsync(qualificationSpecification);
-                    if (data.Any())
-                        continue;
+                    var spec = new AcademicQualificationsSpecifications(item);
 
-                    var dispatchSpecification = new LookUpItemNameSpecification(item.Dispatch);
-                    var dispatch = await dispatchRepo.GetAllAsync(dispatchSpecification);
+                    if (await academicRepo.ExistsAsync(spec))
+                        return null;
 
-                    var gradeSpecification = new LookUpItemNameSpecification(item.Grade);
-                    var grade = await gradeRepo.GetAllAsync(gradeSpecification);
+                    var dto = _mapper.Map<AcademicQualificationCreateDto>(item);
 
-                    var qualificationTypeSpecification = new LookUpItemNameSpecification(item.Qualification);
-                    var qualification = await qualificationRepo.GetAllAsync(qualificationTypeSpecification);
+                    dto.DispatchId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Dispatch);
+                    dto.GradeId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Grade);
+                    dto.QualificationId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Qualification);
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
 
-                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
-                    var member = await facultyMemberRepo.GetAllAsync(facultyMemberSpecification);
-
-                    var currentQualification = new AcademicQualificationCreateDto
-                    {
-                        Specialization = item.Specialization,
-                        CountryOrCity = item.CountryCity,
-                        DateOfObtainingTheQualification = DateOnly.Parse(item.DateOfAcquisition),
-                        DispatchId = dispatch.FirstOrDefault()?.Id ?? Guid.Empty,
-                        FacultyMemberId = member.FirstOrDefault()?.Id ?? Guid.Empty,
-                        QualificationId = qualification.FirstOrDefault()?.Id ?? Guid.Empty,
-                        GradeId = grade.FirstOrDefault()?.Id ?? Guid.Empty,
-                        UniversityOrFaculty = item.UniversityFaculty,
-                        
-                    };
-
-                    dataAddRequest.Add(currentQualification);
-                }
-
-               var entites = _mapper.Map<IEnumerable<AcademicQualifications>>(dataAddRequest);
-               await academicRepo.AddRangeAsync(entites);
-               return await _unitOfWork.SaveChangesAsync() > 0;
-            }
-
-            return false;
-
-         }
+                    return dto;
+                },
+                _mapper,
+                academicRepo,
+                _unitOfWork
+            );
+        }
 
 		public async Task<bool> ContactDataHandle(string? json)
 		{
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentException("JSON is null or empty.", nameof(json));
+            var contactRepo = _unitOfWork.GetRepository<ContactData, int>();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var listResult = JsonSerializer.Deserialize<List<ContactDataFetchingDTO>>(json, options);
-            var dataAddRequest = new List<ContactDataCreateDTO>();
-
-            if (listResult != null && listResult.Any())
-            {
-                var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
-                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-
-                foreach (var item in listResult)
+            return await BulkHelper.HandleAsync<
+                ContactDataFetchingDTO,
+                ContactDataCreateDTO,
+                ContactData,
+                int
+            >(
+                json,
+                async item =>
                 {
-                    var contactDataSpecification = new ContactDataWithExternalServiceSpecification(item);
-                    var data = await contactDataRepo.GetAllAsync(contactDataSpecification);
+                    var spec = new ContactDataWithExternalServiceSpecification(item);
+                    if (await contactRepo.ExistsAsync(spec))
+                        return null;
 
-                    if (data.Any())
-                        continue;
+                    var dto = _mapper.Map<ContactDataCreateDTO>(item);
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
 
-                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
-                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
-
-                    var currentContactData = new ContactDataCreateDTO
-                    {
-                        Address = item.Address,
-                        AlternativeEmail = item.PersonalEmail,
-                        FaxNumber = item.FaxNumber,
-                        HomePhoneNumber = item.HomePhoneNumber,
-                        MainPhoneNumber = item.MainPhoneNumber,
-                        OfficialEmail = item.OfficialEmail,
-                        PersonalEmail = item.PersonalEmail,
-                        WorkPhoneNumber = item.WorkPhoneNumber,
-                        FacultyMemberId = member.Id
-                    };
-
-                    dataAddRequest.Add(currentContactData);
-                }
-
-                var entites = _mapper.Map<IEnumerable<ContactData>>(dataAddRequest);
-                await contactDataRepo.AddRangeAsync(entites);
-                return await _unitOfWork.SaveChangesAsync() > 0;
-            }
-
-            return false;
+                    return dto;
+                },
+                _mapper,
+                contactRepo,
+                _unitOfWork
+            );
         }
 
         public async Task<bool> EmploymentDataHandle(string? json)
         {
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentException("JSON is null or empty.", nameof(json));
+            var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var listResult = JsonSerializer.Deserialize<List<JobRanksFetchingDTO>>(json, options);
-            var dataAddRequest = new List<JobRankCreateDto>();
-
-
-            if (listResult != null && listResult.Any())
-            {
-                var jobRanksRepo = _unitOfWork.GetRepository<JobRanks, int>();
-                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-                var lookUpRepo = _unitOfWork.GetRepository<Lookup, Guid>();
-
-                foreach (var item in listResult)
+            return await BulkHelper.HandleAsync<
+                JobRanksFetchingDTO,
+                JobRankCreateDto,
+                JobRanks,
+                int
+            >(
+                json,
+                async item =>
                 {
-                    var jobRankSpecification = new JobRanksSpecifications(item);
-                    var data = await jobRanksRepo.GetAllAsync(jobRankSpecification);
-                    if (data.Any())
-                        continue;
+                    var spec = new JobRanksSpecifications(item);
+                    if (await jobRanksRepo.ExistsAsync(spec))
+                        return null;
 
-                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
-                    var facultyMember = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+                    var dto = _mapper.Map<JobRankCreateDto>(item);
 
-
-                    var currentJobSpecification = new LookUpItemNameSpecification(item.Name);
-                    var currentJob = await lookUpRepo.GetAsync(currentJobSpecification);
-
-                    var currentJobRank = new JobRankCreateDto
-                    {
-                        DateOfJobRank = DateOnly.Parse(item.PromotionDate),
-                        FacultyMemberId = facultyMember.Id,
-                        JobRankId = currentJob.Id,
-                        Notes = "لا يوجد"
-                    };
-
-                    dataAddRequest.Add(currentJobRank);
-                }
-
-                var entites = _mapper.Map<IEnumerable<JobRanks>>(dataAddRequest);
-                await jobRanksRepo.AddRangeAsync(entites);
-                return await _unitOfWork.SaveChangesAsync() > 0;
-            }
-
-            return false;
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
+                    dto.JobRankId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Name);
+                    return dto;
+                },
+                _mapper,
+                jobRanksRepo,
+                _unitOfWork
+            );
         }
 
         public async Task<bool> ManagerialDataHandle(string? json)
         {
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentException("JSON is null or empty.", nameof(json));
+            var adminRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var listResult = JsonSerializer.Deserialize<List<AdminstrativePostionsFetchingDTO>>(json, options);
-            var dataAddRequest = new List<AdministrativePositionCreateDto>();
-
-            if (listResult != null && listResult.Any())
-            {
-                var adminstrativePositionRepo = _unitOfWork.GetRepository<AdministrativePositions, int>();
-                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-
-                foreach (var item in listResult)
+            return await BulkHelper.HandleAsync<
+                AdminstrativePostionsFetchingDTO,
+                AdministrativePositionCreateDto,
+                AdministrativePositions,
+                int
+            >(
+                json,
+                async item =>
                 {
-                    var adminstrativePositionSpecification = new AdministrativePositionsSpecifications(item);
-                    var data = await adminstrativePositionRepo.GetAllAsync(adminstrativePositionSpecification);
-                    
-                    if (data.Any())
-                        continue;
+                    var spec = new AdministrativePositionsSpecifications(item);
+                    if (await adminRepo.ExistsAsync(spec))
+                        return null;
 
-                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
-                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+                    var dto = _mapper.Map<AdministrativePositionCreateDto>(item);
 
-                    var currentAdminstrtivePosition = new AdministrativePositionCreateDto
-                    {
-                       StartDate = DateOnly.Parse(item.StartDate),
-                       EndDate = (string.IsNullOrEmpty(item.EndDate)
-                                      ?  null
-                                      : DateOnly.Parse(item.EndDate)),
-                        FacultyMemberId = member.Id,
-                       Notes = item.Description,
-                       Position = item.Name,
-                    };
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
 
-                    dataAddRequest.Add(currentAdminstrtivePosition);
-                }
+                    dto.Notes = item.Description;
+                    dto.Position = item.Name;
 
-                var entites = _mapper.Map<IEnumerable<AdministrativePositions>>(dataAddRequest);
-                await adminstrativePositionRepo.AddRangeAsync(entites);
-                return await _unitOfWork.SaveChangesAsync() > 0;
-            }
-
-            return false;
-
+                    return dto;
+                },
+                _mapper,
+                adminRepo,
+                _unitOfWork
+            );
         }
 
 		public async Task<bool> PersonalDataHandle(string? json)
 		{
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentException("JSON is null or empty.", nameof(json));
+            var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var listResult = JsonSerializer.Deserialize<List<PersonalDataFetchingDTO>>(json, options);
-            var dataAddRequest = new List<PersonalDataCreateDTO>();
-
-            if (listResult != null && listResult.Any())
-            {
-                var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
-                var lookUpRepo = _unitOfWork.GetRepository<Lookup, Guid>();
-                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-
-                
-                foreach (var item in listResult)
+            return await BulkHelper.HandleAsync<
+                PersonalDataFetchingDTO,
+                PersonalDataCreateDTO,
+                PersonalData,
+                int
+            >(
+                json,
+                async item =>
                 {
-                    var personalDataSpecification = new PersonalDataWithIncludesSpecifications(item);
-                    var data = await personalDataRepo.GetAllAsync(personalDataSpecification);
-                    if (data.Any())
-                        continue;
+                    var spec = new PersonalDataWithIncludesSpecifications(item);
+                    if (await personalDataRepo.ExistsAsync(spec))
+                        return null;
 
-                    var titleSpecification = new LookUpItemNameSpecification(item.Title);
-                    var title = await lookUpRepo.GetAsync(titleSpecification);
+                    var dto = _mapper.Map<PersonalDataCreateDTO>(item);
 
-                    var genderSpecification = new LookUpItemNameSpecification(item.Gender);
-                    var gender = await lookUpRepo.GetAsync(titleSpecification);
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
+                    dto.TitleId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Title);
+                    dto.GenderId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Gender);
+                    dto.MaritalStatusId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.SocialStatus);
+                    dto.AuthorityId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.FacultyName);
+                    dto.DepartmentId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Department);
+                    dto.FieldId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.FieldOfStudy);
+                    dto.UniversityId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.University);
 
-                    var materialStatusSpecification = new LookUpItemNameSpecification(item.SocialStatus);
-                    var materialStatus = await lookUpRepo.GetAsync(titleSpecification);
-
-                    var facultySpecification = new LookUpItemNameSpecification(item.FacultyName);
-                    var faculty = await lookUpRepo.GetAsync(facultySpecification);
-
-                    var departmentSpecification = new LookUpItemNameSpecification(item.Department);
-                    var department = await lookUpRepo.GetAsync(departmentSpecification);
-
-                    var fieldSpecification = new LookUpItemNameSpecification(item.FieldOfStudy);
-                    var field = await lookUpRepo.GetAsync(fieldSpecification);
-
-                    var universitySpecification = new LookUpItemNameSpecification(item.University);
-                    var university = await lookUpRepo.GetAsync(universitySpecification);
-
-                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
-                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
-
-                    var currentData = new PersonalDataCreateDTO
-                    {
-                        DepartmentId = department.Id,
-                        BirthDate = item.BirthDate,
-                        AccurateSpecialization = item.AccurateSpecialization,
-                        GeneralSpecialization = item.GeneralSpecialization,
-                        MaritalStatusId = materialStatus.Id,
-                        AuthorityId = faculty.Id,
-                        UniversityId = university.Id,
-                        BirthPlace = item.BirthPlace,
-                        CompositionTopics = item.CompositionTopics,
-                        FieldId = field.Id,
-                        GenderId = gender.Id,
-                        Name = item.Name,
-                        NameInComposition = item.NameInCompositions,
-                        TitleId = title.Id,
-                        FacultyMemberId = member.Id
-                    };
-
-                    dataAddRequest.Add(currentData);
-                }
-
-                var entites = _mapper.Map<IEnumerable<PersonalData>>(dataAddRequest);
-                await personalDataRepo.AddRangeAsync(entites);
-                return await _unitOfWork.SaveChangesAsync() > 0;
-            }
-
-            return false;
-
-
+                    return dto;
+                },
+                _mapper,
+                personalDataRepo,
+                _unitOfWork
+            );
         }
 
         public async Task<bool> ScientificDutyDataHandle(string? json)
 		{
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentException("JSON is null or empty.", nameof(json));
+            var missionRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var listResult = JsonSerializer.Deserialize<List<SceintificMissionsFetchingDTO>>(json, options);
-            var dataAddRequest = new List<ScientificMissionCreateDto>();
-
-            if (listResult != null && listResult.Any())
-            {
-                var missionRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
-                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-
-
-                foreach (var item in listResult)
+            return await BulkHelper.HandleAsync<
+                SceintificMissionsFetchingDTO,
+                ScientificMissionCreateDto,
+                ScientificMissions,
+                int
+            >(
+                json,
+                async item =>
                 {
-                    var missionSpecification = new ScientificMissionsSpecifications(item);
-                    var data = await missionRepo.GetAllAsync(missionSpecification);
-                    
-                    if (data.Any())
-                        continue;
+                    var spec = new ScientificMissionsSpecifications(item);
+                    if (await missionRepo.ExistsAsync(spec))
+                        return null;
 
-                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
-                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+                    var dto = _mapper.Map<ScientificMissionCreateDto>(item);
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
 
-                    var currentData = new ScientificMissionCreateDto
-                    {
-                        StartDate = item.StartDate,
-                        CountryOrCity = item.CountryCity,
-                        Description = item.Description,
-                        EndDate = item.EndDate,
-                        FacultyMemberId = member.Id,
-                        name = item.Name,
-                        UniversityOrFaculty = item.UniversityFaculty
-                    };
-
-                    dataAddRequest.Add(currentData);
-                }
-
-                var entites = _mapper.Map<IEnumerable<ScientificMissions>>(dataAddRequest);
-                await missionRepo.AddRangeAsync(entites);
-                return await _unitOfWork.SaveChangesAsync() > 0;
-            }
-
-            return false;
+                    return dto;
+                },
+                _mapper,
+                missionRepo,
+                _unitOfWork
+            );
         }
 
         /*public Task<bool> SpecializationDataHandle(string? json)
@@ -387,75 +208,107 @@ namespace Services.Implementations
 			throw new NotImplementedException();
 		}*/
 
-        public Task<bool> ThesisDataHandle(string? json)
+        public async Task<bool> ThesisDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            var thesesRepo = _unitOfWork.GetRepository<Thesis, int>();
+            var supervisorRepo = _unitOfWork.GetRepository<Supervisor, int>();
 
-		public Task<bool> ThesisSupervisingDataHandle(string? json)
+            return await BulkHelper.HandleAsync<
+                ThesesFetchingDTO,
+                ThesesCreateDTO,
+                Thesis,
+                int
+            >(
+                json,
+                async item =>
+                {
+                    var spec = new ThesesSpecifications(item);
+                    if (await thesesRepo.ExistsAsync(spec))
+                        return null;
+
+                    var dto = _mapper.Map<ThesesCreateDTO>(item);
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
+                    dto.GradeId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Grade);
+
+                    var thesisEntity = _mapper.Map<Thesis>(dto);
+
+                    if (item.Supervisors != null && item.Supervisors.Any())
+                    {
+                        dto.Supervisors = new List<SupervisorCreateDTO>();
+
+                        foreach (var supervisorDto in item.Supervisors)
+                        {
+                            var supervisor = _mapper.Map<SupervisorCreateDTO>(supervisorDto);
+                            supervisor.JobLevelId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Grade);
+                            dto.Supervisors.Add(supervisor);
+                        }
+                    }
+
+                    return dto;
+                },
+                _mapper,
+                thesesRepo,
+                _unitOfWork
+            );
+        }
+
+		public async Task<bool> ThesisSupervisingDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            var supervisingRepo = _unitOfWork.GetRepository<Supervising, int>();
+
+            return await BulkHelper.HandleAsync<
+                SupervisingsFetchingDTO,
+                SupervisingCreateDTO,
+                Supervising,
+                int
+            >(
+                json,
+                async item =>
+                {
+                    var spec = new SupervisingsSepcifications(item);
+                    if (await supervisingRepo.ExistsAsync(spec))
+                        return null;
+
+                    var dto = _mapper.Map<SupervisingCreateDTO>(item);
+
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
+                    dto.GradeId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Grade);
+
+                    return dto;
+                },
+                _mapper,
+                supervisingRepo,
+                _unitOfWork
+            );
+        }
 
 		public async Task<bool> TrainingProgramDataHandle(string? json)
 		{
-            if (string.IsNullOrWhiteSpace(json))
-                throw new ArgumentException("JSON is null or empty.", nameof(json));
+            var trainingRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var listResult = JsonSerializer.Deserialize<List<TrainingProgramsFetchingDTO>>(json, options);
-            var dataAddRequest = new List<TrainingProgramsCreateDto>();
-
-            if (listResult != null && listResult.Any())
-            {
-                var trainingRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
-                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-
-
-                foreach (var item in listResult)
+            return await BulkHelper.HandleAsync<
+                TrainingProgramsFetchingDTO,
+                TrainingProgramsCreateDto,
+                TrainingPrograms,
+                int
+            >(
+                json,
+                async item =>
                 {
-                    var trainingSpecification = new TrainingProgramsSpecifications(item);
-                    var data = await trainingRepo.GetAllAsync(trainingSpecification);
+                    var spec = new TrainingProgramsSpecifications(item);
+                    if (await trainingRepo.ExistsAsync(spec))
+                        return null;
 
-                    if (data.Any())
-                        continue;
+                    var dto = _mapper.Map<TrainingProgramsCreateDto>(item);
 
-                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
-                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+                    dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
 
-                    var currentData = new TrainingProgramsCreateDto
-                    {
-                        StartDate = item.StartDate,
-                        Description = item.Description,
-                        EndDate = item.EndDate,
-                        FacultyMemberId = member.Id,
-                        OrganizingAuthority = item.OrganizerName,
-                        ParticipationType =
-                            (item.ParticipationType?.Trim() == "محاضر")
-                            ? TrainingProgramParticipationType.lecturer
-                            : TrainingProgramParticipationType.listener,
-
-                        TrainingProgramName = item.Name,
-                        Venue = item.ProgramPlace,
-                        Type = (item.ProgramType?.Trim() == "في التخصص")
-                            ? TrainingProgramType.InTheSpecialty
-                            : TrainingProgramType.OutTheSpecialty,
-
-                    };
-
-                    dataAddRequest.Add(currentData);
-                }
-
-                var entites = _mapper.Map<IEnumerable<TrainingPrograms>>(dataAddRequest);
-                await trainingRepo.AddRangeAsync(entites);
-                return await _unitOfWork.SaveChangesAsync() > 0;
-            }
-
-            return false;
+                    return dto;
+                },
+                _mapper,
+                trainingRepo,
+                _unitOfWork
+            );
         }
 	}
 }

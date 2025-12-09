@@ -37,7 +37,7 @@ namespace Services.Specifications.ScientificProgressionModule
         }
 
         public JobRanksSpecifications(JobRanksFetchingDTO dTO)
-            : base(jr => jr.DateOfJobRank.ToString() == dTO.PromotionDate && 
+            : base(jr => jr.DateOfJobRank == dTO.PromotionDate && 
                   jr.JobRank.ValueAr == dTO.Name || jr.JobRank.ValueEn == dTO.Name && 
                   jr.FacultyMember.NationalNumber == dTO.NationalNumber)
         {

@@ -46,10 +46,8 @@ namespace Services.Specifications.ScientificProgressionModule
       : base(ap =>
           !ap.IsDeleted
           && ap.FacultyMember.NationalNumber == dTO.NationalNumber
-          && (string.IsNullOrEmpty(dTO.EndDate)
-              ? ap.EndDate == null 
-              : ap.EndDate == DateOnly.Parse(dTO.EndDate))
-          && ap.StartDate == DateOnly.Parse(dTO.StartDate)
+          && ap.StartDate == dTO.StartDate
+          && ap.EndDate == dTO.EndDate
           && (string.IsNullOrEmpty(dTO.Name) || ap.Position == dTO.Name)
       )
         {

@@ -1,4 +1,7 @@
-﻿using Services.Abstraction.Contracts;
+﻿using Domain.Contracts;
+using Presistence.Repositories;
+using Services.Abstraction.Contracts;
+using Services.Helpers.ExternalDataFetchingServiceHelpers;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -49,6 +52,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<Func<IProjectsAndCommitteesService>>(provider =>
             () => provider.GetRequiredService<IProjectsAndCommitteesService>()
             );
+
+            services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
+            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+
+
 
             services.AddScoped<IExternalDataHandlingService, ExternalDataHandlingService>();
 

@@ -9,7 +9,7 @@ namespace Shared.Dtos.DataFetchingFromExternalService
     public record JobRanksFetchingDTO
     {
         public string Name { get; set; } = string.Empty;
-        public string PromotionDate { get; set; } = string.Empty;
+        public DateOnly PromotionDate { get; set; }
         public string NationalNumber { get; set; } = string.Empty;
 
     }

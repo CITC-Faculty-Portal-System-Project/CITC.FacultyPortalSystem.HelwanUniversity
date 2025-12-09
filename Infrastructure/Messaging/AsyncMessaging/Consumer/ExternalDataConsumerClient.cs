@@ -281,10 +281,10 @@ namespace Messaging.AsyncMessaging.Consumer
 					await service.TrainingProgramDataHandle(message);
 					break;
 				case RabbitMQConstants.ThesisSupervisionRoutingKey:
-					//await service.ThesisSupervisingDataHandle(message);
+					await service.ThesisSupervisingDataHandle(message);
 					break;
 				case RabbitMQConstants.ThesisDataRoutingKey:
-					//await service.ThesisDataHandle(message);
+					await service.ThesisDataHandle(message);
 					break;
 				default:
 					throw new InvalidOperationException($"Unknown routing key: {routingKey}");
