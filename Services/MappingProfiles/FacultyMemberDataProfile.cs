@@ -17,8 +17,10 @@ namespace Services.MappingProfiles
                .ForMember(dest => dest.Field, opt => opt.MapFrom(src => src.Field));
 
             CreateMap<PersonalDataUpdateDto, PersonalData>();
+            CreateMap<PersonalDataCreateDTO, PersonalData>();
 
             CreateMap<ContactData, ContactDataResponseDto>();
+            CreateMap<ContactDataCreateDTO, ContactData>();
             CreateMap<ContactDataUpdateDto, ContactData>();
 
             CreateMap<IdentificationCardDto, IdentificationCard>().ReverseMap();

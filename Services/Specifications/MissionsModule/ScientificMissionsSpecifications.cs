@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.MissionsModule;
+using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Enums.MissionsModule;
 using Shared.SpceificationParameters.MissionsModule;
 
@@ -40,6 +41,15 @@ namespace Services.Specifications.MissionsModule
         }
 
         public ScientificMissionsSpecifications(int id) : base(sm => !sm.IsDeleted && sm.Id == id)
+        {
+            AddIncludes(sm => sm.FacultyMember);
+        }
+
+        public ScientificMissionsSpecifications(SceintificMissionsFetchingDTO sceintificMissionsFetchingDTO) 
+            : base(sm => sm.StartDate == sceintificMissionsFetchingDTO.StartDate && sm.EndDate == sceintificMissionsFetchingDTO.EndDate &&
+            sm.MissionName == sceintificMissionsFetchingDTO.Name && sm.UniversityOrFaculty == sceintificMissionsFetchingDTO.UniversityFaculty
+            && sm.CountryOrCity == sceintificMissionsFetchingDTO.CountryCity && sm.Notes == sceintificMissionsFetchingDTO.Description 
+            && sm.FacultyMember.NationalNumber == sceintificMissionsFetchingDTO.NationalNumber)
         {
             AddIncludes(sm => sm.FacultyMember);
         }

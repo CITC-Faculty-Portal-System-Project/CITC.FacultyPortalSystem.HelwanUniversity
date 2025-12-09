@@ -21,6 +21,14 @@ namespace Domain.Enums
         AuthorRole = 11,
         Rewards = 12,
         ContributionTypes = 13,
+        University = 14,
+        Gender = 15,
+        BirthPlace = 16,
+        SocialStatus = 17,
+        Title = 18,
+        Faculty = 19,
+        StudyField = 20,
+        Department = 21
 
     }
 }

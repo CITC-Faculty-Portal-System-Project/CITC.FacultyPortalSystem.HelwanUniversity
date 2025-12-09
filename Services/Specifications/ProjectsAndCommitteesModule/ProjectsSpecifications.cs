@@ -19,7 +19,8 @@ namespace Services.Specifications.ProjectsAndCommitteesModule
                    p.FinancingAuthority.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))
             )
         {
-
+            AddIncludes(p => p.ParticipationRole);
+            AddIncludes(p => p.TypeOfProject);
             switch (parameters.Sort)
             {
                 case ProjectsSortingOptions.NameAsc:

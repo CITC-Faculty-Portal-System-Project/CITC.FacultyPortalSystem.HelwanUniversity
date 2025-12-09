@@ -1,8 +1,14 @@
-﻿using Domain.Entities.ScientificProgressionModule;
+﻿using Domain.Entities.MissionsModule;
+using Domain.Entities.ScientificProgressionModule;
+using Shared.Enums;
 using Services.Specifications.LookUpItems;
+using Services.Specifications.MissionsModule;
 using Services.Specifications.ScientificProgressionModule;
 using Shared.Dtos.DataFetchingFromExternalService;
+using Shared.Dtos.FacultyMemberDataModule;
+using Shared.Dtos.MissionsModule;
 using Shared.Dtos.ScientificProgressionModule;
+using Shared.Enums.MissionsModule;
 using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
@@ -83,12 +89,60 @@ namespace Services.Implementations
 
          }
 
-		public Task<bool> ContactDataHandle(string? json)
+		public async Task<bool> ContactDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
 
-		public async Task<bool> EmploymentDataHandle(string? json)
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<ContactDataFetchingDTO>>(json, options);
+            var dataAddRequest = new List<ContactDataCreateDTO>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var contactDataRepo = _unitOfWork.GetRepository<ContactData, int>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+                foreach (var item in listResult)
+                {
+                    var contactDataSpecification = new ContactDataWithExternalServiceSpecification(item);
+                    var data = await contactDataRepo.GetAllAsync(contactDataSpecification);
+
+                    if (data.Any())
+                        continue;
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentContactData = new ContactDataCreateDTO
+                    {
+                        Address = item.Address,
+                        AlternativeEmail = item.PersonalEmail,
+                        FaxNumber = item.FaxNumber,
+                        HomePhoneNumber = item.HomePhoneNumber,
+                        MainPhoneNumber = item.MainPhoneNumber,
+                        OfficialEmail = item.OfficialEmail,
+                        PersonalEmail = item.PersonalEmail,
+                        WorkPhoneNumber = item.WorkPhoneNumber,
+                        FacultyMemberId = member.Id
+                    };
+
+                    dataAddRequest.Add(currentContactData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<ContactData>>(dataAddRequest);
+                await contactDataRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> EmploymentDataHandle(string? json)
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("JSON is null or empty.", nameof(json));
@@ -163,6 +217,7 @@ namespace Services.Implementations
                 {
                     var adminstrativePositionSpecification = new AdministrativePositionsSpecifications(item);
                     var data = await adminstrativePositionRepo.GetAllAsync(adminstrativePositionSpecification);
+                    
                     if (data.Any())
                         continue;
 
@@ -172,8 +227,10 @@ namespace Services.Implementations
                     var currentAdminstrtivePosition = new AdministrativePositionCreateDto
                     {
                        StartDate = DateOnly.Parse(item.StartDate),
-                       EndDate = DateOnly.Parse(item.EndDate),
-                       FacultyMemberId = member.Id,
+                       EndDate = (string.IsNullOrEmpty(item.EndDate)
+                                      ?  null
+                                      : DateOnly.Parse(item.EndDate)),
+                        FacultyMemberId = member.Id,
                        Notes = item.Description,
                        Position = item.Name,
                     };
@@ -190,22 +247,147 @@ namespace Services.Implementations
 
         }
 
-		public Task<bool> PersonalDataHandle(string? json)
+		public async Task<bool> PersonalDataHandle(string? json)
+		{
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<PersonalDataFetchingDTO>>(json, options);
+            var dataAddRequest = new List<PersonalDataCreateDTO>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
+                var lookUpRepo = _unitOfWork.GetRepository<Lookup, Guid>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+                
+                foreach (var item in listResult)
+                {
+                    var personalDataSpecification = new PersonalDataWithIncludesSpecifications(item);
+                    var data = await personalDataRepo.GetAllAsync(personalDataSpecification);
+                    if (data.Any())
+                        continue;
+
+                    var titleSpecification = new LookUpItemNameSpecification(item.Title);
+                    var title = await lookUpRepo.GetAsync(titleSpecification);
+
+                    var genderSpecification = new LookUpItemNameSpecification(item.Gender);
+                    var gender = await lookUpRepo.GetAsync(titleSpecification);
+
+                    var materialStatusSpecification = new LookUpItemNameSpecification(item.SocialStatus);
+                    var materialStatus = await lookUpRepo.GetAsync(titleSpecification);
+
+                    var facultySpecification = new LookUpItemNameSpecification(item.FacultyName);
+                    var faculty = await lookUpRepo.GetAsync(facultySpecification);
+
+                    var departmentSpecification = new LookUpItemNameSpecification(item.Department);
+                    var department = await lookUpRepo.GetAsync(departmentSpecification);
+
+                    var fieldSpecification = new LookUpItemNameSpecification(item.FieldOfStudy);
+                    var field = await lookUpRepo.GetAsync(fieldSpecification);
+
+                    var universitySpecification = new LookUpItemNameSpecification(item.University);
+                    var university = await lookUpRepo.GetAsync(universitySpecification);
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentData = new PersonalDataCreateDTO
+                    {
+                        DepartmentId = department.Id,
+                        BirthDate = item.BirthDate,
+                        AccurateSpecialization = item.AccurateSpecialization,
+                        GeneralSpecialization = item.GeneralSpecialization,
+                        MaritalStatusId = materialStatus.Id,
+                        AuthorityId = faculty.Id,
+                        UniversityId = university.Id,
+                        BirthPlace = item.BirthPlace,
+                        CompositionTopics = item.CompositionTopics,
+                        FieldId = field.Id,
+                        GenderId = gender.Id,
+                        Name = item.Name,
+                        NameInComposition = item.NameInCompositions,
+                        TitleId = title.Id,
+                        FacultyMemberId = member.Id
+                    };
+
+                    dataAddRequest.Add(currentData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<PersonalData>>(dataAddRequest);
+                await personalDataRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+
+
+        }
+
+        public async Task<bool> ScientificDutyDataHandle(string? json)
+		{
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<SceintificMissionsFetchingDTO>>(json, options);
+            var dataAddRequest = new List<ScientificMissionCreateDto>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var missionRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+
+                foreach (var item in listResult)
+                {
+                    var missionSpecification = new ScientificMissionsSpecifications(item);
+                    var data = await missionRepo.GetAllAsync(missionSpecification);
+                    
+                    if (data.Any())
+                        continue;
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentData = new ScientificMissionCreateDto
+                    {
+                        StartDate = item.StartDate,
+                        CountryOrCity = item.CountryCity,
+                        Description = item.Description,
+                        EndDate = item.EndDate,
+                        FacultyMemberId = member.Id,
+                        name = item.Name,
+                        UniversityOrFaculty = item.UniversityFaculty
+                    };
+
+                    dataAddRequest.Add(currentData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<ScientificMissions>>(dataAddRequest);
+                await missionRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
+
+        /*public Task<bool> SpecializationDataHandle(string? json)
 		{
 			throw new NotImplementedException();
-		}
+		}*/
 
-		public Task<bool> ScientificDutyDataHandle(string? json)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> SpecializationDataHandle(string? json)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task<bool> ThesisDataHandle(string? json)
+        public Task<bool> ThesisDataHandle(string? json)
 		{
 			throw new NotImplementedException();
 		}
@@ -215,9 +397,65 @@ namespace Services.Implementations
 			throw new NotImplementedException();
 		}
 
-		public Task<bool> TrainingProgramDataHandle(string? json)
+		public async Task<bool> TrainingProgramDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            if (string.IsNullOrWhiteSpace(json))
+                throw new ArgumentException("JSON is null or empty.", nameof(json));
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var listResult = JsonSerializer.Deserialize<List<TrainingProgramsFetchingDTO>>(json, options);
+            var dataAddRequest = new List<TrainingProgramsCreateDto>();
+
+            if (listResult != null && listResult.Any())
+            {
+                var trainingRepo = _unitOfWork.GetRepository<TrainingPrograms, int>();
+                var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+
+                foreach (var item in listResult)
+                {
+                    var trainingSpecification = new TrainingProgramsSpecifications(item);
+                    var data = await trainingRepo.GetAllAsync(trainingSpecification);
+
+                    if (data.Any())
+                        continue;
+
+                    var facultyMemberSpecification = new FacultyMemberWithNationalNumberSpecifications(item.NationalNumber);
+                    var member = await facultyMemberRepo.GetAsync(facultyMemberSpecification);
+
+                    var currentData = new TrainingProgramsCreateDto
+                    {
+                        StartDate = item.StartDate,
+                        Description = item.Description,
+                        EndDate = item.EndDate,
+                        FacultyMemberId = member.Id,
+                        OrganizingAuthority = item.OrganizerName,
+                        ParticipationType =
+                            (item.ParticipationType?.Trim() == "محاضر")
+                            ? TrainingProgramParticipationType.lecturer
+                            : TrainingProgramParticipationType.listener,
+
+                        TrainingProgramName = item.Name,
+                        Venue = item.ProgramPlace,
+                        Type = (item.ProgramType?.Trim() == "في التخصص")
+                            ? TrainingProgramType.InTheSpecialty
+                            : TrainingProgramType.OutTheSpecialty,
+
+                    };
+
+                    dataAddRequest.Add(currentData);
+                }
+
+                var entites = _mapper.Map<IEnumerable<TrainingPrograms>>(dataAddRequest);
+                await trainingRepo.AddRangeAsync(entites);
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+
+            return false;
+        }
 	}
 }

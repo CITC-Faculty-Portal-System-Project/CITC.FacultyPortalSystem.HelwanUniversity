@@ -12,8 +12,7 @@ namespace Shared.Dtos.MissionsModule
         public string UniversityOrFaculty { get; set; } = string.Empty;
         [Required(ErrorMessage = "Please Enter Start Date")]
         public DateOnly StartDate { get; set; }
-        [Required(ErrorMessage = "Plase Enter End Date")]
-        public DateOnly EndDate { get; set; }
+        public DateOnly? EndDate { get; set; }
         [Required(ErrorMessage = "Please Enter Description")]
         public string Description { get; set; } = string.Empty;
 
