@@ -197,6 +197,11 @@ namespace Services.Implementations
 
             EnsureOwnership(conferenceOrSeminar.FacultyMemberId, currentUser.UserId, "Conference Or Seminar");
 
+            conferenceOrSeminar.IsDeleted = true;
+            conferenceOrSeminar.DeletedAt = DateTime.UtcNow;
+            conferenceOrSeminar.DeletedBy = currentUser.UserName;
+
+
             ConferencesAndSeminarsRepo.Update(conferenceOrSeminar);
 
             await _unitOfWork.SaveChangesAsync();
