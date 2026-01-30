@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.IdentityModule;
+using Messaging.AsyncMessaging;
 using Messaging.AsyncMessaging.Consumer;
 using Messaging.AsyncMessaging.Publisher;
 using Messaging.AsyncMessaging.Settings;
@@ -45,11 +46,14 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.Configure<RabbitMQConsumerSettings>(
                 configuration.GetSection("RabbitMQConsumer"));
 
+            services.AddSingleton<IRabbitMQConnection, RabbitMQConnection>();
 
-            services.AddHostedService<ExternalDataConsumerClient>();
+			services.AddHostedService<ExternalDataConsumerClient>();
+
+            services.AddHostedService<ResearchDataConsumerClient>();
 
 
-            services.AddSingleton(new JsonSerializerOptions
+			services.AddSingleton(new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
