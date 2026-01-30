@@ -7,6 +7,7 @@ namespace Domain.Contracts
         public Expression<Func<TEntity, bool>>? Criteria { get; }
         //Signature for property [Expression ==> Include]
         public List<Expression<Func<TEntity, object>>> IncludeExpressions { get; }
+        public List<Func<IQueryable<TEntity>, IQueryable<TEntity>>> IncludeChains { get; }
 
         //OrderBy , OrderByDescending [Expression]
         public Expression<Func<TEntity, object>>? OrderBy { get; }

@@ -1,4 +1,6 @@
-﻿using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.Attachments;
+using Domain.Entities.MissionsModule;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Shared.Dtos.MissionsModule;
 
 namespace Services.MappingProfiles
@@ -22,10 +24,20 @@ namespace Services.MappingProfiles
             CreateMap<ConferencesAndSeminars, ConferencesAndSeminarsResponseDto>()
                  .ForMember(dest => dest.RoleOfParticipation, opt => opt.MapFrom(src => src.RoleOfParticipation))
                  .ForMember(dest => dest.LocalOrInternational, opt => opt.MapFrom(src => src.LocalOrInternational))
-                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type));
+                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type))
 
-            CreateMap<ConferencesAndSeminarsCreateDto, ConferencesAndSeminars>();
+                .ForMember(dest => dest.Attachments,
+                    opt => opt.MapFrom(src =>
+                        src.Attachments.Select(a => a.Attachment)
+                    )
+                );
+
+            CreateMap<ConferencesAndSeminarsCreateDto, ConferencesAndSeminars>()
+                        .ForMember(d => d.Attachments, opt => opt.Ignore());
+    
+
             CreateMap<ConferencesAndSeminarsUpdateDto, ConferencesAndSeminars>();
+            CreateMap<ConferencesAndSeminarsAttachmentCreateDTO , ConferencesAndSeminarsAttachments>();
 
             #endregion
 

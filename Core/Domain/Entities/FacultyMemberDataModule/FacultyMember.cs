@@ -1,4 +1,5 @@
-﻿using Domain.Entities.HigherStuidesModule;
+﻿using Domain.Entities.Attachments;
+using Domain.Entities.HigherStuidesModule;
 using Domain.Entities.MissionsModule;
 using Domain.Entities.ProjectsAndCommitteesModule;
 using Domain.Entities.ResearchesModule;
@@ -55,6 +56,11 @@ namespace Domain.Entities.FacultyMemberDataModule
 
         public ICollection<Supervising>? Supervisings { get; set; }
         public ICollection<Thesis>? Theses { get; set; }
+
+        #endregion
+
+        #region AttachmentsModule
+        public ICollection<FacultyMemberAttachments>? Attachments { get; set; }
 
         #endregion
 

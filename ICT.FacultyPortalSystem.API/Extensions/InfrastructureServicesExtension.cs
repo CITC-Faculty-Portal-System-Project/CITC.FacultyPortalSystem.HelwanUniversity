@@ -1,5 +1,7 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.IdentityModule;
+using FtpFileStorage.Factories;
+using FtpFileStorage.Implementation;
 using Messaging.AsyncMessaging.Consumer;
 using Messaging.AsyncMessaging.Publisher;
 using Messaging.AsyncMessaging.Settings;
@@ -10,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Presistence.Data;
 using Presistence.Identity;
 using Presistence.Repositories;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Shared.Common;
 using StackExchange.Redis;
 using System.Text;
@@ -47,6 +50,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
 
             services.AddHostedService<ExternalDataConsumerClient>();
+            services.AddScoped<IFTPClientFactory, FTPClientFactory>();
+            services.AddScoped<IFTPFileStorageService, FTPFileStorageService>();
 
 
             services.AddSingleton(new JsonSerializerOptions

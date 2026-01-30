@@ -1,7 +1,11 @@
 ﻿using Domain.Contracts;
+using FtpFileStorage.Configurations;
+using FtpFileStorage.Factories;
+using FtpFileStorage.Implementation;
 using Presistence.Repositories;
-using Services.Abstraction.Contracts;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
+using Services.Implementations.AttachmentsModule;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -53,15 +57,43 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IProjectsAndCommitteesService>()
             );
 
+            services.AddScoped<IAttachmentService, AttachmentService>();
+            services.AddScoped<Func<IAttachmentService>>(provider =>
+            () => provider.GetRequiredService<IAttachmentService>()
+            );
+
+            services.AddScoped<IAttachmentsAcsessabilityService, AttachmentsAcsessablityService>();
+            services.AddScoped<Func<IAttachmentsAcsessabilityService>>(provider =>
+            () => provider.GetRequiredService<IAttachmentsAcsessabilityService>()
+            );
+
+
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
-
-
             services.AddScoped<IExternalDataHandlingService, ExternalDataHandlingService>();
+            services.AddScoped<IEncryptionService, EncryptionService>();
+            services.AddScoped<IProcessingService, ProcessingService>();
+
 
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+
+            services.Configure<FileStorageOptions>(
+                    configuration.GetSection("FileStorage"));
+
+            services.Configure<FtpsOptions>(
+                      configuration.GetSection("FileStorage:Ftps")
+                    );
+
+           services
+            .AddOptions<FtpsOptions>()
+            .Bind(configuration.GetSection("FileStorage:Ftps"))
+            .ValidateDataAnnotations()
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Host), "Host is required")
+            .ValidateOnStart();
+
+
             return services;
         }
     }

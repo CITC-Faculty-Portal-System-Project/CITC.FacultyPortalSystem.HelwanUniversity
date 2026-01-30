@@ -46,6 +46,15 @@
                    .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
+            #region RelationShip With Attachments
+
+            builder.HasOne(aq => aq.Attachment)
+             .WithOne(f => f.AcademicQualification)
+             .HasForeignKey<AcademicQualifications>(aq => aq.AttachmentId)
+             .OnDelete(DeleteBehavior.Cascade);
+
+            #endregion
+
         }
     }
 }

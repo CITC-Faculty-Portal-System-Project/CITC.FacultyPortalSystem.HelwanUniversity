@@ -16,5 +16,7 @@ namespace Shared.Dtos.MissionsModule
         public DateOnly? EndDate { get; set; }
         public string Venue { get; set; } = string.Empty;
         public string? Notes { get; set; } = string.Empty;
+
+        public ICollection<ConferencesAndSeminarsAttachmentsReadDTO>? Attachments { get; set; }
     }
 }

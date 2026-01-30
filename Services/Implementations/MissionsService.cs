@@ -1,9 +1,12 @@
-﻿using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.Attachments;
+using Domain.Entities.MissionsModule;
 using Domain.Entities.ScientificProgressionModule;
+using Microsoft.VisualBasic;
 using Services.Specifications.MissionsModule;
 using Shared.Dtos.MissionsModule;
 using Shared.SpceificationParameters.MissionsModule;
 using Shared.SpecificationParameters.MissionsModule;
+using System.Threading.Tasks;
 
 namespace Services.Implementations
 {
@@ -43,8 +46,19 @@ namespace Services.Implementations
         private IGenericRepository<ConferencesAndSeminars, int> ConferencesAndSeminarsRepo
             => _unitOfWork.GetRepository<ConferencesAndSeminars, int>();
 
+        private IGenericRepository<AttachmentReference, Guid> AttachmentsRepo
+            => _unitOfWork.GetRepository<AttachmentReference, Guid>();
+
         private IGenericRepository<TrainingPrograms, int> TrainingProgramsRepo
             => _unitOfWork.GetRepository<TrainingPrograms, int>();
+
+        //Enusure Attachment Exist
+        private async Task EnsureAttachmentExistance(Guid attachmentId)
+        {
+            if (await AttachmentsRepo.GetByIdAsync(attachmentId) is null)
+                throw new NotFoundException($"Desired Attachment Wasn't Found");
+        }
+
         #endregion
 
         #region Scientific Missions
@@ -163,6 +177,22 @@ namespace Services.Implementations
 
             var conferenceOrSeminar = _mapper.Map<ConferencesAndSeminars>(conferencesAndSeminarsCreateDto);
             conferenceOrSeminar.FacultyMemberId = currentUser.UserId;
+
+            if (conferencesAndSeminarsCreateDto.AttachmentsIds!.Count > 0)
+            {
+
+                foreach (var attachment in conferencesAndSeminarsCreateDto.AttachmentsIds)
+                {
+                    await EnsureAttachmentExistance(attachment);
+                    
+                    conferenceOrSeminar.Attachments!.Add(new ConferencesAndSeminarsAttachments
+                    {
+                        AttachmentId = attachment
+                    });
+                }
+
+            }
+
 
             await ConferencesAndSeminarsRepo.AddAsync(conferenceOrSeminar);
             await _unitOfWork.SaveChangesAsync();

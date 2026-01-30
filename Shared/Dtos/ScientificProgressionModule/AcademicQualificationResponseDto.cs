@@ -12,5 +12,7 @@ namespace Shared.Dtos.ScientificProgressionModule
         public string? UniversityOrFaculty { get; set; } = string.Empty;
         public string CountryOrCity { get; set; } = string.Empty;
         public DateOnly DateOfObtainingTheQualification { get; set; }
+        public Guid? AttachmentId { get; set; }
+        public string? AttachmentName { get; set; } = string.Empty;
     }
 }
