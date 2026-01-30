@@ -1,18 +1,14 @@
 ﻿using Messaging.AsyncMessaging.Consumer.Helpers;
-using Messaging.AsyncMessaging.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Services.Abstraction.Contracts;
 using System.Text;
-using System.Threading.Channels;
 
 namespace Messaging.AsyncMessaging.Consumer
 {
-    /*public class ExternalDataConsumerClient : BackgroundService
+	/*public class ExternalDataConsumerClient : BackgroundService
     {
 
         private IConnection _connection;
@@ -124,18 +120,18 @@ namespace Messaging.AsyncMessaging.Consumer
         }
     }*/
 
-    public class ExternalDataConsumerClient : BackgroundService
+	public class ExternalDataConsumerClient : BackgroundService
     {
         private readonly IServiceScopeFactory _scopeFactory;
-        private readonly RabbitMQConsumerSettings _settings;
-        private IConnection? _connection;
+        private readonly IRabbitMQConnection _connection;
         private List<IModel> _channels = new();
 
 
-        public ExternalDataConsumerClient(IOptions<RabbitMQConsumerSettings> options, IServiceScopeFactory scopeFactory)
+        public ExternalDataConsumerClient(IRabbitMQConnection rabbitMQConnection, IServiceScopeFactory scopeFactory)
         {
-            _scopeFactory = scopeFactory;
-            _settings = options.Value;
+			_connection = rabbitMQConnection;
+			_scopeFactory = scopeFactory;
+
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -176,8 +172,8 @@ namespace Messaging.AsyncMessaging.Consumer
 					channel.Dispose();
 				}
 
-				_connection?.Close();
-				_connection?.Dispose();
+				_connection?.GetConnection().Close();
+				_connection?.GetConnection().Dispose();
 			}
 			catch (Exception ex)
 			{
@@ -191,17 +187,7 @@ namespace Messaging.AsyncMessaging.Consumer
 		#region Helpers
 		private void InitializeRabbitMQ()
         {
-            var factory = new ConnectionFactory
-            {
-                HostName = _settings.Host,
-                Port = _settings.Port,
-                UserName = _settings.Username,
-                Password = _settings.Password
-            };
-
-            _connection = factory.CreateConnection();
-
-			using var setupChannel = _connection.CreateModel();
+			using var setupChannel = _connection.GetConnection().CreateModel();
 			setupChannel.ExchangeDeclare(RabbitMQConstants.ExchangeName, ExchangeType.Direct, durable: true);
 
 			var queues = QueueInitializer.InitializeQueues();
@@ -219,7 +205,7 @@ namespace Messaging.AsyncMessaging.Consumer
 
             foreach(var queue in queues)
             {
-				var channel = _connection!.CreateModel();
+				var channel = _connection!.GetConnection().CreateModel();
 				_channels.Add(channel);
 				StartConsumer(channel, queue.QueueName,queue.RoutingKey);
 			}
@@ -227,7 +213,7 @@ namespace Messaging.AsyncMessaging.Consumer
 
         private void StartConsumer(IModel channel, string queueName, string routingKey)
         {
-            var consumer = new EventingBasicConsumer(channel);
+            var consumer = new AsyncEventingBasicConsumer(channel);
 
 			consumer.Received += async (sender, ea) =>
 			{
