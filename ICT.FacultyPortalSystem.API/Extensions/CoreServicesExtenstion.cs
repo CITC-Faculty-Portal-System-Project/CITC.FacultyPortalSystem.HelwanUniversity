@@ -63,10 +63,6 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             );
 
             services.AddScoped<IAttachmentsAcsessabilityService, AttachmentsAcsessablityService>();
-            services.AddScoped<Func<IAttachmentsAcsessabilityService>>(provider =>
-            () => provider.GetRequiredService<IAttachmentsAcsessabilityService>()
-            );
-
 
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));

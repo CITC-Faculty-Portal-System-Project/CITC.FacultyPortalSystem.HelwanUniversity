@@ -11,7 +11,6 @@ namespace Services.Implementations
         , Func<IScientificProgressionService> _scientificProgressionFactory
         , Func<IProjectsAndCommitteesService> _ProjectsAndCommitteesFactory
         , Func<IAttachmentService> _attachmentService
-        , Func<IAttachmentsAcsessabilityService> _attachmentAcsessabilityService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -28,7 +27,6 @@ namespace Services.Implementations
 
         public IProjectsAndCommitteesService ProjectsAndCommitteesService => _ProjectsAndCommitteesFactory.Invoke();
         public IAttachmentService AttachmentService => _attachmentService.Invoke();
-        public IAttachmentsAcsessabilityService AttachmentsAcsessabilityService => _attachmentAcsessabilityService.Invoke();
 
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
     }

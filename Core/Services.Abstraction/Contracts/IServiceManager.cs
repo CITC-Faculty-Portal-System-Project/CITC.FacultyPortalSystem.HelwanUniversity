@@ -13,7 +13,6 @@ namespace Services.Abstraction.Contracts
         public IScientificProgressionService ScientificProgressionService { get; }
         public IProjectsAndCommitteesService ProjectsAndCommitteesService { get; }
         public IAttachmentService AttachmentService { get;}
-        public IAttachmentsAcsessabilityService AttachmentsAcsessabilityService { get;}
 
 
         //public IExternalDataHandlingService ExternalDataHandlingService { get; }
