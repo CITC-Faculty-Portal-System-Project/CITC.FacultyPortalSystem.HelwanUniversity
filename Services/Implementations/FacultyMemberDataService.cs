@@ -1,5 +1,7 @@
-﻿using Shared.Dtos.FacultyMemberDataModule;
+﻿using Domain.Entities.Attachments;
+using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Dtos.IdentityModule;
+using Shared.Dtos.ScientificProgressionModule;
 
 namespace Services.Implementations
 {
@@ -48,8 +50,15 @@ namespace Services.Implementations
         private IGenericRepository<SocialMediaPlatforms, int> SocialMediaRepo
             => _unitOfWork.GetRepository<SocialMediaPlatforms, int>();
 
-        private IGenericRepository<FacultyMember, Guid> FacultyMemberRepo
-            => _unitOfWork.GetRepository<FacultyMember, Guid>();
+        private IGenericRepository<AttachmentReference, Guid> AttachmentsRepo
+           => _unitOfWork.GetRepository<AttachmentReference, Guid>();
+
+        //Enusure Attachment Exist
+        private async Task EnsureAttachmentExistance(Guid attachmentId)
+        {
+            if (await AttachmentsRepo.GetByIdAsync(attachmentId) is null)
+                throw new NotFoundException($"Desired Attachment Wasn't Found");
+        }
 
         #endregion
 
@@ -78,6 +87,9 @@ namespace Services.Implementations
         {
             //Get Logged User 
             var currentUser = await GetCurrentUserAsync();
+
+            if (personalDataUpdateDto.ProfilePictureId is not null)
+                await EnsureAttachmentExistance(personalDataUpdateDto.ProfilePictureId ?? Guid.Empty);
 
             //Load Personal Data With Includes
             var personalData = await PersonalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email)) 

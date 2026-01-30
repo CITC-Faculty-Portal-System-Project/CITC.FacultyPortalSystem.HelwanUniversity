@@ -20,6 +20,7 @@ namespace Services.Specifications.ScientificProgressionModule
             AddIncludes(aq => aq.Qualification);
             AddIncludes(aq => aq.Grade);
             AddIncludes(aq => aq.DispatchType);
+            AddIncludes(aq => aq.Attachment);
 
             switch (parameters.Sort)
             {
@@ -41,6 +42,7 @@ namespace Services.Specifications.ScientificProgressionModule
             AddIncludes(aq => aq.Qualification);
             AddIncludes(aq => aq.Grade);
             AddIncludes(aq => aq.DispatchType);
+            AddIncludes(aq => aq.Attachment);
         }
 
 

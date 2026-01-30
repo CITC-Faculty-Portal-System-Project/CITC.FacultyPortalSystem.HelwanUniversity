@@ -23,5 +23,6 @@ namespace Shared.Dtos.MissionsModule
         public string? Notes { get; set; } = string.Empty;
 
         public Guid FacultyMemberId { get; set; }
+        public ICollection<Guid>? AttachmentsIds { get; set; }
     }
 }

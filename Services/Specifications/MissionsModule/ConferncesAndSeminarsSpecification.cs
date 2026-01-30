@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.MissionsModule;
+using Microsoft.EntityFrameworkCore;
 using Shared.Enums.MissionsModule;
 using Shared.SpceificationParameters.MissionsModule;
 using Shared.SpecificationParameters.MissionsModule;
@@ -18,6 +19,9 @@ namespace Services.Specifications.MissionsModule
             )
         {
             AddIncludes(cas => cas.RoleOfParticipation);
+            AddIncludeWithChain(cas => cas.Include(cas => cas.Attachments)
+                                           .ThenInclude(cas => cas.Attachment));
+
             switch (parameters.Sort)
             {
                 case SeminarsAndConferencesSortingOptions.NameAsc:
@@ -41,7 +45,7 @@ namespace Services.Specifications.MissionsModule
 
         public ConferncesAndSeminarsSpecification(int id) : base(cas => !cas.IsDeleted && cas.Id == id)
         {
-
+            AddIncludes(cas => cas.Attachments.Select(a => a.Attachment));
         }
     }
 }

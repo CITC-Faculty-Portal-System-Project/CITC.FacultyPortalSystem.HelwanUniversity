@@ -1,4 +1,5 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿
+using Domain.Entities.Attachments;
 
 namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {
@@ -22,6 +23,15 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.Property(fm => fm.Email)
                 .HasColumnType("NVARCHAR(150)");
 
+
+            #region Configuring Relation With Attachments
+
+            builder.HasMany(f => f.Attachments)
+                .WithOne(a => a.FacultyMember)
+                .HasForeignKey(a => a.FacultyMemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            #endregion
         }
     }
 }

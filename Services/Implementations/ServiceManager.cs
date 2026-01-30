@@ -1,4 +1,6 @@
-﻿namespace Services.Implementations
+﻿using Services.Abstraction.Contracts.AttachmentsModule;
+
+namespace Services.Implementations
 {
     public class ServiceManager(Func<IAuthenticationService> _authFactory
         , Func<ICacheService> _cacheFactory
@@ -8,6 +10,8 @@
         , Func<IMissionsService> _missionService
         , Func<IScientificProgressionService> _scientificProgressionFactory
         , Func<IProjectsAndCommitteesService> _ProjectsAndCommitteesFactory
+        , Func<IAttachmentService> _attachmentService
+        , Func<IAttachmentsAcsessabilityService> _attachmentAcsessabilityService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -23,6 +27,8 @@
         public IScientificProgressionService ScientificProgressionService => _scientificProgressionFactory.Invoke();
 
         public IProjectsAndCommitteesService ProjectsAndCommitteesService => _ProjectsAndCommitteesFactory.Invoke();
+        public IAttachmentService AttachmentService => _attachmentService.Invoke();
+        public IAttachmentsAcsessabilityService AttachmentsAcsessabilityService => _attachmentAcsessabilityService.Invoke();
 
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
     }

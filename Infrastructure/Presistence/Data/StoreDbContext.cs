@@ -1,4 +1,5 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿using Domain.Entities.Attachments;
+using Domain.Entities.FacultyMemberDataModule;
 using Domain.Entities.HigherStuidesModule;
 using Domain.Entities.ProjectsAndCommitteesModule;
 using Domain.Entities.ResearchesModule;
@@ -131,5 +132,12 @@ namespace Presistence.Data
         #endregion
 
         public DbSet<Lookup> Lookups { get; set; }
+
+        #region AttachmentsModuleDatasets
+        public DbSet<AttachmentReference> AttachmentsReferences { get; set; }
+        public DbSet<FacultyMemberAttachments> FacultyMemberAttachments { get; set; }
+        public DbSet<ConferencesAndSeminarsAttachments> ConferencesAndSeminarsAttachments { get; set; }
+
+        #endregion
     }
 }

@@ -1,5 +1,7 @@
-﻿using Domain.Entities.ScientificProgressionModule;
+﻿using Domain.Entities.Attachments;
+using Domain.Entities.ScientificProgressionModule;
 using Services.Specifications.ScientificProgressionModule;
+using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Dtos.ScientificProgressionModule;
 using Shared.SpecificationParameters.ScientificProgressionModule;
 
@@ -40,8 +42,19 @@ namespace Services.Implementations
         private IGenericRepository<JobRanks, int> JobRanksRepo
             => _unitOfWork.GetRepository<JobRanks, int>();
 
+        private IGenericRepository<AttachmentReference, Guid> AttachmentsRepo
+                        => _unitOfWork.GetRepository<AttachmentReference, Guid>();
+
         private IGenericRepository<AdministrativePositions, int> AdministrativePositionsRepo
             => _unitOfWork.GetRepository<AdministrativePositions, int>();
+
+        //Enusure Attachment Exist
+        private async Task EnsureAttachmentExistance(Guid attachmentId)
+        {
+            if (await AttachmentsRepo.GetByIdAsync(attachmentId) is null)
+                throw new NotFoundException($"Desired Attachment Wasn't Found");
+        }
+
         #endregion
 
         #region Academic Qualifications
@@ -86,6 +99,9 @@ namespace Services.Implementations
         {
             //Get Current User 
             var currentUser = await GetCurrentUserAsync();
+
+            if (academicQualificationCreateDto.AttachmentId is not null)
+                await EnsureAttachmentExistance(academicQualificationCreateDto.AttachmentId ?? Guid.Empty);
 
             //Map Dto to Entity and Add FacultyMemberId
             var academicQualification = _mapper.Map<AcademicQualifications>(academicQualificationCreateDto);

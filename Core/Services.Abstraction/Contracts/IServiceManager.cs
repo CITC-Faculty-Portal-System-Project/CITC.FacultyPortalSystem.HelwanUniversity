@@ -1,4 +1,6 @@
-﻿namespace Services.Abstraction.Contracts
+﻿using Services.Abstraction.Contracts.AttachmentsModule;
+
+namespace Services.Abstraction.Contracts
 {
     public interface IServiceManager
     {
@@ -10,6 +12,9 @@
         public IMissionsService MissionsService { get; }
         public IScientificProgressionService ScientificProgressionService { get; }
         public IProjectsAndCommitteesService ProjectsAndCommitteesService { get; }
+        public IAttachmentService AttachmentService { get;}
+        public IAttachmentsAcsessabilityService AttachmentsAcsessabilityService { get;}
+
 
         //public IExternalDataHandlingService ExternalDataHandlingService { get; }
     }
