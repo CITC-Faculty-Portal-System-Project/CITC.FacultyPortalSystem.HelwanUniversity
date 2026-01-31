@@ -43,11 +43,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
             services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
-			services.Configure<RabbitMQPublishSettings>(
-                configuration.GetSection("RabbitMQPublisher"));
+			services.Configure<RabbitMQSettings>(
+                configuration.GetSection("RabbitMQSettings"));
 
-            services.Configure<RabbitMQConsumerSettings>(
-                configuration.GetSection("RabbitMQConsumer"));
+            services.Configure<RabbitMQConnectionSettings>(
+                configuration.GetSection("RabbitMQConnectionSettings"));
 
             services.AddSingleton<IRabbitMQConnection, RabbitMQConnection>();
 
