@@ -9,3 +9,4 @@ global using Shared;
 global using Services.Specifications.FacultyMemberDataModule;
 global using Domain.Entities.FacultyMemberDataModule;
 global using Shared.Dtos.IdentityModule;
+using Services.Global;
