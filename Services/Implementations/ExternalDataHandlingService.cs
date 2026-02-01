@@ -175,7 +175,7 @@ namespace Services.Implementations
             );
         }
 
-        public async Task<bool> ScientificDutyDataHandle(string? json)
+		public async Task<bool> ScientificDutyDataHandle(string? json)
 		{
             var missionRepo = _unitOfWork.GetRepository<ScientificMissions, int>();
 
@@ -310,5 +310,12 @@ namespace Services.Implementations
                 _unitOfWork
             );
         }
+
+		//Researches Data
+		public Task<bool> ResearchDataHandle(string? json)
+		{
+			throw new NotImplementedException();
+		}
+
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using ICIT.FacultyPortalSystem.API.Factories;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Filters;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -27,6 +28,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             });
 
             services.AddEndpointsApiExplorer();
+            services.AddScoped<BlockMaliciousExtensionsFilter>();
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new() { Title = "CITC Faculty Portal System", Version = "v1" });

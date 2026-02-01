@@ -19,5 +19,7 @@
         public string? AccurateSpecialization { get; set; }
         public string? NameInComposition { get; set; }
         public string? CompositionTopics { get; set; }
+
+        public Guid? ProfilePictureId { get; set; }
     }
 }

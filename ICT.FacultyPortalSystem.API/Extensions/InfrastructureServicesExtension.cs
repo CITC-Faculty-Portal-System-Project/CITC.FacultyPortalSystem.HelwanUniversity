@@ -1,5 +1,8 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.IdentityModule;
+using FtpFileStorage.Factories;
+using FtpFileStorage.Implementation;
+using Messaging.AsyncMessaging;
 using Messaging.AsyncMessaging.Consumer;
 using Messaging.AsyncMessaging.Publisher;
 using Messaging.AsyncMessaging.Settings;
@@ -10,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Presistence.Data;
 using Presistence.Identity;
 using Presistence.Repositories;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Shared.Common;
 using StackExchange.Redis;
 using System.Text;
@@ -39,17 +43,23 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
             services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
-			services.Configure<RabbitMQPublishSettings>(
-                configuration.GetSection("RabbitMQPublisher"));
+			services.Configure<RabbitMQSettings>(
+                configuration.GetSection("RabbitMQSettings"));
 
-            services.Configure<RabbitMQConsumerSettings>(
-                configuration.GetSection("RabbitMQConsumer"));
+            services.Configure<RabbitMQConnectionSettings>(
+                configuration.GetSection("RabbitMQConnectionSettings"));
 
+            services.AddSingleton<IRabbitMQConnection, RabbitMQConnection>();
 
             services.AddHostedService<ExternalDataConsumerClient>();
+            services.AddScoped<IFTPClientFactory, FTPClientFactory>();
+            services.AddScoped<IFTPFileStorageService, FTPFileStorageService>();
+			services.AddHostedService<ExternalDataConsumerClient>();
+
+            services.AddHostedService<ResearchDataConsumerClient>();
 
 
-            services.AddSingleton(new JsonSerializerOptions
+			services.AddSingleton(new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull

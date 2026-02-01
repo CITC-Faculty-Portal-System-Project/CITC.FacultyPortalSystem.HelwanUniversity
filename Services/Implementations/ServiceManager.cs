@@ -2,6 +2,9 @@
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 
+using Services.Abstraction.Contracts.AttachmentsModule;
+using System;
+
 namespace Services.Implementations
 {
     public class ServiceManager(Func<IAuthenticationService> _authFactory
@@ -9,6 +12,7 @@ namespace Services.Implementations
         , Func<IEmailService> _emailFactory
         , Func<IFacultyMemberDataService> _facultyMemberDataFactory
         , Func<ILookUpItemService> _lookUpItemSerivce
+        , Func<IAttachmentService> _attachmentService
         , Func<IScientificMissionsService> _scientificMissionsServiceFactory
         , Func<ISeminarsAndConferencesService> _seminarsAndConferencesServiceFactory
         , Func<ITrainingProgramsService> _trainingProgramsServiceFactory
@@ -29,7 +33,7 @@ namespace Services.Implementations
 
         public IFacultyMemberDataService FacultyMemberDataService => _facultyMemberDataFactory.Invoke();
         public ILookUpItemService LookUpItemService => _lookUpItemSerivce.Invoke();
-
+        public IAttachmentService AttachmentService => _attachmentService.Invoke();
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
 
         #region Academic Data Module

@@ -1,4 +1,4 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿using Domain.Entities.Attachments;
 
 namespace Domain.Entities.ScientificProgressionModule
 {
@@ -23,8 +23,14 @@ namespace Domain.Entities.ScientificProgressionModule
         public Guid FacultyMemberId { get; set; }
         #endregion
 
+        #region Relation With Attachment
+        public Guid? AttachmentId { get; set; }
+        #endregion
+
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
+        public AttachmentReference? Attachment { get; set; }
+
         #endregion
     }
 }

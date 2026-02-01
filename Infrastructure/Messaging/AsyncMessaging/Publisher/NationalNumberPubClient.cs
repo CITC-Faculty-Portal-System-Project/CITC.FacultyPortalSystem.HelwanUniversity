@@ -1,5 +1,4 @@
 ﻿using Messaging.AsyncMessaging.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Services.Abstraction.Contracts;
@@ -9,31 +8,20 @@ namespace Messaging.AsyncMessaging.Publisher
 {
 	public class NationalNumberPubClient : INationalNumberPubClient, IDisposable
 	{
-		private readonly IConnection _connection;
+		private readonly IRabbitMQConnection _connection;
+		private readonly RabbitMQSettings _settings;
 		private readonly IModel _channel;
-		private readonly RabbitMQPublishSettings _settings;
 		private bool _disposed;
 
-		public NationalNumberPubClient(IOptions<RabbitMQPublishSettings> options)
+		public NationalNumberPubClient(IRabbitMQConnection rabbitMQConnection, IOptions<RabbitMQSettings> options)
 		{
 			_settings = options.Value;
+			_connection = rabbitMQConnection;
 
 			try
 			{
-				var factory = new ConnectionFactory
-				{
-					HostName = _settings.Host,
-					Port = _settings.Port,
-					UserName = _settings.Username,
-					Password = _settings.Password,
-					AutomaticRecoveryEnabled = true, // auto-reconnect if RabbitMQ restarts
-					NetworkRecoveryInterval = TimeSpan.FromSeconds(10)
-				};
-
-				_connection = factory.CreateConnection();
-				_channel = _connection.CreateModel();
-
-				_channel.ExchangeDeclare(_settings.ExchangeName, ExchangeType.Fanout, durable: true);
+				_channel = _connection.GetConnection().CreateModel();
+				_channel.ExchangeDeclare(_settings.NationalNumberExchangeName, ExchangeType.Fanout, durable: true);
 
 			}catch (Exception ex)
 			{
@@ -48,7 +36,7 @@ namespace Messaging.AsyncMessaging.Publisher
 
 			try
 			{
-				if (_channel is null || !_channel.IsOpen || _disposed)
+				if (_channel is null || !_channel.IsOpen || !_connection.GetConnection().IsOpen)
 					throw new InvalidOperationException("RabbitMQ channel is closed or unavailable.");
 
 
@@ -58,7 +46,7 @@ namespace Messaging.AsyncMessaging.Publisher
 				props.Persistent = true;
 
 				_channel.BasicPublish(
-					exchange: _settings.ExchangeName,
+					exchange: _settings.NationalNumberExchangeName,
 					routingKey: "",
 					basicProperties: props, // make message persistent
 					body: body
@@ -78,7 +66,7 @@ namespace Messaging.AsyncMessaging.Publisher
 			try
 			{
 				_channel?.Close();
-				_connection?.Close();
+				_channel?.Dispose();
 			}
 			catch (Exception ex)
 			{
@@ -86,7 +74,6 @@ namespace Messaging.AsyncMessaging.Publisher
 			}
 			_disposed = true;
 			GC.SuppressFinalize(this);
-
 		}
 	}
 }

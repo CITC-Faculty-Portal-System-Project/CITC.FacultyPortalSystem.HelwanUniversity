@@ -21,6 +21,13 @@
                 //    query = query.Include(expression);
                 query = specifications.IncludeExpressions.Aggregate(query, (currentQuery, expression) => currentQuery.Include(expression));
             }
+
+            if (specifications.IncludeChains?.Count > 0)
+            {
+                query = specifications.IncludeChains
+                    .Aggregate(query, (current, include) => include(current));
+            }
+
             if (specifications.isPaginated)
             {
                 query = query.Skip(specifications.Skip).Take(specifications.Take);

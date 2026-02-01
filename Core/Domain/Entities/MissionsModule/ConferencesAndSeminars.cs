@@ -1,4 +1,5 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿using Domain.Entities.Attachments;
+using Domain.Entities.FacultyMemberDataModule;
 
 namespace Domain.Entities.MissionsModule
 {
@@ -24,6 +25,9 @@ namespace Domain.Entities.MissionsModule
 
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
+        public ICollection<ConferencesAndSeminarsAttachments> Attachments { get; set; }
+            = new List<ConferencesAndSeminarsAttachments>();       
+        
         #endregion
     }
 }

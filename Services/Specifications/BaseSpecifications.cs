@@ -15,11 +15,21 @@ namespace Services.Specifications
 
         #region Include
         public List<Expression<Func<TEntity, object>>> IncludeExpressions { get; } = [];
+        public List<Func<IQueryable<TEntity>, IQueryable<TEntity>>> IncludeChains { get; } = [];
+
+
 
         protected void AddIncludes(Expression<Func<TEntity, object>> includeExpression)
         {
             IncludeExpressions.Add(includeExpression);
         }
+
+        protected void AddIncludeWithChain(
+            Func<IQueryable<TEntity>, IQueryable<TEntity>> includeChain)
+        {
+            IncludeChains.Add(includeChain);
+        }
+
         #endregion
 
         #region Sorting [OrderBy - OrderByDescending]

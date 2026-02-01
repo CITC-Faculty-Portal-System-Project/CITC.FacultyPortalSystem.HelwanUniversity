@@ -1,4 +1,6 @@
-﻿using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
+﻿using Services.Abstraction.Contracts.AttachmentsModule;
+
+using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 
@@ -11,7 +13,7 @@ namespace Services.Abstraction.Contracts
         public IEmailService EmailService { get; }
         public IFacultyMemberDataService FacultyMemberDataService { get; }
         public ILookUpItemService LookUpItemService { get; }
-
+        public IAttachmentService AttachmentService { get; }
         //public IExternalDataHandlingService ExternalDataHandlingService { get; }
 
         #region Academic Data Module

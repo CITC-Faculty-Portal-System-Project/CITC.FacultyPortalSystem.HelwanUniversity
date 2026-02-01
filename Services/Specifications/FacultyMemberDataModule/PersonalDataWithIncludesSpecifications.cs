@@ -17,6 +17,7 @@ namespace Services.Specifications.FacultyMemberDataModule
             AddIncludes(pd => pd.Field);
 
             AddIncludes(pd => pd.FacultyMember!);
+            AddIncludes(pd => pd.ProfilePicture!);
         }
 
         public PersonalDataWithIncludesSpecifications(PersonalDataFetchingDTO dTO)
@@ -34,7 +35,9 @@ namespace Services.Specifications.FacultyMemberDataModule
             AddIncludes(pd => pd.Authority);
             AddIncludes(pd => pd.Field);
             AddIncludes(pd => pd.Department);
-            AddIncludes(aq => aq.FacultyMember);
+            AddIncludes(aq => aq.FacultyMember!);
+            AddIncludes(pd => pd.ProfilePicture!);
+
 
         }
     }
