@@ -26,13 +26,17 @@ namespace Messaging.AsyncMessaging.Consumer
 		protected override Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			_channel = _connection.GetConnection().CreateModel();
+			_channel.ExchangeDeclare(
+			exchange: _settings.ResearchDataExchangeName,
+			type: ExchangeType.Direct,
+			durable: true,
+			autoDelete: false);
 			_channel.QueueDeclare(
 				queue: _settings.ResearchDataQueueName,
 				durable: true,
 				exclusive: false,
 				autoDelete: false,
 				arguments: null);
-
 			_channel.QueueBind(queue: _settings.ResearchDataQueueName, exchange: _settings.ResearchDataExchangeName, routingKey: _settings.ResearchDataRoutingKey);
 
 			var consumer = new AsyncEventingBasicConsumer(_channel);

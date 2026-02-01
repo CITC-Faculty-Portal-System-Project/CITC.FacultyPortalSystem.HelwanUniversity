@@ -1,15 +1,10 @@
 ﻿using Messaging.AsyncMessaging.Settings;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messaging.AsyncMessaging
 {
-    public class RabbitMQConnection : IRabbitMQConnection, IDisposable
+	public class RabbitMQConnection : IRabbitMQConnection, IDisposable
     {
         private IConnection? _connection;
         private readonly RabbitMQConnectionSettings _settings;
