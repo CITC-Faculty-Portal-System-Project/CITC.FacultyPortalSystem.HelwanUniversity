@@ -1,10 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Messaging.AsyncMessaging.Settings;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Services.Abstraction.Contracts;
 using System.Text;
-using System.Threading.Channels;
 
 namespace Messaging.AsyncMessaging.Consumer
 {
@@ -12,23 +13,31 @@ namespace Messaging.AsyncMessaging.Consumer
 	{
 		private readonly IServiceScopeFactory _serviceScope;
 		private readonly IRabbitMQConnection _connection;
+		private readonly RabbitMQSettings _settings;
 		private IModel? _channel;
-		public ResearchDataConsumerClient(IServiceScopeFactory serviceScope, IRabbitMQConnection connection)
+		public ResearchDataConsumerClient(IServiceScopeFactory serviceScope, 
+			IRabbitMQConnection connection,
+			 IOptions<RabbitMQSettings> options)
 		{
+			_settings = options.Value;
 			_serviceScope = serviceScope;
 			_connection = connection;
 		}
 		protected override Task ExecuteAsync(CancellationToken stoppingToken)
 		{
 			_channel = _connection.GetConnection().CreateModel();
+			_channel.ExchangeDeclare(
+			exchange: _settings.ResearchDataExchangeName,
+			type: ExchangeType.Direct,
+			durable: true,
+			autoDelete: false);
 			_channel.QueueDeclare(
-				queue: "external.researches.queue",
+				queue: _settings.ResearchDataQueueName,
 				durable: true,
 				exclusive: false,
 				autoDelete: false,
 				arguments: null);
-
-			_channel.QueueBind(queue: "external.researches.queue", exchange: "external.researches.exchange", routingKey: "external.researches.fetch");
+			_channel.QueueBind(queue: _settings.ResearchDataQueueName, exchange: _settings.ResearchDataExchangeName, routingKey: _settings.ResearchDataRoutingKey);
 
 			var consumer = new AsyncEventingBasicConsumer(_channel);
 
@@ -44,7 +53,7 @@ namespace Messaging.AsyncMessaging.Consumer
 			};
 
 			_channel.BasicConsume(
-				queue: "external.researches.queue",
+				queue: _settings.ResearchDataQueueName,
 				autoAck: false,
 				consumer: consumer);
 
@@ -53,8 +62,18 @@ namespace Messaging.AsyncMessaging.Consumer
 
 		public override void Dispose()
 		{
-			_channel?.Close();
-			_channel?.Dispose();
+			try
+			{
+				if(_channel is not null)
+				{
+					if (_channel.IsOpen)
+						_channel.Close();
+					_channel.Dispose();
+				}
+			}catch(Exception ex)
+			{
+				Console.WriteLine($"--> Failed to dispose channel: {ex.Message}");
+			}
 			base.Dispose();
 		}
 	}

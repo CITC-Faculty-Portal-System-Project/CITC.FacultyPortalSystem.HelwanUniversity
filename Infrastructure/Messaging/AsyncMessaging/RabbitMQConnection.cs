@@ -1,19 +1,14 @@
 ﻿using Messaging.AsyncMessaging.Settings;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Messaging.AsyncMessaging
 {
-    public class RabbitMQConnection : IRabbitMQConnection, IDisposable
+	public class RabbitMQConnection : IRabbitMQConnection, IDisposable
     {
         private IConnection? _connection;
-        private readonly RabbitMQConsumerSettings _settings;
-        public RabbitMQConnection(IOptions<RabbitMQConsumerSettings> options)
+        private readonly RabbitMQConnectionSettings _settings;
+        public RabbitMQConnection(IOptions<RabbitMQConnectionSettings> options)
         {
             _settings = options.Value;
             var factory = new ConnectionFactory
@@ -28,14 +23,22 @@ namespace Messaging.AsyncMessaging
         }
         public IConnection GetConnection() => _connection ?? throw new InvalidOperationException("RabbitMQ connection is not established.");
 
-        public void Dispose()
-        {
-            if (_connection != null)
-            {
-                if (_connection.IsOpen)
-                    _connection.Close();
-                _connection.Dispose();
-            }
-        }
-    }
+		public void Dispose()
+		{
+			try
+			{
+				if (_connection != null)
+				{
+					if (_connection.IsOpen)
+						_connection.Close();
+					_connection.Dispose();
+					_connection = null;
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"--> Error while disposing RabbitMQ connection: {ex.Message}");
+			}
+		}
+	}
 }

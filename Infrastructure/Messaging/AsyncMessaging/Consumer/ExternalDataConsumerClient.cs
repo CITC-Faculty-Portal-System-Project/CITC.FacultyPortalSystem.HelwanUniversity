@@ -164,21 +164,23 @@ namespace Messaging.AsyncMessaging.Consumer
 
 		public override void Dispose()
 		{
-			try
+			Console.WriteLine("--> Disposing consumer channels...");
+
+			foreach (var channel in _channels)
 			{
-				foreach (var channel in _channels)
+				try
 				{
-					if (channel.IsOpen) channel.Close();
+					if (channel.IsOpen)
+						channel.Close();
 					channel.Dispose();
 				}
+				catch (Exception ex)
+				{
+					Console.WriteLine($"--> Failed to dispose channel: {ex.Message}");
+				}
+			}
 
-				_connection?.GetConnection().Close();
-				_connection?.GetConnection().Dispose();
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine($"==> Error during disposal: {ex.Message}");
-			}
+			Console.WriteLine("--> Consumer disposed (connection kept alive).");
 
 			base.Dispose();
 		}
