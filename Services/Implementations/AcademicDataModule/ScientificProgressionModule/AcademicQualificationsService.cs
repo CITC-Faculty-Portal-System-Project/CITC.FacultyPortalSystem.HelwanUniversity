@@ -1,4 +1,4 @@
-﻿using Domain.Entities.ScientificProgressionModule;
+﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Global;
 using Services.Specifications.ScientificProgressionModule;

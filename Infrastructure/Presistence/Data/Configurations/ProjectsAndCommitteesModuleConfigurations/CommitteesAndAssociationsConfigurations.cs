@@ -1,4 +1,6 @@
-﻿namespace Presistence.Data.Configurations.ProjectsAndCommitteesModuleConfigurations
+﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
+
+namespace Presistence.Data.Configurations.ProjectsAndCommitteesModuleConfigurations
 {
     public class CommitteesAndAssociationsConfigurations : IEntityTypeConfiguration<CommitteesAndAssociations>
     {

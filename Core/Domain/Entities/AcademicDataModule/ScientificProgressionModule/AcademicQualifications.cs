@@ -1,6 +1,6 @@
 ﻿using Domain.Entities.Attachments;
 
-namespace Domain.Entities.ScientificProgressionModule
+namespace Domain.Entities.AcademicDataModule.ScientificProgressionModule
 {
     public class AcademicQualifications : BaseEntity<int>
     {

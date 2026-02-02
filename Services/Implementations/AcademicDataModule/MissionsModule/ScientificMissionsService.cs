@@ -1,4 +1,4 @@
-﻿using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Global;
 using Services.Specifications.MissionsModule;

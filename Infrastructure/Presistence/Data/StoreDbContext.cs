@@ -1,8 +1,10 @@
-﻿using Domain.Entities.Attachments;
+﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
+using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.Attachments;
 using Domain.Entities.FacultyMemberDataModule;
-using Domain.Entities.HigherStuidesModule;
-using Domain.Entities.ProjectsAndCommitteesModule;
-using Domain.Entities.ResearchesModule;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 

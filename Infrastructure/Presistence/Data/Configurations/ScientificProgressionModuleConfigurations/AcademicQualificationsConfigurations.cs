@@ -1,4 +1,6 @@
-﻿namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurations
+﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+
+namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurations
 {
     public class AcademicQualificationsConfigurations : IEntityTypeConfiguration<AcademicQualifications>
     {

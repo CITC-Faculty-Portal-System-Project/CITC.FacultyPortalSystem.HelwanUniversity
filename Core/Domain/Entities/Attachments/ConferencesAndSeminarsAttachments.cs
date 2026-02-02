@@ -1,4 +1,4 @@
-﻿using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.AcademicDataModule.MissionsModule;
 
 namespace Domain.Entities.Attachments
 {

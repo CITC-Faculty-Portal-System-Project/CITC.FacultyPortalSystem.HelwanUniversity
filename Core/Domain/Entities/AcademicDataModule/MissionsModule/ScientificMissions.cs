@@ -1,6 +1,6 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
 
-namespace Domain.Entities.MissionsModule
+namespace Domain.Entities.AcademicDataModule.MissionsModule
 {
     public class ScientificMissions : BaseEntity<int>
     {

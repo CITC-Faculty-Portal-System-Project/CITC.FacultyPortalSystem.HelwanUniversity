@@ -1,4 +1,4 @@
-﻿using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.AcademicDataModule.MissionsModule;
 using Shared.SpceificationParameters.MissionsModule;
 using Shared.SpecificationParameters.MissionsModule;
 

@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.ResearchesModule
+﻿namespace Domain.Entities.AcademicDataModule.ResearchesModule
 {
     public class ExternalResearch : BaseEntity<int>
     {

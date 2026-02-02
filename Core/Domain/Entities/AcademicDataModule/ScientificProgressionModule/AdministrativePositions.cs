@@ -1,6 +1,6 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
 
-namespace Domain.Entities.ScientificProgressionModule
+namespace Domain.Entities.AcademicDataModule.ScientificProgressionModule
 {
     public class AdministrativePositions : BaseEntity<int>
     {

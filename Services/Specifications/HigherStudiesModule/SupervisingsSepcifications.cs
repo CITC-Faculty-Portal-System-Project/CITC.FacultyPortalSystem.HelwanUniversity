@@ -1,5 +1,5 @@
 ﻿
-using Domain.Entities.HigherStuidesModule;
+using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 
 namespace Services.Specifications.HigherStudiesModule

@@ -1,4 +1,4 @@
-﻿using Domain.Entities.ResearchesModule;
+﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Presistence.Data.Configurations.ResearchesModuleConfigurations

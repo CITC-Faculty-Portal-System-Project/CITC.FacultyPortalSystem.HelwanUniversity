@@ -1,4 +1,4 @@
-﻿namespace Domain.Entities.HigherStuidesModule
+﻿namespace Domain.Entities.AcademicDataModule.HigherStuidesModule
 {
     public class Thesis : BaseEntity<int>
     {

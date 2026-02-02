@@ -1,4 +1,4 @@
-﻿using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.AcademicDataModule.MissionsModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Enums.MissionsModule;
 using Shared.SpceificationParameters.MissionsModule;

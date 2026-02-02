@@ -1,7 +1,7 @@
 ﻿using Domain.Entities.Attachments;
 using Domain.Entities.FacultyMemberDataModule;
 
-namespace Domain.Entities.MissionsModule
+namespace Domain.Entities.AcademicDataModule.MissionsModule
 {
     public class ConferencesAndSeminars : BaseEntity<int>
     {

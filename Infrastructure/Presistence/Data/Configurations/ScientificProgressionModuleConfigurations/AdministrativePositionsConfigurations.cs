@@ -1,4 +1,6 @@
 ﻿
+using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+
 namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurations
 {
     public class AdministrativePositionsConfigurations : IEntityTypeConfiguration<AdministrativePositions>

@@ -1,4 +1,4 @@
-﻿using Domain.Entities.ScientificProgressionModule;
+﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Shared.SpecificationParameters.ScientificProgressionModule;
 
 namespace Services.Specifications.ScientificProgressionModule

@@ -1,9 +1,9 @@
-﻿using Domain.Entities.Attachments;
-using Domain.Entities.HigherStuidesModule;
-using Domain.Entities.MissionsModule;
-using Domain.Entities.ProjectsAndCommitteesModule;
-using Domain.Entities.ResearchesModule;
-using Domain.Entities.ScientificProgressionModule;
+﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
+using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.Attachments;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.FacultyMemberDataModule

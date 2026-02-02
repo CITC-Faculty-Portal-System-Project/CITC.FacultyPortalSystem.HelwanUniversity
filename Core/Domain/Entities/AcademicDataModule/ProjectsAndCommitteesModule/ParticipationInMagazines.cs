@@ -1,6 +1,6 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
 
-namespace Domain.Entities.ProjectsAndCommitteesModule
+namespace Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule
 {
     public class ParticipationInMagazines : BaseEntity<int>
     {

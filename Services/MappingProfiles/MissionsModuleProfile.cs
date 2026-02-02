@@ -1,5 +1,5 @@
-﻿using Domain.Entities.Attachments;
-using Domain.Entities.MissionsModule;
+﻿using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.Attachments;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Shared.Dtos.MissionsModule;
 

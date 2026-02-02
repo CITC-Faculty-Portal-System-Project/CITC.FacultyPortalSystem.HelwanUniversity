@@ -1,15 +1,15 @@
-﻿using Domain.Entities.MissionsModule;
-using Domain.Entities.ScientificProgressionModule;
-using Services.Specifications.MissionsModule;
+﻿using Services.Specifications.MissionsModule;
 using Services.Specifications.ScientificProgressionModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Dtos.MissionsModule;
 using Shared.Dtos.ScientificProgressionModule;
 using Shared.Dtos.HigherStudiesModule;
-using Domain.Entities.HigherStuidesModule;
 using Services.Specifications.HigherStudiesModule;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
+using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 
 namespace Services.Implementations
 {

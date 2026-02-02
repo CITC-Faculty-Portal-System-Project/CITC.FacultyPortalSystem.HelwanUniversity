@@ -1,4 +1,4 @@
-﻿using Domain.Entities.HigherStuidesModule;
+﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Shared.Dtos.HigherStudiesModule;
 
 namespace Services.MappingProfiles

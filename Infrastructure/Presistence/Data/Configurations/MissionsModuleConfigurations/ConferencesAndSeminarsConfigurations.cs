@@ -1,4 +1,6 @@
 ﻿
+using Domain.Entities.AcademicDataModule.MissionsModule;
+
 namespace Presistence.Data.Configurations.MissionsModuleConfigurations
 {
     public class ConferencesAndSeminarsConfigurations : IEntityTypeConfiguration<ConferencesAndSeminars>

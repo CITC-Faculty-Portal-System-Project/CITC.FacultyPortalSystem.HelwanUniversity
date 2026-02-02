@@ -1,4 +1,6 @@
 ﻿
+using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
+
 namespace Presistence.Data.Configurations.ProjectsAndCommitteesModuleConfigurations
 {
     public class ParticipationInMagazinesConfigurations : IEntityTypeConfiguration<ParticipationInMagazines>

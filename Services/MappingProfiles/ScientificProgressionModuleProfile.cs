@@ -1,4 +1,4 @@
-﻿using Domain.Entities.ScientificProgressionModule;
+﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Shared.Dtos.ScientificProgressionModule;
 
 namespace Services.MappingProfiles

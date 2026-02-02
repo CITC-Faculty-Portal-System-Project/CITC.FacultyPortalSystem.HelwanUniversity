@@ -1,5 +1,5 @@
 ﻿
-using Domain.Entities.ScientificProgressionModule;
+using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 
 namespace Domain.Entities.Attachments
 {

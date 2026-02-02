@@ -1,4 +1,4 @@
-﻿using Domain.Entities.HigherStuidesModule;
+﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 
 namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
 {

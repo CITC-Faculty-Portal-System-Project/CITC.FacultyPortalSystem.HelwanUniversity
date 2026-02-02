@@ -1,4 +1,4 @@
-﻿using Domain.Entities.ProjectsAndCommitteesModule;
+﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Global;
 using Services.Specifications.ProjectsAndCommitteesModule;

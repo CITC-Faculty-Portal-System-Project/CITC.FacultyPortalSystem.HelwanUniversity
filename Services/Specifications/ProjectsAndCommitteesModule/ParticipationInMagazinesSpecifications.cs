@@ -1,4 +1,4 @@
-﻿using Domain.Entities.ProjectsAndCommitteesModule;
+﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Shared.Enums.ProjectsAndCommitteesModule;
 using Shared.SpecificationParameters.ProjectsAndCommitteesModule;
 

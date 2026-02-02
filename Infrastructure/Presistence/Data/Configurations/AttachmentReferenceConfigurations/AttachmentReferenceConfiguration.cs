@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Attachments;
+﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.Attachments;
 
 namespace Presistence.Data.Configurations.AttachmentReferenceConfigurations
 {

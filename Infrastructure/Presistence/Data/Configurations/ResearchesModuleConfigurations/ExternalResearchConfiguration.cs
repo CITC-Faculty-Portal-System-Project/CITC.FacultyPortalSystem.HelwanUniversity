@@ -1,5 +1,5 @@
 ﻿
-using Domain.Entities.ResearchesModule;
+using Domain.Entities.AcademicDataModule.ResearchesModule;
 
 namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
 {
