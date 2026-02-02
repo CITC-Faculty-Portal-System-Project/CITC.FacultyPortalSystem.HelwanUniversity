@@ -52,8 +52,8 @@ namespace Services.Implementations
             //Get Logged User 
             var currentUser = await GetCurrentUserAsync();
 
-            if (personalDataUpdateDto.ProfilePictureId is not null)
-                await EnsureAttachmentExistance(personalDataUpdateDto.ProfilePictureId ?? Guid.Empty);
+            //if (personalDataUpdateDto.ProfilePictureId is not null)
+            //    await EnsureAttachmentExistance(personalDataUpdateDto.ProfilePictureId ?? Guid.Empty);
 
             //Load Personal Data With Includes
             var personalData = await PersonalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email)) 

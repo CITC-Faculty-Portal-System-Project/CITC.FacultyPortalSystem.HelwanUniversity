@@ -3,8 +3,14 @@ using FtpFileStorage.Configurations;
 using FtpFileStorage.Factories;
 using FtpFileStorage.Implementation;
 using Presistence.Repositories;
+using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
+using Services.Implementations.AcademicDataModule.MissionsModule;
+using Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AttachmentsModule;
 using Shared.Common;
 
@@ -42,19 +48,55 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<ILookUpItemService>()
             );
 
-            services.AddScoped<IMissionsService, MissionsService>();
-            services.AddScoped<Func<IMissionsService>>(provider =>
-            () => provider.GetRequiredService<IMissionsService>()
+            services.AddScoped<IScientificMissionsService, ScientificMissionsService>();
+            services.AddScoped<Func<IScientificMissionsService>>(provider =>
+            () => provider.GetRequiredService<IScientificMissionsService>()
             );
 
-            services.AddScoped<IScientificProgressionService, ScientificProgressionService>();
-            services.AddScoped<Func<IScientificProgressionService>>(provider =>
-            () => provider.GetRequiredService<IScientificProgressionService>()
+            services.AddScoped<ISeminarsAndConferencesService, SeminarsAndConferncesService>();
+            services.AddScoped<Func<ISeminarsAndConferencesService>>(provider =>
+            () => provider.GetRequiredService<ISeminarsAndConferencesService>()
             );
 
-            services.AddScoped<IProjectsAndCommitteesService, ProjectsAndCommitteesService>();
-            services.AddScoped<Func<IProjectsAndCommitteesService>>(provider =>
-            () => provider.GetRequiredService<IProjectsAndCommitteesService>()
+            services.AddScoped<ITrainingProgramsService, TrainingProgramsService>();
+            services.AddScoped<Func<ITrainingProgramsService>>(provider =>
+            () => provider.GetRequiredService<ITrainingProgramsService>()
+            );
+
+            services.AddScoped<ICommitteesAndAssociationsService, CommitteesAndAssociationsService>();
+            services.AddScoped<Func<ICommitteesAndAssociationsService>>(provider =>
+            () => provider.GetRequiredService<ICommitteesAndAssociationsService>()
+            );
+
+            services.AddScoped<IParticipationInMagazinesService, ParticipationInMagazinesService>();
+            services.AddScoped<Func<IParticipationInMagazinesService>>(provider =>
+            () => provider.GetRequiredService<IParticipationInMagazinesService>()
+            );
+
+            services.AddScoped<IProjectsService, ProjectsService>();
+            services.AddScoped<Func<IProjectsService>>(provider =>
+            () => provider.GetRequiredService<IProjectsService>()
+            );
+
+            services.AddScoped<IReviewingArticlesService, ReviewingArticlesService>();
+            services.AddScoped<Func<IReviewingArticlesService>>(provider =>
+            () => provider.GetRequiredService<IReviewingArticlesService>()
+            );
+
+
+            services.AddScoped<IAcademicQualificationsService, AcademicQualificationsService>();
+            services.AddScoped<Func<IAcademicQualificationsService>>(provider =>
+            () => provider.GetRequiredService<IAcademicQualificationsService>()
+            );
+
+            services.AddScoped<IAdministrativePositionsService, AdministrativePositionsService>();
+            services.AddScoped<Func<IAdministrativePositionsService>>(provider =>
+            () => provider.GetRequiredService<IAdministrativePositionsService>()
+            );
+
+            services.AddScoped<IJobRanksService, JobRanksService>();
+            services.AddScoped<Func<IJobRanksService>>(provider =>
+            () => provider.GetRequiredService<IJobRanksService>()
             );
 
             services.AddScoped<IAttachmentService, AttachmentService>();
