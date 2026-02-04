@@ -7,7 +7,7 @@ namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurati
     {
         public void Configure(EntityTypeBuilder<AdministrativePositions> builder)
         {
-            builder.ToTable("AdministrativePositions");
+            builder.ToTable("AdministrativePositions", t => t.HasCheckConstraint("CK_AdminPositions_Dates", "[EndDate] >= [StartDate]"));
 
             builder.HasKey(ap => ap.Id);
 

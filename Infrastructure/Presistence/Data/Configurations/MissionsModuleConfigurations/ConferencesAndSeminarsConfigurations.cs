@@ -7,7 +7,7 @@ namespace Presistence.Data.Configurations.MissionsModuleConfigurations
     {
         public void Configure(EntityTypeBuilder<ConferencesAndSeminars> builder)
         {
-            builder.ToTable("ConferencesAndSeminars");
+            builder.ToTable("ConferencesAndSeminars", t => t.HasCheckConstraint("CK_ConferencesAndSeminars_Dates", "[EndDate] >= [StartDate]"));
 
             builder.HasKey(cas => cas.Id);
 

@@ -7,7 +7,7 @@ namespace Presistence.Data.Configurations.ProjectsAndCommitteesModuleConfigurati
     {
         public void Configure(EntityTypeBuilder<Projects> builder)
         {
-            builder.ToTable("Projects");
+            builder.ToTable("Projects", t => t.HasCheckConstraint("CK_Projects_Dates", "[EndDate] >= [StartDate]"));
 
             builder.HasKey(p => p.Id);
 
