@@ -19,11 +19,26 @@ namespace FtpFileStorage.Implementation
             _options = options.Value;
         }
 
+        #region Helpers
+
+        private static string CombineFtpPath(string dir, string fileName)
+        {
+            dir = (dir ?? "").Replace("\\", "/").Trim('/');
+            fileName = (fileName ?? "").Replace("\\", "/").Trim('/');
+
+            if (dir.EndsWith(fileName, StringComparison.OrdinalIgnoreCase))
+                return "/" + dir; 
+
+            return "/" + $"{dir}/{fileName}";
+        }
+
+        #endregion
+
         public async Task DeleteFileAsync(string remotePath)
         {
             using var client = await _fTPClientFactory.CreateConnectedAsync();
 
-            var fullPath = _options.RootPath + remotePath;
+            var fullPath = remotePath;
             await client.DeleteFile(fullPath);
         }
 
@@ -31,7 +46,7 @@ namespace FtpFileStorage.Implementation
         {
             using var client = await _fTPClientFactory.CreateConnectedAsync();
 
-            var fullPath = _options.RootPath + remotePath;
+            var fullPath = remotePath;
             var memoryStream = new MemoryStream();
 
             var result = await client.DownloadStream(memoryStream, fullPath);
@@ -52,20 +67,32 @@ namespace FtpFileStorage.Implementation
             return await client.FileExists(fullPath);
         }
 
-        public async Task<bool> UploadFileAsync(string remotePath, Stream fileStream, string fileName)
+        public async Task<string> UploadFileAsync(string remotePath, Stream fileStream, string fileName)
         {
             using var client = await _fTPClientFactory.CreateConnectedAsync();
 
-            if (!remotePath.EndsWith("/"))
-                remotePath += "/";
+            remotePath = (remotePath ?? "").Replace("\\", "/").Trim('/');
+            fileName = (fileName ?? "").Replace("\\", "/").Trim('/');
 
-            var fullPath = _options.RootPath + remotePath + fileName;
+           
+            var dirForFtp = _options.RootPath + "/" + remotePath;                 
+            var fileForFtp = $"{dirForFtp}/{fileName}"; 
 
-            await client.CreateDirectory(_options.RootPath + remotePath, true);
+            await client.CreateDirectory(dirForFtp, true);
 
-            var status = await client.UploadStream(fileStream, fullPath, FtpRemoteExists.Overwrite, false);
+            if (fileStream.CanSeek) fileStream.Position = 0;
 
-            return status.IsSuccess();
+            var status = await client.UploadStream(
+                fileStream,
+                fileForFtp,
+                FtpRemoteExists.Overwrite,
+                createRemoteDir: false
+            );
+
+            if (status != FtpStatus.Success)
+                throw new Exception($"FTP upload failed: {status}");
+            return dirForFtp + "/";
         }
+
     }
 }

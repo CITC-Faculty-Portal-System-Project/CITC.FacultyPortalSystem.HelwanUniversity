@@ -3,6 +3,7 @@
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 
 namespace Services.Abstraction.Contracts
 {
@@ -35,6 +36,14 @@ namespace Services.Abstraction.Contracts
         public IAcademicQualificationsService AcademicQualificationsService { get; }
         public IAdministrativePositionsService AdministrativePositionsService { get; }
         public IJobRanksService JobRanksService { get; }
+        #endregion
+
+        #region ResearchesModule
+        public IResearchesService ResearchesService { get; }
+        public IResearcherProfileService ResearcherProfileService { get; }
+        public IThesesSupervisingService ThesesSupervisingService { get; }
+        public IThesesService ThesesService { get; }
+
         #endregion
 
         #endregion

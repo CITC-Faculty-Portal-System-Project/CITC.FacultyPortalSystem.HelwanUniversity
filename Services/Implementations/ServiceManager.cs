@@ -1,5 +1,6 @@
 ﻿using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 
 using Services.Abstraction.Contracts.AttachmentsModule;
@@ -23,6 +24,10 @@ namespace Services.Implementations
         , Func<IAcademicQualificationsService> _academicQualificationsServiceFactory
         , Func<IAdministrativePositionsService> _administrativePositionsServiceFactory
         , Func<IJobRanksService> _jobRanksServiceFactory
+        , Func<IResearchesService> _researchesService
+        , Func<IResearcherProfileService> _researcherProfileService
+        , Func<IThesesSupervisingService> _thesesSupervisingService
+        , Func<IThesesService> _thesesService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -58,6 +63,17 @@ namespace Services.Implementations
         public IJobRanksService JobRanksService => _jobRanksServiceFactory.Invoke();
         #endregion
 
+        #region ResearchesModule
+
+        public IResearchesService ResearchesService => _researchesService.Invoke();
+        public IResearcherProfileService ResearcherProfileService => _researcherProfileService.Invoke();
+        public IThesesSupervisingService ThesesSupervisingService => _thesesSupervisingService.Invoke();
+        public IThesesService ThesesService => _thesesService.Invoke();
+
         #endregion
+
+        #endregion
+
+
     }
 }

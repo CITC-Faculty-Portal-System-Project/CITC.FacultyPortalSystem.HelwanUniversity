@@ -9,7 +9,6 @@ namespace Services.MappingProfiles
         {
             CreateMap<ThesesCreateDTO, Thesis>();
             CreateMap<SupervisorCreateDTO , Supervisor>();
-            CreateMap<Thesis, ThesesResponseDTO>();
             CreateMap<SupervisingCreateDTO, Supervising>();
         }
     }

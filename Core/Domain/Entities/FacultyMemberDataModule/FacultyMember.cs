@@ -3,7 +3,6 @@ using Domain.Entities.AcademicDataModule.MissionsModule;
 using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
-using Domain.Entities.Attachments;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.FacultyMemberDataModule
@@ -47,8 +46,8 @@ namespace Domain.Entities.FacultyMemberDataModule
         #region ResarchesModule
 
         [NotMapped]
-        public Researcher? Researcher { get; set; }
-        public ICollection<InternalSystemResearch>? InternalSystemResearches { get; set; }
+        public ResearcherProfile? Researcher { get; set; }
+        public ICollection<ResearchContribution>? ResearchContributions { get; set; } = new List<ResearchContribution>();
 
         #endregion
 
@@ -56,11 +55,6 @@ namespace Domain.Entities.FacultyMemberDataModule
 
         public ICollection<Supervising>? Supervisings { get; set; }
         public ICollection<Thesis>? Theses { get; set; }
-
-        #endregion
-
-        #region AttachmentsModule
-        public ICollection<FacultyMemberAttachments>? Attachments { get; set; }
 
         #endregion
 

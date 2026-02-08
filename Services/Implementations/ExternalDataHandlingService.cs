@@ -1,15 +1,20 @@
-﻿using Services.Specifications.MissionsModule;
+﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Enums;
+using Services.Helpers.ExternalDataFetchingServiceHelpers;
+using Services.Specifications.HigherStudiesModule;
+using Services.Specifications.MissionsModule;
 using Services.Specifications.ScientificProgressionModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.FacultyMemberDataModule;
+using Shared.Dtos.HigherStudiesModule;
 using Shared.Dtos.MissionsModule;
 using Shared.Dtos.ScientificProgressionModule;
-using Shared.Dtos.HigherStudiesModule;
-using Services.Specifications.HigherStudiesModule;
-using Services.Helpers.ExternalDataFetchingServiceHelpers;
-using Domain.Entities.AcademicDataModule.MissionsModule;
-using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
-using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+using Shared.Enums.ResearchesModule;
+using System.Text.Json;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Services.Implementations
 {
@@ -311,11 +316,105 @@ namespace Services.Implementations
             );
         }
 
-		//Researches Data
-		public Task<bool> ResearchDataHandle(string? json)
+		public async Task<bool> ResearchDataHandle(string? json)
 		{
-			throw new NotImplementedException();
-		}
+            var researchersRepo = _unitOfWork.GetRepository<ResearcherProfile, int>();
+            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+            var researchRepo = _unitOfWork.GetRepository<Research, int>(); // ✅ أضف ده
 
-	}
+            var list = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json)
+                       ?? throw new Exception("Invalid JSON");
+
+            var facultyMember = await facultyMemberRepo.GetAsync(
+                new FacultyMemberWithNationalNumberSpecifications(list.NationalNumber)
+            );
+
+            if (facultyMember is null)
+                throw new Exception("Faculty member not found");
+
+            facultyMember.ResearchContributions ??= new List<ResearchContribution>();
+
+            var researcher = _mapper.Map<ResearcherProfile>(list);
+            var interests = _mapper.Map<IEnumerable<ScientificInterest>>(list.Interests ?? Enumerable.Empty<ExternalResearcherInterestsFetchingDTO>());
+            var researcherCites = _mapper.Map<IEnumerable<ResearcherCite>>(list.ResearcherCites ?? Enumerable.Empty<ExternalResearcherCitesFetchingDTO>());
+            var researches = list.Researches ?? Enumerable.Empty<ExternalResearchesFetchingDTO>();
+
+            try
+            {
+                foreach (var interest in interests)
+                {
+                    var researcherInterest = new ResearcherInterest
+                    {
+                        Researcher = researcher,
+                        Interest = interest,
+                    };
+
+                    researcher.ResearcherInterests!.Add(researcherInterest);
+                    interest.Researchers!.Add(researcherInterest);
+                }
+
+                foreach (var cite in researcherCites)
+                {
+                    researcher.ResearcherCites!.Add(cite);
+                    cite.Researcher = researcher;
+                }
+
+                foreach (var researchDTO in researches)
+                {
+                    var research = _mapper.Map<Research>(researchDTO);
+
+                    research.PublisherType = Domain.Enums.PublisherType.Unspecified;
+                    research.PublicationType = Domain.Enums.PublicationType.Unspecified;
+                    research.Source = Domain.Enums.ResearchSource.External;
+                    research.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
+
+                    foreach (var cont in researchDTO.Contributions ?? Enumerable.Empty<ExternalResearchContributionFetchingDTO>())
+                    {
+                        var contEntity = _mapper.Map<ResearchContribution>(cont);
+                        contEntity.ContributorType = Domain.Enums.ContributorType.Unspecified;
+
+                        contEntity.Research = research;
+
+                        if (string.Equals(
+                            cont.MemberAcademicName.Replace(".", ""),
+                            researcher.AcademicName.Replace(".", ""),
+                            StringComparison.OrdinalIgnoreCase
+                        ))
+                        {
+                            facultyMember.ResearchContributions.Add(contEntity);
+                            contEntity.Contributor = facultyMember;
+                            contEntity.ContributorType = Domain.Enums.ContributorType.FromUniverstity;
+                            contEntity.IsTheMajorResearcher = true;
+
+                        }
+
+                        research.Contributions!.Add(contEntity);
+                    }
+
+                    foreach (var c in researchDTO.Cites ?? Enumerable.Empty<ExternalResearchCitesFetchingDTO>())
+                    {
+                        var citeEntity = _mapper.Map<ResearchCite>(c);
+
+                        citeEntity.Research = research;
+                        research.Cites!.Add(citeEntity);
+                    }
+
+                    await researchRepo.AddAsync(research);
+                }
+
+                researcher.FacultyMember = facultyMember;
+
+                await researchersRepo.AddAsync(researcher);
+
+                return await _unitOfWork.SaveChangesAsync() > 0;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            return false;   
+        }
+
+    }
 }

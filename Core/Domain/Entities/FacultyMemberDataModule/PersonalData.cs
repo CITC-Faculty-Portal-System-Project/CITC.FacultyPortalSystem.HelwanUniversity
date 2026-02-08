@@ -1,5 +1,4 @@
-﻿using Domain.Entities.Attachments;
-
+﻿
 namespace Domain.Entities.FacultyMemberDataModule
 {
     public class PersonalData : BaseEntity<int>
@@ -46,7 +45,6 @@ namespace Domain.Entities.FacultyMemberDataModule
 
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
-        public AttachmentReference? ProfilePicture { get; set; }
 
         #endregion
     }

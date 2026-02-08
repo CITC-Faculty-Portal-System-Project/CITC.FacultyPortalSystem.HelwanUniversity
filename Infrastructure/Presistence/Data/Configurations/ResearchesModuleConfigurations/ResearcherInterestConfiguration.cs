@@ -7,14 +7,6 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
         public void Configure(EntityTypeBuilder<ResearcherInterest> builder)
         {
 
-            #region ConfiguringProperties
-
-            builder.Property(e => e.Name)
-                    .HasMaxLength(100)
-                    .IsRequired();
-
-            #endregion
-
             #region ConfiguringRelations
 
             builder.HasOne(r => r.Researcher)
@@ -22,11 +14,19 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
                    .HasForeignKey(ri => ri.ResearcherId)
                    .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(r => r.Interest)
+              .WithMany(r => r.Researchers)
+              .HasForeignKey(ri => ri.InterestId)
+              .OnDelete(DeleteBehavior.Cascade);
+
+
             #endregion
 
             #region AddingIndcies
 
-            builder.HasIndex(ri => ri.Name);
+            builder.HasIndex(ri => new { ri.ResearcherId, ri.InterestId })
+                .IsUnique();
+
 
             #endregion
         }

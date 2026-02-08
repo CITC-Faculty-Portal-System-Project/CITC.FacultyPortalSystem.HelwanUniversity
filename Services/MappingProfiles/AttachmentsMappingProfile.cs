@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Attachments;
+﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Shared.Dtos.AttachmentsModule;
 using Shared.Dtos.MissionsModule;
 
@@ -8,18 +9,30 @@ namespace Services.MappingProfiles
     {
         public AttachmentsMappingProfile() {
 
-            CreateMap<AttachmentReference , AttachmentReferenceDTO>();
-            CreateMap<AttachmentReferenceDTO, AttachmentReference>();
-            CreateMap<AttachmentReference, AttachmentResponseDTO>();
-            CreateMap<AttachmentReference, AttachmentReadDTO>()
-                     .ForMember(d => d.FacultyMembersCount,
-                     o => o.MapFrom(s => s.FacultyMembers!.Count));
 
-            CreateMap<AttachmentReadDTO, AttachmentReferenceDTO>();
-            CreateMap<AttachmentReadDTO, AttachmentReference>();
+            CreateMap<AttachmentReferenceDTO, ResearchAttachment>()
+                .IncludeBase<AttachmentReferenceDTO, BaseAttachmentEntity>()
+                    .ForMember(d => d.ResearchId, opt => opt.Ignore());
 
-            CreateMap<AttachmentReference, ConferencesAndSeminarsAttachmentsReadDTO>();
 
+            CreateMap<AttachmentReferenceDTO, ThesesAttachment>()
+                .IncludeBase<AttachmentReferenceDTO, BaseAttachmentEntity>()
+                .ForMember(d => d.ThesisId, opt => opt.Ignore()); 
+
+
+            CreateMap<ResearchAttachment, AttachmentResponseDTO>();
+            CreateMap<ThesesAttachment, AttachmentResponseDTO>();
+
+            CreateMap<BaseAttachmentEntity, AttachmentReferenceDTO>();
+
+            CreateMap<ResearchAttachment, AttachmentReferenceDTO>()
+                .IncludeBase<BaseAttachmentEntity, AttachmentReferenceDTO>();
+
+            CreateMap<ThesesAttachment, AttachmentReferenceDTO>()
+                .IncludeBase<BaseAttachmentEntity, AttachmentReferenceDTO>();
+
+            CreateMap<AttachmentReferenceDTO, BaseAttachmentEntity>()
+                .ForMember(d => d.Id, opt => opt.Ignore());
 
             CreateMap<AttachmentUploadDTO, AttachmentReferenceDTO>()
             .ForMember(d => d.FileName, o => o.MapFrom(s => s.File.FileName))
