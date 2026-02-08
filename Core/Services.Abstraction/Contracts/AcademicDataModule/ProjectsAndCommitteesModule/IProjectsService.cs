@@ -1,5 +1,5 @@
-﻿using Shared.Dtos.ProjectsAndCommitteesModule;
-using Shared.SpecificationParameters.ProjectsAndCommitteesModule;
+﻿using Shared.Dtos.AcademicDataModule.ProjectsAndCommitteesModule;
+using Shared.SpecificationParameters.AcademicDataModule.ProjectsAndCommitteesModule;
 
 namespace Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule
 {

@@ -3,6 +3,10 @@
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
 
 namespace Services.Abstraction.Contracts
 {
@@ -35,6 +39,27 @@ namespace Services.Abstraction.Contracts
         public IAcademicQualificationsService AcademicQualificationsService { get; }
         public IAdministrativePositionsService AdministrativePositionsService { get; }
         public IJobRanksService JobRanksService { get; }
+        #endregion
+
+        #region Experiences Module
+        public IGeneralExperiencesService GeneralExperiencesService { get; }
+        public ITeachingExperiencesService TeachingExperiencesService { get; }
+        #endregion
+
+        #region Prizes Module
+        public IPrizesAndRewardsService PrizesAndRewardsService { get; }
+        public IManifestationsOfScientificAppreciationService ManifestationsOfScientificAppreciationService { get; }
+        #endregion
+
+        #region Writings And Patents Module
+        public IScientificWritingsService ScientificWritingsService { get; }
+        public IPatentsService PatentsService { get; }
+        #endregion
+
+        #region Contributions Module
+        public IContributionsToUniversityService ContributionsToUniversityService { get; }
+        public IContributionsToCommunityServiceService ContributionsToCommunityService { get; }
+        public IParticipationInQualityWorksService ParticipationInQualityWorksService { get; }
         #endregion
 
         #endregion
