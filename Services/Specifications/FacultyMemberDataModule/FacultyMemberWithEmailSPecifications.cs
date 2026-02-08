@@ -6,7 +6,7 @@ namespace Services.Specifications.FacultyMemberDataModule
     {
         public FacultyMemberWithEmailSpecifications(string email) : base(fm => fm.Email == email)
         {
-
+            AddIncludes(f => f.PersonalData!);
         }
     }
 }

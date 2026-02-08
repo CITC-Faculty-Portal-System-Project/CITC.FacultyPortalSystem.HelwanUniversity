@@ -23,7 +23,6 @@ namespace Shared.Dtos.ResearchesModule
         public string Abstract { get; set; } = string.Empty;
         public string? PubDate { get; set; } = string.Empty;
         public int? NoOfCititations { get; set; }
-        public bool IsConfirmed { get; set; }
         public List<ResearchCitesResponseDTO>? Cites { get; set; }
         public List<ResearchContributionResponseDTO>? Contributions { get; set; }
         public List<AttachmentResponseDTO>? Attachments { get; set; }

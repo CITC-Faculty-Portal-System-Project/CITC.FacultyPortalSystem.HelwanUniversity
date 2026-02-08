@@ -18,6 +18,10 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
             builder.Property(e => e.ContributorType)
                     .HasConversion<string>();
 
+            builder.Property(e => e.IsConfirmed)
+                .HasDefaultValue(false);
+
+
 
             #endregion
 

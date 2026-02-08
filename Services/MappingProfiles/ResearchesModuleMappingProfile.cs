@@ -70,6 +70,7 @@ namespace Services.MappingProfiles
             CreateMap<Supervisor, ThesesSupervisorDTO>();
 
             CreateMap<ResearchDTO , Research>();
+            CreateMap<ResearchContributionDTO , ResearchContribution>();
             CreateMap<Research, ResearchDTO>(); 
             CreateMap<Research, ResearchResponseDTO>();
 

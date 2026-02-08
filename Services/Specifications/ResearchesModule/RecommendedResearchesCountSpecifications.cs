@@ -7,14 +7,16 @@ namespace Services.Specifications.ResearchesModule
     {
         public RecommendedResearchesCountSpecifications(RecommendedResearchesSpecificationParameters parameters , Guid facultyMemberId)
             :base(r =>
-                  (!r.IsDeleted &&
-                    r.Contributions!.Any(c => c.ContributorId == facultyMemberId)) 
-                    && r.IsConfirmed == false &&
+                  (!r.IsDeleted && !r.Contributions!
+            .SingleOrDefault(r => r.ContributorId == facultyMemberId)!
+            .IsDeleted  
+                    && r.Contributions!
+                .SingleOrDefault()!.IsConfirmed == false &&
                    (string.IsNullOrEmpty(parameters.Search) ||
                    r.Title.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    r.JournalOrConfernce.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
-                   r.PubYear.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase))){
+                   r.PubYear.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase)))){ }
                          
             }
     }
-}
+

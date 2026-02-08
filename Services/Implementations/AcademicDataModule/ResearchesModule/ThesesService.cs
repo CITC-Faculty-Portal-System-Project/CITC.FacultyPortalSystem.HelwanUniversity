@@ -50,6 +50,23 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             return Mapper.Map<ThesesResponseDTO>(entity);
         }
 
+        public async Task DeleteTheses(int Id)
+        {
+            var user = await GetCurrentUserAsync();
+
+            var thesesEntity = await Repo.GetAsync(new ThesesSpecifications(Id, user.UserId))
+                ?? throw NotFound();
+
+            EnsureOwnership(thesesEntity.FacultyMemberId, user.UserId, EntityName);
+
+            thesesEntity!.IsDeleted = true;
+            thesesEntity.DeletedAt = DateTime.Now;
+            thesesEntity.DeletedBy = user.UserName;
+
+            Repo.Update(thesesEntity);
+            await unitOfWork.SaveChangesAsync();
+        }
+
         public async Task<PaginatedResult<ThesesResponseDTO>> GetAllTheses
             (ThesesSpecificationParameters parameters)
         {

@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.FacultyMemberDataModule;
+using Domain.Entities.IdentityModule;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Utilities;
 using Shared.Enums.ProjectsAndCommitteesModule;
@@ -12,8 +13,10 @@ namespace Services.Specifications.ResearchesModule
     {
         public RecommendedResearchesSpecifications(RecommendedResearchesSpecificationParameters parameters, Guid facultyMemberId)
                 : base(r => !r.IsDeleted &&
-                    r.Contributions!.Any(c => c.ContributorId == facultyMemberId)
-                    && r.IsConfirmed == false &&
+                    r.Contributions!.SingleOrDefault(c => c.ContributorId == facultyMemberId)!.IsConfirmed == false 
+                    && !r.Contributions!
+            .SingleOrDefault(r => r.ContributorId == facultyMemberId)!
+            .IsDeleted &&
                    (string.IsNullOrEmpty(parameters.Search) ||
                    r.Title.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
                    r.JournalOrConfernce.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
@@ -49,9 +52,13 @@ namespace Services.Specifications.ResearchesModule
 
         }
 
-        public RecommendedResearchesSpecifications(int researchId)
+        public RecommendedResearchesSpecifications(int researchId , Guid facultyMemberId)
             : base(r => !r.IsDeleted &&
-                    r.Id == researchId && r.IsConfirmed == false)
+                    r.Id == researchId && !r.Contributions!
+            .SingleOrDefault(r => r.ContributorId == facultyMemberId)!
+            .IsDeleted &&
+
+            r.Contributions!.SingleOrDefault(c => c.ContributorId == facultyMemberId)!.IsConfirmed == false)
         {
             AddIncludeWithChain(r => r.Include(r => r.Contributions!)
                                      .ThenInclude(r => r.Contributor));

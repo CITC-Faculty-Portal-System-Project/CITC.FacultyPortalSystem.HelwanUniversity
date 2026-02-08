@@ -22,7 +22,6 @@ namespace Domain.Entities.AcademicDataModule.ResearchesModule
         public string Abstract { get; set; } = string.Empty;
         public string? PubDate { get; set; } = string.Empty;
         public int? NoOfCititations { get; set; }
-        public bool IsConfirmed { get; set; }
         public int? ThesisId { get; set; }
         public Thesis? Thesis { get; set; }
         public ICollection<ResearchContribution>? Contributions { get; set; } = new List<ResearchContribution>();

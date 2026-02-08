@@ -46,9 +46,7 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
             builder.Property(e => e.NoOfCititations)
                    .IsRequired();
 
-            builder.Property(e => e.IsConfirmed)
-                   .HasDefaultValue(false);
-
+        
             #endregion
 
             #region Configuring RelationShips
