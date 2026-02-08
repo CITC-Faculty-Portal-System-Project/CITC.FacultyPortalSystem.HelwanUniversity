@@ -1,5 +1,5 @@
-﻿using Shared.Dtos.MissionsModule;
-using Shared.SpceificationParameters.MissionsModule;
+﻿using Shared.Dtos.AcademicDataModule.MissionsModule;
+using Shared.SpecificationParameters.AcademicDataModule.MissionsModule;
 
 namespace Services.Abstraction.Contracts.AcademicDataModule.MissionsModule
 {

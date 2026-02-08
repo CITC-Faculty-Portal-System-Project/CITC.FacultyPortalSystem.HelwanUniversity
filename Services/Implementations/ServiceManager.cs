@@ -1,9 +1,11 @@
-﻿using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
+﻿using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
-
+using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
-using System;
 
 namespace Services.Implementations
 {
@@ -23,6 +25,15 @@ namespace Services.Implementations
         , Func<IAcademicQualificationsService> _academicQualificationsServiceFactory
         , Func<IAdministrativePositionsService> _administrativePositionsServiceFactory
         , Func<IJobRanksService> _jobRanksServiceFactory
+        , Func<IGeneralExperiencesService> _generalExperiencesServiceFactory
+        , Func<ITeachingExperiencesService> _teachingExperiencesServiceFactory
+        , Func<IPrizesAndRewardsService> _prizesAndRewardsServiceFactory
+        , Func<IManifestationsOfScientificAppreciationService> _manifestationsOfScientificAppreciationServiceFactory
+        , Func<IScientificWritingsService> _scientificWritingsServiceFactory
+        , Func<IPatentsService> _patentsServiceFactory
+        , Func<IContributionsToCommunityServiceService> _contributionsToCommunityServiceFactory
+        , Func<IContributionsToUniversityService> _contributionsToUniversityServiceFactory
+        , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -56,6 +67,27 @@ namespace Services.Implementations
         public IAcademicQualificationsService AcademicQualificationsService => _academicQualificationsServiceFactory.Invoke();
         public IAdministrativePositionsService AdministrativePositionsService => _administrativePositionsServiceFactory.Invoke();
         public IJobRanksService JobRanksService => _jobRanksServiceFactory.Invoke();
+        #endregion
+
+        #region Expriences Module
+        public IGeneralExperiencesService GeneralExperiencesService => _generalExperiencesServiceFactory.Invoke();
+        public ITeachingExperiencesService TeachingExperiencesService => _teachingExperiencesServiceFactory.Invoke();
+        #endregion
+
+        #region Prizes Module
+        public IPrizesAndRewardsService PrizesAndRewardsService => _prizesAndRewardsServiceFactory.Invoke();
+        public IManifestationsOfScientificAppreciationService ManifestationsOfScientificAppreciationService => _manifestationsOfScientificAppreciationServiceFactory.Invoke();
+        #endregion
+
+        #region Writings And Patents Module
+        public IScientificWritingsService ScientificWritingsService => _scientificWritingsServiceFactory.Invoke();
+        public IPatentsService PatentsService => _patentsServiceFactory.Invoke();
+        #endregion
+
+        #region Contributions Module
+        public IContributionsToCommunityServiceService ContributionsToCommunityService => _contributionsToCommunityServiceFactory.Invoke();
+        public IContributionsToUniversityService ContributionsToUniversityService => _contributionsToUniversityServiceFactory.Invoke();
+        public IParticipationInQualityWorksService ParticipationInQualityWorksService => _participationInQualityWorksServiceFactory.Invoke();
         #endregion
 
         #endregion
