@@ -7,7 +7,6 @@ using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Domain.Entities.AcademicDataModule.WritingsAndPatents;
-using Domain.Entities.Attachments;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
@@ -119,16 +118,14 @@ namespace Presistence.Data
 
         #region ResearchModule DbSets
 
-        public DbSet<Researcher> Researchers { get; set; }
-        public DbSet<ResearchContribution> ResearchContributions { get; set; }
+        public DbSet<ResearcherProfile> ResearchersProfiles { get; set; }
+        public DbSet<ResearchContribution> ResearchesContributions { get; set; }
         public DbSet<ResearcherInterest> ResearchersInterests { get; set; }
-        public DbSet<ResearcherResearch> ResearchersResearches { get; set; }
-        public DbSet<ResearchIndex> ResearchesIndices { get; set; }
-        public DbSet<ExternalResearch> ExternalResearches { get; set; }
-        public DbSet<InternalSystemResearch> InternalSystemResearches { get; set; }
-        public DbSet<InternalSystemResearchContributor> InternalSystemResearchesContributors { get; set; }
-        public DbSet<InternalSystemResearchContributorsResearches> InternalSystemResearchesContributorsResearches { get; set; }
-        public DbSet<ResearchCite> ResearchesCites { get; set; }
+        public DbSet<Research> Researches { get; set; }
+        public DbSet<ResearcherCite> ResearchersCites { get; set; }
+        public DbSet<ResearchCite> ResearchsCites { get; set; }
+        public DbSet<ScientificInterest> ScientificInterests { get; set; }
+        public DbSet<ResearchAttachment> ResearchAttachments { get; set; }
 
         #endregion
 
@@ -137,6 +134,7 @@ namespace Presistence.Data
         public DbSet<Supervising> Supervisings { get; set; }
         public DbSet<Supervisor> Supervisors { get; set; }
         public DbSet<Thesis> Theses { get; set; }
+        public DbSet<ThesesAttachment> ThesesAttachments { get; set; }
 
         #endregion
 
@@ -163,11 +161,5 @@ namespace Presistence.Data
 
         #endregion
 
-        #region AttachmentsModuleDatasets
-        public DbSet<AttachmentReference> AttachmentsReferences { get; set; }
-        public DbSet<FacultyMemberAttachments> FacultyMemberAttachments { get; set; }
-        public DbSet<ConferencesAndSeminarsAttachments> ConferencesAndSeminarsAttachments { get; set; }
-
-        #endregion
-    }
+     }
 }

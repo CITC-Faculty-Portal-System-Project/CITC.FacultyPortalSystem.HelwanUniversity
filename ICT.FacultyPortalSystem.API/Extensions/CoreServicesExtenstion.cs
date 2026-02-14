@@ -6,6 +6,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
@@ -15,6 +16,7 @@ using Services.Implementations.AcademicDataModule.ExperiencesModule;
 using Services.Implementations.AcademicDataModule.MissionsModule;
 using Services.Implementations.AcademicDataModule.PrizesModule;
 using Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Implementations.AcademicDataModule.ResearchesModule;
 using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AttachmentsModule;
@@ -105,6 +107,29 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IJobRanksService>()
             );
 
+            services.AddScoped<IResearchesService, ResearchesService>();
+            services.AddScoped<Func<IResearchesService>>(provider =>
+            () => provider.GetRequiredService<IResearchesService>()
+            );
+
+
+            services.AddScoped<IResearcherProfileService, ResearcherProfileService>();
+            services.AddScoped<Func<IResearcherProfileService>>(provider =>
+            () => provider.GetRequiredService<IResearcherProfileService>()
+            );
+
+
+            services.AddScoped<IThesesSupervisingService, ThesesSupervisingService>();
+            services.AddScoped<Func<IThesesSupervisingService>>(provider =>
+            () => provider.GetRequiredService<IThesesSupervisingService>()
+            );
+
+            services.AddScoped<IThesesService, ThesesService>();
+            services.AddScoped<Func<IThesesService>>(provider =>
+            () => provider.GetRequiredService<IThesesService>()
+            );
+
+
             services.AddScoped<IGeneralExperiencesService, GeneralExperiencesService>();
             services.AddScoped<Func<IGeneralExperiencesService>>(provider =>
             () => provider.GetRequiredService<IGeneralExperiencesService>()
@@ -154,8 +179,6 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<Func<IParticipationInQualityWorksService>>(provider =>
             () => provider.GetRequiredService<IParticipationInQualityWorksService>()
             );
-
-            services.AddScoped<IAttachmentsAcsessabilityService, AttachmentsAcsessablityService>();
 
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));

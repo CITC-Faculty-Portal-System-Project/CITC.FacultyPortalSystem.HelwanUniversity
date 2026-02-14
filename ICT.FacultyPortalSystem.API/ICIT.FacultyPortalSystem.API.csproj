@@ -22,6 +22,7 @@
     <ProjectReference Include="..\Infrastructure\Messaging\Messaging.csproj" />
     <ProjectReference Include="..\Infrastructure\Presentation\Presentation.csproj" />
     <ProjectReference Include="..\Infrastructure\Presistence\Presistence.csproj" />
+    <ProjectReference Include="..\Integrations\Integrations.csproj" />
   </ItemGroup>
 
   <ItemGroup>

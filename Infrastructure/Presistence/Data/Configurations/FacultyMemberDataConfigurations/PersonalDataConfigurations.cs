@@ -71,15 +71,7 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
                .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
-            #region RelationShip With Attachments
-
-            builder.HasOne(f => f.ProfilePicture)
-                .WithOne(pp => pp.FacultyMemberPersonalData)
-                .HasForeignKey<PersonalData>(f => f.ProfilePictureId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            #endregion
-
+        
         }
     }
 }

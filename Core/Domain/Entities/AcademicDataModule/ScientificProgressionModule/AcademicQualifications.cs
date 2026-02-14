@@ -1,6 +1,4 @@
-﻿using Domain.Entities.Attachments;
-
-namespace Domain.Entities.AcademicDataModule.ScientificProgressionModule
+﻿namespace Domain.Entities.AcademicDataModule.ScientificProgressionModule
 {
     public class AcademicQualifications : BaseEntity<int>
     {
@@ -29,7 +27,7 @@ namespace Domain.Entities.AcademicDataModule.ScientificProgressionModule
 
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
-        public AttachmentReference? Attachment { get; set; }
+        //public AttachmentReference? Attachment { get; set; }
 
         #endregion
     }

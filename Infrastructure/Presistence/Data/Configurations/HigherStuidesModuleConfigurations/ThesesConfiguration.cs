@@ -33,6 +33,12 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                    .HasForeignKey(th => th.GradeId)
                    .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasMany(th => th.Attachments)
+                 .WithOne(a => a.Thesis)
+                 .HasForeignKey(a => a.ThesisId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+
             #endregion
 
             #region AddingIndcies

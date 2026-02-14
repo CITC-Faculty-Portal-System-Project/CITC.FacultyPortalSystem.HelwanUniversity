@@ -7,7 +7,6 @@ using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Domain.Entities.AcademicDataModule.WritingsAndPatents;
-using Domain.Entities.Attachments;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.FacultyMemberDataModule
@@ -50,14 +49,6 @@ namespace Domain.Entities.FacultyMemberDataModule
         public ICollection<Projects> Projects { get; set; } = new HashSet<Projects>();
         #endregion
 
-        #region ResarchesModule
-
-        [NotMapped]
-        public Researcher? Researcher { get; set; }
-        public ICollection<InternalSystemResearch>? InternalSystemResearches { get; set; }
-
-        #endregion
-
         #region HigherStudiesModule
 
         public ICollection<Supervising>? Supervisings { get; set; }
@@ -88,8 +79,12 @@ namespace Domain.Entities.FacultyMemberDataModule
 
         #endregion
 
-        #region AttachmentsModule
-        public ICollection<FacultyMemberAttachments>? Attachments { get; set; }
+
+        #region ResarchesModule
+
+        [NotMapped]
+        public ResearcherProfile? Researcher { get; set; }
+        public ICollection<ResearchContribution>? ResearchContributions { get; set; } = new List<ResearchContribution>();
 
         #endregion
 

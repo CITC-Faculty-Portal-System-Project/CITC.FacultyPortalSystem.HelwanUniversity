@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities.AcademicDataModule.HigherStuidesModule
+﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
+
+namespace Domain.Entities.AcademicDataModule.HigherStuidesModule
 {
     public class Thesis : BaseEntity<int>
     {
@@ -14,6 +16,8 @@
         public Guid FacultyMemberId { get; set; }
         public FacultyMember? FacultyMember { get; set; }
         public ICollection<Supervisor>? Supervisors { get; set; }
+        public ICollection<Research>? Researches { get; set; } = new List<Research>();
+        public ICollection<ThesesAttachment>? Attachments { get; set; } = new List<ThesesAttachment>();
 
     }
 }

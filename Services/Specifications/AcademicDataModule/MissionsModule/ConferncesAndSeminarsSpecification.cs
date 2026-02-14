@@ -26,9 +26,7 @@ namespace Services.Specifications.AcademicDataModule.MissionsModule
             )
         {
             AddIncludes(cas => cas.RoleOfParticipation);
-            AddIncludeWithChain(cas => cas.Include(cas => cas.Attachments)
-                                           .ThenInclude(cas => cas.Attachment));
-
+           
             switch (parameters.Sort)
             {
                 case SeminarsAndConferencesSortingOptions.NameAsc:
@@ -52,7 +50,9 @@ namespace Services.Specifications.AcademicDataModule.MissionsModule
 
         public ConferncesAndSeminarsSpecification(int id) : base(cas => !cas.IsDeleted && cas.Id == id)
         {
-            AddIncludes(cas => cas.Attachments.Select(a => a.Attachment));
+            AddIncludes(cas => cas.RoleOfParticipation);
+
         }
+
     }
 }

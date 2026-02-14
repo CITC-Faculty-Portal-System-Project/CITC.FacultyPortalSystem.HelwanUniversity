@@ -1,5 +1,4 @@
-﻿using Domain.Entities.Attachments;
-using Services.Global;
+﻿using Services.Global;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Dtos.IdentityModule;
 using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
