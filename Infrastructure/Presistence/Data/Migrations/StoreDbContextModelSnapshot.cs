@@ -22,6 +22,1761 @@ namespace Presistence.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Supervising", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("DiscussionDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FacultyMemberRole")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("GradeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly?>("GrantingDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly?>("RegistrationDate")
+                        .HasColumnType("date");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Specialization")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("StudentName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateOnly?>("SupervisionFormationDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UniversityOrFaculty")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("GradeId");
+
+                    b.HasIndex("StudentName");
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("Supervisings", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Supervisor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Authority")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobLevelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("ThesesId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobLevelId");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("ThesesId");
+
+                    b.ToTable("Supervisors", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.ThesesAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HashAlg")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("KeyRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Nonce")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("RemotePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageProvider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Tag")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("ThesisId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("WrappedDek")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ThesisId");
+
+                    b.ToTable("ThesesAttachments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("EnrollmentDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GradeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly?>("InternalGradeDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Link")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly>("RegistrationDate")
+                        .HasColumnType("date");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateOnly?>("SupervisionConfirmationDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("GradeId");
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("Theses", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.ConferencesAndSeminars", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LocalOrInternational")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("OrganizingAuthority")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<Guid>("RoleOfParticipationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Venue")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Website")
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("Name");
+
+                    b.HasIndex("RoleOfParticipationId");
+
+                    b.HasIndex("StartDate");
+
+                    b.ToTable("ConferencesAndSeminars", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.ScientificMissions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CountryOrCity")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MissionName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("UniversityOrFaculty")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryOrCity");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("MissionName");
+
+                    b.HasIndex("StartDate");
+
+                    b.ToTable("ScientificMissions", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.TrainingPrograms", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OrganizingAuthority")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("ParticipationType")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("TrainingProgramName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Venue")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("StartDate");
+
+                    b.HasIndex("TrainingProgramName");
+
+                    b.ToTable("TrainingPrograms", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.CommitteesAndAssociations", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DegreeOfSubscriptionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameOfCommitteeOrAssociation")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TypeOfCommitteeOrAssociationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DegreeOfSubscriptionId");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("NameOfCommitteeOrAssociation");
+
+                    b.HasIndex("StartDate");
+
+                    b.HasIndex("TypeOfCommitteeOrAssociationId");
+
+                    b.ToTable("CommitteesAndAssociations", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.ParticipationInMagazines", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameOfMagazine")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<Guid>("TypeOfParticipationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WebsiteOfMagazine")
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("NameOfMagazine");
+
+                    b.HasIndex("TypeOfParticipationId");
+
+                    b.ToTable("ParticipationInMagazines", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.Projects", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FinancingAuthority")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LocalOrInternational")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NameOfProject")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<Guid>("ParticipationRoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("TypeOfProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("NameOfProject");
+
+                    b.HasIndex("ParticipationRoleId");
+
+                    b.HasIndex("StartDate");
+
+                    b.HasIndex("TypeOfProjectId");
+
+                    b.ToTable("Projects", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.ReviewingArticles", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Authority")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateOnly>("ReviewingDate")
+                        .HasColumnType("date");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TitleOfArticle")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("ReviewingDate");
+
+                    b.HasIndex("TitleOfArticle");
+
+                    b.ToTable("ReviewingArticles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.Research", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Abstract")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DOI")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Issue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JournalOrConfernce")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("NoOfCititations")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<string>("NoOfPages")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PubDate")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PubYear")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("PublicationType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Publisher")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("PublisherType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RelatedResearchLink")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResearchDerivedFrom")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResearchLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ThesisId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(800)
+                        .HasColumnType("nvarchar(800)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Volume")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ThesisId");
+
+                    b.ToTable("Researches", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HashAlg")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("KeyRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Nonce")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("RemotePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ResearchId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageProvider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Tag")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("WrappedDek")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResearchId");
+
+                    b.ToTable("ResearchAttachments", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchCite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NumberOfCites")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResearchId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResearchId");
+
+                    b.ToTable("ResearchsCites", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchContribution", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("ContributorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContributorType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsConfirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsTheMajorResearcher")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("MemberAcademicName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<int>("ResearchId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResearchId");
+
+                    b.HasIndex("ContributorId", "ResearchId")
+                        .IsUnique()
+                        .HasFilter("[ContributorId] IS NOT NULL");
+
+                    b.ToTable("ResearchesContributions", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherCite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NoOfCitations")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("ResearcherId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Year")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResearcherId");
+
+                    b.ToTable("ResearchersCites", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherInterest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("InterestId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ResearcherId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InterestId");
+
+                    b.HasIndex("ResearcherId", "InterestId")
+                        .IsUnique();
+
+                    b.ToTable("ResearchersInterests", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Hindex")
+                        .HasColumnType("int");
+
+                    b.Property<int>("HindexInLastFiveYears")
+                        .HasColumnType("int");
+
+                    b.Property<int>("I10index")
+                        .HasColumnType("int");
+
+                    b.Property<int>("I10index5y")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("JobTitle")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("NumberOfCitiationsInLastFiveYears")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ORCID")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("OrganisationId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("OrganisationalDomain")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("ScholarProfileImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ScholarProfileLink")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("TotalNumberOfCitiations")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcademicName");
+
+                    b.HasIndex("FacultyMemberId")
+                        .IsUnique();
+
+                    b.ToTable("ResearchersProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ScientificInterest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ScientificInterests", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.AcademicQualifications", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid?>("AttachmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CountryOrCity")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("DateOfObtainingTheQualification")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("DispatchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("GradeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("QualificationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Specialization")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("UniversityOrFaculty")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryOrCity");
+
+                    b.HasIndex("DateOfObtainingTheQualification");
+
+                    b.HasIndex("DispatchId");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("GradeId");
+
+                    b.HasIndex("QualificationId");
+
+                    b.ToTable("AcademicQualifications", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.AdministrativePositions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Position")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("Position");
+
+                    b.HasIndex("StartDate");
+
+                    b.ToTable("AdministrativePositions", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.JobRanks", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateOnly>("DateOfJobRank")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("JobRankId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Notes")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DateOfJobRank");
+
+                    b.HasIndex("FacultyMemberId");
+
+                    b.HasIndex("JobRankId");
+
+                    b.ToTable("JobRanks", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.ContactData", b =>
                 {
                     b.Property<int>("Id")
@@ -101,7 +1856,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("OfficialEmail");
 
-                    b.ToTable("ContactData");
+                    b.ToTable("ContactData", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.FacultyMember", b =>
@@ -166,7 +1921,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("NationalNumber")
                         .IsUnique();
 
-                    b.ToTable("FacultyMembers");
+                    b.ToTable("FacultyMembers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.IdentificationCard", b =>
@@ -308,6 +2063,9 @@ namespace Presistence.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<Guid?>("ProfilePictureId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -347,7 +2105,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("UniversityId");
 
-                    b.ToTable("PersonalData");
+                    b.ToTable("PersonalData", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.SocialMediaPlatforms", b =>
@@ -424,259 +2182,6 @@ namespace Presistence.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("SocialMedia", (string)null);
-                });
-
-            modelBuilder.Entity("Domain.Entities.HigherStuidesModule.Supervising", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("DiscussionDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FacultyMemberRole")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("GradeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly?>("GrantingDate")
-                        .HasColumnType("date");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateOnly?>("RegistrationDate")
-                        .HasColumnType("date");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("Specialization")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("StudentName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateOnly?>("SupervisionFormationDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("UniversityOrFaculty")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("GradeId");
-
-                    b.HasIndex("StudentName");
-
-                    b.HasIndex("Title");
-
-                    b.ToTable("Supervisings");
-                });
-
-            modelBuilder.Entity("Domain.Entities.HigherStuidesModule.Supervisor", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Authority")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobLevelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<int>("ThesesId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobLevelId");
-
-                    b.HasIndex("Name");
-
-                    b.HasIndex("ThesesId");
-
-                    b.ToTable("Supervisors");
-                });
-
-            modelBuilder.Entity("Domain.Entities.HigherStuidesModule.Thesis", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("EnrollmentDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GradeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateOnly?>("InternalGradeDate")
-                        .HasColumnType("date");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Link")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateOnly>("RegistrationDate")
-                        .HasColumnType("date");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateOnly?>("SupervisionConfirmationDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("GradeId");
-
-                    b.HasIndex("Title");
-
-                    b.ToTable("Theses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Lookup", b =>
@@ -3348,1510 +4853,351 @@ namespace Presistence.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Domain.Entities.MissionsModule.ConferencesAndSeminars", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Supervising", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("Supervisings")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.Lookup", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LocalOrInternational")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("OrganizingAuthority")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<Guid>("RoleOfParticipationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Venue")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Website")
-                        .HasColumnType("NVARCHAR(MAX)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("Name");
-
-                    b.HasIndex("RoleOfParticipationId");
-
-                    b.HasIndex("StartDate");
-
-                    b.ToTable("ConferencesAndSeminars", (string)null);
+                    b.Navigation("Grade");
                 });
 
-            modelBuilder.Entity("Domain.Entities.MissionsModule.ScientificMissions", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Supervisor", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.Lookup", "JobLevel")
+                        .WithMany()
+                        .HasForeignKey("JobLevelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", "Theses")
+                        .WithMany("Supervisors")
+                        .HasForeignKey("ThesesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("CountryOrCity")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                    b.Navigation("JobLevel");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MissionName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("UniversityOrFaculty")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryOrCity");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("MissionName");
-
-                    b.HasIndex("StartDate");
-
-                    b.ToTable("ScientificMissions", (string)null);
+                    b.Navigation("Theses");
                 });
 
-            modelBuilder.Entity("Domain.Entities.MissionsModule.TrainingPrograms", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.ThesesAttachment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", "Thesis")
+                        .WithMany("Attachments")
+                        .HasForeignKey("ThesisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("OrganizingAuthority")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("ParticipationType")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("TrainingProgramName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Venue")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("StartDate");
-
-                    b.HasIndex("TrainingProgramName");
-
-                    b.ToTable("TrainingPrograms", (string)null);
+                    b.Navigation("Thesis");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.CommitteesAndAssociations", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("Theses")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.Lookup", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("DegreeOfSubscriptionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("NameOfCommitteeOrAssociation")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("TypeOfCommitteeOrAssociationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DegreeOfSubscriptionId");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("NameOfCommitteeOrAssociation");
-
-                    b.HasIndex("StartDate");
-
-                    b.HasIndex("TypeOfCommitteeOrAssociationId");
-
-                    b.ToTable("CommitteesAndAssociations", (string)null);
+                    b.Navigation("Grade");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.ParticipationInMagazines", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.ConferencesAndSeminars", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("ConferencesAndSeminars")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.Lookup", "RoleOfParticipation")
+                        .WithMany()
+                        .HasForeignKey("RoleOfParticipationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("NameOfMagazine")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<Guid>("TypeOfParticipationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("WebsiteOfMagazine")
-                        .HasColumnType("NVARCHAR(MAX)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("NameOfMagazine");
-
-                    b.HasIndex("TypeOfParticipationId");
-
-                    b.ToTable("ParticipationInMagazines", (string)null);
+                    b.Navigation("RoleOfParticipation");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.Projects", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.ScientificMissions", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("ScientificMissions")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("FinancingAuthority")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LocalOrInternational")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NameOfProject")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<Guid>("ParticipationRoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("TypeOfProjectId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("NameOfProject");
-
-                    b.HasIndex("ParticipationRoleId");
-
-                    b.HasIndex("StartDate");
-
-                    b.HasIndex("TypeOfProjectId");
-
-                    b.ToTable("Projects", (string)null);
+                    b.Navigation("FacultyMember");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.ReviewingArticles", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.TrainingPrograms", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("TrainingPrograms")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Authority")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateOnly>("ReviewingDate")
-                        .HasColumnType("date");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("TitleOfArticle")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("ReviewingDate");
-
-                    b.HasIndex("TitleOfArticle");
-
-                    b.ToTable("ReviewingArticles", (string)null);
+                    b.Navigation("FacultyMember");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ExternalResearch", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.CommitteesAndAssociations", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.Lookup", "DegreeOfSubscription")
+                        .WithMany()
+                        .HasForeignKey("DegreeOfSubscriptionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("CommitteesAndAssociations")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.HasOne("Domain.Entities.Lookup", "TypeOfCommitteeOrAssociation")
+                        .WithMany()
+                        .HasForeignKey("TypeOfCommitteeOrAssociationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Navigation("DegreeOfSubscription");
 
-                    b.Property<string>("DOI")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsConfirmed")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Link")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("NoOfCititations")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PubDate")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PubYear")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("Publisher")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(800)
-                        .HasColumnType("nvarchar(800)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExternalResearches");
+                    b.Navigation("TypeOfCommitteeOrAssociation");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.InternalSystemResearch", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.ParticipationInMagazines", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("ParticipationInMagazines")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.Lookup", "TypeOfParticipation")
+                        .WithMany()
+                        .HasForeignKey("TypeOfParticipationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DOI")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Issue")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("LinkWithOtherResearch")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("MagazineOrConference")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<int?>("Pages")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PublicationType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Publisher")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("PublisherType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResearchDerivedFrom")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResearchLink")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("Summary")
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("Year");
-
-                    b.ToTable("InternalSystemResearches");
+                    b.Navigation("TypeOfParticipation");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.InternalSystemResearchContributor", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.Projects", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("Projects")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.Lookup", "ParticipationRole")
+                        .WithMany()
+                        .HasForeignKey("ParticipationRoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.HasOne("Domain.Entities.Lookup", "TypeOfProject")
+                        .WithMany()
+                        .HasForeignKey("TypeOfProjectId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                    b.Navigation("ParticipationRole");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsFromHelwanUniversity")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<bool>("IsTheMajorResearcher")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("InternalSystemResearchesContributors");
+                    b.Navigation("TypeOfProject");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.InternalSystemResearchContributorsResearches", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule.ReviewingArticles", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("ReviewingArticles")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InternalSystemResearchContributorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("InternalSystemResearchId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InternalSystemResearchId");
-
-                    b.HasIndex("InternalSystemResearchContributorId", "InternalSystemResearchId");
-
-                    b.ToTable("InternalSystemResearchesContributorsResearches");
+                    b.Navigation("FacultyMember");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearchCite", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.Research", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", "Thesis")
+                        .WithMany("Researches")
+                        .HasForeignKey("ThesisId");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("NoOfCitations")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
-
-                    b.Property<int>("ResearcherId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Year")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ResearcherId");
-
-                    b.ToTable("ResearchesCites");
+                    b.Navigation("Thesis");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearchContribution", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchAttachment", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.Research", "Research")
+                        .WithMany("Attachments")
+                        .HasForeignKey("ResearchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ExternalResearchId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MemberAcademicName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("MemberOrcid")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("MemberPositionInSearch")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExternalResearchId");
-
-                    b.HasIndex("MemberAcademicName");
-
-                    b.ToTable("ResearchContributions");
+                    b.Navigation("Research");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearchIndex", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchCite", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.Research", "Research")
+                        .WithMany("Cites")
+                        .HasForeignKey("ResearchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ExternalResearchId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("PlatForm")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExternalResearchId");
-
-                    b.HasIndex("PlatForm");
-
-                    b.ToTable("ResearchesIndices");
+                    b.Navigation("Research");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.Researcher", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchContribution", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "Contributor")
+                        .WithMany("ResearchContributions")
+                        .HasForeignKey("ContributorId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.Research", "Research")
+                        .WithMany("Contributions")
+                        .HasForeignKey("ResearchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("AcademicName")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
+                    b.Navigation("Contributor");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Hindex")
-                        .HasColumnType("int");
-
-                    b.Property<int>("HindexInLastFiveYears")
-                        .HasColumnType("int");
-
-                    b.Property<int>("I10index")
-                        .HasColumnType("int");
-
-                    b.Property<int>("I10index5y")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("JobTitle")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("NumberOfCitiationsInLastFiveYears")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ORCID")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("OrganisationId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("OrganisationalDomain")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("ScholarProfileLink")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("TotalNumberOfCitiations")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AcademicName");
-
-                    b.HasIndex("FacultyMemberId")
-                        .IsUnique();
-
-                    b.ToTable("Researchers");
+                    b.Navigation("Research");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearcherInterest", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherCite", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", "Researcher")
+                        .WithMany("ResearcherCites")
+                        .HasForeignKey("ResearcherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("ResearcherId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name");
-
-                    b.HasIndex("ResearcherId");
-
-                    b.ToTable("ResearchersInterests");
+                    b.Navigation("Researcher");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearcherResearch", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherInterest", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.ScientificInterest", "Interest")
+                        .WithMany("Researchers")
+                        .HasForeignKey("InterestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", "Researcher")
+                        .WithMany("ResearcherInterests")
+                        .HasForeignKey("ResearcherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Navigation("Interest");
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ExternalResearchId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ResearcherId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExternalResearchId");
-
-                    b.HasIndex("ResearcherId", "ExternalResearchId");
-
-                    b.ToTable("ResearchersResearches");
+                    b.Navigation("Researcher");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ScientificProgressionModule.AcademicQualifications", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithOne("Researcher")
+                        .HasForeignKey("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", "FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CountryOrCity")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly>("DateOfObtainingTheQualification")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("DispatchId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("GradeId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("QualificationId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<string>("Specialization")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("UniversityOrFaculty")
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryOrCity");
-
-                    b.HasIndex("DateOfObtainingTheQualification");
-
-                    b.HasIndex("DispatchId");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("GradeId");
-
-                    b.HasIndex("QualificationId");
-
-                    b.ToTable("AcademicQualifications", (string)null);
+                    b.Navigation("FacultyMember");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ScientificProgressionModule.AdministrativePositions", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.AcademicQualifications", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.Lookup", "DispatchType")
+                        .WithMany()
+                        .HasForeignKey("DispatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("AcademicQualifications")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.HasOne("Domain.Entities.Lookup", "Grade")
+                        .WithMany()
+                        .HasForeignKey("GradeId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasOne("Domain.Entities.Lookup", "Qualification")
+                        .WithMany()
+                        .HasForeignKey("QualificationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                    b.Navigation("DispatchType");
 
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
+                    b.Navigation("Grade");
 
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("Position");
-
-                    b.HasIndex("StartDate");
-
-                    b.ToTable("AdministrativePositions", (string)null);
+                    b.Navigation("Qualification");
                 });
 
-            modelBuilder.Entity("Domain.Entities.ScientificProgressionModule.JobRanks", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.AdministrativePositions", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("AdministrativePositions")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Navigation("FacultyMember");
+                });
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.JobRanks", b =>
+                {
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("JobRanks")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasOne("Domain.Entities.Lookup", "JobRank")
+                        .WithMany()
+                        .HasForeignKey("JobRankId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                    b.Property<DateOnly>("DateOfJobRank")
-                        .HasColumnType("date");
+                    b.Navigation("FacultyMember");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("DeletedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeletionReason")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("FacultyMemberId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("JobRankId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Notes")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("VersionNo")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DateOfJobRank");
-
-                    b.HasIndex("FacultyMemberId");
-
-                    b.HasIndex("JobRankId");
-
-                    b.ToTable("JobRanks", (string)null);
+                    b.Navigation("JobRank");
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.ContactData", b =>
@@ -4954,354 +5300,34 @@ namespace Presistence.Data.Migrations
                     b.Navigation("FacultyMember");
                 });
 
-            modelBuilder.Entity("Domain.Entities.HigherStuidesModule.Supervising", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", b =>
                 {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("Supervisings")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Attachments");
 
-                    b.HasOne("Domain.Entities.Lookup", "Grade")
-                        .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("Researches");
 
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("Grade");
+                    b.Navigation("Supervisors");
                 });
 
-            modelBuilder.Entity("Domain.Entities.HigherStuidesModule.Supervisor", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.Research", b =>
                 {
-                    b.HasOne("Domain.Entities.Lookup", "JobLevel")
-                        .WithMany()
-                        .HasForeignKey("JobLevelId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.Navigation("Attachments");
 
-                    b.HasOne("Domain.Entities.HigherStuidesModule.Thesis", "Theses")
-                        .WithMany("Supervisors")
-                        .HasForeignKey("ThesesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Cites");
 
-                    b.Navigation("JobLevel");
-
-                    b.Navigation("Theses");
+                    b.Navigation("Contributions");
                 });
 
-            modelBuilder.Entity("Domain.Entities.HigherStuidesModule.Thesis", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", b =>
                 {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("Theses")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("ResearcherCites");
 
-                    b.HasOne("Domain.Entities.Lookup", "Grade")
-                        .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("Grade");
+                    b.Navigation("ResearcherInterests");
                 });
 
-            modelBuilder.Entity("Domain.Entities.MissionsModule.ConferencesAndSeminars", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ScientificInterest", b =>
                 {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("ConferencesAndSeminars")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Lookup", "RoleOfParticipation")
-                        .WithMany()
-                        .HasForeignKey("RoleOfParticipationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("RoleOfParticipation");
-                });
-
-            modelBuilder.Entity("Domain.Entities.MissionsModule.ScientificMissions", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("ScientificMissions")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("Domain.Entities.MissionsModule.TrainingPrograms", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("TrainingPrograms")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.CommitteesAndAssociations", b =>
-                {
-                    b.HasOne("Domain.Entities.Lookup", "DegreeOfSubscription")
-                        .WithMany()
-                        .HasForeignKey("DegreeOfSubscriptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("CommitteesAndAssociations")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Lookup", "TypeOfCommitteeOrAssociation")
-                        .WithMany()
-                        .HasForeignKey("TypeOfCommitteeOrAssociationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DegreeOfSubscription");
-
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("TypeOfCommitteeOrAssociation");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.ParticipationInMagazines", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("ParticipationInMagazines")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Lookup", "TypeOfParticipation")
-                        .WithMany()
-                        .HasForeignKey("TypeOfParticipationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("TypeOfParticipation");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.Projects", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("Projects")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Lookup", "ParticipationRole")
-                        .WithMany()
-                        .HasForeignKey("ParticipationRoleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Lookup", "TypeOfProject")
-                        .WithMany()
-                        .HasForeignKey("TypeOfProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("ParticipationRole");
-
-                    b.Navigation("TypeOfProject");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProjectsAndCommitteesModule.ReviewingArticles", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("ReviewingArticles")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.InternalSystemResearch", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("InternalSystemResearches")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.InternalSystemResearchContributorsResearches", b =>
-                {
-                    b.HasOne("Domain.Entities.ResearchesModule.InternalSystemResearchContributor", "InternalSystemResearchContributor")
-                        .WithMany("Researches")
-                        .HasForeignKey("InternalSystemResearchContributorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.ResearchesModule.InternalSystemResearch", "InternalSystemResearch")
-                        .WithMany("Contributors")
-                        .HasForeignKey("InternalSystemResearchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("InternalSystemResearch");
-
-                    b.Navigation("InternalSystemResearchContributor");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearchCite", b =>
-                {
-                    b.HasOne("Domain.Entities.ResearchesModule.Researcher", "Researcher")
-                        .WithMany("ResearchCites")
-                        .HasForeignKey("ResearcherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Researcher");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearchContribution", b =>
-                {
-                    b.HasOne("Domain.Entities.ResearchesModule.ExternalResearch", "ExternalResearch")
-                        .WithMany("Contributions")
-                        .HasForeignKey("ExternalResearchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExternalResearch");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearchIndex", b =>
-                {
-                    b.HasOne("Domain.Entities.ResearchesModule.ExternalResearch", "ExternalResearch")
-                        .WithMany("Indcies")
-                        .HasForeignKey("ExternalResearchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExternalResearch");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.Researcher", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithOne("Researcher")
-                        .HasForeignKey("Domain.Entities.ResearchesModule.Researcher", "FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearcherInterest", b =>
-                {
-                    b.HasOne("Domain.Entities.ResearchesModule.Researcher", "Researcher")
-                        .WithMany("ResearcherInterests")
-                        .HasForeignKey("ResearcherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Researcher");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ResearcherResearch", b =>
-                {
-                    b.HasOne("Domain.Entities.ResearchesModule.ExternalResearch", "ExternalResearch")
-                        .WithMany("Researchers")
-                        .HasForeignKey("ExternalResearchId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.ResearchesModule.Researcher", "Researcher")
-                        .WithMany("ExternalResearches")
-                        .HasForeignKey("ResearcherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExternalResearch");
-
-                    b.Navigation("Researcher");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ScientificProgressionModule.AcademicQualifications", b =>
-                {
-                    b.HasOne("Domain.Entities.Lookup", "DispatchType")
-                        .WithMany()
-                        .HasForeignKey("DispatchId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("AcademicQualifications")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Lookup", "Grade")
-                        .WithMany()
-                        .HasForeignKey("GradeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Domain.Entities.Lookup", "Qualification")
-                        .WithMany()
-                        .HasForeignKey("QualificationId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("DispatchType");
-
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("Grade");
-
-                    b.Navigation("Qualification");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ScientificProgressionModule.AdministrativePositions", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("AdministrativePositions")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ScientificProgressionModule.JobRanks", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
-                        .WithMany("JobRanks")
-                        .HasForeignKey("FacultyMemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Lookup", "JobRank")
-                        .WithMany()
-                        .HasForeignKey("JobRankId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("FacultyMember");
-
-                    b.Navigation("JobRank");
+                    b.Navigation("Researchers");
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.FacultyMember", b =>
@@ -5318,8 +5344,6 @@ namespace Presistence.Data.Migrations
 
                     b.Navigation("IdentificationCard");
 
-                    b.Navigation("InternalSystemResearches");
-
                     b.Navigation("JobRanks");
 
                     b.Navigation("ParticipationInMagazines");
@@ -5327,6 +5351,8 @@ namespace Presistence.Data.Migrations
                     b.Navigation("PersonalData");
 
                     b.Navigation("Projects");
+
+                    b.Navigation("ResearchContributions");
 
                     b.Navigation("Researcher");
 
@@ -5341,39 +5367,6 @@ namespace Presistence.Data.Migrations
                     b.Navigation("Theses");
 
                     b.Navigation("TrainingPrograms");
-                });
-
-            modelBuilder.Entity("Domain.Entities.HigherStuidesModule.Thesis", b =>
-                {
-                    b.Navigation("Supervisors");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.ExternalResearch", b =>
-                {
-                    b.Navigation("Contributions");
-
-                    b.Navigation("Indcies");
-
-                    b.Navigation("Researchers");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.InternalSystemResearch", b =>
-                {
-                    b.Navigation("Contributors");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.InternalSystemResearchContributor", b =>
-                {
-                    b.Navigation("Researches");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ResearchesModule.Researcher", b =>
-                {
-                    b.Navigation("ExternalResearches");
-
-                    b.Navigation("ResearchCites");
-
-                    b.Navigation("ResearcherInterests");
                 });
 #pragma warning restore 612, 618
         }

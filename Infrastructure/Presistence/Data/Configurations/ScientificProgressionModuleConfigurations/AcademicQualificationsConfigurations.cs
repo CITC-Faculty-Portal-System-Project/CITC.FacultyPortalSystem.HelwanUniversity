@@ -1,4 +1,6 @@
-﻿namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurations
+﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+
+namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurations
 {
     public class AcademicQualificationsConfigurations : IEntityTypeConfiguration<AcademicQualifications>
     {
@@ -44,6 +46,11 @@
                    .WithMany(f => f.AcademicQualifications)
                    .HasForeignKey(aq => aq.FacultyMemberId)
                    .OnDelete(DeleteBehavior.Cascade);
+            #endregion
+
+            #region RelationShip With Attachments
+
+         
             #endregion
 
         }

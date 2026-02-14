@@ -1,6 +1,4 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
-
-namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
+﻿namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {
     public class FacultyMemberConfigurations : IEntityTypeConfiguration<FacultyMember>
     {
@@ -22,6 +20,15 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.Property(fm => fm.Email)
                 .HasColumnType("NVARCHAR(150)");
 
+
+            #region Configuring Relation With Researches
+
+            builder.HasMany(f => f.ResearchContributions)
+                    .WithOne(a => a.Contributor)
+                    .HasForeignKey(a => a.ContributorId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+            #endregion
         }
     }
 }

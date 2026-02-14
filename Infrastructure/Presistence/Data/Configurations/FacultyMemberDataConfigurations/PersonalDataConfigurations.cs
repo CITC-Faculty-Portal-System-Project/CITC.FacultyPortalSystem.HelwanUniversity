@@ -70,6 +70,8 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
                .HasForeignKey<PersonalData>(pd => pd.FacultyMemberId)
                .OnDelete(DeleteBehavior.Cascade);
             #endregion
+
+        
         }
     }
 }

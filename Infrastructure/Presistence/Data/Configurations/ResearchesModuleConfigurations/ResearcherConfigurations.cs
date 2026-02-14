@@ -1,10 +1,10 @@
-﻿using Domain.Entities.ResearchesModule;
+﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 
 namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
 {
-    public class ResearcherConfigurations : IEntityTypeConfiguration<Researcher>
+    public class ResearcherConfigurations : IEntityTypeConfiguration<ResearcherProfile>
     {
-        public void Configure(EntityTypeBuilder<Researcher> builder)
+        public void Configure(EntityTypeBuilder<ResearcherProfile> builder)
         {
 
 
@@ -58,8 +58,18 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
 
             builder.HasOne(r => r.FacultyMember)
                    .WithOne(r => r.Researcher)
-                   .HasForeignKey<Researcher>(r=> r.FacultyMemberId)
+                   .HasForeignKey<ResearcherProfile>(r=> r.FacultyMemberId)
                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(r => r.ResearcherInterests)
+                    .WithOne(r => r.Researcher)
+                    .HasForeignKey(r => r.ResearcherId)
+                    .OnDelete(DeleteBehavior.Cascade);
+         
+            builder.HasMany(r => r.ResearcherCites)
+                .WithOne(rc => rc.Researcher)
+                .HasForeignKey(rc => rc.ResearcherId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             #endregion
 

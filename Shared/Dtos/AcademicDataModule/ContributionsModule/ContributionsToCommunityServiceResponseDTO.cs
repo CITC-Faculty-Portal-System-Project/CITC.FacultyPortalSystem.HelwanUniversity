@@ -1,0 +1,10 @@
+﻿namespace Shared.Dtos.AcademicDataModule.ContributionsModule
+{
+    public record ContributionsToCommunityServiceResponseDTO
+    {
+        public int Id { get; set; }
+        public string ContributionTitle { get; set; } = string.Empty;
+        public DateOnly DateOfContribution { get; set; }
+        public string? Description { get; set; }
+    }
+}

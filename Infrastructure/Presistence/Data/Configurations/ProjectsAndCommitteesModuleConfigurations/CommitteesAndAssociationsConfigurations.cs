@@ -1,10 +1,12 @@
-﻿namespace Presistence.Data.Configurations.ProjectsAndCommitteesModuleConfigurations
+﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
+
+namespace Presistence.Data.Configurations.ProjectsAndCommitteesModuleConfigurations
 {
     public class CommitteesAndAssociationsConfigurations : IEntityTypeConfiguration<CommitteesAndAssociations>
     {
         public void Configure(EntityTypeBuilder<CommitteesAndAssociations> builder)
         {
-            builder.ToTable("CommitteesAndAssociations");
+            builder.ToTable("CommitteesAndAssociations", t => t.HasCheckConstraint("CK_CommitteesAndAssociations_Dates", "[EndDate] >= [StartDate]"));
 
             builder.HasKey(caa => caa.Id);
 

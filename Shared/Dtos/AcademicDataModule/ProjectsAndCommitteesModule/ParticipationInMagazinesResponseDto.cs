@@ -1,0 +1,10 @@
+﻿namespace Shared.Dtos.AcademicDataModule.ProjectsAndCommitteesModule
+{
+    public record ParticipationInMagazinesResponseDto
+    {
+        public int Id { get; set; }
+        public string NameOfMagazine { get; set; } = string.Empty;
+        public string? WebsiteOfMagazine { get; set; }
+        public LookupItemDto TypeOfParticipation { get; set; } = null!;
+    }
+}

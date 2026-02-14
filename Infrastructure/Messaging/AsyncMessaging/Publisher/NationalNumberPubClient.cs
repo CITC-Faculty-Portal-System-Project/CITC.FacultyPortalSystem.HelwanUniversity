@@ -1,5 +1,4 @@
 ﻿using Messaging.AsyncMessaging.Settings;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using Services.Abstraction.Contracts;
@@ -7,61 +6,61 @@ using System.Text;
 
 namespace Messaging.AsyncMessaging.Publisher
 {
-	public class NationalNumberPubClient : INationalNumberPubClient, IDisposable
+	public class NationalNumberPubClient : INationalNumberPubClient, IAsyncDisposable 
 	{
-		private readonly IConnection _connection;
-		private readonly IModel _channel;
-		private readonly RabbitMQPublishSettings _settings;
+		private readonly IRabbitMQConnection _connection;
+		private readonly RabbitMQSettings _settings;
+		private readonly IChannel _channel;
 		private bool _disposed;
 
-		public NationalNumberPubClient(IOptions<RabbitMQPublishSettings> options)
+		public NationalNumberPubClient(IRabbitMQConnection rabbitMQConnection, IOptions<RabbitMQSettings> options)
 		{
 			_settings = options.Value;
+			_connection = rabbitMQConnection;
 
 			try
 			{
-				var factory = new ConnectionFactory
-				{
-					HostName = _settings.Host,
-					Port = _settings.Port,
-					UserName = _settings.Username,
-					Password = _settings.Password,
-					AutomaticRecoveryEnabled = true, // auto-reconnect if RabbitMQ restarts
-					NetworkRecoveryInterval = TimeSpan.FromSeconds(10)
-				};
+				_channel = _connection.GetConnection().CreateChannelAsync().GetAwaiter().GetResult(); // Create channel synchronously suitable for DI
 
-				_connection = factory.CreateConnection();
-				_channel = _connection.CreateModel();
-
-				_channel.ExchangeDeclare(_settings.ExchangeName, ExchangeType.Fanout, durable: true);
-
-			}catch (Exception ex)
+			}
+			catch (Exception ex)
 			{
 				Console.WriteLine($"--> Could not create RabbitMQ connection: {ex.Message}");
-				throw new InvalidOperationException("Could Not Connect with RabbitMQ"); //==> Exception Handler
+				throw new InvalidOperationException("Could Not Connect with RabbitMQ");
 			}
 
 		}
 
-		public void PublishUserNationalNumber(string nationalNumber)
+		public async Task PublishUserNationalNumberAsync(string nationalNumber)
 		{
-
+			using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(_settings.TimeoutSeconds));
 			try
 			{
-				if (_channel is null || !_channel.IsOpen || _disposed)
+				if (_channel is null || !_channel.IsOpen || !_connection.GetConnection().IsOpen)
 					throw new InvalidOperationException("RabbitMQ channel is closed or unavailable.");
+
+				await _channel.ExchangeDeclareAsync(
+					_settings.NationalNumberExchangeName, 
+					ExchangeType.Fanout, 
+					durable: true, 
+					cancellationToken: cancellationTokenSource.Token
+				);
 
 
 				var body = Encoding.UTF8.GetBytes(nationalNumber);
 
-				var props = _channel.CreateBasicProperties();
-				props.Persistent = true;
+				var properties = new BasicProperties
+				{
+					DeliveryMode = DeliveryModes.Persistent
+				};
 
-				_channel.BasicPublish(
-					exchange: _settings.ExchangeName,
+				await _channel.BasicPublishAsync(
+					exchange: _settings.NationalNumberExchangeName,
 					routingKey: "",
-					basicProperties: props, // make message persistent
-					body: body
+					mandatory: false,
+					body: body,
+					basicProperties: properties, // make message persistent
+					cancellationToken: cancellationTokenSource.Token
 				);
 
 				Console.WriteLine($"--> Published national number: {nationalNumber}");
@@ -72,21 +71,25 @@ namespace Messaging.AsyncMessaging.Publisher
 
 		}
 
-		public void Dispose()
+		public async ValueTask DisposeAsync()
 		{
 			if (_disposed) return;
+
 			try
 			{
-				_channel?.Close();
-				_connection?.Close();
+				if (_channel != null)
+					await _channel.CloseAsync();
+
+				_channel?.Dispose();
 			}
 			catch (Exception ex)
 			{
 				Console.WriteLine($"--> Could not dispose RabbitMQ resources: {ex.Message}");
 			}
+
 			_disposed = true;
 			GC.SuppressFinalize(this);
-
 		}
+
 	}
 }

@@ -1,11 +1,13 @@
 ﻿
+using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
+
 namespace Presistence.Data.Configurations.ProjectsAndCommitteesModuleConfigurations
 {
     public class ProjectsConfigurations : IEntityTypeConfiguration<Projects>
     {
         public void Configure(EntityTypeBuilder<Projects> builder)
         {
-            builder.ToTable("Projects");
+            builder.ToTable("Projects", t => t.HasCheckConstraint("CK_Projects_Dates", "[EndDate] >= [StartDate]"));
 
             builder.HasKey(p => p.Id);
 

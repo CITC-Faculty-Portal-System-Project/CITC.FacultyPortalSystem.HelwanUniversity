@@ -1,5 +1,10 @@
 ﻿using Domain.Contracts;
 using Domain.Entities.IdentityModule;
+using FtpFileStorage.Factories;
+using FtpFileStorage.Implementation;
+using Integrations.HttpClientFactory;
+using Integrations.Services;
+using Messaging.AsyncMessaging;
 using Messaging.AsyncMessaging.Consumer;
 using Messaging.AsyncMessaging.Publisher;
 using Messaging.AsyncMessaging.Settings;
@@ -10,8 +15,11 @@ using Microsoft.IdentityModel.Tokens;
 using Presistence.Data;
 using Presistence.Identity;
 using Presistence.Repositories;
+using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Shared.Common;
 using StackExchange.Redis;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using UserRole = Domain.Entities.IdentityModule.Role;
@@ -31,6 +39,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
             });
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+           
 
             services.AddSingleton<IConnectionMultiplexer>((_) =>
             {
@@ -39,15 +48,30 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
             services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
-			services.Configure<RabbitMQPublishSettings>(
-                configuration.GetSection("RabbitMQPublisher"));
+			services.Configure<RabbitMQSettings>(
+                configuration.GetSection("RabbitMQSettings"));
 
-            services.Configure<RabbitMQConsumerSettings>(
-                configuration.GetSection("RabbitMQConsumer"));
+            services.Configure<RabbitMQConnectionSettings>(
+                configuration.GetSection("RabbitMQConnectionSettings"));
 
+            services.AddSingleton<IRabbitMQConnection, RabbitMQConnection>();
 
             services.AddHostedService<ExternalDataConsumerClient>();
+            services.AddScoped<IFTPClientFactory, FTPClientFactory>();
+            services.AddScoped<IFTPFileStorageService, FTPFileStorageService>();
+			services.AddHostedService<ExternalDataConsumerClient>();
 
+            services.AddHostedService<ResearchDataConsumerClient>();
+            services.AddHttpClient("Generic", client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Accept.Add(
+                    new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+
+
+            services.AddScoped<IGenericHTTPClient, GenericHttpClient>();
+            services.AddScoped<IResearchesDOIandORCIDLoadService, ResearchesDOIandORCIDLoadService>();
 
             services.AddSingleton(new JsonSerializerOptions
             {

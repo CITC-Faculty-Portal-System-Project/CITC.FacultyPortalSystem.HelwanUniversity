@@ -1,11 +1,13 @@
 ﻿
+using Domain.Entities.AcademicDataModule.MissionsModule;
+
 namespace Presistence.Data.Configurations.MissionsModuleConfigurations
 {
     public class ConferencesAndSeminarsConfigurations : IEntityTypeConfiguration<ConferencesAndSeminars>
     {
         public void Configure(EntityTypeBuilder<ConferencesAndSeminars> builder)
         {
-            builder.ToTable("ConferencesAndSeminars");
+            builder.ToTable("ConferencesAndSeminars", t => t.HasCheckConstraint("CK_ConferencesAndSeminars_Dates", "[EndDate] >= [StartDate]"));
 
             builder.HasKey(cas => cas.Id);
 
@@ -51,6 +53,7 @@ namespace Presistence.Data.Configurations.MissionsModuleConfigurations
                    .HasForeignKey(cas => cas.FacultyMemberId)
                    .OnDelete(DeleteBehavior.Cascade);
             #endregion
+
         }
     }
 }

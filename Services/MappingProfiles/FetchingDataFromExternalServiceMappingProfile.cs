@@ -1,10 +1,10 @@
-﻿using Shared.Dtos.DataFetchingFromExternalService;
+﻿using Shared.Dtos.AcademicDataModule.HigherStudiesModule;
+using Shared.Dtos.AcademicDataModule.MissionsModule;
+using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.FacultyMemberDataModule;
-using Shared.Dtos.HigherStudiesModule;
-using Shared.Dtos.MissionsModule;
-using Shared.Dtos.ScientificProgressionModule;
-using Shared.Enums.HigherStudiesModule;
-using Shared.Enums.MissionsModule;
+using Shared.Enums.AcademicDataModule.HigherStudiesModule;
+using Shared.Enums.AcademicDataModule.MissionsModule;
 
 namespace Services.MappingProfiles
 {

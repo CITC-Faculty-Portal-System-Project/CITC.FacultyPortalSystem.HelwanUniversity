@@ -1,11 +1,13 @@
 ﻿
+using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+
 namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurations
 {
     public class AdministrativePositionsConfigurations : IEntityTypeConfiguration<AdministrativePositions>
     {
         public void Configure(EntityTypeBuilder<AdministrativePositions> builder)
         {
-            builder.ToTable("AdministrativePositions");
+            builder.ToTable("AdministrativePositions", t => t.HasCheckConstraint("CK_AdminPositions_Dates", "[EndDate] >= [StartDate]"));
 
             builder.HasKey(ap => ap.Id);
 

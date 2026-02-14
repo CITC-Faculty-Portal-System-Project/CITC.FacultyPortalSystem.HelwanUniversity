@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Services.Abstraction.Contracts
+﻿namespace Services.Abstraction.Contracts
 {
 	public interface INationalNumberPubClient
 	{
-		void PublishUserNationalNumber(string nationalNumber);
+		public Task PublishUserNationalNumberAsync(string nationalNumber);
 	}
 }

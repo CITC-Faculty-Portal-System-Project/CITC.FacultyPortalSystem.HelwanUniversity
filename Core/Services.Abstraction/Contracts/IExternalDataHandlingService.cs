@@ -1,4 +1,4 @@
-﻿using Shared.Dtos.ScientificProgressionModule;
+﻿using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +20,13 @@ namespace Services.Abstraction.Contracts
         public Task<bool> ThesisSupervisingDataHandle(string? json);
         public Task<bool> ThesisDataHandle(string? json);
 
+		//Researches Data
+		public Task<bool> ResearchDataHandle(string? json);
 
 
 
 
 
 
-    }
+	}
 }
