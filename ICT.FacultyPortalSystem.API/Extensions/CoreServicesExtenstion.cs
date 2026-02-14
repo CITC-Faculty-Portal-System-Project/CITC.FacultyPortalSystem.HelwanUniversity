@@ -1,18 +1,24 @@
 ﻿using Domain.Contracts;
 using FtpFileStorage.Configurations;
-using FtpFileStorage.Factories;
-using FtpFileStorage.Implementation;
 using Presistence.Repositories;
+using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
+using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
+using Services.Implementations.AcademicDataModule.ContributionsModule;
+using Services.Implementations.AcademicDataModule.ExperiencesModule;
 using Services.Implementations.AcademicDataModule.MissionsModule;
+using Services.Implementations.AcademicDataModule.PrizesModule;
 using Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Implementations.AcademicDataModule.ResearchesModule;
 using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
+using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AttachmentsModule;
 using Shared.Common;
 
@@ -124,11 +130,57 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             );
 
 
+            services.AddScoped<IGeneralExperiencesService, GeneralExperiencesService>();
+            services.AddScoped<Func<IGeneralExperiencesService>>(provider =>
+            () => provider.GetRequiredService<IGeneralExperiencesService>()
+            );
+
+            services.AddScoped<ITeachingExperiencesService, TeachingExperiencesService>();
+            services.AddScoped<Func<ITeachingExperiencesService>>(provider =>
+            () => provider.GetRequiredService<ITeachingExperiencesService>()
+            );
+
             services.AddScoped<IAttachmentService, AttachmentService>();
             services.AddScoped<Func<IAttachmentService>>(provider =>
             () => provider.GetRequiredService<IAttachmentService>()
             );
 
+            services.AddScoped<IPrizesAndRewardsService, PrizesAndRewardsService>();
+            services.AddScoped<Func<IPrizesAndRewardsService>>(provider =>
+            () => provider.GetRequiredService<IPrizesAndRewardsService>()
+            );
+
+            services.AddScoped<IManifestationsOfScientificAppreciationService, ManifestationsOfScientificAppreciationService>();
+            services.AddScoped<Func<IManifestationsOfScientificAppreciationService>>(provider =>
+            () => provider.GetRequiredService<IManifestationsOfScientificAppreciationService>()
+            );
+
+            services.AddScoped<IScientificWritingsService, ScientificWritingsService>();
+            services.AddScoped<Func<IScientificWritingsService>>(provider =>
+            () => provider.GetRequiredService<IScientificWritingsService>()
+            );
+
+            services.AddScoped<IPatentsService, PatentsService>();
+            services.AddScoped<Func<IPatentsService>>(provider =>
+            () => provider.GetRequiredService<IPatentsService>()
+            );
+
+            services.AddScoped<IContributionsToCommunityServiceService, ContributionsToCommunityServiceService>();
+            services.AddScoped<Func<IContributionsToCommunityServiceService>>(provider =>
+            () => provider.GetRequiredService<IContributionsToCommunityServiceService>()
+            );
+
+            services.AddScoped<IContributionsToUniversityService, ContributionsToUniversityService>();
+            services.AddScoped<Func<IContributionsToUniversityService>>(provider =>
+            () => provider.GetRequiredService<IContributionsToUniversityService>()
+            );
+
+            services.AddScoped<IParticipationInQualityWorksService, ParticipationInQualityWorksService>();
+            services.AddScoped<Func<IParticipationInQualityWorksService>>(provider =>
+            () => provider.GetRequiredService<IParticipationInQualityWorksService>()
+            );
+
+            services.AddScoped<IAttachmentsAcsessabilityService, AttachmentsAcsessablityService>();
 
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));

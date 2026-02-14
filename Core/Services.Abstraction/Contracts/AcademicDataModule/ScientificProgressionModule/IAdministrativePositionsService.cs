@@ -1,5 +1,5 @@
-﻿using Shared.Dtos.ScientificProgressionModule;
-using Shared.SpecificationParameters.ScientificProgressionModule;
+﻿using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+using Shared.SpecificationParameters.AcademicDataModule.ScientificProgressionModule;
 
 namespace Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule
 {

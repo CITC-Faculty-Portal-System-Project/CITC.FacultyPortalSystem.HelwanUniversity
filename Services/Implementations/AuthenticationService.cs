@@ -182,7 +182,7 @@ namespace Services.Implementations
             await _unitOfWork.SaveChangesAsync();
 
 
-            _nationalNumberPubClient.PublishUserNationalNumber(registerDto.NationalNumber);
+            await _nationalNumberPubClient.PublishUserNationalNumberAsync(registerDto.NationalNumber);
 
             return new UserResultDto(UserName: newUser.UserName ?? "" , newUser.Email ?? "");
         }

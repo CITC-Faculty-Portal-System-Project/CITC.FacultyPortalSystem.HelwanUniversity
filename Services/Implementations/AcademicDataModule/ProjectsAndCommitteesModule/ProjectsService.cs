@@ -1,9 +1,9 @@
 ﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Global;
-using Services.Specifications.ProjectsAndCommitteesModule;
-using Shared.Dtos.ProjectsAndCommitteesModule;
-using Shared.SpecificationParameters.ProjectsAndCommitteesModule;
+using Services.Specifications.AcademicDataModule.ProjectsAndCommitteesModule;
+using Shared.Dtos.AcademicDataModule.ProjectsAndCommitteesModule;
+using Shared.SpecificationParameters.AcademicDataModule.ProjectsAndCommitteesModule;
 
 namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule
 {

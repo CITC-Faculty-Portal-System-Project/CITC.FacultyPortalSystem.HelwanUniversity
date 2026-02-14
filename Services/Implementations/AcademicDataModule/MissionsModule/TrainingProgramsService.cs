@@ -1,9 +1,9 @@
 ﻿using Domain.Entities.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Global;
-using Services.Specifications.MissionsModule;
-using Shared.Dtos.MissionsModule;
-using Shared.SpecificationParameters.MissionsModule;
+using Services.Specifications.AcademicDataModule.MissionsModule;
+using Shared.Dtos.AcademicDataModule.MissionsModule;
+using Shared.SpecificationParameters.AcademicDataModule.MissionsModule;
 
 namespace Services.Implementations.AcademicDataModule.MissionsModule
 {

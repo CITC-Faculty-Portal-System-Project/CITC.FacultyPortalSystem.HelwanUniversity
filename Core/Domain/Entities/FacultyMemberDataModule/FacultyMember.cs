@@ -1,8 +1,13 @@
-﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+﻿using Domain.Entities.AcademicDataModule.ContributionsModule;
+using Domain.Entities.AcademicDataModule.ExperiencesModule;
+using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.AcademicDataModule.PrizesModule;
 using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.AcademicDataModule.WritingsAndPatents;
+using Domain.Entities.Attachments;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.FacultyMemberDataModule
@@ -22,6 +27,8 @@ namespace Domain.Entities.FacultyMemberDataModule
         public IdentificationCard? IdentificationCard { get; set; }
         public SocialMediaPlatforms? SocialMediaPlatforms { get; set; }
         #endregion
+
+        #region AcademicDataModule
 
         #region ScientificProgressionModule
         public ICollection<AcademicQualifications> AcademicQualifications { get; set; } = new HashSet<AcademicQualifications>();
@@ -43,18 +50,42 @@ namespace Domain.Entities.FacultyMemberDataModule
         public ICollection<Projects> Projects { get; set; } = new HashSet<Projects>();
         #endregion
 
+        #region HigherStudiesModule
+
+        public ICollection<Supervising>? Supervisings { get; set; }
+        public ICollection<Thesis>? Theses { get; set; }
+
+        #endregion
+
+        #region ExperiencesModule
+        public ICollection<GeneralExperiences> GeneralExperiences { get; set; } = new HashSet<GeneralExperiences>();
+        public ICollection<TeachingExperiences> TeachingExperiences { get; set; } = new HashSet<TeachingExperiences>();
+        #endregion
+
+        #region WritingsAndPatents
+        public ICollection<ScientificWritings> ScientificWritings { get; set; } = new HashSet<ScientificWritings>();
+        public ICollection<Patents> Patents { get; set; } = new HashSet<Patents>();
+        #endregion
+
+        #region PrizesModule
+        public ICollection<PrizesAndRewards> PrizesAndRewards { get; set; } = new HashSet<PrizesAndRewards>();
+        public ICollection<ManifestationsOfScientificAppreciation> ManifestationsOfScientificAppreciations { get; set; } = new HashSet<ManifestationsOfScientificAppreciation>();
+        #endregion
+
+        #region Contributions Module
+        public ICollection<ContributionsToUniversity> ContributionsToUniversity { get; set; } = new HashSet<ContributionsToUniversity>();
+        public ICollection<ContributionsToCommunityService> ContributionsToCommunityServices { get; set; } = new HashSet<ContributionsToCommunityService>();
+        public ICollection<ParticipationInQualityWorks> ParticipationInQualityWorks { get; set; } = new HashSet<ParticipationInQualityWorks>();
+        #endregion
+
+        #endregion
+
+
         #region ResarchesModule
 
         [NotMapped]
         public ResearcherProfile? Researcher { get; set; }
         public ICollection<ResearchContribution>? ResearchContributions { get; set; } = new List<ResearchContribution>();
-
-        #endregion
-
-        #region HigherStudiesModule
-
-        public ICollection<Supervising>? Supervisings { get; set; }
-        public ICollection<Thesis>? Theses { get; set; }
 
         #endregion
 

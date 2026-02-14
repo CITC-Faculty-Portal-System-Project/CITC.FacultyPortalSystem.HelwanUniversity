@@ -1,4 +1,4 @@
-﻿using Shared.Dtos.ScientificProgressionModule;
+﻿using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;

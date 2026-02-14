@@ -1,9 +1,9 @@
 ﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Global;
-using Services.Specifications.ScientificProgressionModule;
-using Shared.Dtos.ScientificProgressionModule;
-using Shared.SpecificationParameters.ScientificProgressionModule;
+using Services.Specifications.AcademicDataModule.ScientificProgressionModule;
+using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+using Shared.SpecificationParameters.AcademicDataModule.ScientificProgressionModule;
 
 namespace Services.Implementations.AcademicDataModule.ScientificProgressionModule
 {

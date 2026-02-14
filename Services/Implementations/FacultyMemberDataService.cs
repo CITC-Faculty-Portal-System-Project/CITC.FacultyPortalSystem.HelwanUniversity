@@ -1,7 +1,7 @@
 ﻿using Services.Global;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Dtos.IdentityModule;
-using Shared.Dtos.ScientificProgressionModule;
+using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
 
 namespace Services.Implementations
 {

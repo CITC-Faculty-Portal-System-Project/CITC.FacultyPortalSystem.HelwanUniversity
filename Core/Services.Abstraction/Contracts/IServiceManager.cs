@@ -3,7 +3,12 @@
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
+
 
 namespace Services.Abstraction.Contracts
 {
@@ -38,14 +43,37 @@ namespace Services.Abstraction.Contracts
         public IJobRanksService JobRanksService { get; }
         #endregion
 
+        #region Experiences Module
+        public IGeneralExperiencesService GeneralExperiencesService { get; }
+        public ITeachingExperiencesService TeachingExperiencesService { get; }
+        #endregion
+
+        #region Prizes Module
+        public IPrizesAndRewardsService PrizesAndRewardsService { get; }
+        public IManifestationsOfScientificAppreciationService ManifestationsOfScientificAppreciationService { get; }
+        #endregion
+
+        #region Writings And Patents Module
+        public IScientificWritingsService ScientificWritingsService { get; }
+        public IPatentsService PatentsService { get; }
+        #endregion
+
+        #region Contributions Module
+        public IContributionsToUniversityService ContributionsToUniversityService { get; }
+        public IContributionsToCommunityServiceService ContributionsToCommunityService { get; }
+        public IParticipationInQualityWorksService ParticipationInQualityWorksService { get; }
+        #endregion
+
+
         #region ResearchesModule
+
         public IResearchesService ResearchesService { get; }
         public IResearcherProfileService ResearcherProfileService { get; }
         public IThesesSupervisingService ThesesSupervisingService { get; }
         public IThesesService ThesesService { get; }
 
-        #endregion
 
+        #endregion
         #endregion
     }
 }

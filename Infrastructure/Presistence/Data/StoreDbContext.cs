@@ -1,9 +1,11 @@
-﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+﻿using Domain.Entities.AcademicDataModule.ContributionsModule;
+using Domain.Entities.AcademicDataModule.ExperiencesModule;
+using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.AcademicDataModule.PrizesModule;
 using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
-using Domain.Entities.FacultyMemberDataModule;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
@@ -81,6 +83,8 @@ namespace Presistence.Data
                 }
             }
         }
+        public DbSet<Lookup> Lookups { get; set; }
+
         #region FacultyMemberData DbSets
         public DbSet<ContactData> ContactData { get; set; }
         public DbSet<PersonalData> PersonalData { get; set; }
@@ -89,6 +93,8 @@ namespace Presistence.Data
         public DbSet<FacultyMember> FacultyMembers { get; set; }
 
         #endregion
+
+        #region AcademicDataModule DbSets
 
         #region ScientificProgressionModule DbSets
         public DbSet<AcademicQualifications> AcademicQualifications { get; set; }
@@ -131,7 +137,28 @@ namespace Presistence.Data
 
         #endregion
 
-        public DbSet<Lookup> Lookups { get; set; }
+        #region ExperiencesModule DbSets
+        public DbSet<GeneralExperiences> GeneralExperiences { get; set; }
+        public DbSet<TeachingExperiences> TeachingExperiences { get; set; }
+        #endregion
+
+        #region WritingsAndPatents
+        public DbSet<ScientificWritings> ScientificWritings { get; set; }
+        public DbSet<Patents> Patents { get; set; }
+        #endregion
+
+        #region Prizes Module
+        public DbSet<PrizesAndRewards> PrizesAndRewards { get; set; }
+        public DbSet<ManifestationsOfScientificAppreciation> ManifestationsOfScientificAppreciations { get; set; }
+        #endregion
+
+        #region Contributions Module
+        public DbSet<ContributionsToUniversity> ContributionsToUniversities { get; set; }
+        public DbSet<ContributionsToCommunityService> ContributionsToCommunityServices { get; set; }
+        public DbSet<ParticipationInQualityWorks> ParticipationInQualityWorks { get; set; }
+        #endregion
+
+        #endregion
 
      }
 }
