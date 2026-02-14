@@ -117,7 +117,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("Title");
 
-                    b.ToTable("Supervisings");
+                    b.ToTable("Supervisings", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Supervisor", b =>
@@ -189,7 +189,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ThesesId");
 
-                    b.ToTable("Supervisors");
+                    b.ToTable("Supervisors", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.ThesesAttachment", b =>
@@ -281,7 +281,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ThesisId");
 
-                    b.ToTable("ThesesAttachments");
+                    b.ToTable("ThesesAttachments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", b =>
@@ -364,7 +364,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("Title");
 
-                    b.ToTable("Theses");
+                    b.ToTable("Theses", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.ConferencesAndSeminars", b =>
@@ -1050,7 +1050,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ThesisId");
 
-                    b.ToTable("Researches");
+                    b.ToTable("Researches", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchAttachment", b =>
@@ -1142,7 +1142,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ResearchId");
 
-                    b.ToTable("ResearchAttachments");
+                    b.ToTable("ResearchAttachments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchCite", b =>
@@ -1199,7 +1199,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ResearchId");
 
-                    b.ToTable("ResearchsCites");
+                    b.ToTable("ResearchsCites", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchContribution", b =>
@@ -1274,7 +1274,7 @@ namespace Presistence.Data.Migrations
                         .IsUnique()
                         .HasFilter("[ContributorId] IS NOT NULL");
 
-                    b.ToTable("ResearchesContributions");
+                    b.ToTable("ResearchesContributions", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherCite", b =>
@@ -1335,7 +1335,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ResearcherId");
 
-                    b.ToTable("ResearchersCites");
+                    b.ToTable("ResearchersCites", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherInterest", b =>
@@ -1392,7 +1392,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("ResearcherId", "InterestId")
                         .IsUnique();
 
-                    b.ToTable("ResearchersInterests");
+                    b.ToTable("ResearchersInterests", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", b =>
@@ -1498,7 +1498,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("FacultyMemberId")
                         .IsUnique();
 
-                    b.ToTable("ResearchersProfiles");
+                    b.ToTable("ResearchersProfiles", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ScientificInterest", b =>
@@ -1548,7 +1548,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ScientificInterests");
+                    b.ToTable("ScientificInterests", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.AcademicQualifications", b =>
@@ -1856,7 +1856,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("OfficialEmail");
 
-                    b.ToTable("ContactData");
+                    b.ToTable("ContactData", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.FacultyMember", b =>
@@ -1921,7 +1921,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("NationalNumber")
                         .IsUnique();
 
-                    b.ToTable("FacultyMembers");
+                    b.ToTable("FacultyMembers", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.IdentificationCard", b =>
@@ -2105,7 +2105,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("UniversityId");
 
-                    b.ToTable("PersonalData");
+                    b.ToTable("PersonalData", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.SocialMediaPlatforms", b =>
