@@ -24,7 +24,6 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.Issue, opt => opt.MapFrom(src => src.Number));
 
             CreateMap<ExternalResearchContributionFetchingDTO, ResearchContribution>();
-            CreateMap<Research, ResearchCardResponseDTO>();
             CreateMap<ResearcherProfile, ResearcherProfileResponseDTO>();
 
             CreateMap<ResearcherProfile, ResearcherProfileResponseDTO>()
@@ -73,6 +72,8 @@ namespace Services.MappingProfiles
             CreateMap<ResearchContributionDTO , ResearchContribution>();
             CreateMap<Research, ResearchDTO>(); 
             CreateMap<Research, ResearchResponseDTO>();
+            CreateMap<ResearchResponseDTO, ResearchDTO>();
+            CreateMap<ThesesSupervisorResponseDTO, ThesesSupervisorDTO>();
 
             CreateMap<ResearchResponseDTO, Research>()
                 .ForMember(d => d.Id, opt => opt.Ignore())
@@ -108,8 +109,13 @@ namespace Services.MappingProfiles
                 .ForMember(d => d.ResearchId, opt => opt.Ignore());
 
             CreateMap<ResearchContribution, ResearchContributionResponseDTO>();
+            CreateMap<ResearchUpdateDTO, Research>();
             CreateMap<ResearchCite, ResearchCitesResponseDTO>();
             CreateMap<ThesesSupervisorDTO, Supervisor>();
+
+
+            CreateMap<Supervisor, ThesesSupervisorResponseDTO>();
+            CreateMap<ThesesUpdateDTO, Thesis>();
         }
     }
 }

@@ -12,5 +12,14 @@ namespace Services.Specifications.ResearchesModule
             AddIncludeWithChain(rp => rp.Include(rp =>rp.ResearcherInterests!)
                                 .ThenInclude(rp => rp.Interest));
         }
+
+        public ResearcherProfileSpceification
+            (string scholarProfileLink)
+            : base(rp => string.Equals(rp.ScholarProfileLink, scholarProfileLink)
+                && !rp.IsDeleted)
+        {
+            AddIncludes(rp => rp.ResearcherCites!);
+        }
+
     }
 }

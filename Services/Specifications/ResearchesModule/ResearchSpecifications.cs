@@ -30,7 +30,10 @@ namespace Services.Specifications.ResearchesModule
             .IsDeleted)
 
         {
-            AddIncludes(r => r.Contributions!);
+            AddIncludeWithChain(q => q
+                             .Include(r => r.Contributions!
+                             .Where(c => c.MemberAcademicName != facultyMemberId.ToString())));
+           
             AddIncludes(r => r.Attachments!);
             AddIncludes(r => r.Cites!);
         }
@@ -75,11 +78,12 @@ namespace Services.Specifications.ResearchesModule
                     break;
             }
             applyPagination(parameters.PageSize, parameters.PageIndex);
-            AddIncludes(r => r.Contributions!);
+            AddIncludeWithChain(q => q
+                                      .Include(r => r.Contributions!
+                                      .Where(c => c.MemberAcademicName != facultyMemberId.ToString())));
+            
             AddIncludes(r => r.Attachments!);
             AddIncludes(r => r.Cites!);
         }
-
-       
     }
 }

@@ -201,10 +201,11 @@ namespace Services.Implementations
             var token = await CreateTokenAsync(user);
             var response = new LoginClaims
             {
-                Email = user.Email,
-                Role = role.FirstOrDefault(),
-                UserName = user.UserName,
-                Token = token
+                Email = user.Email!,
+                Role = role.FirstOrDefault()!,
+                UserName = user.UserName!,
+                Token = token,
+                NationalNumber = user.NationalNumber
             };
             return (response);
         }
@@ -275,9 +276,9 @@ namespace Services.Implementations
         public string GetLoggedUserEmail()
         {
             var user = _httpContextAccessor.HttpContext?.User;
-            var email = user.FindFirst(ClaimTypes.Email)?.Value.ToString();
+            var email = user!.FindFirst(ClaimTypes.Email)?.Value.ToString();
 
-            return email;
+            return email!;
 
         }
 

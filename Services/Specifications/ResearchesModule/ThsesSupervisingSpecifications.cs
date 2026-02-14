@@ -12,7 +12,6 @@ namespace Services.Specifications.ResearchesModule
             AddIncludes(ts => ts.Grade!);
         }
 
-
         public ThsesSupervisingSpecifications(ThesesSupervisingSpecificationParameters parameters 
                     , Guid FacultyMemberId)
                 : base(ts => !ts.IsDeleted && ts.FacultyMemberId == FacultyMemberId)

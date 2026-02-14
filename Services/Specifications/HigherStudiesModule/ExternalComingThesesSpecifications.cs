@@ -3,9 +3,9 @@ using Shared.Dtos.DataFetchingFromExternalService;
 
 namespace Services.Specifications.HigherStudiesModule
 {
-    internal class ThesesSpecifications : BaseSpecifications<Thesis , int>
+    internal class ExternalComingThesesSpecifications : BaseSpecifications<Thesis , int>
     {
-        public ThesesSpecifications(ThesesFetchingDTO thesesFetchingDTO)
+        public ExternalComingThesesSpecifications(ThesesFetchingDTO thesesFetchingDTO)
             : base(th => !th.IsDeleted && th.Link == thesesFetchingDTO.Link && th.Title == thesesFetchingDTO.Title
             && th.Grade.ValueAr == thesesFetchingDTO.Grade && th.EnrollmentDate == thesesFetchingDTO.EnrollmentDate
             && th.RegistrationDate == thesesFetchingDTO.RegistrationDate && th.InternalGradeDate == thesesFetchingDTO.InternalGradeDate
@@ -16,7 +16,7 @@ namespace Services.Specifications.HigherStudiesModule
         }
 
 
-        public ThesesSpecifications(Guid FacultyMemberId , string title)
+        public ExternalComingThesesSpecifications(Guid FacultyMemberId , string title)
             : base(th => !th.IsDeleted && th.Title == title && th.FacultyMemberId == FacultyMemberId)
          {
          }

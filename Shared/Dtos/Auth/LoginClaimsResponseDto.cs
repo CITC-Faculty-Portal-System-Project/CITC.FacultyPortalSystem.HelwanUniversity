@@ -11,5 +11,6 @@ namespace Shared.Dtos.Auth
         public string Email { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public string NationalNumber { get; set; } = string.Empty;
     }
 }

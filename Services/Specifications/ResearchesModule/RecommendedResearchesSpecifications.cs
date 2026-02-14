@@ -24,7 +24,11 @@ namespace Services.Specifications.ResearchesModule
         {
 
 
-            AddIncludes(r => r.Contributions!);
+            AddIncludeWithChain(q => q
+                            .Include(r => r.Contributions!
+                            .Where(c => c.MemberAcademicName != facultyMemberId.ToString()))
+            );
+            
             switch (parameters.Sort)
             {
                 case ResearchesSortingOptions.TitleASC:
@@ -60,8 +64,19 @@ namespace Services.Specifications.ResearchesModule
 
             r.Contributions!.SingleOrDefault(c => c.ContributorId == facultyMemberId)!.IsConfirmed == false)
         {
-            AddIncludeWithChain(r => r.Include(r => r.Contributions!)
-                                     .ThenInclude(r => r.Contributor));
+            AddIncludeWithChain(q => q
+                             .Include(r => r.Contributions!
+                             .Where(c => c.MemberAcademicName != facultyMemberId.ToString())
+              ));
+        }
+
+
+        public RecommendedResearchesSpecifications(string title)
+            : base(r => !r.IsDeleted &&
+                    r.Title == title) 
+        {
+            AddIncludes(r => r.Contributions!);
+            AddIncludes(r => r.Cites!);
         }
     }
 }

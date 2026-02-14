@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Presistence.Data;
 
@@ -11,9 +12,11 @@ using Presistence.Data;
 namespace Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    partial class StoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209010202_AddingEnhancementsToResearches")]
+    partial class AddingEnhancementsToResearches
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1213,6 +1216,9 @@ namespace Presistence.Data.Migrations
                     b.Property<Guid?>("ContributorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ContributorOrgansationId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ContributorType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1248,6 +1254,9 @@ namespace Presistence.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("MemberScholarId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ResearchId")
                         .HasColumnType("int");

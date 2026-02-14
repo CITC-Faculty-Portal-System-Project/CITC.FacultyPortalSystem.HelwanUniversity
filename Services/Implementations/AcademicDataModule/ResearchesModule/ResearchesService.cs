@@ -1,9 +1,12 @@
-﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
+﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Global;
+using Services.Helpers.CollectionSyncingHelpers;
 using Services.Specifications.ResearchesModule;
 using Shared.Dtos.ResearchesModule;
 using Shared.SpecificationParameters.ResearchesModule;
+using System.Threading;
 
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
@@ -16,6 +19,43 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
     {
         protected override string EntityName => "Researches";
 
+
+        #region Helpers
+
+        private async Task AttachUniversityContributorsAsync(
+            Research entity,
+            IUnitOfWork unitOfWork)
+                {
+            if (entity.Contributions is null || !entity.Contributions.Any())
+                return;
+
+            var personalDataRepo = unitOfWork.GetRepository<PersonalData, int>();
+            var facultyMemberRepo = unitOfWork.GetRepository<FacultyMember, Guid>();
+
+            foreach (var cont in entity.Contributions)
+            {
+                if (string.IsNullOrWhiteSpace(cont.MemberAcademicName))
+                    continue;
+
+                var teammate = await personalDataRepo.GetAsync(
+                    new PersonalDataWithNameSpecification(cont.MemberAcademicName)
+                );
+
+                if (teammate?.FacultyMember is null)
+                    continue;
+
+                cont.ContributorType = Domain.Enums.ContributorType.FromUniverstity;
+
+                teammate.FacultyMember.ResearchContributions ??= new List<ResearchContribution>();
+
+                teammate.FacultyMember.ResearchContributions.Add(cont);
+            }
+        }
+
+
+        #endregion
+
+
         public async Task<ResearchResponseDTO> AddResearch(ResearchDTO research)
         {
             var personalDataRepo = UnitOfWork.GetRepository<PersonalData, int>();
@@ -26,22 +66,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var entity = Mapper.Map<Research>(research);
             entity.Source = Domain.Enums.ResearchSource.Internal;
 
-            if (entity.Contributions is not null)
-                foreach (var cont in entity.Contributions)
-                {
-                    var teammate = await personalDataRepo.GetAsync(new PersonalDataWithNameSpecification
-                        (cont.MemberAcademicName));
-
-                    if(teammate != null)
-                    {
-                        cont.ContributorType = Domain.Enums.ContributorType.FromUniverstity;
-                        cont.ContributorOrgansationId = "N/A";
-                        teammate.FacultyMember!.ResearchContributions!
-                            .Add(cont);
-                    }
-
-              }
-
+            await AttachUniversityContributorsAsync(entity, UnitOfWork);
 
             var currentContributor = await facultyMemberRepo.GetAsync
                 (new FacultyMemberWithEmailSpecifications(currentUser.Email));
@@ -59,7 +84,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             return Mapper.Map<ResearchResponseDTO>(entity);
         }
 
-        public async Task<ResearchCardResponseDTO> ConfirmRecommendedResearch(int researchId)
+        public async Task<ResearchResponseDTO> ConfirmRecommendedResearch(int researchId)
         {
             var user = await GetCurrentUserAsync();
 
@@ -76,7 +101,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
             await unitOfWork.SaveChangesAsync();
 
-            return Mapper.Map<ResearchCardResponseDTO>(researchEntity);
+            return Mapper.Map<ResearchResponseDTO>(researchEntity);
 
         }
 
@@ -101,7 +126,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
         }
 
-        public async Task<PaginatedResult<ResearchCardResponseDTO>> GetAllRecommendedResearches
+        public async Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches
                                     (RecommendedResearchesSpecificationParameters parameters)
         {
             var user = await GetCurrentUserAsync();
@@ -113,9 +138,9 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             
             var currentPage = recommendedResearchesEntites.Count();
 
-            var recommendedResearchesResponse = Mapper.Map<IEnumerable<ResearchCardResponseDTO>>(recommendedResearchesEntites);
+            var recommendedResearchesResponse = Mapper.Map<IEnumerable<ResearchResponseDTO>>(recommendedResearchesEntites);
 
-            return new PaginatedResult<ResearchCardResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, recommendedResearchesResponse);
+            return new PaginatedResult<ResearchResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, recommendedResearchesResponse);
         }
 
         public async Task<PaginatedResult<ResearchResponseDTO>> GetAllResearches(ResearchSpecificationParameters parameters)
@@ -169,6 +194,55 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
             Repo.Update(researchEntity);
             await unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<ResearchResponseDTO> UpdateResearch(int researchId, ResearchUpdateDTO researchUpdate)
+        {
+            var currentUser = await GetCurrentUserAsync();
+
+            var researchEntity = await Repo.GetAsync(new ResearchSpecifications(researchId, currentUser.UserId))
+                ?? throw NotFound();
+
+
+            CollectionSync.Sync<
+                ResearchContribution,
+                ResearchContributionDTO,
+                ResearchContributionDTO,
+                ResearchContributionResponseDTO,
+                int
+            >(
+                current: researchEntity.Contributions!,
+                toAdd: researchUpdate.ResearchContributionsToAdd,
+                toUpdate: researchUpdate.ResearchContributionsToUpdate,
+                toDelete: researchUpdate.ResearchContributionsToDelete,
+
+                childKey: rc => rc.Id,
+                deleteKey: d => d.Id,
+
+                mapAdd: d => Mapper.Map<ResearchContribution>(d),
+
+
+                mapUpdate: (dto, entity) => Mapper.Map(dto, entity),
+
+                onDelete: e => e.IsDeleted = true,
+
+                onUpdateNotFound: id =>
+                    throw new NotFoundException($"ResearchContribution not found"),
+
+                onDeleteNotFound: id =>
+                    throw new NotFoundException($"ResearchContribution not found for delete")
+            );
+
+
+            Mapper.Map(researchUpdate, researchEntity);
+
+            await AttachUniversityContributorsAsync(researchEntity, UnitOfWork);
+
+            Repo.Update(researchEntity);
+            await UnitOfWork.SaveChangesAsync();
+
+            return Mapper.Map<ResearchResponseDTO>(researchEntity);
+
         }
     }
 }

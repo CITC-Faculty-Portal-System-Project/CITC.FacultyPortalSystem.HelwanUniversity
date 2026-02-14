@@ -11,13 +11,16 @@ using Shared.Dtos.AttachmentsModule;
 namespace Presentation.Controllers
 {
     [Authorize]
-    public class ResearchesAndThesesController(IServiceManager _serviceManager 
-        , IResearchesDOIandORCIDLoadService _researchesDOIandORCIDLoadService ) : ApiController
+    public class ResearchesAndThesesController(IServiceManager _serviceManager
+        , IResearchesDOIandORCIDLoadService _researchesDOIandORCIDLoadService) : ApiController
     {
 
-        [ProducesResponseType(typeof(PaginatedResult<ResearchCardResponseDTO>) , StatusCodes.Status200OK)]
+        #region Researches
+
+
+        [ProducesResponseType(typeof(PaginatedResult<ResearchResponseDTO>), StatusCodes.Status200OK)]
         [HttpGet("RecommendedResearches")]
-        public async Task<ActionResult<PaginatedResult<ResearchCardResponseDTO>>> GetAllRecommendedResearches
+        public async Task<ActionResult<PaginatedResult<ResearchResponseDTO>>> GetAllRecommendedResearches
                      ([FromQuery] RecommendedResearchesSpecificationParameters parameters)
                => Ok(await _serviceManager.ResearchesService.GetAllRecommendedResearches(parameters));
 
@@ -57,9 +60,9 @@ namespace Presentation.Controllers
           => Ok(await _serviceManager.ResearchesService.GetResarchById(id));
 
 
-        [ProducesResponseType(typeof(ResearchCardResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ResearchResponseDTO), StatusCodes.Status200OK)]
         [HttpPut("ApproveRecommendedResearch/{researchId}")]
-        public async Task<ActionResult<ResearchCardResponseDTO>> ApproveRecommendedResearch
+        public async Task<ActionResult<ResearchResponseDTO>> ApproveRecommendedResearch
                    (int researchId)
              => Ok(await _serviceManager.ResearchesService.ConfirmRecommendedResearch(researchId));
 
@@ -80,10 +83,21 @@ namespace Presentation.Controllers
             return NoContent();
         }
 
-        [ProducesResponseType(typeof(ResearchResponseDTO), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(ResearchResponseDTO), StatusCodes.Status201Created)]
         [HttpPost("AddResearch")]
         public async Task<ActionResult<ResearchResponseDTO>> AddResearch(ResearchDTO research)
             => Ok(await _serviceManager.ResearchesService.AddResearch(research));
+
+
+        [ProducesResponseType(typeof(ResearchResponseDTO), StatusCodes.Status204NoContent)]
+        [HttpPut("UpdateResearch/{id}")]
+        public async Task<ActionResult<ResearchResponseDTO>> UpdateResearch
+                    (int id , ResearchUpdateDTO research)
+            => Ok(await _serviceManager.ResearchesService.UpdateResearch(id , research));
+
+        #endregion
+
+        #region Theses Supervising
 
         [ProducesResponseType(typeof(SupervisingThesesAddDTO), StatusCodes.Status201Created)]
         [HttpPost("AddThesesSupervising")]
@@ -98,7 +112,7 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(PaginatedResult<SupervisingThsesResponseDTO>), StatusCodes.Status200OK)]
         [HttpGet("ThesesSupervising")]
-        public async Task<ActionResult<PaginatedResult<SupervisingThsesResponseDTO>>> GetAllThesesSupervisings([FromQuery]ThesesSupervisingSpecificationParameters parameters)
+        public async Task<ActionResult<PaginatedResult<SupervisingThsesResponseDTO>>> GetAllThesesSupervisings([FromQuery] ThesesSupervisingSpecificationParameters parameters)
         => Ok(await _serviceManager.ThesesSupervisingService.GetAllSupervisings(parameters));
 
 
@@ -115,6 +129,11 @@ namespace Presentation.Controllers
         public async Task<ActionResult<SupervisingThsesResponseDTO>> UpdateThesesSupervising
                 (int thesesId, SupervisingThesesUpdateDTO supervisingThesesUpdateDTO)
             => Ok(await _serviceManager.ThesesSupervisingService.UpdateThesesSupervising(thesesId, supervisingThesesUpdateDTO));
+
+
+        #endregion
+
+        #region Theses
 
         [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
         [HttpPost("AddTheses")]
@@ -143,6 +162,14 @@ namespace Presentation.Controllers
             return NoContent();
 
         }
+
+
+        [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
+        [HttpPut("UpdateTheses/{id}")]
+        public async Task<ActionResult<ThesesResponseDTO>> UpdateTheses(int id, [FromBody] ThesesUpdateDTO theses)
+             => Ok(await _serviceManager.ThesesService.UpdateTheses(id, theses));   
+
+        #endregion
 
     }
 }
