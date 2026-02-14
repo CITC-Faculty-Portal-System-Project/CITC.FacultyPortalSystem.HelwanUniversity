@@ -4,15 +4,16 @@ using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
 using Services.Specifications.HigherStudiesModule;
-using Services.Specifications.MissionsModule;
+using Services.Specifications.AcademicDataModule.MissionsModule;
 using Services.Specifications.ResearchesModule;
-using Services.Specifications.ScientificProgressionModule;
+using Services.Specifications.AcademicDataModule.ScientificProgressionModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.FacultyMemberDataModule;
-using Shared.Dtos.HigherStudiesModule;
-using Shared.Dtos.MissionsModule;
-using Shared.Dtos.ScientificProgressionModule;
+using Shared.Dtos.AcademicDataModule.HigherStudiesModule;
+using Shared.Dtos.AcademicDataModule.MissionsModule;
+using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
 using System.Text.Json;
+using Services.Specifications.AcademicDataModule.HigherStudiesModule;
 
 namespace Services.Implementations
 {

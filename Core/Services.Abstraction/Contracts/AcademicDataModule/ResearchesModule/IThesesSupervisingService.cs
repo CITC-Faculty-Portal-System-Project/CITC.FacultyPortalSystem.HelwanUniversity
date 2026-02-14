@@ -1,4 +1,4 @@
-﻿using Shared.Dtos.HigherStudiesModule;
+﻿using Shared.Dtos.AcademicDataModule.HigherStudiesModule;
 using Shared.Dtos.ResearchesModule;
 using Shared.SpecificationParameters.ResearchesModule;
 

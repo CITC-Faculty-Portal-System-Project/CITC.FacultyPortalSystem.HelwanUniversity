@@ -1,4 +1,4 @@
-﻿using Shared.Enums.HigherStudiesModule;
+﻿using Shared.Enums.AcademicDataModule.HigherStudiesModule;
 
 namespace Shared.Dtos.ResearchesModule
 {

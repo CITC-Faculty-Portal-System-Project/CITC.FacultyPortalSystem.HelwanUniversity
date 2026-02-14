@@ -3,7 +3,7 @@ using Domain.Entities.FacultyMemberDataModule;
 using Domain.Entities.IdentityModule;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Utilities;
-using Shared.Enums.ProjectsAndCommitteesModule;
+using Shared.Enums.AcademicDataModule.ProjectsAndCommitteesModule;
 using Shared.Enums.ResearchesModule;
 using Shared.SpecificationParameters.ResearchesModule;
 

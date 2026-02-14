@@ -6,6 +6,7 @@ using Domain.Entities.AcademicDataModule.PrizesModule;
 using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.AcademicDataModule.WritingsAndPatents;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 

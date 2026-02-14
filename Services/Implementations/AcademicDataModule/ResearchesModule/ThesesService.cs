@@ -1,17 +1,11 @@
 ﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
-using Microsoft.AspNetCore.Http;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
-using Services.Abstraction.Contracts.AttachmentsModule;
-using Services.Abstraction.Enums;
 using Services.Global;
 using Services.Helpers.CollectionSyncingHelpers;
 using Services.Specifications.ResearchesModule;
-using Shared.Dtos.AttachmentsModule;
-using Shared.Dtos.HigherStudiesModule;
 using Shared.Dtos.ResearchesModule;
 using Shared.SpecificationParameters.ResearchesModule;
-using System.Net.Mail;
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
     public class ThesesService

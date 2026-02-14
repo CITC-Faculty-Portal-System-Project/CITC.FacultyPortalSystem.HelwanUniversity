@@ -7,7 +7,6 @@ using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Domain.Entities.AcademicDataModule.WritingsAndPatents;
-using Domain.Entities.Attachments;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.FacultyMemberDataModule
