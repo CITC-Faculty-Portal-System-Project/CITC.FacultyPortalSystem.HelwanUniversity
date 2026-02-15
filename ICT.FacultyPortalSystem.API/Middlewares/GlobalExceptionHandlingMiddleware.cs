@@ -15,6 +15,7 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
            baseName: "Shared.Localisation.Resources.Messages",
            location: "Shared" 
        );
+
         public async Task InvokeAsync(HttpContext context)
     {
             try

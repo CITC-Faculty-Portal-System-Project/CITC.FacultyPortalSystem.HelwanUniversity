@@ -255,7 +255,7 @@ namespace Services.Implementations
         {
             var user = await _registrationClient.CheckNationalNumber(nationalNumber);
             if (user is null || string.IsNullOrWhiteSpace(user.NationalNumber))
-                throw new NotFoundL("errors.NationalNumber.notFound", nationalNumber);
+                throw new NotFoundException("errors.NationalNumber.notFound");
             return new UserRegistrationClientDto
             {
                 Exists = true,
