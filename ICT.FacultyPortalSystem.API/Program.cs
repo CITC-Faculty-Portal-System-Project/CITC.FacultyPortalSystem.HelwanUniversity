@@ -26,6 +26,9 @@ namespace ICIT.FacultyPortalSystem.API
             
             var app = builder.Build();
 
+            app.UseRequestLocalization(app.Services.GetRequiredService<
+             Microsoft.Extensions.Options.IOptions<RequestLocalizationOptions>>().Value);
+
             app.UseExceptionHandlingMiddlewares();
 
             if (app.Environment.IsDevelopment())

@@ -10,6 +10,7 @@
                     Field = error.Key,
                     Errors = error.Value?.Errors.Select(error => error.ErrorMessage) ?? new List<string>()
                 });
+
             var response = new ValidationErrorResponse()
             {
                 Errors = errors,

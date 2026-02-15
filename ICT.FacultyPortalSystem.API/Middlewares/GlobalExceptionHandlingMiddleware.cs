@@ -1,9 +1,20 @@
 ﻿using Integrations.Exceptions;
+using Microsoft.Extensions.Localization;
+using Shared.Localisation;
 
 namespace ICIT.FacultyPortalSystem.API.Middlewares
 {
-    public class GlobalExceptionHandlingMiddleware(RequestDelegate _next, ILogger<GlobalExceptionHandlingMiddleware> _logger)
+    public class GlobalExceptionHandlingMiddleware(
+        RequestDelegate _next, 
+        ILogger<GlobalExceptionHandlingMiddleware> _logger ,
+       IStringLocalizerFactory factory)
     {
+
+        private readonly IStringLocalizer _localizer =
+        factory.Create(
+           baseName: "Shared.Localisation.Resources.Messages",
+           location: "Shared" 
+       );
         public async Task InvokeAsync(HttpContext context)
     {
             try
@@ -36,8 +47,32 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
             context.Response.ContentType = "application/json";
             var response = new ErrorDetails()
             {
-                ErrorMessage = ex.Message
+                //ErrorMessage = ex.Message
             };
+
+            var asm = typeof(Messages).Assembly;
+            var names = asm.GetManifestResourceNames();
+
+            foreach (var n in names)
+            {
+                Console.WriteLine(n);
+            }
+
+
+            response.ErrorMessage = ex switch
+            {
+                LocalizedException lex => _localizer[lex.Key, lex.Args].Value,
+                HttpRequestException httpEx when httpEx.StatusCode == System.Net.HttpStatusCode.NotFound
+                 => _localizer["errors.NationalNumber.notFound"].Value,
+
+                HttpRequestException httpEx
+                    => _localizer["errors.NationalNumber.notFound", (int?)httpEx.StatusCode ?? 0].Value,
+
+
+                _ => ex.Message 
+            };
+
+
             context.Response.StatusCode = ex switch
             {
                 NotFoundException => StatusCodes.Status404NotFound,
@@ -46,6 +81,7 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
                 UserAlreadyExistsException => StatusCodes.Status409Conflict,
                 BadRequestException => StatusCodes.Status400BadRequest,
                 ValidationException validationException => HandleValidationException(validationException, response),
+                NotFoundL => StatusCodes.Status404NotFound,
                 (_) => StatusCodes.Status500InternalServerError
             };
             response.StatusCode = context.Response.StatusCode;

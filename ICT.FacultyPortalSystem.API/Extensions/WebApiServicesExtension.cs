@@ -1,6 +1,9 @@
 ﻿using ICIT.FacultyPortalSystem.API.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Filters;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using ICIT.FacultyPortalSystem.API.Localisation;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -8,13 +11,18 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
     {
         public static IServiceCollection AddWebApiServices(this IServiceCollection services, IConfiguration configuration)
         {
+
+            services.AddLocalization();
+
             services.AddControllers()
                   .AddJsonOptions(options =>
                    {
                        options.JsonSerializerOptions.Converters.Add(
                            new System.Text.Json.Serialization.JsonStringEnumConverter()
                        );
-                   });
+                   })
+                    .AddDataAnnotationsLocalization()
+                    .AddViewLocalization(); 
 
             services.AddCors(options =>
             {
@@ -25,6 +33,24 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                            .WithOrigins("http://localhost:3000")
                            .AllowCredentials();
                 });
+            });
+
+
+            var supportedCultures = new[] {
+                new CultureInfo("en-US"),
+                new CultureInfo("ar-EG"),
+                new CultureInfo("fr-FR")
+            };
+
+            services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture("ar-EG");
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+                options.RequestCultureProviders.Insert(0, new CustomHeaderRequestCultureProvider("X-Lang"));
+
+
+                options.RequestCultureProviders.Insert(0, new QueryStringRequestCultureProvider());
             });
 
             services.AddEndpointsApiExplorer();
