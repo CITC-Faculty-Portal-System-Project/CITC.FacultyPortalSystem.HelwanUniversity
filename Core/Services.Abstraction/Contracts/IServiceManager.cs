@@ -20,6 +20,7 @@ namespace Services.Abstraction.Contracts
         public IFacultyMemberDataService FacultyMemberDataService { get; }
         public ILookUpItemService LookUpItemService { get; }
         public IAttachmentService AttachmentService { get; }
+        public IProfileDashboardService ProfileDashboardService { get; }
         //public IExternalDataHandlingService ExternalDataHandlingService { get; }
 
         #region Academic Data Module

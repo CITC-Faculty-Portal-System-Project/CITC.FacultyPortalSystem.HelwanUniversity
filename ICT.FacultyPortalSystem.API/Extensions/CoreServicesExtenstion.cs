@@ -180,6 +180,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IParticipationInQualityWorksService>()
             );
 
+            services.AddScoped<IProfileDashboardService, ProfileDashboardService>();
+            services.AddScoped<Func<IProfileDashboardService>>(provider =>
+            () => provider.GetRequiredService<IProfileDashboardService>()
+            );
+
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 

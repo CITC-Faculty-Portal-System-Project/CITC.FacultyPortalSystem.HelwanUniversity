@@ -19,5 +19,12 @@ namespace Services.Specifications.AcademicDataModule.PrizesModule
         {
 
         }
+        public PrizesAndRewardsCountSpecifications(Guid facultyMemberId)
+            : base(par =>
+                  !par.IsDeleted &&
+                    par.FacultyMemberId == facultyMemberId
+            )
+        {
+        }
     }
 }

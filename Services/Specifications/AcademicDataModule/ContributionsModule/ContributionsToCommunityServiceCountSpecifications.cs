@@ -15,5 +15,13 @@ namespace Services.Specifications.AcademicDataModule.ContributionsModule
         {
 
         }
+
+        public ContributionsToCommunityServiceCountSpecifications(Guid facultyMemberId)
+            : base(ctcs =>
+                  !ctcs.IsDeleted &&
+                   ctcs.FacultyMemberId == facultyMemberId
+            )
+        {
+        }
     }
 }

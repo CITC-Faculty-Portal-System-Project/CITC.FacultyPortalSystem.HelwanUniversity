@@ -1,4 +1,5 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿using Domain.Entities.AcademicDataModule.ExperiencesModule;
+using Domain.Entities.FacultyMemberDataModule;
 using Shared.Dtos.FacultyMemberDataModule;
 
 namespace Services.MappingProfiles
@@ -34,6 +35,30 @@ namespace Services.MappingProfiles
             CreateMap<IdentificationCardDto, IdentificationCard>().ReverseMap();
 
             CreateMap<SocialMediaPlatformsDto, SocialMediaPlatforms>().ReverseMap();
+
+            #region Profile Dashboard
+            CreateMap<PersonalData, ProfileDashboardResponseDTO>()
+                .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
+                .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University))
+                .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department))
+                .ForMember(dest => dest.ProfilePictureId, opt => opt.MapFrom(src => src.ProfilePictureId))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.BioSummary, opt => opt.MapFrom(src => src.BioSummary))
+                .ForMember(dest => dest.Skills,
+                opt => opt.MapFrom(src =>
+                    string.IsNullOrWhiteSpace(src.Skills)
+                        ? new List<string>()
+                        : src.Skills.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList()
+                        ));
+
+            CreateMap<SkillsDTO, PersonalData>()
+                .ForMember(dest => dest.Skills,
+                opt => opt.MapFrom(src =>
+                    src.Skills != null && src.Skills.Any()
+                        ? string.Join(";", src.Skills)
+                        : string.Empty
+                ));
+            #endregion
         }
     }
 }

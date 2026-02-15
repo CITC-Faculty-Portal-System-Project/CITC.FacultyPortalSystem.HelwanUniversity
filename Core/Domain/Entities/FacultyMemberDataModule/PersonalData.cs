@@ -35,6 +35,9 @@ namespace Domain.Entities.FacultyMemberDataModule
         public string? NameInComposition { get; set; } 
         public string? CompositionTopics { get; set; }
 
+        public string? BioSummary { get; set; }
+        public string? Skills { get; set; }
+
         #region Relation With FacultyMember
         public Guid FacultyMemberId { get; set; }
         #endregion

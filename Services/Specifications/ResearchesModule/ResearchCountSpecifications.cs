@@ -20,5 +20,14 @@ namespace Services.Specifications.ResearchesModule
                    r.PubYear.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase)))
         {
         }
+
+        public ResearchCountSpecifications(Guid facultyMemberId)
+        : base(r => !r.IsDeleted &&
+           r.Contributions.Any(c =>
+                c.ContributorId == facultyMemberId &&
+                c.IsConfirmed == true &&
+                !c.IsDeleted))
+        {
+        }
     }
 }

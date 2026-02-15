@@ -23,5 +23,13 @@ namespace Services.Specifications.AcademicDataModule.ProjectsAndCommitteesModule
         {
 
         }
+
+        public ProjectsCountSpecifications(Guid facultyMemberId)
+            : base(p =>
+                  !p.IsDeleted &&
+                    p.FacultyMemberId == facultyMemberId
+            )
+        {
+        }
     }
 }
