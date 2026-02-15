@@ -75,7 +75,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             {
                 Contributor = currentContributor,
                 Research = entity,
-                MemberAcademicName = currentContributor.PersonalData!.Name
+                MemberAcademicName = currentContributor.PersonalData!.Name,
+                IsConfirmed = true
             });
 
             await Repo.AddAsync(entity);

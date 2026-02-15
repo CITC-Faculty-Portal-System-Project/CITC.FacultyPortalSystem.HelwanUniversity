@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Presistence.Data;
 
@@ -11,9 +12,11 @@ using Presistence.Data;
 namespace Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    partial class StoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260215021954_FixingNotRequiredFields")]
+    partial class FixingNotRequiredFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -501,7 +504,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("Title");
 
-                    b.ToTable("Supervisings", (string)null);
+                    b.ToTable("Supervisings");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Supervisor", b =>
@@ -573,7 +576,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ThesesId");
 
-                    b.ToTable("Supervisors", (string)null);
+                    b.ToTable("Supervisors");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.ThesesAttachment", b =>
@@ -665,7 +668,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ThesisId");
 
-                    b.ToTable("ThesesAttachments", (string)null);
+                    b.ToTable("ThesesAttachments");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", b =>
@@ -748,7 +751,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("Title");
 
-                    b.ToTable("Theses", (string)null);
+                    b.ToTable("Theses");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.MissionsModule.ConferencesAndSeminars", b =>
@@ -1589,7 +1592,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ThesisId");
 
-                    b.ToTable("Researches", (string)null);
+                    b.ToTable("Researches");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchAttachment", b =>
@@ -1681,7 +1684,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ResearchId");
 
-                    b.ToTable("ResearchAttachments", (string)null);
+                    b.ToTable("ResearchAttachments");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchCite", b =>
@@ -1738,7 +1741,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ResearchId");
 
-                    b.ToTable("ResearchsCites", (string)null);
+                    b.ToTable("ResearchsCites");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearchContribution", b =>
@@ -1813,7 +1816,7 @@ namespace Presistence.Data.Migrations
                         .IsUnique()
                         .HasFilter("[ContributorId] IS NOT NULL");
 
-                    b.ToTable("ResearchesContributions", (string)null);
+                    b.ToTable("ResearchesContributions");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherCite", b =>
@@ -1874,7 +1877,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ResearcherId");
 
-                    b.ToTable("ResearchersCites", (string)null);
+                    b.ToTable("ResearchersCites");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherInterest", b =>
@@ -1931,7 +1934,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("ResearcherId", "InterestId")
                         .IsUnique();
 
-                    b.ToTable("ResearchersInterests", (string)null);
+                    b.ToTable("ResearchersInterests");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", b =>
@@ -2037,7 +2040,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("FacultyMemberId")
                         .IsUnique();
 
-                    b.ToTable("ResearchersProfiles", (string)null);
+                    b.ToTable("ResearchersProfiles");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ScientificInterest", b =>
@@ -2087,7 +2090,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ScientificInterests", (string)null);
+                    b.ToTable("ScientificInterests");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ScientificProgressionModule.AcademicQualifications", b =>
@@ -2571,7 +2574,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("OfficialEmail");
 
-                    b.ToTable("ContactData", (string)null);
+                    b.ToTable("ContactData");
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.FacultyMember", b =>
@@ -2636,7 +2639,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("NationalNumber")
                         .IsUnique();
 
-                    b.ToTable("FacultyMembers", (string)null);
+                    b.ToTable("FacultyMembers");
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.IdentificationCard", b =>
@@ -2820,7 +2823,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("UniversityId");
 
-                    b.ToTable("PersonalData", (string)null);
+                    b.ToTable("PersonalData");
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.SocialMediaPlatforms", b =>
