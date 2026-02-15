@@ -2,9 +2,9 @@
 {
     public class NotFoundException : LocalizedException
     {
-        public NotFoundException(string message) : base(message)
+        public NotFoundException(string key, params object[] args)
+          : base(key, args)
         {
-
         }
     }
 }

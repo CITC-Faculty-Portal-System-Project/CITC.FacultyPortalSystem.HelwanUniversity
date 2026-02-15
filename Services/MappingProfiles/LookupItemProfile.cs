@@ -9,9 +9,9 @@ namespace Services.MappingProfiles
         {
             CreateMap<Lookup, LookupItemDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
-                .ForMember(dest => dest.ValueAr, opt => opt.MapFrom(src => src.ValueAr))
-                .ForMember(dest => dest.ValueEn, opt => opt.MapFrom(src => src.ValueEn));
-         
+                 .ForMember(d => d.Value, opt => opt.MapFrom((src, _, __, ctx) =>
+                        (bool)ctx.Items["isAr"] ? src.ValueAr : src.ValueEn
+                    ));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(id)) ?? throw new NotFoundException("Job Rank is Not Found.");
+            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(id)) ?? throw new NotFoundException("errors.JobRank.notFound"  , id);
 
             EnsureOwnership(jobRank.FacultyMemberId, currentUser.UserId, EntityName);
 
@@ -76,7 +76,7 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(jobRankId)) ?? throw new NotFoundException("Job Rank is Not Found.");
+            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(jobRankId)) ?? throw new NotFoundException("errors.JobRank.notFound" , jobRankId);
 
             EnsureOwnership(jobRank.FacultyMemberId, currentUser.UserId, EntityName);
 

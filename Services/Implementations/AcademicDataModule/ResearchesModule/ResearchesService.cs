@@ -92,7 +92,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 ?? throw NotFound();
 
             if (!researchEntity.Contributions!.Any(c => c.ContributorId == user.UserId))
-                throw new UnauthorizedException("You Can't Modify this research!");
+                throw new UnauthorizedException("errors.ResearchEdit.Unauhtorized" , user.UserName);
            
             researchEntity.Contributions!
              .SingleOrDefault(c=> c.ContributorId == user.UserId)!.IsConfirmed = true;
@@ -113,7 +113,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 ?? throw NotFound();
 
             if (!researchEntity.Contributions!.Any(c => c.ContributorId == user.UserId))
-                throw new UnauthorizedException("You Can't Modify this research!");
+                throw new UnauthorizedException("errors.ResearchEdit.Unauhtorized" , user.UserName);
 
             var researcherContribution = researchEntity.Contributions!.FirstOrDefault(c => c.ContributorId == user.UserId);
 
@@ -187,7 +187,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 ?? throw NotFound();
 
             if (!researchEntity.Contributions!.Any(c => c.ContributorId == user.UserId))
-                throw new UnauthorizedException("You Can't Modify this research!");
+                throw new UnauthorizedException("errors.ResearchEdit.Unauhtorized" , user.UserName);
 
             researchEntity.IsDeleted = true;
             researchEntity.DeletedBy = user.UserName;
@@ -227,10 +227,10 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 onDelete: e => e.IsDeleted = true,
 
                 onUpdateNotFound: id =>
-                    throw new NotFoundException($"ResearchContribution not found"),
+                    throw new NotFoundException($"errors.ResearchContribution.notFound"  , id),
 
                 onDeleteNotFound: id =>
-                    throw new NotFoundException($"ResearchContribution not found for delete")
+                    throw new NotFoundException($"errors.ResearchContribution.notFound" , id)
             );
 
 

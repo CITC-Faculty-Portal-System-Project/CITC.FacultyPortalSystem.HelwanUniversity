@@ -1,9 +1,12 @@
 ﻿using ICIT.FacultyPortalSystem.API.Factories;
-using Microsoft.AspNetCore.Mvc;
-using Presentation.Filters;
-using System.Globalization;
-using Microsoft.AspNetCore.Localization;
 using ICIT.FacultyPortalSystem.API.Localisation;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using Presentation.Filters;
+using Presentation.Global;
+using Services.Abstraction.Contracts.Common;
+using System.Globalization;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -56,20 +59,36 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddEndpointsApiExplorer();
             services.AddScoped<BlockMaliciousExtensionsFilter>();
 
+            services.AddHttpContextAccessor();
+            services.AddScoped<ILangContext, LangContext>();
+
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new() { Title = "CITC Faculty Portal System", Version = "v1" });
-                options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                options.AddSecurityDefinition("X-Lang", new OpenApiSecurityScheme
                 {
-                    Name = "Authorization",
-                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                    Description = "Bearer <token>"
+                    In = ParameterLocation.Header,
+                    Name = "X-Lang",
+                    Type = SecuritySchemeType.ApiKey,
+                    Description = "Language header (ar / en)"
                 });
-                
-                options.UseInlineDefinitionsForEnums();  // <-- THIS FIXES QUERY PARAM ENUMS
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "X-Lang"
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
+
+                options.UseInlineDefinitionsForEnums();  
 
 
                 options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement

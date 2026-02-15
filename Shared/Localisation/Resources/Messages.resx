@@ -117,7 +117,61 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="errors.ContactData.notFound" xml:space="preserve">
+    <value>Contact Data is Not Found</value>
+  </data>
+  <data name="errors.EndPoint.notFound" xml:space="preserve">
+    <value>The endpoint with this url not found</value>
+  </data>
+  <data name="errors.Entity.notFound" xml:space="preserve">
+    <value>The requested resource was not found</value>
+  </data>
+  <data name="errors.FacultyMember.notFound" xml:space="preserve">
+    <value>Faculty Member With this Credentials wasn't found </value>
+  </data>
+  <data name="errors.IdCard.notFound" xml:space="preserve">
+    <value>Identification Card is Not Found</value>
+  </data>
+  <data name="errors.JobRank.notFound" xml:space="preserve">
+    <value>Job Rank is Not Found</value>
+  </data>
   <data name="errors.NationalNumber.notFound" xml:space="preserve">
     <value>National Number was not found.</value>
+  </data>
+  <data name="errors.PersonalData.notFound" xml:space="preserve">
+    <value>Personal Data is Not Found</value>
+  </data>
+  <data name="errors.Project.notFound" xml:space="preserve">
+    <value>Project is Not Found</value>
+  </data>
+  <data name="errors.Research.notFound" xml:space="preserve">
+    <value>Research was not found</value>
+  </data>
+  <data name="errors.ResearchContribution.notFound" xml:space="preserve">
+    <value>Research Contribution not found</value>
+  </data>
+  <data name="errors.ResearchEdit.Unauhtorized" xml:space="preserve">
+    <value>You Can't Modify this research</value>
+  </data>
+  <data name="errors.ServerError" xml:space="preserve">
+    <value>An unexpected server error occurred</value>
+  </data>
+  <data name="errors.SocialMedia.notFound" xml:space="preserve">
+    <value>Social Media Platforms Are Not Found</value>
+  </data>
+  <data name="errors.Supervisor.notFound" xml:space="preserve">
+    <value>Supervisor was not found</value>
+  </data>
+  <data name="errors.TrainingProgram.notFound" xml:space="preserve">
+    <value>Training Program is Not Found</value>
+  </data>
+  <data name="errors.Unauhtorized" xml:space="preserve">
+    <value>Invalid Username Or Password</value>
+  </data>
+  <data name="errors.User.AlreadyExist" xml:space="preserve">
+    <value>This Member is Already Registered</value>
+  </data>
+  <data name="errors.User.notFound" xml:space="preserve">
+    <value>User is Not Found</value>
   </data>
 </root>

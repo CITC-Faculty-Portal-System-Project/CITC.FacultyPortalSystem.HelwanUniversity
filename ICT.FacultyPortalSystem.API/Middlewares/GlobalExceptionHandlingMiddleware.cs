@@ -38,7 +38,8 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
             var response = new ErrorDetails()
             {
                 StatusCode = StatusCodes.Status400BadRequest,
-                ErrorMessage = $"The endpoint with url {context.Request.Path} not found."
+                ErrorMessage = _localizer["errors.EndPoint.notFound", context.Request.Path].Value
+            
             }.ToString();
             await context.Response.WriteAsync(response);
         }
@@ -48,43 +49,32 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
             context.Response.ContentType = "application/json";
             var response = new ErrorDetails()
             {
-                //ErrorMessage = ex.Message
+                ErrorMessage = ex switch
+                {
+                    LocalizedException lex => _localizer[lex.Key, lex.Args].Value,
+                   
+                    HttpRequestException httpEx when httpEx.StatusCode == System.Net.HttpStatusCode.NotFound
+                     => _localizer["errors.NationalNumber.notFound"].Value,
+
+                    HttpRequestException httpEx
+                        => _localizer["errors.NationalNumber.notFound", (int?)httpEx.StatusCode ?? 0].Value,
+
+
+                    _ => ex.Message
+                }
             };
-
-            var asm = typeof(Messages).Assembly;
-            var names = asm.GetManifestResourceNames();
-
-            foreach (var n in names)
-            {
-                Console.WriteLine(n);
-            }
-
-
-            response.ErrorMessage = ex switch
-            {
-                LocalizedException lex => _localizer[lex.Key, lex.Args].Value,
-                HttpRequestException httpEx when httpEx.StatusCode == System.Net.HttpStatusCode.NotFound
-                 => _localizer["errors.NationalNumber.notFound"].Value,
-
-                HttpRequestException httpEx
-                    => _localizer["errors.NationalNumber.notFound", (int?)httpEx.StatusCode ?? 0].Value,
-
-
-                _ => ex.Message 
-            };
-
 
             context.Response.StatusCode = ex switch
             {
                 NotFoundException => StatusCodes.Status404NotFound,
-                AttachmentAlreadyExist => StatusCodes.Status409Conflict,
                 UnauthorizedException => StatusCodes.Status401Unauthorized,
                 UserAlreadyExistsException => StatusCodes.Status409Conflict,
                 BadRequestException => StatusCodes.Status400BadRequest,
                 ValidationException validationException => HandleValidationException(validationException, response),
-                NotFoundL => StatusCodes.Status404NotFound,
                 (_) => StatusCodes.Status500InternalServerError
             };
+
+
             response.StatusCode = context.Response.StatusCode;
             await context.Response.WriteAsync(response.ToString());
         }

@@ -35,7 +35,7 @@ namespace Services.Implementations
 
             //Load Personal Data With Includes
             var personalData = await PersonalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email))
-                ?? throw new NotFoundException("Personal Data is Not Found.");
+                ?? throw new NotFoundException("errors.PersonalData.notFound" , currentUser.Email);
 
             //Map Response to Dto
             var personalDataResult = Mapper.Map<PersonalDataResponseDto>(personalData);
@@ -56,7 +56,7 @@ namespace Services.Implementations
 
             //Load Personal Data With Includes
             var personalData = await PersonalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email)) 
-                ?? throw new NotFoundException("Personal Data is Not Found.");
+                ?? throw new NotFoundException("errors.PersonalData.notFound" , currentUser.Email);
 
             //Map Updated Data to Personal Data Entity
             Mapper.Map(personalDataUpdateDto, personalData);
@@ -78,7 +78,7 @@ namespace Services.Implementations
 
             //Load Contact Data
             var contactData = await ContactDataRepo.GetAsync(new ContactDataWithFacultyMemberEmailSpecifications(currentUser.Email)) 
-                ?? throw new NotFoundException("Contact Data is Not Found.");
+                ?? throw new NotFoundException("errors.ContactData.notFound" , currentUser.Email);
 
             //Map Response to Dto
             return Mapper.Map<ContactDataResponseDto>(contactData);
@@ -91,7 +91,7 @@ namespace Services.Implementations
 
             //Load Contact Data 
             var contactData = await ContactDataRepo.GetAsync(new ContactDataWithFacultyMemberEmailSpecifications(currentUser.Email)) 
-                ?? throw new NotFoundException("Contact Data is Not Found.");
+                ?? throw new NotFoundException("errors.ContactData.notFound" , currentUser.Email);
 
             //Map Updated Data to Contact Data Entity
             Mapper.Map(contactDataUpdateDto, contactData);
@@ -118,7 +118,7 @@ namespace Services.Implementations
                 return Mapper.Map<IdentificationCardDto>(identificationCard);
 
             //Load Faculty Member to Attach New Card
-            var facultyMember = await GetFacultyMemberByEmailAsync(currentUser.Email) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            var facultyMember = await GetFacultyMemberByEmailAsync(currentUser.Email) ?? throw new NotFoundException("errors.FacultyMember.notFound" , currentUser.Email);
 
             //Create New Empty Identification Card
             var newCard = new IdentificationCard
@@ -146,7 +146,7 @@ namespace Services.Implementations
 
             //Load Identification Card Data
             var identificationCard = await IdentificationCardRepo.GetAsync(new IdentificationCardWithFacultyMemberEmailSpecifications(currentUser.Email)) 
-                ?? throw new NotFoundException("Identification Card is Not Found.");
+                ?? throw new NotFoundException("errors.IdCard.notFound"  , currentUser.Email);
 
             //Map Updated Data to Entity
             Mapper.Map(identificationCardDto, identificationCard);
@@ -173,7 +173,7 @@ namespace Services.Implementations
                 return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
 
             //Load Faculty Member to Attach New Social Media Platforms Data
-            var facultyMember = await GetFacultyMemberByEmailAsync(currentUser.Email) ?? throw new NotFoundException("Faculty Member is Not Found.");
+            var facultyMember = await GetFacultyMemberByEmailAsync(currentUser.Email) ?? throw new NotFoundException("errors.FacultyMember.notFound" , currentUser.Email);
 
             //Create New Empty Social Media Platforms
             var newSocialMediaPlatforms = new SocialMediaPlatforms
@@ -204,7 +204,7 @@ namespace Services.Implementations
 
             //Load Social Media Platforms Data
             var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(new SocialMediaWithFacultyMemberEmailSpecifications(currentUser.Email)) 
-                ?? throw new NotFoundException("Social Media Platforms Are Not Found.");
+                ?? throw new NotFoundException("errors.SocialMedia.notFound" , currentUser.Email);
 
             //Map Updated Data to Entity
             Mapper.Map(socialMediaPlatformsDto, socialMediaPlatforms);

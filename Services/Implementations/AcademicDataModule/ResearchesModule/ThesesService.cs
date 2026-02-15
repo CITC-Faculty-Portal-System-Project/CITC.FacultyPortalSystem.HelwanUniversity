@@ -120,8 +120,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
                 onDelete: e => e.IsDeleted = true,
 
-                onUpdateNotFound: id => throw new NotFoundException($"Supervisor was not found"),
-                onDeleteNotFound: id => throw new NotFoundException($"Supervisor was not found for delete")
+                onUpdateNotFound: id => throw new NotFoundException("errors.Supervisor.notFound" , id),
+                onDeleteNotFound: id => throw new NotFoundException("errors.Supervisor.notFound" , id)
             );
 
 
@@ -143,8 +143,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
                          onDelete: e => e.ThesisId = null,
 
-                         onUpdateNotFound: id => throw new NotFoundException($"Research was not found"),
-                         onDeleteNotFound: id => throw new NotFoundException($"Research was not found for delete")
+                         onUpdateNotFound: id => throw new NotFoundException("errors.Research.notFound" , id),
+                         onDeleteNotFound: id => throw new NotFoundException("errors.Research.notFound" , id)
                      );
             
             Mapper.Map(theses, thesesEntity);

@@ -21,7 +21,7 @@ namespace Services.Global
         {
             var repo = UnitOfWork.GetRepository<FacultyMember, Guid>();
             return await repo.GetAsync(new FacultyMemberWithEmailSpecifications(email))
-                ?? throw new NotFoundException($"Faculty Member with email {email} not found.");
+                ?? throw new NotFoundException("errors.FacultyMember.notFound" , email);
         }
         #endregion
 
@@ -55,7 +55,7 @@ namespace Services.Global
             => await UnitOfWork.SaveChangesAsync();
 
         protected NotFoundException NotFound()
-            => new($"The requested {EntityName} resource was not found.");
+            => new("errors.Entity.notFound" , EntityName);
         #endregion
 
     }

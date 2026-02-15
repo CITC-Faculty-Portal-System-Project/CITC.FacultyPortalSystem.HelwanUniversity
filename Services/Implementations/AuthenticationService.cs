@@ -123,7 +123,7 @@ namespace Services.Implementations
             //Check if user already exists
             var existingUser = await _userManager.FindByEmailAsync(email);
             if(existingUser is not null) 
-                throw new UserAlreadyExistsException();
+                throw new UserAlreadyExistsException("errors.User.AlreadyExist", registerDto.NationalNumber);
 
             //Create Credentials
             var username = await GenerateUniqueUsernameAsync(email, registerDto.NationalNumber);
@@ -141,7 +141,7 @@ namespace Services.Implementations
             var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
             var member = await facultyMemberRepo.GetAsync(secification);
             if (member is not null)
-                throw new UserAlreadyExistsException("This Member is Already Registered");
+                throw new UserAlreadyExistsException("errors.User.AlreadyExist" , registerDto.NationalNumber);
 
 
 
@@ -191,11 +191,11 @@ namespace Services.Implementations
         public async Task<LoginClaims> LoginAsync(LoginDto loginDto)
         {
             var user = await _userManager.FindByNameAsync(loginDto.Username);
-            if (user is null) throw new UnauthorizedException();
+            if (user is null) throw new UnauthorizedException("errors.Unauhtorized" , loginDto.Username , loginDto.Password);
 
             var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             var role = await _userManager.GetRolesAsync(user);
-            if (!result) throw new UnauthorizedException();
+            if (!result) throw new UnauthorizedException("errors.Unauhtorized", loginDto.Username, loginDto.Password);
 
 
             var token = await CreateTokenAsync(user);
@@ -221,7 +221,7 @@ namespace Services.Implementations
         public async Task ConfirmEmail(string userEmail)
         {
             var checkEmail = await CheckEmailExistAsync(userEmail);
-            if (!checkEmail) throw new UserNotFoundException(userEmail);
+            if (!checkEmail) throw new UserNotFoundException("errors.User.notFound" , userEmail);
             await _emailService.SendOTPAsync(userEmail);
         }
 
@@ -255,7 +255,7 @@ namespace Services.Implementations
         {
             var user = await _registrationClient.CheckNationalNumber(nationalNumber);
             if (user is null || string.IsNullOrWhiteSpace(user.NationalNumber))
-                throw new NotFoundException("errors.NationalNumber.notFound");
+                throw new NotFoundException("errors.NationalNumber.notFound" , nationalNumber);
             return new UserRegistrationClientDto
             {
                 Exists = true,
@@ -268,7 +268,7 @@ namespace Services.Implementations
         public async Task<UserResultDto> GetCurrentUserAsync(string userEmail)
         {
             var user = await _userManager.FindByEmailAsync(userEmail)
-                ?? throw new UserNotFoundException(userEmail);
+                ?? throw new UserNotFoundException("errors.User.notFound" , userEmail);
             return new UserResultDto(UserName: user.UserName ?? "", user.Email ?? "" , 
                 user.Id);
         }

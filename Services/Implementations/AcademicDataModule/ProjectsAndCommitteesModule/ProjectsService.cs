@@ -34,7 +34,7 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
         { 
             var currentUser = await GetCurrentUserAsync();
 
-            var project = await Repo.GetAsync(new ProjectsSpecifications(id)) ?? throw new NotFoundException("Project is Not Found.");
+            var project = await Repo.GetAsync(new ProjectsSpecifications(id)) ?? throw new NotFoundException("errors.Project.notFound" , id);
 
             EnsureOwnership(project.FacultyMemberId, currentUser.UserId, EntityName);
 

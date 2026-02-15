@@ -35,7 +35,7 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             var currentUser = await GetCurrentUserAsync();
 
             var trainingProgram = await Repo.GetAsync(new TrainingProgramsSpecifications(id))
-                ?? throw new NotFoundException("Training Program is Not Found.");
+                ?? throw new NotFoundException("errors.TrainingProgram.notFound" , id);
 
             EnsureOwnership(trainingProgram.FacultyMemberId, currentUser.UserId, EntityName);
 

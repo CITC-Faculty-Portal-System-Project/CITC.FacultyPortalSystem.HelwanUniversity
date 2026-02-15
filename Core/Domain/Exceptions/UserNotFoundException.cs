@@ -2,9 +2,10 @@
 {
     public sealed class UserNotFoundException : NotFoundException
     {
-        public UserNotFoundException(string userEmail)
-            : base($"User with email '{userEmail}' was not found.")
+        public UserNotFoundException(string key, params object[] args)
+          : base(key, args)
         {
+
         }
     }
 }

@@ -117,7 +117,61 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="errors.ContactData.notFound" xml:space="preserve">
+    <value>بيانات الاتصال غير موجودة</value>
+  </data>
+  <data name="errors.EndPoint.notFound" xml:space="preserve">
+    <value>لا توجد خدمة بهذا الرابط</value>
+  </data>
+  <data name="errors.Entity.notFound" xml:space="preserve">
+    <value>البيانات المراد العثور عليها غير موجودة</value>
+  </data>
+  <data name="errors.FacultyMember.notFound" xml:space="preserve">
+    <value>لم يتم العثور على عضو هيئة تدريس بهذه البيانات</value>
+  </data>
+  <data name="errors.IdCard.notFound" xml:space="preserve">
+    <value>البطاقة التعريفية غير موجودة</value>
+  </data>
+  <data name="errors.JobRank.notFound" xml:space="preserve">
+    <value>الدرجة الوظيفية غير موجودة</value>
+  </data>
   <data name="errors.NationalNumber.notFound" xml:space="preserve">
     <value>الرقم القومي غير موجود</value>
+  </data>
+  <data name="errors.PersonalData.notFound" xml:space="preserve">
+    <value>البيانات الشخصية غير موجودة</value>
+  </data>
+  <data name="errors.Project.notFound" xml:space="preserve">
+    <value>المشروع غير موجود</value>
+  </data>
+  <data name="errors.Research.notFound" xml:space="preserve">
+    <value>البحث غير موجود</value>
+  </data>
+  <data name="errors.ResearchContribution.notFound" xml:space="preserve">
+    <value>المساهمة البحثية غير موجودة</value>
+  </data>
+  <data name="errors.ResearchEdit.Unauhtorized" xml:space="preserve">
+    <value>لا يمكنك تعديل هذا البحث</value>
+  </data>
+  <data name="errors.ServerError" xml:space="preserve">
+    <value>حدث خطأ غير متوقع في الخادم</value>
+  </data>
+  <data name="errors.SocialMedia.notFound" xml:space="preserve">
+    <value>منصات التواصل الاحتماعي غير موجودة</value>
+  </data>
+  <data name="errors.Supervisor.notFound" xml:space="preserve">
+    <value>المشرف غير موجود</value>
+  </data>
+  <data name="errors.TrainingProgram.notFound" xml:space="preserve">
+    <value>البرنامج التدريبي غير موجود</value>
+  </data>
+  <data name="errors.Unauhtorized" xml:space="preserve">
+    <value>كلمة مرور او اسم مستخدم خطأ</value>
+  </data>
+  <data name="errors.User.AlreadyExist" xml:space="preserve">
+    <value>عضو هيئة التدريس مسجل في النظام من قبل</value>
+  </data>
+  <data name="errors.User.notFound" xml:space="preserve">
+    <value>المستخدم غير موجود</value>
   </data>
 </root>

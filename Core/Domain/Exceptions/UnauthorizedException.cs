@@ -1,9 +1,11 @@
 ﻿namespace Domain.Exceptions
 {
-    public sealed class UnauthorizedException : Exception
+    public sealed class UnauthorizedException : LocalizedException
     {
-        public UnauthorizedException(string message = $"Invalid Username Or Password") : base(message)
+        public UnauthorizedException(string key, params object[] args)
+          : base(key, args)
         {
+
         }
     }
 }

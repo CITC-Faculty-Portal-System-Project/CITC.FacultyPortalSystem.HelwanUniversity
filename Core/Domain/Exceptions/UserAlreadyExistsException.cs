@@ -1,9 +1,11 @@
 ﻿namespace Domain.Exceptions
 {
-    public sealed class UserAlreadyExistsException : Exception
+    public sealed class UserAlreadyExistsException : LocalizedException
     {
-        public UserAlreadyExistsException(string message = $"User Already Exists") : base(message)
+        public UserAlreadyExistsException(string key, params object[] args)
+          : base(key, args)
         {
+
         }
     }
 }
