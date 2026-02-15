@@ -11,8 +11,7 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
             #region ConfiguringEntityColumns
 
             builder.Property(e => e.DOI)
-                    .HasMaxLength(150)
-                    .IsRequired();
+                    .HasMaxLength(150);
 
             builder.Property(e => e.PublisherType)
                 .HasConversion<string>();
@@ -32,19 +31,16 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
                    .IsRequired();
 
             builder.Property(e => e.PubYear)
-                   .HasMaxLength(10)
-                   .IsRequired();
+                   .HasMaxLength(10);
 
             builder.Property(e => e.PubDate)
                    .HasMaxLength(100)
                    .IsRequired(false);
 
             builder.Property(e => e.Publisher)
-                   .HasMaxLength(500)
-                   .IsRequired();
+                   .HasMaxLength(500);
 
-            builder.Property(e => e.NoOfCititations)
-                   .IsRequired();
+            builder.Property(e => e.NoOfCititations);
 
         
             #endregion
