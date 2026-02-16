@@ -64,10 +64,7 @@ namespace Services.Specifications.ResearchesModule
 
             r.Contributions!.SingleOrDefault(c => c.ContributorId == facultyMemberId)!.IsConfirmed == false)
         {
-            AddIncludeWithChain(q => q
-                             .Include(r => r.Contributions!
-                             .Where(c => c.MemberAcademicName != facultyMemberId.ToString())
-              ));
+            AddIncludes(r => r.Contributions!);
         }
 
 

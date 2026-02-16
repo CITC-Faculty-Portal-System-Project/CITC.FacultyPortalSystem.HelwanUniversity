@@ -187,7 +187,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var researchEntity = await Repo.GetAsync(new RecommendedResearchesSpecifications(researchId, user.UserId))
                 ?? throw NotFound();
 
-            if (!researchEntity.Contributions!.Any(c => c.ContributorId != user.UserId))
+            if (!researchEntity.Contributions!.Any(c => c.ContributorId == user.UserId))
                 throw new UnauthorizedException("You Can't Modify this research!");
 
             researchEntity.Contributions!.SingleOrDefault(c => c.ContributorId == user.UserId)!
