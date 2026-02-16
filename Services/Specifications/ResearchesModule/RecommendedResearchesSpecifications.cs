@@ -53,6 +53,7 @@ namespace Services.Specifications.ResearchesModule
                     break;
             }
             applyPagination(parameters.PageSize, parameters.PageIndex);
+            AddIncludes(r => r.Cites!);
 
         }
 
