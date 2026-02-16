@@ -17,5 +17,7 @@ namespace Domain.Contracts
         public int Skip { get; }
         public int Take { get; }
         public bool isPaginated { get; }
+        bool IsSplitQuery { get; }
+
     }
 }

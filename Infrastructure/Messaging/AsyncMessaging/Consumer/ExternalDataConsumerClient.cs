@@ -224,9 +224,9 @@ namespace Messaging.AsyncMessaging.Consumer
 				switch (ea.RoutingKey)
 				{
 					case RabbitMQConstants.AcademicQualificationRoutingKey:
-						throw new FormatException("Simulated format error for testing DLQ.");
-						//await service.AcademicDataHandle(message);
-						//break;
+						//throw new FormatException("Simulated format error for testing DLQ.");
+						await service.AcademicDataHandle(message);
+						break;
 					case RabbitMQConstants.EmploymentDegreeRoutingKey:
 						await service.EmploymentDataHandle(message);
 						break;
@@ -237,9 +237,9 @@ namespace Messaging.AsyncMessaging.Consumer
 						await service.ContactDataHandle(message);
 						break;
 					case RabbitMQConstants.PersonalDataRoutingKey:
-						throw new FormatException("Simulated format error for testing DLQ.");
-						//await service.PersonalDataHandle(message);
-						//break;
+						//throw new FormatException("Simulated format error for testing DLQ.");
+						await service.PersonalDataHandle(message);
+						break;
 					case RabbitMQConstants.ScientificDutyRoutingKey:
 						await service.ScientificDutyDataHandle(message);
 						break;
@@ -247,13 +247,13 @@ namespace Messaging.AsyncMessaging.Consumer
 						await service.TrainingProgramDataHandle(message);
 						break;
 					case RabbitMQConstants.ThesisSupervisionRoutingKey:
-						throw new FormatException("Simulated format error for testing DLQ.");
-						//await service.ThesisSupervisingDataHandle(message);
-						//break;
+						//throw new FormatException("Simulated format error for testing DLQ.");
+						await service.ThesisSupervisingDataHandle(message);
+						break;
 					case RabbitMQConstants.ThesisDataRoutingKey:
-						throw new FormatException("Simulated format error for testing DLQ.");
-						//await service.ThesisDataHandle(message);
-						//break;
+						//throw new FormatException("Simulated format error for testing DLQ.");
+						await service.ThesisDataHandle(message);
+						break;
 					default:
 						throw new InvalidOperationException($"Unknown routing key: {ea.RoutingKey}");
 				}

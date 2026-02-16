@@ -90,102 +90,142 @@ namespace Services.Implementations
 
         public async Task<ProfileDashboardResponseDTO> GetProfileDashboardAsync()
         {
+
+            #region Old Code
+            //var currentUser = await GetCurrentUserAsync();
+
+            //var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
+
+            //var personalDataTask = personalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email));
+
+            //var researchCountTask = _unitOfWork.GetRepository<Research, int>()
+            //    .CountAsync(new ResearchCountSpecifications(currentUser.UserId));
+
+            //var prizesAndRewardsCountTask = _unitOfWork.GetRepository<PrizesAndRewards, int>()
+            //    .CountAsync(new PrizesAndRewardsCountSpecifications(currentUser.UserId));
+
+            //var scientificWritingsCountTask = _unitOfWork.GetRepository<ScientificWritings, int>()
+            //    .CountAsync(new ScientificWritingsCountSpecifications(currentUser.UserId));
+
+            //var projectsCountTask = _unitOfWork.GetRepository<Projects, int>()
+            //    .CountAsync(new ProjectsCountSpecifications(currentUser.UserId));
+
+            //var generalExperiencesTask = _unitOfWork.GetRepository<GeneralExperiences, int>()
+            //    .GetAllAsync(new GeneralExperiencesSpecifications(currentUser.UserId));
+
+            //var teachingExperiencesTask = _unitOfWork.GetRepository<TeachingExperiences, int>()
+            //    .GetAllAsync(new TeachingExperiencesSpecifications(currentUser.UserId));
+
+            //var academicQualificationsTask = _unitOfWork.GetRepository<AcademicQualifications, int>()
+            //    .GetAllAsync(new AcademicQualificationsCountSpecifications(currentUser.UserId));
+
+            //var contributionsToUniversityCountTask = _unitOfWork.GetRepository<ContributionsToUniversity, int>()
+            //    .CountAsync(new ContributionsToUniversityCountSpecifications(currentUser.UserId));
+
+            //var ContributionsToCommunityServiceCountTask = _unitOfWork.GetRepository<ContributionsToCommunityService, int>()
+            //    .CountAsync(new ContributionsToCommunityServiceCountSpecifications(currentUser.UserId));
+
+            //var ParticipationInQualityWorksCountTask = _unitOfWork.GetRepository<ParticipationInQualityWorks, int>()
+            //    .CountAsync(new ParticipationInQualityWorksCountSpecifications(currentUser.UserId));
+
+            //await Task.WhenAll(
+            //    personalDataTask,
+            //    researchCountTask,
+            //    prizesAndRewardsCountTask,
+            //    scientificWritingsCountTask,
+            //    projectsCountTask,
+            //    generalExperiencesTask,
+            //    teachingExperiencesTask,
+            //    academicQualificationsTask,
+            //    contributionsToUniversityCountTask,
+            //    ContributionsToCommunityServiceCountTask,
+            //    ParticipationInQualityWorksCountTask
+            //);
+
+            //var generalExperiences = (await generalExperiencesTask)
+            //    .Select(ge => new ExperiencesSummaryDTO
+            //    {
+            //        Title = ge.ExperienceTitle,
+            //        Organization = ge.Authority,
+            //        StartDate = ge.StartDate,
+            //        EndDate = ge.EndDate
+            //    });
+
+            //var teachingExperiences = (await teachingExperiencesTask)
+            //    .Select(te => new ExperiencesSummaryDTO
+            //    {
+            //        Title = te.CourseName,
+            //        Organization = te.UniversityOrFaculty,
+            //        StartDate = te.StartDate,
+            //        EndDate = te.EndDate
+            //    });
+
+            //var topExperiences = generalExperiences
+            //    .Concat(teachingExperiences)
+            //    .OrderByDescending(x => x.StartDate)
+            //    .Take(3)
+            //    .ToList();
+
+            //var academicQualifications = (await academicQualificationsTask)
+            //    .Select(aq => new AcademicQualificationsSummaryDTO
+            //    {
+            //        Qualification = _mapper.Map<LookupItemDto>(aq.Qualification),
+            //        Specialization = aq.Specialization,
+            //        UniversityOrFaculty = aq.UniversityOrFaculty,
+            //        DateOfObtainingTheQualification = aq.DateOfObtainingTheQualification
+            //    });
+
+            //var topAcademicQualifications = academicQualifications
+            //    .OrderByDescending(aq => aq.DateOfObtainingTheQualification)
+            //    .Take(3)
+            //    .ToList();
+
+            //var personalData = await personalDataTask
+            //    ?? throw new NotFoundException($"Personal data not found for {currentUser.Email}.");
+
+            //var response = _mapper.Map<ProfileDashboardResponseDTO>(personalData);
+
+            //if (personalData.FacultyMember?.SocialMediaPlatforms != null)
+            //{
+            //    var sm = personalData.FacultyMember.SocialMediaPlatforms;
+            //    response.LinkedIn = sm.LinkedIn;
+            //    response.Facebook = sm.Facebook;
+            //    response.Instagram = sm.Instagram;
+            //    response.YouTube = sm.YouTube;
+            //    response.X = sm.X;
+            //    response.GoogleScholar = sm.GoogleScholar;
+            //    response.Scopus = sm.Scopus;
+            //    response.PersonalWebsite = sm.PersonalWebsite;
+            //}
+
+            //response.ResearchCount = await researchCountTask;
+            //response.PrizesAndRewardsCount = await prizesAndRewardsCountTask;
+            //response.ScientificWritingsCount = await scientificWritingsCountTask;
+            //response.ProjectsCount = await projectsCountTask;
+            //response.ContributionsCount = (await contributionsToUniversityCountTask)
+            //                            + (await ContributionsToCommunityServiceCountTask)
+            //                            + (await ParticipationInQualityWorksCountTask);
+
+            //response.TopExperiences = topExperiences;
+            //response.TopAcademicQualifications = topAcademicQualifications;
+
+            //return response;
+
+            #endregion
+
             var currentUser = await GetCurrentUserAsync();
 
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
-            var personalDataTask = personalDataRepo.GetAsync(new PersonalDataWithIncludesSpecifications(currentUser.Email));
-            
-            var researchCountTask = _unitOfWork.GetRepository<Research, int>()
-                .CountAsync(new ResearchCountSpecifications(currentUser.UserId));
-
-            var prizesAndRewardsCountTask = _unitOfWork.GetRepository<PrizesAndRewards, int>()
-                .CountAsync(new PrizesAndRewardsCountSpecifications(currentUser.UserId));
-
-            var scientificWritingsCountTask = _unitOfWork.GetRepository<ScientificWritings, int>()
-                .CountAsync(new ScientificWritingsCountSpecifications(currentUser.UserId));
-
-            var projectsCountTask = _unitOfWork.GetRepository<Projects, int>()
-                .CountAsync(new ProjectsCountSpecifications(currentUser.UserId));
-
-            var generalExperiencesTask = _unitOfWork.GetRepository<GeneralExperiences, int>()
-                .GetAllAsync(new GeneralExperiencesSpecifications(currentUser.UserId));
-
-            var teachingExperiencesTask = _unitOfWork.GetRepository<TeachingExperiences, int>()
-                .GetAllAsync(new TeachingExperiencesSpecifications(currentUser.UserId));
-
-            var academicQualificationsTask = _unitOfWork.GetRepository<AcademicQualifications, int>()
-                .GetAllAsync(new AcademicQualificationsCountSpecifications(currentUser.UserId));
-
-            var contributionsToUniversityCountTask = _unitOfWork.GetRepository<ContributionsToUniversity, int>()
-                .CountAsync(new ContributionsToUniversityCountSpecifications(currentUser.UserId));
-
-            var ContributionsToCommunityServiceCountTask = _unitOfWork.GetRepository<ContributionsToCommunityService, int>()
-                .CountAsync(new ContributionsToCommunityServiceCountSpecifications(currentUser.UserId));
-
-            var ParticipationInQualityWorksCountTask = _unitOfWork.GetRepository<ParticipationInQualityWorks, int>()
-                .CountAsync(new ParticipationInQualityWorksCountSpecifications(currentUser.UserId));
-
-            await Task.WhenAll(
-                personalDataTask,
-                researchCountTask,
-                prizesAndRewardsCountTask,
-                scientificWritingsCountTask,
-                projectsCountTask,
-                generalExperiencesTask,
-                teachingExperiencesTask,
-                academicQualificationsTask,
-                contributionsToUniversityCountTask,
-                ContributionsToCommunityServiceCountTask,
-                ParticipationInQualityWorksCountTask
-            );
-
-            var generalExperiences = (await generalExperiencesTask)
-                .Select(ge => new ExperiencesSummaryDTO
-                {
-                    Title = ge.ExperienceTitle,
-                    Organization = ge.Authority,
-                    StartDate = ge.StartDate,
-                    EndDate = ge.EndDate
-                });
-
-            var teachingExperiences = (await teachingExperiencesTask)
-                .Select(te => new ExperiencesSummaryDTO
-                {
-                    Title = te.CourseName,
-                    Organization = te.UniversityOrFaculty,
-                    StartDate = te.StartDate,
-                    EndDate = te.EndDate
-                });
-
-            var topExperiences = generalExperiences
-                .Concat(teachingExperiences)
-                .OrderByDescending(x => x.StartDate)
-                .Take(3)
-                .ToList();
-
-            var academicQualifications = (await academicQualificationsTask)
-                .Select(aq => new AcademicQualificationsSummaryDTO
-                {
-                    Qualification = _mapper.Map<LookupItemDto>(aq.Qualification),
-                    Specialization = aq.Specialization,
-                    UniversityOrFaculty = aq.UniversityOrFaculty,
-                    DateOfObtainingTheQualification = aq.DateOfObtainingTheQualification
-                });
-
-            var topAcademicQualifications = academicQualifications
-                .OrderByDescending(aq => aq.DateOfObtainingTheQualification)
-                .Take(3)
-                .ToList();
-
-            var personalData = await personalDataTask
-                ?? throw new NotFoundException($"Personal data not found for {currentUser.Email}.");
+            var personalData = await personalDataRepo.GetAsync(
+                new ProfilePageSpecification(currentUser.Email)
+            ) ?? throw new NotFoundException($"Personal data not found for {currentUser.Email}.");
 
             var response = _mapper.Map<ProfileDashboardResponseDTO>(personalData);
 
-            if (personalData.FacultyMember?.SocialMediaPlatforms != null)
+            if (personalData.FacultyMember!.SocialMediaPlatforms != null)
             {
-                var sm = personalData.FacultyMember.SocialMediaPlatforms;
+                var sm = personalData.FacultyMember!.SocialMediaPlatforms;
                 response.LinkedIn = sm.LinkedIn;
                 response.Facebook = sm.Facebook;
                 response.Instagram = sm.Instagram;
@@ -196,16 +236,51 @@ namespace Services.Implementations
                 response.PersonalWebsite = sm.PersonalWebsite;
             }
 
-            response.ResearchCount = await researchCountTask;
-            response.PrizesAndRewardsCount = await prizesAndRewardsCountTask;
-            response.ScientificWritingsCount = await scientificWritingsCountTask;
-            response.ProjectsCount = await projectsCountTask;
-            response.ContributionsCount = (await contributionsToUniversityCountTask)
-                                        + (await ContributionsToCommunityServiceCountTask)
-                                        + (await ParticipationInQualityWorksCountTask);
+            response.ResearchCount = personalData.FacultyMember!.ResearchContributions?.Count ?? 0;
+            response.PrizesAndRewardsCount = personalData.FacultyMember!.PrizesAndRewards.Count;
+            response.ScientificWritingsCount = personalData.FacultyMember!.ScientificWritings.Count;
+            response.ProjectsCount = personalData.FacultyMember!.Projects.Count;
 
-            response.TopExperiences = topExperiences;
-            response.TopAcademicQualifications = topAcademicQualifications;
+            response.ContributionsCount =
+                personalData.FacultyMember!.ContributionsToUniversity.Count
+                + personalData.FacultyMember!.ContributionsToCommunityServices.Count
+                + personalData.FacultyMember!.ParticipationInQualityWorks.Count;
+
+            var generalExperiences = personalData.FacultyMember!.GeneralExperiences
+                .Select(ge => new ExperiencesSummaryDTO
+                {
+                    Title = ge.ExperienceTitle,
+                    Organization = ge.Authority,
+                    StartDate = ge.StartDate,
+                    EndDate = ge.EndDate
+                });
+
+            var teachingExperiences = personalData.FacultyMember!.TeachingExperiences
+                .Select(te => new ExperiencesSummaryDTO
+                {
+                    Title = te.CourseName,
+                    Organization = te.UniversityOrFaculty,
+                    StartDate = te.StartDate,
+                    EndDate = te.EndDate
+                });
+
+            response.TopExperiences = generalExperiences
+                .Concat(teachingExperiences)
+                .OrderByDescending(x => x.StartDate)
+                .Take(3)
+                .ToList();
+
+            response.TopAcademicQualifications = personalData.FacultyMember!.AcademicQualifications
+                .OrderByDescending(aq => aq.DateOfObtainingTheQualification)
+                .Take(3)
+                .Select(aq => new AcademicQualificationsSummaryDTO
+                {
+                    Qualification = _mapper.Map<LookupItemDto>(aq.Qualification),
+                    Specialization = aq.Specialization,
+                    UniversityOrFaculty = aq.UniversityOrFaculty,
+                    DateOfObtainingTheQualification = aq.DateOfObtainingTheQualification
+                })
+                .ToList();
 
             return response;
         }

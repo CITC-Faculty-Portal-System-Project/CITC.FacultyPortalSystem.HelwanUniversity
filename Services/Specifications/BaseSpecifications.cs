@@ -30,6 +30,9 @@ namespace Services.Specifications
             IncludeChains.Add(includeChain);
         }
 
+        public bool IsSplitQuery { get; private set; }
+        protected void EnableSplitQuery() => IsSplitQuery = true;
+
         #endregion
 
         #region Sorting [OrderBy - OrderByDescending]

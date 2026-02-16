@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
+using Microsoft.EntityFrameworkCore;
 using Shared.Dtos.DataFetchingFromExternalService;
 
 namespace Services.Specifications.FacultyMemberDataModule
