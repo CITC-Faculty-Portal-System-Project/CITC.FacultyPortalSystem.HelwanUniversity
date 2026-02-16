@@ -88,5 +88,16 @@ namespace Presentation.Controllers
 
             return Ok("Logged out");
         }
+
+        [HttpGet("AuthMe")]
+        public IActionResult AuthMe()
+        {
+            if (!Request.Cookies.TryGetValue("jwtToken", out var token))
+            {
+                return Unauthorized("JWT cookie not found.");
+            }
+
+            return Ok("Authorized");
+        }
     }
 }
