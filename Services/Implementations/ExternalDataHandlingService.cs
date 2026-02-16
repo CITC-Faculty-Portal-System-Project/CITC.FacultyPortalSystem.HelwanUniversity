@@ -243,7 +243,7 @@ namespace Services.Implementations
                         foreach (var supervisorDto in item.Supervisors)
                         {
                             var supervisor = _mapper.Map<SupervisorCreateDTO>(supervisorDto);
-                            supervisor.JobLevelId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Grade);
+                            supervisor.JobLevelId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(supervisorDto.JobLevel);
                             dto.Supervisors.Add(supervisor);
                         }
                     }
