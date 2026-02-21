@@ -10,6 +10,14 @@
 
         [ProducesResponseType(typeof(LookupItemDto), StatusCodes.Status200OK)]
         [RedisCache]
+        [HttpGet("Universities")]
+        public async Task<ActionResult<IEnumerable<LookupItemDto>>> GetUniversities()
+          => Ok(await _serviceManager.LookUpItemService.GetLookUpItemByType("University"));
+
+
+
+        [ProducesResponseType(typeof(LookupItemDto), StatusCodes.Status200OK)]
+        [RedisCache]
         [HttpGet("MagazineParticipationRoles")]
         public async Task<ActionResult<IEnumerable<LookupItemDto>>> GetMagazineParticipationRoles()
             => Ok(await _serviceManager.LookUpItemService.GetLookUpItemByType("MagazineParticipationRole"));
