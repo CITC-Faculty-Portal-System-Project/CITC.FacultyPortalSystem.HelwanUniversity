@@ -164,7 +164,11 @@ namespace Services.Implementations
         public async Task SendOTPAsync(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
+            {
                 _logger.LogWarning("Email Can't be Empty");
+                return;
+            }
+                
 
             int otp = Random.Shared.Next(100000, 999999);
 
@@ -173,7 +177,7 @@ namespace Services.Implementations
 
             await SendAsync(email, "رمز إعادة التعيين", html);
 
-            await _cacheService.SetCachedValueAsync($"auth:otp:{otp}", otp.ToString(), TimeSpan.FromMinutes(5));
+            await _cacheService.SetCachedValueAsync($"auth:otp:{email.ToLower()}", otp.ToString(), TimeSpan.FromMinutes(5));
             await _cacheService.SetCachedValueAsync($"auth:email:{email.ToLower()}", email, TimeSpan.FromMinutes(15));
         }
     }
