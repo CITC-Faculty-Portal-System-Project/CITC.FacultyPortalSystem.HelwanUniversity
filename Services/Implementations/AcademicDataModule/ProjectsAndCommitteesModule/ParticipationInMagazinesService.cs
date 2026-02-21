@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
     public class ParticipationInMagazinesService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ParticipationInMagazines, int>(unitOfWork, authenticationService, mapper), IParticipationInMagazinesService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ParticipationInMagazines, int>(unitOfWork, authenticationService, mapper, validationService), IParticipationInMagazinesService
     {
         protected override string EntityName => "Participation In Magazines";
         public async Task<PaginatedResult<ParticipationInMagazinesResponseDto>> GetAllParticipationInMagazinesAsync(ParticipationInMagazinesSpecificationsParameters parameters)

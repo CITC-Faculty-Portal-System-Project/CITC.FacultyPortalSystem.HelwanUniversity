@@ -8,8 +8,9 @@ namespace Services.Implementations
     public class FacultyMemberDataService(
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    IAuthenticationService authenticationService)
-                : BaseService<FacultyMember, Guid>(unitOfWork, authenticationService, mapper), IFacultyMemberDataService
+    IAuthenticationService authenticationService,
+    IValidationService validationService)
+                : BaseService<FacultyMember, Guid>(unitOfWork, authenticationService, mapper, validationService), IFacultyMemberDataService
     {
         protected override string EntityName => "Faculty Member";
 

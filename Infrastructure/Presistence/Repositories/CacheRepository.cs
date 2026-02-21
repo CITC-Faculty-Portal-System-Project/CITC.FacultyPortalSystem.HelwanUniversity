@@ -31,7 +31,6 @@ namespace Presistence.Repositories
             {
                 string data;
 
-                // 👉 Only serialize objects, not strings
                 if (value is string s)
                 {
                     data = s;

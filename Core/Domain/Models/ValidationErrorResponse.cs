@@ -1,4 +1,4 @@
-﻿namespace Shared.ErrorModels
+﻿namespace Domain.Models
 {
     public class ValidationErrorResponse
     {

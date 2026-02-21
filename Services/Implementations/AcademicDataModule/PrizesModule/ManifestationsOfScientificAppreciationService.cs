@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
     public class ManifestationsOfScientificAppreciationService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ManifestationsOfScientificAppreciation, int>(unitOfWork, authenticationService, mapper), IManifestationsOfScientificAppreciationService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ManifestationsOfScientificAppreciation, int>(unitOfWork, authenticationService, mapper, validationService), IManifestationsOfScientificAppreciationService
     {
         protected override string EntityName => "Manifestations of Scientific Appreciation";
         public async Task<PaginatedResult<ManifestationsOfScientificAppreciationResponseDTO>> GetAllManifestationsOfScientificAppreciationAsync(ManifestationsOfScientificAppreciationSpecificationParameters parameters)

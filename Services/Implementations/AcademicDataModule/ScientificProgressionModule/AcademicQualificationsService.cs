@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
     public class AcademicQualificationsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<AcademicQualifications, int>(unitOfWork, authenticationService, mapper), IAcademicQualificationsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<AcademicQualifications, int>(unitOfWork, authenticationService, mapper, validationService), IAcademicQualificationsService
     {
         protected override string EntityName => "Academic Qualifications";
         public async Task<PaginatedResult<AcademicQualificationResponseDto>> GetAllAcademicQualificationsAsync(AcademicQualificationsSpecificationParamters parameters)

@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="FluentFTP" Version="53.0.2" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="8.0.24" />
   </ItemGroup>
 
 </Project>

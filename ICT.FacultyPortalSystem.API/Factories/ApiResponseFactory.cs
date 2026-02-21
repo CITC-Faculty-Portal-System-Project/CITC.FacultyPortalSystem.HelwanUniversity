@@ -1,4 +1,7 @@
-﻿namespace ICIT.FacultyPortalSystem.API.Factories
+﻿using Domain.Models;
+using ValidationErrors = Domain.Models.ValidationError;
+
+namespace ICIT.FacultyPortalSystem.API.Factories
 {
     public class ApiResponseFactory
     {

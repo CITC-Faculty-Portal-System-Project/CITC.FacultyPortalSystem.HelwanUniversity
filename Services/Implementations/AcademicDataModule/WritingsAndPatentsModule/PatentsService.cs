@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
     public class PatentsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<Patents, int>(unitOfWork, authenticationService, mapper), IPatentsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<Patents, int>(unitOfWork, authenticationService, mapper, validationService), IPatentsService
     {
         protected override string EntityName => "Patents";
         public async Task<PaginatedResult<PatentsResponseDTO>> GetAllPatentsAsync(PatentsSpecificationParameters parameters)

@@ -15,13 +15,13 @@ namespace Services.Abstraction.Contracts
         Task<UserResultDto> GetCurrentUserAsync(string userEmail);
 
         //Check If Email Exists
-        Task<bool> CheckEmailExistAsync(string userEmail);
+        Task<bool> CheckEmailExistAsync(EmailDTO userEmail);
 
         //Check If User with National Number Exists and Get Email
         public Task<UserRegistrationClientDto> GetUserInfoFromExternalService(string nationalNumber);
 
         //Confirm Email (Send OTP Email)
-        Task ConfirmEmail(string userEmail);
+        Task ConfirmEmail(EmailDTO confirmEmailDto);
 
         //Verify OTP 
         Task<bool> VerifyOTPAsync(OTPSendDTO otpSendDto);

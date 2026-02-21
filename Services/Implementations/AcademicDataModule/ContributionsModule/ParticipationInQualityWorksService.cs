@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
     public class ParticipationInQualityWorksService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ParticipationInQualityWorks, int>(unitOfWork, authenticationService, mapper), IParticipationInQualityWorksService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ParticipationInQualityWorks, int>(unitOfWork, authenticationService, mapper, validationService), IParticipationInQualityWorksService
     {
         protected override string EntityName => "Participation In Quality Works";
         public async Task<PaginatedResult<ParticipationInQualityWorksResponseDTO>> GetAllParticipationsInQualityWorksAsync(ParticipationInQualityWorksSpecificationParameters parameters)

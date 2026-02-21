@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
     public class ReviewingArticlesService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ReviewingArticles, int>(unitOfWork, authenticationService, mapper), IReviewingArticlesService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ReviewingArticles, int>(unitOfWork, authenticationService, mapper, validationService), IReviewingArticlesService
     {
         protected override string EntityName => "Reviewing Articles";
         public async Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(ReviewingArticlesSpecificationsParameters parameters)

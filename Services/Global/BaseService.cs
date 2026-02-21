@@ -1,13 +1,14 @@
 ﻿using Shared.Dtos.IdentityModule;
 namespace Services.Global
 {
-    public abstract class BaseService<TEntity, TId>(IUnitOfWork _unitOfWork, IAuthenticationService _authenticationService, IMapper _mapper)
+    public abstract class BaseService<TEntity, TId>(IUnitOfWork _unitOfWork, IAuthenticationService _authenticationService, IMapper _mapper, IValidationService _validationService)
         where TEntity : BaseEntity<TId>
         where TId : notnull
     {
         protected readonly IMapper Mapper = _mapper;
         protected readonly IUnitOfWork UnitOfWork = _unitOfWork;
         protected readonly IAuthenticationService AuthService = _authenticationService;
+        protected readonly IValidationService ValidationService = _validationService;
 
         #region Identity
         protected async Task<UserResultDto> GetCurrentUserAsync()
@@ -56,6 +57,13 @@ namespace Services.Global
 
         protected NotFoundException NotFound()
             => new("errors.Entity.notFound" , EntityName);
+        #endregion
+
+        #region Validations
+        protected async Task ValidateAsync<T>(T dto)
+        {
+            await ValidationService.ValidateAsync(dto);
+        }
         #endregion
 
     }

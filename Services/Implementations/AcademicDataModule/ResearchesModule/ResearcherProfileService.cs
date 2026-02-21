@@ -6,8 +6,8 @@ using Shared.Dtos.ResearchesModule;
 
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
-    public class ResearcherProfileService(IUnitOfWork unitOfWork , IMapper mapper , IAuthenticationService authenticationService
-        ) : BaseService<ResearcherProfile, int>(unitOfWork, authenticationService , mapper), IResearcherProfileService
+    public class ResearcherProfileService(IUnitOfWork unitOfWork , IMapper mapper , IAuthenticationService authenticationService, IValidationService validationService
+        ) : BaseService<ResearcherProfile, int>(unitOfWork, authenticationService , mapper, validationService), IResearcherProfileService
     {
         protected override string EntityName => "Researcher Profile";
 

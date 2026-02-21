@@ -1,6 +1,9 @@
-﻿using Integrations.Exceptions;
+﻿using Domain.Models;
+using Integrations.Exceptions;
 using Microsoft.Extensions.Localization;
 using Shared.Localisation;
+using System.Text.Json;
+using ValidationException = Domain.Exceptions.ValidationException;
 
 namespace ICIT.FacultyPortalSystem.API.Middlewares
 {
@@ -47,6 +50,13 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             context.Response.ContentType = "application/json";
+
+            if (ex is ValidationException validationEx)
+            {
+                await HandleValidationExceptionAsync(context, validationEx);
+                return;
+            }
+
             var response = new ErrorDetails()
             {
                 ErrorMessage = ex switch
@@ -70,7 +80,6 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
                 UnauthorizedException => StatusCodes.Status401Unauthorized,
                 UserAlreadyExistsException => StatusCodes.Status409Conflict,
                 BadRequestException => StatusCodes.Status400BadRequest,
-                ValidationException validationException => HandleValidationException(validationException, response),
                 (_) => StatusCodes.Status500InternalServerError
             };
 
@@ -79,10 +88,18 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
             await context.Response.WriteAsync(response.ToString());
         }
 
-        private int HandleValidationException(ValidationException validationException, ErrorDetails response)
+        private async Task HandleValidationExceptionAsync(HttpContext context, ValidationException ex)
         {
-            response.Errors = validationException.Errors;
-            return StatusCodes.Status400BadRequest;
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+            var response = new ValidationErrorResponse
+            {
+                StatusCode = StatusCodes.Status400BadRequest,
+                ErrorMessage = "Validation Failed",
+                Errors = ex.Errors
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
     }
 }

@@ -39,6 +39,7 @@ namespace Services.Implementations
         , Func<IContributionsToCommunityServiceService> _contributionsToCommunityServiceFactory
         , Func<IContributionsToUniversityService> _contributionsToUniversityServiceFactory
         , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
+        , Func<IValidationService> _validationServiceFactory
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -50,6 +51,7 @@ namespace Services.Implementations
         public IFacultyMemberDataService FacultyMemberDataService => _facultyMemberDataFactory.Invoke();
         public ILookUpItemService LookUpItemService => _lookUpItemSerivce.Invoke();
         public IAttachmentService AttachmentService => _attachmentService.Invoke();
+        public IValidationService ValidationService => _validationServiceFactory.Invoke();
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
 
         #region Academic Data Module

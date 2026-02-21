@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
     public class SeminarsAndConferncesService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ConferencesAndSeminars, int>(unitOfWork, authenticationService, mapper), ISeminarsAndConferencesService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ConferencesAndSeminars, int>(unitOfWork, authenticationService, mapper, validationService), ISeminarsAndConferencesService
     {
         protected override string EntityName => "Seminars And Conferences";
         public async Task<PaginatedResult<ConferencesAndSeminarsResponseDto>> GetAllSeminarsAndConferencesAsync(SeminarsAndConferncesSpecificationParameters parameters)

@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
     public class TeachingExperiencesService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<TeachingExperiences, int>(unitOfWork, authenticationService, mapper), ITeachingExperiencesService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<TeachingExperiences, int>(unitOfWork, authenticationService, mapper, validationService), ITeachingExperiencesService
     {
         protected override string EntityName => "Teaching Experiences";
         public async Task<PaginatedResult<TeachingExperiencesResponseDTO>> GetAllTeachingExperiencesAsync(TeachingExperiencesSpecificationParameters parameters)

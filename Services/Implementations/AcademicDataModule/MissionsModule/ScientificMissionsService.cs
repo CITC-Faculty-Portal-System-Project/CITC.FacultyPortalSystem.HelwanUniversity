@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
     public class ScientificMissionsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ScientificMissions, int>(unitOfWork, authenticationService, mapper), IScientificMissionsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ScientificMissions, int>(unitOfWork, authenticationService, mapper, validationService), IScientificMissionsService
     {
         protected override string EntityName => "Scientific Missions";
         public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(ScientificMissionSpecificationParamaters parameters)

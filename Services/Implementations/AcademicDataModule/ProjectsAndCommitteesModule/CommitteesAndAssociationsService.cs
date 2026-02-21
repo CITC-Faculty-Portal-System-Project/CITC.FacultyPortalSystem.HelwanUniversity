@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
     public class CommitteesAndAssociationsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<CommitteesAndAssociations, int>(unitOfWork, authenticationService, mapper), ICommitteesAndAssociationsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<CommitteesAndAssociations, int>(unitOfWork, authenticationService, mapper, validationService), ICommitteesAndAssociationsService
     {
         protected override string EntityName => "Committees And Associations";
         public async Task<PaginatedResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync(CommitteesAndAssociationsSpecificationsParameters parameters)

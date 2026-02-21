@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
     public class ScientificWritingsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ScientificWritings, int>(unitOfWork, authenticationService, mapper), IScientificWritingsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ScientificWritings, int>(unitOfWork, authenticationService, mapper, validationService), IScientificWritingsService
     {
         protected override string EntityName => "Scientific Writings";
         public async Task<PaginatedResult<ScientificWritingsResponseDTO>> GetAllScientificWritingsAsync(ScientificWritingsSpecificationParameters parameters)

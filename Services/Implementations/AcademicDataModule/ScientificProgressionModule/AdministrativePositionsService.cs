@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
     public class AdministrativePositionsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<AdministrativePositions, int>(unitOfWork, authenticationService, mapper), IAdministrativePositionsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<AdministrativePositions, int>(unitOfWork, authenticationService, mapper, validationService), IAdministrativePositionsService
     {
         protected override string EntityName => "AdminIstrative Positions";
         public async Task<PaginatedResult<AdministrativePositionDto>> GetAllAdministrativePositionsAsync(AdministrativePositionsSpecificationParameters parameters)

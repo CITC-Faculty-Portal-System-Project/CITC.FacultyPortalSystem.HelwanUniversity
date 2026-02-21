@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Services.Abstraction.Contracts;
 using Shared.Dtos.Auth;
 using Shared.Dtos.IdentityModule;
 using System.Security.Claims;
@@ -46,10 +45,10 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPost("ConfirmEmail")]
-        public async Task<ActionResult> ConfirmEmail([FromBody] EmailSendDto userEmail)
+        public async Task<ActionResult> ConfirmEmail([FromBody] EmailDTO userEmail)
         {
-            await _serviceManager.AuthenticationService.ConfirmEmail(userEmail.userEmail);
-            return Ok(new ApiResponseHandler($"OTP Sent To {userEmail} Succefully."));
+            await _serviceManager.AuthenticationService.ConfirmEmail(userEmail);
+            return Ok(new ApiResponseHandler($"OTP Sent To {userEmail.Email} Succefully."));
         }
            
         [ProducesResponseType(typeof(OTPSendDTO), StatusCodes.Status200OK)]
@@ -58,9 +57,9 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.AuthenticationService.VerifyOTPAsync(otpSendDto));
 
         [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        [HttpGet("EmailExist")]
-        public async Task<ActionResult<bool>> CheckEmailExistAsync([FromBody] EmailSendDto email)
-            => Ok(await _serviceManager.AuthenticationService.CheckEmailExistAsync(email.userEmail));
+        [HttpPost("EmailExist")]
+        public async Task<ActionResult<bool>> CheckEmailExistAsync([FromBody] EmailDTO email)
+            => Ok(await _serviceManager.AuthenticationService.CheckEmailExistAsync(email));
 
         [ProducesResponseType(typeof(UserResultDto), StatusCodes.Status200OK)]
         [Authorize]

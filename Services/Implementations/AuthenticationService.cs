@@ -1,17 +1,16 @@
-﻿using Domain.Contracts;
-using Domain.Entities.FacultyMemberDataModule;
-using Domain.Entities.IdentityModule;
+﻿using Domain.Entities.IdentityModule;
+using Domain.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Services.Specifications.FacultyMemberDataModule;
 using Shared.Dtos.Auth;
 using Shared.Dtos.IdentityModule;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using ValidationException = Domain.Exceptions.ValidationException;
 
 namespace Services.Implementations
 {
@@ -24,7 +23,8 @@ namespace Services.Implementations
         IUnitOfWork _unitOfWork,
         IRegistrationClientService _registrationClient,
         INationalNumberPubClient _nationalNumberPubClient,
-        IHttpContextAccessor _httpContextAccessor
+        IHttpContextAccessor _httpContextAccessor,
+        IValidationService _validationService
         ) : IAuthenticationService
     {
         #region Helper Methods
@@ -116,6 +116,8 @@ namespace Services.Implementations
         //Register
         public async Task<UserResultDto> RegisterAsync(RegisterDto registerDto)
         {
+            await _validationService.ValidateAsync(registerDto);
+
             // Call External Microservice here to validate NtionalNumber & Get Email
             var externalUser = await GetUserInfoFromExternalService(registerDto.NationalNumber);
             var email = externalUser.Email.Trim().ToLowerInvariant();
@@ -148,8 +150,12 @@ namespace Services.Implementations
             var result = await _userManager.CreateAsync(newUser, password);
             if (!result.Succeeded)
             {
-                var errors = result.Errors.Select(e => e.Description).ToList();
-                throw new ValidationException(errors);
+                var validationErrors = result.Errors.Select(e => new ValidationError
+                {
+                    Field = e.Code,
+                    Errors = new List<string> { e.Description }
+                }).ToList();
+                throw new ValidationException(validationErrors);
             }
 
             var roleName = "Faculty Member";
@@ -190,6 +196,8 @@ namespace Services.Implementations
         //Login
         public async Task<LoginClaims> LoginAsync(LoginDto loginDto)
         {
+            await _validationService.ValidateAsync(loginDto);
+
             var user = await _userManager.FindByNameAsync(loginDto.Username);
             if (user is null) throw new UnauthorizedException("errors.Unauhtorized" , loginDto.Username , loginDto.Password);
 
@@ -211,23 +219,26 @@ namespace Services.Implementations
         }
 
         //CheckEmail
-        public async Task<bool> CheckEmailExistAsync(string userEmail)
+        public async Task<bool> CheckEmailExistAsync(EmailDTO userEmail)
         {
-            var user = await _userManager.FindByEmailAsync(userEmail);
+            await _validationService.ValidateAsync(userEmail);
+            var user = await _userManager.FindByEmailAsync(userEmail.Email);
             return user != null;
         }
 
         //ConfirmOTP
-        public async Task ConfirmEmail(string userEmail)
+        public async Task ConfirmEmail(EmailDTO confirmEmailDto)
         {
-            var checkEmail = await CheckEmailExistAsync(userEmail);
-            if (!checkEmail) throw new UserNotFoundException("errors.User.notFound" , userEmail);
-            await _emailService.SendOTPAsync(userEmail);
+            await _validationService.ValidateAsync(confirmEmailDto);
+            var checkEmail = await CheckEmailExistAsync(confirmEmailDto);
+            if (!checkEmail) throw new UserNotFoundException("errors.User.notFound" , confirmEmailDto.Email);
+            await _emailService.SendOTPAsync(confirmEmailDto.Email);
         }
 
         //VerifyOTP
         public async Task<bool> VerifyOTPAsync(OTPSendDTO otpSendDto)
         {
+            await _validationService.ValidateAsync(otpSendDto);
             var otpKey = $"auth:otp:{otpSendDto.Email.ToLower()}";
             var cachedOTP = await _cacheService.GetCachedValueAsync(otpKey);
 
@@ -240,6 +251,8 @@ namespace Services.Implementations
         //ResetPassowrd
         public async Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto)
         {
+            await _validationService.ValidateAsync(passwordDto);
+
             var email = await _cacheService.GetCachedValueAsync($"auth:email:{passwordDto.Email.ToLower()}") ?? "";
             var user = await _userManager.FindByEmailAsync(passwordDto.Email ?? "");
             if (user is null) return false;
@@ -281,7 +294,6 @@ namespace Services.Implementations
             return email!;
 
         }
-
         #endregion
     }
 }

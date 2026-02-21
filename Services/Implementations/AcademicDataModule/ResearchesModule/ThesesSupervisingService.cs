@@ -9,9 +9,10 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
     public class ThesesSupervisingService(IUnitOfWork unitOfWork
         , IAuthenticationService authenticationService
-        , IMapper mapper)
+        , IMapper mapper
+        , IValidationService validationService)
 
-        : BaseService<Supervising, int>(unitOfWork, authenticationService, mapper) , IThesesSupervisingService
+        : BaseService<Supervising, int>(unitOfWork, authenticationService, mapper, validationService) , IThesesSupervisingService
     {
         protected override string EntityName => "Theses Supervising";
 

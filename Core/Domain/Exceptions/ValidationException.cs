@@ -1,10 +1,13 @@
-﻿namespace Domain.Exceptions
+﻿using Domain.Models;
+
+namespace Domain.Exceptions
 {
     public sealed class ValidationException : Exception
     {
-        public IEnumerable<string> Errors { get; }
-        public ValidationException(IEnumerable<string> errors)
-            : base("Validation failed")
+        public IEnumerable<ValidationError> Errors { get; }
+
+        public ValidationException(IEnumerable<ValidationError> errors)
+            : base("One or more validation failures have occurred.")
         {
             Errors = errors;
         }

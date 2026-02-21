@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
     public class PrizesAndRewardsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<PrizesAndRewards, int>(unitOfWork, authenticationService, mapper), IPrizesAndRewardsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<PrizesAndRewards, int>(unitOfWork, authenticationService, mapper, validationService), IPrizesAndRewardsService
     {
         protected override string EntityName => "Prizes and Rewards";
         public async Task<PaginatedResult<PrizesAndRewardsResponseDTO>> GetAllPrizesAndRewardsAsync(PrizesAndRewardsSpecificationParameters parameters)

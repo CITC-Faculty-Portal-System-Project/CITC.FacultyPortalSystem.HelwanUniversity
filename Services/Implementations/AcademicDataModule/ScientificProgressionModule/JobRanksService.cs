@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
     public class JobRanksService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<JobRanks, int>(unitOfWork, authenticationService, mapper), IJobRanksService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<JobRanks, int>(unitOfWork, authenticationService, mapper, validationService), IJobRanksService
     {
         protected override string EntityName => "Job Ranks";
         public async Task<PaginatedResult<JobRankResponseDto>> GetAllJobRanksAsync(JobRanksSpecificationsParameters parameters)

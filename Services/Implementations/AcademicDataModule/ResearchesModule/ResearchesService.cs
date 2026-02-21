@@ -12,10 +12,12 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
     public class ResearchesService(IUnitOfWork unitOfWork 
                 , IMapper mapper 
-                , IAuthenticationService authenticationService) :  
+                , IAuthenticationService authenticationService
+                , IValidationService validationService) :  
                      BaseService<Research , int>(unitOfWork 
                          , authenticationService  
-                         , mapper) , IResearchesService
+                         , mapper
+                         , validationService) , IResearchesService
     {
         protected override string EntityName => "Researches";
 

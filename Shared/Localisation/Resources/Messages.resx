@@ -174,4 +174,52 @@
   <data name="errors.User.notFound" xml:space="preserve">
     <value>User is Not Found</value>
   </data>
+  <data name="validation.NationalNumber.invalid" xml:space="preserve">
+    <value>Please enter a valid national ID number format</value>
+  </data>
+  <data name="validation.NationalNumber.required" xml:space="preserve">
+    <value>Please enter your national ID number</value>
+  </data>
+  <data name="validation.Login.Username.required" xml:space="preserve">
+    <value>Username is mandatory to proceed</value>
+  </data>
+  <data name="validation.Password.required" xml:space="preserve">
+    <value>Please enter your password</value>
+  </data>
+  <data name="validation.Email.required" xml:space="preserve">
+    <value>Please enter your email address</value>
+  </data>
+  <data name="validation.Email.invalid" xml:space="preserve">
+    <value>Please enter a valid email address</value>
+  </data>
+  <data name="validation.Password.minLength" xml:space="preserve">
+    <value>Password must be at least 8 characters</value>
+  </data>
+  <data name="validation.Password.uppercase" xml:space="preserve">
+    <value>Password must include at least one uppercase letter</value>
+  </data>
+  <data name="validation.Password.lowercase" xml:space="preserve">
+    <value>Password must include at least one lowercase letter</value>
+  </data>
+  <data name="validation.Password.digit" xml:space="preserve">
+    <value>Password must include at least one digit</value>
+  </data>
+  <data name="validation.Password.specialChar" xml:space="preserve">
+    <value>Password must include at least one special character</value>
+  </data>
+  <data name="validation.PasswordConfirm.required" xml:space="preserve">
+    <value>Please re-enter your password to confirm</value>
+  </data>
+  <data name="validation.Password.mismatch" xml:space="preserve">
+    <value>Passwords do not match</value>
+  </data>
+  <data name="validation.OTP.required" xml:space="preserve">
+    <value>Please enter the verification code (OTP)</value>
+  </data>
+  <data name="validation.OTP.length" xml:space="preserve">
+    <value>The verification code must be exactly 6 digits</value>
+  </data>
+  <data name="validation.OTP.digitsOnly" xml:space="preserve">
+    <value>The verification code must contain numbers only</value>
+  </data>
 </root>

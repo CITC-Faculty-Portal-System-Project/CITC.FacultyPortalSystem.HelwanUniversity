@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
     public class ThesesService
         (IUnitOfWork unitOfWork, IMapper mapper
-        , IAuthenticationService authenticationService) : BaseService<Thesis, int>
-        (unitOfWork, authenticationService, mapper), IThesesService
+        , IAuthenticationService authenticationService
+        , IValidationService validationService) : BaseService<Thesis, int>
+        (unitOfWork, authenticationService, mapper, validationService), IThesesService
     {
 
 

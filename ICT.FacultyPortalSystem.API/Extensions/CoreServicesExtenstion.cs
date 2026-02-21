@@ -1,4 +1,6 @@
 ﻿using Domain.Contracts;
+using Domain.Models;
+using FluentValidation;
 using FtpFileStorage.Configurations;
 using Presistence.Repositories;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
@@ -20,6 +22,7 @@ using Services.Implementations.AcademicDataModule.ResearchesModule;
 using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AttachmentsModule;
+using Shared;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -180,6 +183,13 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IParticipationInQualityWorksService>()
             );
 
+            services.AddValidatorsFromAssembly(typeof(SharedAssemblyReference).Assembly);
+
+            services.AddScoped<IValidationService, ValidationService>();
+            services.AddScoped<Func<IValidationService>>(provider =>
+            () => provider.GetRequiredService<IValidationService>()
+            );
+
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
@@ -204,7 +214,6 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             .ValidateDataAnnotations()
             .Validate(o => !string.IsNullOrWhiteSpace(o.Host), "Host is required")
             .ValidateOnStart();
-
 
             return services;
         }

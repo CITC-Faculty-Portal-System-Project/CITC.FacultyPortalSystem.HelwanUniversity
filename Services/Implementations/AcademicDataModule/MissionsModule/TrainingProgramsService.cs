@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
     public class TrainingProgramsService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<TrainingPrograms, int>(unitOfWork, authenticationService, mapper), ITrainingProgramsService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<TrainingPrograms, int>(unitOfWork, authenticationService, mapper, validationService), ITrainingProgramsService
     {
         protected override string EntityName => "Training Programs";
         public async Task<PaginatedResult<TrainingProgramsResponseDto>> GetAllTrainingProgramsAsync(TrainingProgramsSpecificationParameters parameters)

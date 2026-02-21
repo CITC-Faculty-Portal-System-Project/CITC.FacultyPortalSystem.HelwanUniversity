@@ -10,8 +10,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
     public class ContributionsToUniversityService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ContributionsToUniversity, int>(unitOfWork, authenticationService, mapper), IContributionsToUniversityService
+        IAuthenticationService authenticationService,
+        IValidationService validationService)
+                : BaseService<ContributionsToUniversity, int>(unitOfWork, authenticationService, mapper, validationService), IContributionsToUniversityService
     {
         protected override string EntityName => "Contributions To University";
         public async Task<PaginatedResult<ContributionsToUniversityResponseDTO>> GetAllContributionsToUniversityAsync(ContributionsToUniversitySpecificationParameters parameters)
