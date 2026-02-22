@@ -222,4 +222,67 @@
   <data name="validation.OTP.digitsOnly" xml:space="preserve">
     <value>The verification code must contain numbers only</value>
   </data>
+  <data name="validation.PersonalData.Name.required" xml:space="preserve">
+    <value>Please enter your full name</value>
+  </data>
+  <data name="validation.PersonalData.Name.maxLength" xml:space="preserve">
+    <value>Name cannot exceed 50 characters</value>
+  </data>
+  <data name="validation.PersonalData.BirthDate.invalid" xml:space="preserve">
+    <value>Age must be at least 20 years</value>
+  </data>
+  <data name="validation.PersonalData.Title.required" xml:space="preserve">
+    <value>Please select your academic title</value>
+  </data>
+  <data name="validation.PersonalData.University.required" xml:space="preserve">
+    <value>Please select your university</value>
+  </data>
+  <data name="validation.PersonalData.Department.required" xml:space="preserve">
+    <value>Please select your department</value>
+  </data>
+  <data name="validation.PersonalData.Authority.required" xml:space="preserve">
+    <value>Please select the faculty/authority</value>
+  </data>
+  <data name="validation.PersonalData.Field.required" xml:space="preserve">
+    <value>Please select your field of study</value>
+  </data>
+  <data name="validation.PersonalData.MaritalStatus.required" xml:space="preserve">
+    <value>Please select your marital status</value>
+  </data>
+  <data name="validation.PersonalData.BirthPlace.maxLength" xml:space="preserve">
+    <value>Birthplace cannot exceed 50 characters</value>
+  </data>
+  <data name="validation.PersonalData.NameInComposition.required" xml:space="preserve">
+    <value>Please enter your name in composition</value>
+  </data>
+  <data name="validation.PersonalData.GeneralSpecialization.maxLength" xml:space="preserve">
+    <value>General specialization cannot exceed 250 characters</value>
+  </data>
+  <data name="validation.PersonalData.AccurateSpecialization.maxLength" xml:space="preserve">
+    <value>Accurate specialization cannot exceed 250 characters</value>
+  </data>
+  <data name="validation.PersonalData.CompositionTopics.maxLength" xml:space="preserve">
+    <value>Composition topics cannot exceed 500 characters</value>
+  </data>
+  <data name="validation.ContactData.WorkPhoneNumber.maxLength" xml:space="preserve">
+    <value>Work phone number cannot exceed 20 characters</value>
+  </data>
+  <data name="validation.ContactData.Phone.invalid" xml:space="preserve">
+    <value>Please enter a valid phone number format</value>
+  </data>
+  <data name="validation.ContactData.HomePhoneNumber.maxLength" xml:space="preserve">
+    <value>Home phone number cannot exceed 20 characters</value>
+  </data>
+  <data name="validation.ContactData.Email.maxLength" xml:space="preserve">
+    <value>Email address cannot exceed 150 characters</value>
+  </data>
+  <data name="validation.ContactData.FaxNumber.maxLength" xml:space="preserve">
+    <value>Fax number cannot exceed 20 characters</value>
+  </data>
+  <data name="validation.ContactData.Address.maxLength" xml:space="preserve">
+    <value>Address cannot exceed 75 characters</value>
+  </data>
+  <data name="validation.Url.invalid" xml:space="preserve">
+    <value>Please enter a valid website link (URL)</value>
+  </data>
 </root>

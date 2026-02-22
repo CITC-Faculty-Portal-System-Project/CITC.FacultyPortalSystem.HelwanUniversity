@@ -2,7 +2,6 @@
 {
     public record IdentificationCardDto
     {
-        public string? ORCID { get; set; } = null;
         public string? EKB { get; set; } = null;
         public string? ResearcherId { get; set; } = null;
         public string? ResearcherGate { get; set; } = null;

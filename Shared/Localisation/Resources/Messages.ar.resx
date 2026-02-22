@@ -222,4 +222,67 @@
   <data name="validation.OTP.digitsOnly" xml:space="preserve">
     <value>يجب أن يحتوي رمز التحقق على أرقام فقط</value>
   </data>
+  <data name="validation.PersonalData.Name.required" xml:space="preserve">
+    <value>يرجى إدخال الاسم بالكامل</value>
+  </data>
+  <data name="validation.PersonalData.Name.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز الاسم 50 حرفاً</value>
+  </data>
+  <data name="validation.PersonalData.BirthDate.invalid" xml:space="preserve">
+    <value>يجب أن يكون العمر 20 عاماً على الأقل</value>
+  </data>
+  <data name="validation.PersonalData.Title.required" xml:space="preserve">
+    <value>يرجى اختيار اللقب الأكاديمي</value>
+  </data>
+  <data name="validation.PersonalData.University.required" xml:space="preserve">
+    <value>يرجى اختيار الجامعة</value>
+  </data>
+  <data name="validation.PersonalData.Department.required" xml:space="preserve">
+    <value>يرجى اختيار القسم</value>
+  </data>
+  <data name="validation.PersonalData.Authority.required" xml:space="preserve">
+    <value>يرجى اختيار الكلية أو الجهة التابع لها</value>
+  </data>
+  <data name="validation.PersonalData.Field.required" xml:space="preserve">
+    <value>يرجى اختيار التخصص الدراسي</value>
+  </data>
+  <data name="validation.PersonalData.MaritalStatus.required" xml:space="preserve">
+    <value>يرجى اختيار الحالة الاجتماعية</value>
+  </data>
+  <data name="validation.PersonalData.BirthPlace.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز محل الميلاد 50 حرفاً</value>
+  </data>
+  <data name="validation.PersonalData.NameInComposition.required" xml:space="preserve">
+    <value>يرجى إدخال الاسم في المؤلفات</value>
+  </data>
+  <data name="validation.PersonalData.GeneralSpecialization.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز التخصص العام 250 حرفاً</value>
+  </data>
+  <data name="validation.PersonalData.AccurateSpecialization.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز التخصص الدقيق 250 حرفاً</value>
+  </data>
+  <data name="validation.PersonalData.CompositionTopics.maxLength" xml:space="preserve">
+    <value>يجب ألا تتجاوز المواضيع الرئيسة للتأليف 500 حرفاً</value>
+  </data>
+  <data name="validation.ContactData.WorkPhoneNumber.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز رقم هاتف العمل 20 حرفاً</value>
+  </data>
+  <data name="validation.ContactData.Phone.invalid" xml:space="preserve">
+    <value>يرجى إدخال رقم الهاتف بصيغة صحيحة</value>
+  </data>
+  <data name="validation.ContactData.HomePhoneNumber.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز رقم هاتف المنزل 20 حرفاً</value>
+  </data>
+  <data name="validation.ContactData.Email.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز البريد الإلكتروني 150 حرفاً</value>
+  </data>
+  <data name="validation.ContactData.FaxNumber.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز رقم الفاكس 20 حرفاً</value>
+  </data>
+  <data name="validation.ContactData.Address.maxLength" xml:space="preserve">
+    <value>يجب ألا يتجاوز العنوان 75 حرفاً</value>
+  </data>
+  <data name="validation.Url.invalid" xml:space="preserve">
+    <value>يرجى إدخال رابط إلكتروني صحيح</value>
+  </data>
 </root>

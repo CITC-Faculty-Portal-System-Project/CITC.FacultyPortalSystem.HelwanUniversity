@@ -49,6 +49,8 @@ namespace Services.Implementations
 
         public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(PersonalDataUpdateDto personalDataUpdateDto)
         {
+            await ValidateAsync(personalDataUpdateDto);
+
             //Get Logged User 
             var currentUser = await GetCurrentUserAsync();
 
@@ -87,6 +89,8 @@ namespace Services.Implementations
 
         public async Task<ContactDataResponseDto?> UpdateContactDataAsync(ContactDataUpdateDto contactDataUpdateDto)
         {
+            await ValidateAsync(contactDataUpdateDto);
+
             //Get Logged User 
             var currentUser = await GetCurrentUserAsync();
 
@@ -142,6 +146,8 @@ namespace Services.Implementations
 
         public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(IdentificationCardDto identificationCardDto)
         {
+            await ValidateAsync(identificationCardDto);
+
             //Get Logged User 
             var currentUser = await GetCurrentUserAsync();
 
@@ -200,6 +206,8 @@ namespace Services.Implementations
 
         public async Task<SocialMediaPlatformsDto> UpdateSocialMediaPlatformsAsync(SocialMediaPlatformsDto socialMediaPlatformsDto)
         {
+            await ValidateAsync(socialMediaPlatformsDto);
+
             //Get Logged User 
             var currentUser = await GetCurrentUserAsync();
 
