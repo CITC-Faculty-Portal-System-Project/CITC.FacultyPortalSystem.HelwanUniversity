@@ -27,6 +27,13 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                    .WithMany(th => th.Theses)
                    .HasForeignKey(th => th.FacultyMemberId)
                    .OnDelete(DeleteBehavior.Cascade);
+            
+            
+            builder.HasMany(th => th.ComitteeMembers)
+              .WithOne(th => th.Theses)
+              .HasForeignKey(th => th.ThesesId)
+              .OnDelete(DeleteBehavior.Restrict);
+
 
             builder.HasOne(th => th.Grade)
                    .WithMany()
@@ -37,7 +44,6 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                  .WithOne(a => a.Thesis)
                  .HasForeignKey(a => a.ThesisId)
                  .OnDelete(DeleteBehavior.Cascade);
-
 
             #endregion
 

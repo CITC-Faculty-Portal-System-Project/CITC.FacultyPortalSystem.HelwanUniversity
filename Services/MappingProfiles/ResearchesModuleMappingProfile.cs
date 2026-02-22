@@ -60,13 +60,17 @@ namespace Services.MappingProfiles
 
             CreateMap<ThesesDTO, Thesis>()
                  .ForMember(d => d.Attachments, opt => opt.Ignore())
-                 .ForMember(d => d.Researches, opt => opt.Ignore());
+                 .ForMember(d => d.Researches, opt => opt.Ignore())
+                 .ForMember(d => d.ComitteeMembers, opt => opt.Ignore());
+
 
             CreateMap<Thesis, ThesesResponseDTO>();
 
 
-            CreateMap<ThesesSupervisorDTO, Supervisor>();
-            CreateMap<Supervisor, ThesesSupervisorDTO>();
+            CreateMap<ThesesSupervisorDTO, ThesisComittee>()
+                    .ForMember(dest => dest.JobLevelId, opt => opt.MapFrom(src => src.JobLevelId));
+                    
+            CreateMap<ThesisComittee, ThesesSupervisorDTO>();
 
             CreateMap<ResearchDTO , Research>();
             CreateMap<ResearchContributionDTO , ResearchContribution>();
@@ -111,10 +115,10 @@ namespace Services.MappingProfiles
             CreateMap<ResearchContribution, ResearchContributionResponseDTO>();
             CreateMap<ResearchUpdateDTO, Research>();
             CreateMap<ResearchCite, ResearchCitesResponseDTO>();
-            CreateMap<ThesesSupervisorDTO, Supervisor>();
+            CreateMap<ThesesSupervisorDTO, ThesisComittee>();
 
 
-            CreateMap<Supervisor, ThesesSupervisorResponseDTO>();
+            CreateMap<ThesisComittee, ThesesSupervisorResponseDTO>();
             CreateMap<ThesesUpdateDTO, Thesis>();
         }
     }

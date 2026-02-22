@@ -9,6 +9,7 @@ namespace Shared.Dtos.ResearchesModule
         public Guid JobLevelId { get; set; }
         public string Authority { get; set; } = string.Empty;
         public int? ThesesId { get; set; }
+        public Guid? MemberId { get; set; }
 
     }
 }

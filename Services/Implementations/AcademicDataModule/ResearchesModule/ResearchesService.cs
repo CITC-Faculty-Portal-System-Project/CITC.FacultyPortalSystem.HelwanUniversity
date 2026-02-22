@@ -65,6 +65,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
             var entity = Mapper.Map<Research>(research);
             entity.Source = Domain.Enums.ResearchSource.Internal;
+            entity.CreatedBy = currentUser.UserId.ToString();
 
             await AttachUniversityContributorsAsync(entity, UnitOfWork);
 
@@ -76,7 +77,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 Contributor = currentContributor,
                 Research = entity,
                 MemberAcademicName = currentContributor.PersonalData!.Name,
-                IsConfirmed = true
+                IsConfirmed = true,
+                IsTheMajorResearcher = true,
             });
 
             await Repo.AddAsync(entity);
@@ -205,6 +207,9 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var researchEntity = await Repo.GetAsync(new ResearchSpecifications(researchId, currentUser.UserId))
                 ?? throw NotFound();
 
+            if (researchEntity.Contributions!
+                .Any(c => c.ContributorId == currentUser.UserId && c.IsTheMajorResearcher == false))
+                throw new ForbiddenException("You Can't Modify this research data as you aren't a major researcher!");
 
             CollectionSync.Sync<
                 ResearchContribution,
@@ -224,9 +229,29 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 mapAdd: d => Mapper.Map<ResearchContribution>(d),
 
 
-                mapUpdate: (dto, entity) => Mapper.Map(dto, entity),
+                mapUpdate: (dto, entity) =>
+                {
+                    if (entity.IsConfirmed)
+                        throw new ForbiddenException("Confirmed contribution can't be updated");
 
-                onDelete: e => e.IsDeleted = true,
+                    if (entity.ContributorId.ToString() == researchEntity.CreatedBy)
+                        throw new ForbiddenException("You can't modify the creator contribution");
+
+                    Mapper.Map(dto, entity);
+                },
+
+
+                onDelete: e =>
+                {
+                    if (e.IsConfirmed)
+                        throw new ForbiddenException("Confirmed contribution can't be deleted");
+
+                    if (e.ContributorId.ToString() == researchEntity.CreatedBy)
+                        throw new ForbiddenException("You Can't Delete this Contributor as he/she is the creator of the research");
+
+                    e.IsDeleted = true;
+                },
+
 
                 onUpdateNotFound: id =>
                     throw new NotFoundException($"ResearchContribution not found"),

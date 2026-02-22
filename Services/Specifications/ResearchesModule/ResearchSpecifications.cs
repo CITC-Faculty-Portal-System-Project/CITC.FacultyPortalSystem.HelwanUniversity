@@ -40,17 +40,20 @@ namespace Services.Specifications.ResearchesModule
 
 
         public ResearchSpecifications(ResearchSpecificationParameters parameters, Guid facultyMemberId)
-            : base(r => !r.IsDeleted &&
-                    r.Contributions!
-                        .SingleOrDefault(c => c.ContributorId == facultyMemberId)!.IsConfirmed == true 
-            && !r.Contributions!
-            .SingleOrDefault(r => r.ContributorId == facultyMemberId)!
-            .IsDeleted &&
-
-            (string.IsNullOrEmpty(parameters.Search) ||
-                   r.Title.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
-                   r.JournalOrConfernce.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
-                   r.PubYear.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase)))
+            : base(r =>
+                !r.IsDeleted
+                &&
+                r.Contributions!.Any(c =>
+                    !c.IsDeleted &&
+                    c.ContributorId == facultyMemberId &&
+                    c.IsConfirmed)
+                &&
+                (
+                    string.IsNullOrEmpty(parameters.Search)
+                    || r.Title.Contains(parameters.Search)
+                    || r.JournalOrConfernce.Contains(parameters.Search)
+                    || (r.PubYear != null && r.PubYear.Contains(parameters.Search))
+                ))
 
 
         {

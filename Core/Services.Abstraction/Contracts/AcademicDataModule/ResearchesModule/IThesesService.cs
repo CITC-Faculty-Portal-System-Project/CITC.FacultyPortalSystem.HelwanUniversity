@@ -12,6 +12,7 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
         public Task<PaginatedResult<ThesesResponseDTO>> GetAllTheses(ThesesSpecificationParameters parameters);
         public Task DeleteTheses(int Id);
         public Task<ThesesResponseDTO> UpdateTheses(int id, ThesesUpdateDTO theses);
-     
+        public Task<PaginatedResult<ThesesResponseDTO>> GetRecommenededTheses(ThesesSpecificationParameters parameters);
+
     }
 }

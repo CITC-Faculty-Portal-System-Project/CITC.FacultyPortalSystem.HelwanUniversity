@@ -2,7 +2,7 @@
 
 namespace Services.Specifications.AcademicDataModule.HigherStudiesModule
 {
-    internal class SupervisorSpecifications : BaseSpecifications<Supervisor , int>
+    internal class SupervisorSpecifications : BaseSpecifications<ThesisComittee , int>
     {
         public SupervisorSpecifications(Thesis theses) :
             base(s => s.Theses == theses)

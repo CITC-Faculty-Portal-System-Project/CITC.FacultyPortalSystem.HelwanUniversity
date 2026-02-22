@@ -1,7 +1,10 @@
 ﻿namespace Domain.Entities.AcademicDataModule.HigherStuidesModule
 {
-    public class Supervisor : BaseEntity<int>
+    public class ThesisComittee : BaseEntity<int>
     {
+        public Guid? MemberId { get; set; }
+        public FacultyMember? Member { get; set; }
+        public bool isConfirmed { get; set; }
         public SupervisorRole Role { get; set; }
         public string Name { get; set; } = string.Empty;
         public Guid JobLevelId { get; set; }

@@ -1,4 +1,5 @@
-﻿using Shared.Dtos.AttachmentsModule;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Dtos.AttachmentsModule;
 using Shared.Enums.ResearchesModule;
 
 namespace Shared.Dtos.ResearchesModule

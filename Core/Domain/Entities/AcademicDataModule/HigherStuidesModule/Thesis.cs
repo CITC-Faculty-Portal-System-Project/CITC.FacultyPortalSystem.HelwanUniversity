@@ -15,7 +15,7 @@ namespace Domain.Entities.AcademicDataModule.HigherStuidesModule
         public DateOnly? SupervisionConfirmationDate { get; set; }
         public Guid FacultyMemberId { get; set; }
         public FacultyMember? FacultyMember { get; set; }
-        public ICollection<Supervisor>? Supervisors { get; set; }
+        public ICollection<ThesisComittee>? ComitteeMembers = new List<ThesisComittee>();
         public ICollection<Research>? Researches { get; set; } = new List<Research>();
         public ICollection<ThesesAttachment>? Attachments { get; set; } = new List<ThesesAttachment>();
 

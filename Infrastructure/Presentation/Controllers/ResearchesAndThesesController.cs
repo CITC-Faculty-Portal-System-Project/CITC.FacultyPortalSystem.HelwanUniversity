@@ -154,6 +154,13 @@ namespace Presentation.Controllers
             ([FromQuery] ThesesSpecificationParameters parameters)
                => Ok(await _serviceManager.ThesesService.GetAllTheses(parameters));
 
+        [ProducesResponseType(typeof(PaginatedResult<ThesesResponseDTO>), StatusCodes.Status200OK)]
+        [HttpGet("RecommendedTheses")]
+        public async Task<ActionResult<PaginatedResult<ThesesResponseDTO>>> GetAllRecommendedTheses
+         ([FromQuery] ThesesSpecificationParameters parameters)
+            => Ok(await _serviceManager.ThesesService.GetRecommenededTheses(parameters));
+
+
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("RemoveTheses/{id}")]
         public async Task<ActionResult> RemoveTheses(int id)

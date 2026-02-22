@@ -11,7 +11,7 @@ namespace Services.Specifications.ResearchesModule
                 : base(t => !t.IsDeleted 
                     && t.FacultyMemberId == facultyMemberId && 
                     (string.IsNullOrEmpty(parameters.Search) ||
-                   t.Title.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase)))
+                   t.Title.Contains(parameters.Search)))
                 {
         
         }

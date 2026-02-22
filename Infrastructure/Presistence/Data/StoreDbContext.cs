@@ -132,7 +132,7 @@ namespace Presistence.Data
         #region HigherStudiesModule DbSets
 
         public DbSet<Supervising> Supervisings { get; set; }
-        public DbSet<Supervisor> Supervisors { get; set; }
+        public DbSet<ThesisComittee> ThesisComittees { get; set; }
         public DbSet<Thesis> Theses { get; set; }
         public DbSet<ThesesAttachment> ThesesAttachments { get; set; }
 

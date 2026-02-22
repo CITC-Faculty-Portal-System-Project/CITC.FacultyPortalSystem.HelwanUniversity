@@ -11,8 +11,8 @@ namespace Services.Specifications.ResearchesModule
                 (ThesesSupervisingSpecificationParameters parameters , Guid facultyMemberId) 
                     : base(ts => !ts.IsDeleted && ts.FacultyMemberId == facultyMemberId
                     && (string.IsNullOrEmpty(parameters.Search) ||
-                   ts.Title.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase) ||
-                   ts.StudentName.Contains(parameters.Search, StringComparison.CurrentCultureIgnoreCase)
+                   ts.Title.Contains(parameters.Search) ||
+                   ts.StudentName.Contains(parameters.Search)
                    ))
         {
         }

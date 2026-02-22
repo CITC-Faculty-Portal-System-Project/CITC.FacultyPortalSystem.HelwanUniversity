@@ -6,28 +6,18 @@ using System.Linq.Expressions;
 
 namespace Services.Specifications.ResearchesModule
 {
-    internal class ThesesSpecifications : BaseSpecifications<Thesis, int>
+    internal class RecommendedThesesSpecifications : BaseSpecifications<Thesis, int>
     {
-        public ThesesSpecifications(int id , Guid facultyMemberId) 
-                : base(t => t.Id == id && !t.IsDeleted && t.FacultyMemberId == facultyMemberId)
+        public RecommendedThesesSpecifications
+            (ThesesSpecificationParameters parameters , Guid memberId) 
+            :base(rth => !rth.IsDeleted && 
+                rth.ComitteeMembers!.SingleOrDefault(cm => cm.MemberId == memberId)!
+                .isConfirmed == false && 
+                (string.IsNullOrEmpty(parameters.Search)
+                    || rth.Title.Contains(parameters.Search)
+                    || rth.Link!.Contains(parameters.Search)
+                    ))
         {
-            AddIncludes(t => t.Researches!);
-            AddIncludes(t => t.Attachments!);
-            AddIncludes(t => t.Grade!);
-            AddIncludeWithChain(t => t
-                        .Include(t => t.ComitteeMembers!)
-                        .ThenInclude(t => t.JobLevel));
-
-        }
-
-
-        public ThesesSpecifications(ThesesSpecificationParameters parameters , Guid facultyMemberId)
-            :base(t => !t.IsDeleted
-                    && t.FacultyMemberId == facultyMemberId && (string.IsNullOrEmpty(parameters.Search) ||
-                   t.Title.Contains(parameters.Search)))
-        {
-
-
             switch (parameters.Sort)
             {
                 case ThesesSortingOptions.TitleASC:
@@ -64,5 +54,7 @@ namespace Services.Specifications.ResearchesModule
             applyPagination(parameters.PageSize, parameters.PageIndex);
 
         }
+
     }
 }
+

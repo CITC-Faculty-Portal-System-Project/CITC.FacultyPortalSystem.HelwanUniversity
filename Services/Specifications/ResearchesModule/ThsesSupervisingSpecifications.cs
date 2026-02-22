@@ -14,7 +14,11 @@ namespace Services.Specifications.ResearchesModule
 
         public ThsesSupervisingSpecifications(ThesesSupervisingSpecificationParameters parameters 
                     , Guid FacultyMemberId)
-                : base(ts => !ts.IsDeleted && ts.FacultyMemberId == FacultyMemberId)
+                : base(ts => !ts.IsDeleted && ts.FacultyMemberId == FacultyMemberId
+                && (string.IsNullOrEmpty(parameters.Search) ||
+                   ts.Title.Contains(parameters.Search) ||
+                   ts.StudentName.Contains(parameters.Search)
+                   ))
         {
             switch (parameters.Sort)
             {

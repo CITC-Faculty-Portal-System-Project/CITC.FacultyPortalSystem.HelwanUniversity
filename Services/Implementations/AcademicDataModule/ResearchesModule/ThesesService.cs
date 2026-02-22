@@ -1,4 +1,5 @@
-﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+﻿using AutoMapper.Execution;
+using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Global;
@@ -21,23 +22,36 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
         public async Task<ThesesResponseDTO> AddTheses(ThesesDTO theses)
         {
             var researchesRepo = UnitOfWork.GetRepository<Research, int>();
-            
+            var personalRepo = UnitOfWork.GetRepository<PersonalData, int>();
+
+
             var currentUser = await GetCurrentUserAsync();
 
             theses.FacultyMemberId = currentUser.UserId;
 
             var entity = Mapper.Map<Thesis>(theses);
-            
-            if(theses.Researches is not null)
-                foreach(var research in theses.Researches!)
+
+            if (theses.Researches is not null)
+                foreach (var research in theses.Researches!)
                 {
                     var researchEntity = await researchesRepo.
-                        GetAsync(new ResearchSpecifications(research.Id , currentUser.UserId));
+                        GetAsync(new ResearchSpecifications(research.Id, currentUser.UserId));
 
                     entity.Researches!.Add(researchEntity!);
                 }
 
-            
+            if (theses.Supervisors is not null)
+                foreach (var supervisor in theses.Supervisors!)
+                {
+                    var supervisorEntity = await personalRepo.
+                        GetAsync(new PersonalDataWithNameSpecification(supervisor.Name));
+
+                    var mappedComitee = Mapper.Map<ThesisComittee>(supervisor);
+                    mappedComitee.MemberId = supervisorEntity!.FacultyMemberId;
+                    entity.ComitteeMembers!.Add(mappedComitee);
+                }
+
+
             await Repo.AddAsync(entity);
 
             await UnitOfWork.SaveChangesAsync();
@@ -79,6 +93,22 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             return new PaginatedResult<ThesesResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, thesesResponses);
         }
 
+        public async Task<PaginatedResult<ThesesResponseDTO>> GetRecommenededTheses(ThesesSpecificationParameters parameters)
+        {
+            var user = await GetCurrentUserAsync();
+
+            var thesesEntites = await Repo.GetAllAsync(new RecommendedThesesSpecifications(parameters, user.UserId))
+                        ?? throw NotFound();
+
+            var totalPagesCount = await Repo.CountAsync(new RecommendedThesesCountSpecifications(parameters, user.UserId));
+
+            var currentPage = thesesEntites.Count();
+
+            var thesesResponses = Mapper.Map<IEnumerable<ThesesResponseDTO>>(thesesEntites);
+
+            return new PaginatedResult<ThesesResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, thesesResponses);
+        }
+
         public async Task<ThesesResponseDTO> GetThesesById(int Id)
         {
             var user = await GetCurrentUserAsync();
@@ -101,13 +131,13 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             EnsureOwnership(thesesEntity.FacultyMemberId, currentUser.UserId, EntityName);
 
             
-            CollectionSync.Sync<Supervisor,
+            CollectionSync.Sync<ThesisComittee,
                                 ThesesSupervisorDTO,
                                 ThesesSupervisorDTO,
                                 ThesesSupervisorResponseDTO,
                                 int>(
                 
-                current: thesesEntity.Supervisors!,
+                current: thesesEntity.ComitteeMembers!,
                 toAdd: theses.SupervisorsToAdd,
                 toUpdate: theses.SupervisorsToUpdate,
                 toDelete: theses.SupervisorsToDelete,
@@ -115,7 +145,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 childKey: s => s.Id,
                 deleteKey: d => d.Id,
 
-                mapAdd: d => Mapper.Map<Supervisor>(d),
+                mapAdd: d => Mapper.Map<ThesisComittee>(d),
                 mapUpdate: (dto, entity) => Mapper.Map(dto, entity),
 
                 onDelete: e => e.IsDeleted = true,

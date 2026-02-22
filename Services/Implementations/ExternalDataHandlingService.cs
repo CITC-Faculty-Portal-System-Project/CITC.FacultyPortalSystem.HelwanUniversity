@@ -215,7 +215,7 @@ namespace Services.Implementations
         public async Task<bool> ThesisDataHandle(string? json)
 		{
             var thesesRepo = _unitOfWork.GetRepository<Thesis, int>();
-            var supervisorRepo = _unitOfWork.GetRepository<Supervisor, int>();
+            var supervisorRepo = _unitOfWork.GetRepository<ThesisComittee, int>();
 
             return await BulkHelper.HandleAsync<
                 ThesesFetchingDTO,

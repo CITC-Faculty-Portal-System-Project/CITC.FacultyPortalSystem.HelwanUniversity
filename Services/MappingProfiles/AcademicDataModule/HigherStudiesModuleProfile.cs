@@ -8,7 +8,7 @@ namespace Services.MappingProfiles.AcademicDataModule
         public HigherStudiesModuleProfile()
         {
             CreateMap<ThesesCreateDTO, Thesis>();
-            CreateMap<SupervisorCreateDTO , Supervisor>();
+            CreateMap<SupervisorCreateDTO , ThesisComittee>();
             CreateMap<SupervisingCreateDTO, Supervising>();
         }
     }

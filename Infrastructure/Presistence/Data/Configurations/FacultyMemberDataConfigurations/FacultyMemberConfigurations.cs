@@ -28,6 +28,17 @@
                     .HasForeignKey(a => a.ContributorId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(f => f.Theses)
+                .WithOne(th => th.FacultyMember)
+                .HasForeignKey(th => th.FacultyMemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            builder.HasMany(f=> f.ThesisComittees)
+                .WithOne(tc => tc.Member)
+                .HasForeignKey(tc => tc.MemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             #endregion
         }
     }

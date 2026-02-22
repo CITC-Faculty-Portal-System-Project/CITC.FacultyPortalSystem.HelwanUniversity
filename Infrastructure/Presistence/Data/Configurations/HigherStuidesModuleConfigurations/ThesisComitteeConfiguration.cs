@@ -2,9 +2,9 @@
 
 namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
 {
-    public class SupervisorConfiguration : IEntityTypeConfiguration<Supervisor>
+    public class ThesisComitteeConfiguration : IEntityTypeConfiguration<ThesisComittee>
     {
-        public void Configure(EntityTypeBuilder<Supervisor> builder)
+        public void Configure(EntityTypeBuilder<ThesisComittee> builder)
         {
 
             #region ConfigruingProperties
@@ -20,19 +20,31 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                    .HasMaxLength(500)
                    .IsRequired();
 
+            builder.Property(t => t.MemberId)
+                  .IsRequired(false);
+
+            builder.Property(t => t.isConfirmed)
+                   .HasDefaultValue(false);
+
             #endregion
 
             #region ConfiguringRelations
-            
+
             builder.HasOne(s => s.JobLevel)
                   .WithMany()
                   .HasForeignKey(s => s.JobLevelId)
                   .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(ss => ss.Theses)
-              .WithMany(t => t.Supervisors)
+              .WithMany(t => t.ComitteeMembers)
               .HasForeignKey(ss => ss.ThesesId)
               .OnDelete(DeleteBehavior.Cascade);
+
+
+            builder.HasOne(ss => ss.Member)
+              .WithMany(t => t.ThesisComittees)
+              .HasForeignKey(ss => ss.MemberId)
+              .OnDelete(DeleteBehavior.Restrict);
 
 
             #endregion

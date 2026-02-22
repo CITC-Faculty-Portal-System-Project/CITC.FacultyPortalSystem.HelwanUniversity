@@ -15,5 +15,6 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
         public Task RejectResearch(int researchId);
         public Task<ResearchResponseDTO> UpdateResearch(int researchId , ResearchUpdateDTO researchUpdate);
 
+
     }
 }
