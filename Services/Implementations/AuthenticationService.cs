@@ -269,8 +269,8 @@ namespace Services.Implementations
         {
             var user = await _userManager.FindByEmailAsync(userEmail)
                 ?? throw new UserNotFoundException(userEmail);
-            return new UserResultDto(UserName: user.UserName ?? "", user.Email ?? "" , 
-                user.Id);
+            return new UserResultDto(UserName: user.UserName ?? "", user.Email ?? "" ,  
+                user.Id ,null ,  user.NationalNumber ?? "");
         }
 
         public string GetLoggedUserEmail()

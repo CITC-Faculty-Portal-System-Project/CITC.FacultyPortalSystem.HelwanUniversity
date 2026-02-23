@@ -4,6 +4,7 @@
         string UserName,
         string Email,
         Guid UserId = default,
-        string? Token = default
+        string? Token = default,
+        string? nationalNumber = default
     );
 }
