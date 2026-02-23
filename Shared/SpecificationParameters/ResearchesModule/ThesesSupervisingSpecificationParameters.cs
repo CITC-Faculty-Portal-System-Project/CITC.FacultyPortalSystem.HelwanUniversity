@@ -1,4 +1,5 @@
 ﻿using Shared.Enums.ResearchesModule;
+using System.Reflection.PortableExecutable;
 
 namespace Shared.SpecificationParameters.ResearchesModule
 {
@@ -8,6 +9,9 @@ namespace Shared.SpecificationParameters.ResearchesModule
         private const int maxPageSize = 9;
         public string FacultyMemberEmail { get; set; } = string.Empty;
         public ThesesSupervisingSortingOptions Sort { get; set; }
+        public List<Guid>? GradeIds { get; set; }
+        public ThesisType? Type { get; set; }
+        public FacultyMemberRoleInSupervisingThesis Role { get; set; }
         public string? Search { get; set; }
         public int PageIndex { get; set; } = 1;
         private int _pageSize = defaultPageSize;
