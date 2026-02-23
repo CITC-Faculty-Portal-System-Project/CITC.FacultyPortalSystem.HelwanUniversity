@@ -10,7 +10,11 @@ namespace Services.Specifications.ResearchesModule
         public ThsesSupervisingCountSpecifications
                 (ThesesSupervisingSpecificationParameters parameters , Guid facultyMemberId) 
                     : base(ts => !ts.IsDeleted && ts.FacultyMemberId == facultyMemberId
-                    && (string.IsNullOrEmpty(parameters.Search) ||
+                    && (parameters.Type == null || (Shared.Enums.ResearchesModule.ThesisType)ts.Type == parameters.Type) ||
+                  (parameters.Type == null || (Shared.Enums.ResearchesModule.FacultyMemberRoleInSupervisingThesis)ts.FacultyMemberRole == parameters.Role) ||
+                  (parameters.GradeIds == null || !parameters.GradeIds.Any() ||
+                   parameters.GradeIds.Contains(ts.GradeId)) &&
+                    (string.IsNullOrEmpty(parameters.Search) ||
                    ts.Title.Contains(parameters.Search) ||
                    ts.StudentName.Contains(parameters.Search)
                    ))
