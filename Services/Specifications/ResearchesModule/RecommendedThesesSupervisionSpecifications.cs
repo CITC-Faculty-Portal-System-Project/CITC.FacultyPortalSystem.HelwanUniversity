@@ -10,13 +10,7 @@ namespace Services.Specifications.ResearchesModule
     {
         public RecommendedThesesSupervisionSpecifications
             (ThesesSpecificationParameters parameters , Guid memberId) 
-            :base(rth => !rth.IsDeleted && 
-                rth.ComitteeMembers!.SingleOrDefault(cm => cm.MemberId == memberId)!
-                .isConfirmed == false && 
-                (string.IsNullOrEmpty(parameters.Search)
-                    || rth.Title.Contains(parameters.Search)
-                    || rth.Link!.Contains(parameters.Search)
-                    ))
+            :base(BuildCriteria(parameters , memberId))
         {
             switch (parameters.Sort)
             {
@@ -53,6 +47,44 @@ namespace Services.Specifications.ResearchesModule
 
             applyPagination(parameters.PageSize, parameters.PageIndex);
 
+        }
+
+        public RecommendedThesesSupervisionSpecifications(int id , Guid memberId)
+            :base(rth => rth.Id == id && !rth.IsDeleted 
+                && rth.ComitteeMembers!.Any(cm => cm.MemberId == memberId && !cm.isConfirmed)) 
+        {
+            AddIncludes(t => t.Researches!);
+            AddIncludes(t => t.Attachments!);
+            AddIncludes(t => t.Grade!);
+            AddIncludeWithChain(t => t
+                        .Include(t => t.ComitteeMembers!)
+                        .ThenInclude(t => t.JobLevel));
+
+        }
+
+        private static Expression<Func<Thesis, bool>> BuildCriteria(
+        ThesesSpecificationParameters parameters,
+        Guid facultyMemberId)
+        {
+            Domain.Enums.ThesisType? mappedType = null;
+            if (parameters.Type.HasValue)
+            {
+                mappedType = Enum.Parse<Domain.Enums.ThesisType>(
+                    parameters.Type.Value.ToString(),
+                    ignoreCase: true);
+            }
+
+            return rth =>
+                !rth.IsDeleted &&
+                rth.ComitteeMembers!.Any(cm => cm.MemberId == facultyMemberId && !cm.isConfirmed)
+
+                && (!mappedType.HasValue || rth.Type == mappedType.Value)
+
+                && (parameters.GradeIds == null || !parameters.GradeIds.Any()
+                    || parameters.GradeIds.Contains(rth.GradeId))
+
+                && (string.IsNullOrEmpty(parameters.Search)
+                    || rth.Title.Contains(parameters.Search));
         }
 
     }

@@ -155,10 +155,18 @@ namespace Presentation.Controllers
                => Ok(await _serviceManager.ThesesService.GetAllTheses(parameters));
 
         [ProducesResponseType(typeof(PaginatedResult<ThesesResponseDTO>), StatusCodes.Status200OK)]
-        [HttpGet("RecommendedTheses")]
-        public async Task<ActionResult<PaginatedResult<ThesesResponseDTO>>> GetAllRecommendedTheses
+        [HttpGet("RecommendedThesesSupervisions")]
+        public async Task<ActionResult<PaginatedResult<ThesesResponseDTO>>> GetAllRecommendedThesesSupervisions
          ([FromQuery] ThesesSpecificationParameters parameters)
-            => Ok(await _serviceManager.ThesesService.GetRecommenededTheses(parameters));
+            => Ok(await _serviceManager.ThesesService.GetAllRecommendedThesesSupervisons(parameters));
+
+
+        [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
+        [HttpGet("RecommendedThesesSupervisions/{id}")]
+        public async Task<ActionResult<ThesesResponseDTO>> GetRecommendedThesesSupervisionById
+        (int id)
+           => Ok(await _serviceManager.ThesesService.GetRecommendedThesesSupervisonById(id));
+
 
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -170,11 +178,28 @@ namespace Presentation.Controllers
 
         }
 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpDelete("RejectRecommendedThesesSupervison/{id}")]
+        public async Task<ActionResult> RejectRecommendedThesesSupervison(int id)
+        {
+            await _serviceManager.ThesesService.RejectRecommendedThesesSupervison(id);
+            return NoContent();
+
+        }
+
 
         [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
         [HttpPut("UpdateTheses/{id}")]
         public async Task<ActionResult<ThesesResponseDTO>> UpdateTheses(int id, [FromBody] ThesesUpdateDTO theses)
-             => Ok(await _serviceManager.ThesesService.UpdateTheses(id, theses));   
+             => Ok(await _serviceManager.ThesesService.UpdateTheses(id, theses));
+
+
+        [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
+        [HttpPut("AcceptRecommendedThesesSupervision/{id}")]
+        public async Task<ActionResult<ThesesResponseDTO>> AcceptRecommendedThesesSupervisions
+        (int id)
+         => Ok(await _serviceManager.ThesesService.AcceptRecommendedThesesSupervison(id));
+
 
         #endregion
 

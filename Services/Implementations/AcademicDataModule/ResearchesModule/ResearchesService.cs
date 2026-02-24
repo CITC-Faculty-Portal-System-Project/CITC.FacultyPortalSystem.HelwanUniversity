@@ -194,7 +194,6 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
             researchEntity.Contributions!.SingleOrDefault(c => c.ContributorId == user.UserId)!
                 .IsDeleted = true;
-            researchEntity.DeletedBy = user.UserName;
 
             Repo.Update(researchEntity);
             await unitOfWork.SaveChangesAsync();

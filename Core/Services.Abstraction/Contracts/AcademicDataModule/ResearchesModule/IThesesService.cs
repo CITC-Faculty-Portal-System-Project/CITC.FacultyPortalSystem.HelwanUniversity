@@ -10,9 +10,12 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
         public Task<ThesesResponseDTO> AddTheses(ThesesDTO theses);
         public Task<ThesesResponseDTO> GetThesesById(int Id);
         public Task<PaginatedResult<ThesesResponseDTO>> GetAllTheses(ThesesSpecificationParameters parameters);
+        public Task<PaginatedResult<ThesesResponseDTO>> GetAllRecommendedThesesSupervisons(ThesesSpecificationParameters parameters);
+        public Task<ThesesResponseDTO> GetRecommendedThesesSupervisonById(int id);
+        public Task<ThesesResponseDTO> AcceptRecommendedThesesSupervison(int thesisId);
+        public Task RejectRecommendedThesesSupervison(int thesisId);
         public Task DeleteTheses(int Id);
         public Task<ThesesResponseDTO> UpdateTheses(int id, ThesesUpdateDTO theses);
-        public Task<PaginatedResult<ThesesResponseDTO>> GetRecommenededTheses(ThesesSpecificationParameters parameters);
 
     }
 }
