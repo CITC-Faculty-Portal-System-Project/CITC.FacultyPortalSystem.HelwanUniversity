@@ -22,9 +22,7 @@ namespace Services.Specifications.ResearchesModule
 
 
         public ThesesSpecifications(ThesesSpecificationParameters parameters , Guid facultyMemberId)
-            :base(t => !t.IsDeleted
-                    && t.FacultyMemberId == facultyMemberId && (string.IsNullOrEmpty(parameters.Search) ||
-                   t.Title.Contains(parameters.Search)))
+            :base(BuildCriteria(parameters, facultyMemberId))
         {
 
 
@@ -63,6 +61,32 @@ namespace Services.Specifications.ResearchesModule
 
             applyPagination(parameters.PageSize, parameters.PageIndex);
 
+        }
+
+
+        private static Expression<Func<Thesis, bool>> BuildCriteria(
+          ThesesSpecificationParameters parameters,
+          Guid facultyMemberId)
+        {
+            Domain.Enums.ThesisType? mappedType = null;
+            if (parameters.Type.HasValue)
+            {
+                mappedType = Enum.Parse<Domain.Enums.ThesisType>(
+                    parameters.Type.Value.ToString(),
+                    ignoreCase: true);
+            }
+
+            return t =>
+                !t.IsDeleted
+                && t.FacultyMemberId == facultyMemberId
+
+                && (!mappedType.HasValue || t.Type == mappedType.Value)
+
+                && (parameters.GradeIds == null || !parameters.GradeIds.Any()
+                    || parameters.GradeIds.Contains(t.GradeId))
+
+                && (string.IsNullOrEmpty(parameters.Search)
+                    || t.Title.Contains(parameters.Search));
         }
     }
 }

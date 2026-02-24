@@ -60,8 +60,7 @@ namespace Services.MappingProfiles
 
             CreateMap<ThesesDTO, Thesis>()
                  .ForMember(d => d.Attachments, opt => opt.Ignore())
-                 .ForMember(d => d.Researches, opt => opt.Ignore())
-                 .ForMember(d => d.ComitteeMembers, opt => opt.Ignore());
+                 .ForMember(d => d.Researches, opt => opt.Ignore());
 
 
             CreateMap<Thesis, ThesesResponseDTO>();

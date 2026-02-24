@@ -6,9 +6,9 @@ using System.Linq.Expressions;
 
 namespace Services.Specifications.ResearchesModule
 {
-    internal class RecommendedThesesSpecifications : BaseSpecifications<Thesis, int>
+    internal class RecommendedThesesSupervisionSpecifications : BaseSpecifications<Thesis, int>
     {
-        public RecommendedThesesSpecifications
+        public RecommendedThesesSupervisionSpecifications
             (ThesesSpecificationParameters parameters , Guid memberId) 
             :base(rth => !rth.IsDeleted && 
                 rth.ComitteeMembers!.SingleOrDefault(cm => cm.MemberId == memberId)!

@@ -11,7 +11,7 @@ namespace Shared.SpecificationParameters.ResearchesModule
         public ThesesSupervisingSortingOptions Sort { get; set; }
         public List<Guid>? GradeIds { get; set; }
         public ThesisType? Type { get; set; }
-        public FacultyMemberRoleInSupervisingThesis Role { get; set; }
+        public FacultyMemberRoleInSupervisingThesis? Role { get; set; }
         public string? Search { get; set; }
         public int PageIndex { get; set; } = 1;
         private int _pageSize = defaultPageSize;

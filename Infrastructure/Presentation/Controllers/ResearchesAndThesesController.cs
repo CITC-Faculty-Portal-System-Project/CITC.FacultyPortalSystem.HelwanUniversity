@@ -21,7 +21,7 @@ namespace Presentation.Controllers
         [ProducesResponseType(typeof(PaginatedResult<ResearchResponseDTO>), StatusCodes.Status200OK)]
         [HttpGet("RecommendedResearches")]
         public async Task<ActionResult<PaginatedResult<ResearchResponseDTO>>> GetAllRecommendedResearches
-                     ([FromQuery] RecommendedResearchesSpecificationParameters parameters)
+                     ([FromQuery] ResearchSpecificationParameters parameters)
                => Ok(await _serviceManager.ResearchesService.GetAllRecommendedResearches(parameters));
 
         [ProducesResponseType(typeof(ResearcherProfileResponseDTO), StatusCodes.Status200OK)]

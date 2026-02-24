@@ -4,9 +4,9 @@ using System.Linq.Expressions;
 
 namespace Services.Specifications.ResearchesModule
 {
-    internal class RecommendedThesesCountSpecifications : BaseSpecifications<Thesis, int>
+    internal class RecommendedThesesSupervisionCountSpecifications : BaseSpecifications<Thesis, int>
     {
-        public RecommendedThesesCountSpecifications
+        public RecommendedThesesSupervisionCountSpecifications
             (ThesesSpecificationParameters parameters , Guid memberId) 
             :base(rth => !rth.IsDeleted &&
                 rth.ComitteeMembers!.SingleOrDefault(cm => cm.MemberId == memberId)!

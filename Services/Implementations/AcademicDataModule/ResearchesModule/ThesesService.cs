@@ -29,6 +29,18 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
             theses.FacultyMemberId = currentUser.UserId;
 
+            if (theses.ComitteeMembers is not null)
+                foreach (var member in theses.ComitteeMembers!)
+                {
+                    var memberEntity = await personalRepo.
+                        GetAsync(new PersonalDataWithNameSpecification(member.Name));
+
+                    if(memberEntity is not null && 
+                        memberEntity.FacultyMemberId != currentUser.UserId)
+                            member.MemberId = memberEntity!.FacultyMemberId;
+                }
+
+
             var entity = Mapper.Map<Thesis>(theses);
 
             if (theses.Researches is not null)
@@ -39,18 +51,6 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
                     entity.Researches!.Add(researchEntity!);
                 }
-
-            if (theses.Supervisors is not null)
-                foreach (var supervisor in theses.Supervisors!)
-                {
-                    var supervisorEntity = await personalRepo.
-                        GetAsync(new PersonalDataWithNameSpecification(supervisor.Name));
-
-                    var mappedComitee = Mapper.Map<ThesisComittee>(supervisor);
-                    mappedComitee.MemberId = supervisorEntity!.FacultyMemberId;
-                    entity.ComitteeMembers!.Add(mappedComitee);
-                }
-
 
             await Repo.AddAsync(entity);
 
@@ -97,10 +97,10 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
         {
             var user = await GetCurrentUserAsync();
 
-            var thesesEntites = await Repo.GetAllAsync(new RecommendedThesesSpecifications(parameters, user.UserId))
+            var thesesEntites = await Repo.GetAllAsync(new RecommendedThesesSupervisionSpecifications(parameters, user.UserId))
                         ?? throw NotFound();
 
-            var totalPagesCount = await Repo.CountAsync(new RecommendedThesesCountSpecifications(parameters, user.UserId));
+            var totalPagesCount = await Repo.CountAsync(new RecommendedThesesSupervisionCountSpecifications(parameters, user.UserId));
 
             var currentPage = thesesEntites.Count();
 

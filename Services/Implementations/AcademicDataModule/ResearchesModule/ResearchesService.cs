@@ -130,7 +130,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
         }
 
         public async Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches
-                                    (RecommendedResearchesSpecificationParameters parameters)
+                                    (ResearchSpecificationParameters parameters)
         {
             var user = await GetCurrentUserAsync();
 
