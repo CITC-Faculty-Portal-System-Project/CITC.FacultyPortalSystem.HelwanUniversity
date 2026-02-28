@@ -4,8 +4,7 @@
     {
         public Guid? MemberId { get; set; }
         public FacultyMember? Member { get; set; }
-        public bool isConfirmed { get; set; }
-        public SupervisorRole Role { get; set; }
+        public FacultyMemberRoleInSupervisingThesis Role { get; set; }
         public string Name { get; set; } = string.Empty;
         public Guid JobLevelId { get; set; }
         public Lookup? JobLevel { get; set; }

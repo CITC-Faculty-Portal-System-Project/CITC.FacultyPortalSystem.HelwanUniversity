@@ -18,6 +18,8 @@ namespace Services.Specifications.ResearchesModule
                         .Include(t => t.ComitteeMembers!)
                         .ThenInclude(t => t.JobLevel));
 
+            AddIncludes(t => t.Supervisings!);
+
         }
 
 
@@ -45,6 +47,12 @@ namespace Services.Specifications.ResearchesModule
                     break;
                 case ThesesSortingOptions.RegisterationDateDESC:
                     AddOrderByDescending(ts => ts.RegistrationDate!);
+                    break;
+                case ThesesSortingOptions.DiscussionDateASC:
+                    AddOrderBy(ts => ts.DiscussionDate!);
+                    break;
+                case ThesesSortingOptions.DiscussionDateDESC:
+                    AddOrderByDescending(ts => ts.DiscussionDate!);
                     break;
                 default:
                     break;
@@ -86,7 +94,8 @@ namespace Services.Specifications.ResearchesModule
                     || parameters.GradeIds.Contains(t.GradeId))
 
                 && (string.IsNullOrEmpty(parameters.Search)
-                    || t.Title.Contains(parameters.Search));
+                    || t.Title.Contains(parameters.Search)
+                    || t.UniversityOrFaculty!.Contains(parameters.Search));
         }
     }
 }

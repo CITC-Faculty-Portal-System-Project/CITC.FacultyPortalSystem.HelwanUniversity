@@ -50,6 +50,10 @@ namespace Presistence.Data.Configurations.ScientificProgressionModuleConfigurati
 
             #region RelationShip With Attachments
 
+            builder.HasMany(ac => ac.Attachments)
+                    .WithOne(a => a.Qualification)
+                    .HasForeignKey(a => a.QualificationId)
+                    .OnDelete(DeleteBehavior.Cascade);
          
             #endregion
 

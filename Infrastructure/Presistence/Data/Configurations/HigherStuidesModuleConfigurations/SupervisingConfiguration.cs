@@ -19,6 +19,12 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                   .HasForeignKey(s => s.GradeId)
                   .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(s => s.Thesis)
+                 .WithMany(th => th.Supervisings)
+                 .HasForeignKey(s => s.ThesisId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+
             #endregion
 
             #region PropertiesConfiguration
@@ -43,16 +49,24 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
             builder.Property(t => t.UniversityOrFaculty)
                    .HasMaxLength(250);
 
+            builder.Property(t => t.isConfirmed)
+                  .HasDefaultValue(false);
+
             #endregion
 
             #region AddingIndcies
 
             builder.HasIndex(s => s.Title);
             builder.HasIndex(s => s.StudentName);
+            builder.HasIndex(s => s.RegistrationDate);
+            builder.HasIndex(s => s.RegistrationDate);
+            builder.HasIndex(s => s.SupervisionFormationDate);
+            builder.HasIndex(s => s.DiscussionDate);
+            builder.HasIndex(s => s.GrantingDate);
+            builder.HasIndex(s => s.GradeId);
+            builder.HasIndex(s => s.Type);
 
             #endregion
-
-
         }
     }
 }

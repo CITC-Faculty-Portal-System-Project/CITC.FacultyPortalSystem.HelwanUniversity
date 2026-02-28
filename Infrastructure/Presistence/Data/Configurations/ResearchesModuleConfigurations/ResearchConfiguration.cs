@@ -69,6 +69,19 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
 
 
             #endregion
+
+            #region AddingIndcies
+
+            builder.HasIndex(r => r.Source);
+            builder.HasIndex(r => r.ResearchDerivedFrom);
+            builder.HasIndex(r => r.PublisherType);
+            builder.HasIndex(r => r.PublicationType);
+            builder.HasIndex(r => r.PublicationType);
+            builder.HasIndex(r => r.Title);
+            builder.HasIndex(r => r.JournalOrConfernce);
+            builder.HasIndex(r => r.PubYear);
+            
+            #endregion
         }
     }
 }

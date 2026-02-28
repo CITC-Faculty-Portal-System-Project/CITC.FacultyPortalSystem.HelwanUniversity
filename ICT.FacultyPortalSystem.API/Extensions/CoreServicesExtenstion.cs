@@ -10,6 +10,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
 using Services.Implementations.AcademicDataModule.ContributionsModule;
 using Services.Implementations.AcademicDataModule.ExperiencesModule;
@@ -20,6 +21,8 @@ using Services.Implementations.AcademicDataModule.ResearchesModule;
 using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AttachmentsModule;
+using Services.Implementations.AttachmentsModule.Helpers;
+using Services.Implementations.AttachmentsModule.Helpers.Handlers;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -192,6 +195,15 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddScoped<IProcessingService, ProcessingService>();
 
+            services.AddScoped<AttachmentCore>();
+            services.AddScoped<IAttachmentContextHandler, ResearchAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ThesisAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ProfilePictureAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, PatentAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ManifestationOfScientificAppreciationAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, PrizeAndAwardAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ConferenceOrSeminarAttachmentHandler>();
 
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));

@@ -35,7 +35,8 @@ namespace Services.Specifications.ResearchesModule
                     || parameters.GradeIds.Contains(t.GradeId))
 
                 && (string.IsNullOrEmpty(parameters.Search)
-                    || t.Title.Contains(parameters.Search));
+                    || t.Title.Contains(parameters.Search)
+                    || t.UniversityOrFaculty!.Contains(parameters.Search));
         }
     }
 }

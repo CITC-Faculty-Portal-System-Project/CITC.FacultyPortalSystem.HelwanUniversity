@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities.AcademicDataModule.PrizesModule
+﻿using Domain.Entities.EntitesAttachments;
+
+namespace Domain.Entities.AcademicDataModule.PrizesModule
 {
     public class PrizesAndRewards : BaseEntity<int>
     {
@@ -14,6 +16,7 @@
 
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
+        public ICollection<PrizesAndAwardsAttachment>? Attachments { get; set; } = new List<PrizesAndAwardsAttachment>();
         #endregion
     }
 }

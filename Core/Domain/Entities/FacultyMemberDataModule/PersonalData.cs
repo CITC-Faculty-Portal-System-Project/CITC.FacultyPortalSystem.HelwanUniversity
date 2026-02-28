@@ -1,4 +1,6 @@
 ﻿
+using Domain.Entities.EntitesAttachments;
+
 namespace Domain.Entities.FacultyMemberDataModule
 {
     public class PersonalData : BaseEntity<int>
@@ -42,13 +44,11 @@ namespace Domain.Entities.FacultyMemberDataModule
         public Guid FacultyMemberId { get; set; }
         #endregion
 
-        #region RelationShip With Attachments
-        public Guid? ProfilePictureId { get; set; }
-        #endregion
-
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
-
+       
+        [NotMapped]
+        public ProfilePictures? ProfilePicture { get; set; }
         #endregion
     }
 }

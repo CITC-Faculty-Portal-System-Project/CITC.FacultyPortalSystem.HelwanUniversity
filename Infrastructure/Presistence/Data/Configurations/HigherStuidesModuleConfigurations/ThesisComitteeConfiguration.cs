@@ -23,8 +23,6 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
             builder.Property(t => t.MemberId)
                   .IsRequired(false);
 
-            builder.Property(t => t.isConfirmed)
-                   .HasDefaultValue(false);
 
             #endregion
 

@@ -1,5 +1,4 @@
-﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
-using Domain.Entities.AcademicDataModule.ResearchesModule;
+﻿using Domain.Entities.EntitesAttachments;
 using Shared.Dtos.AttachmentsModule;
 
 namespace Services.MappingProfiles

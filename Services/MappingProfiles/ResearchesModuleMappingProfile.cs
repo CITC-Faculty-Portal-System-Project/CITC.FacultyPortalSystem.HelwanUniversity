@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.EntitesAttachments;
 using Shared.Dtos.AttachmentsModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.ResearchesModule;
@@ -119,6 +120,11 @@ namespace Services.MappingProfiles
 
             CreateMap<ThesisComittee, ThesesSupervisorResponseDTO>();
             CreateMap<ThesesUpdateDTO, Thesis>();
+
+            CreateMap<ThesesDTO, SupervisingThesesAddDTO>()
+                .ForMember(dest => dest.GrantingDate, opt => opt.MapFrom(src => src.InternalGradeDate))
+                .ForMember(dest => dest.SupervisionFormationDate, opt => opt.MapFrom(src => src.SupervisionConfirmationDate))
+                .ForMember(dest => dest.FacultyMemberId, opt => opt.Ignore());
         }
     }
 }

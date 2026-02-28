@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Presentation.Filters;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
+using Services.Abstraction.Enums;
 using Shared;
+using Shared.Dtos.AttachmentsModule;
 using Shared.Dtos.ResearchesModule;
 using Shared.Dtos.ResearchesModule.ResearchesDOIandORCIDLoadService;
 using Shared.SpecificationParameters.ResearchesModule;
-using Services.Abstraction.Enums;
-using Shared.Dtos.AttachmentsModule;
 
 
 namespace Presentation.Controllers
@@ -116,6 +117,22 @@ namespace Presentation.Controllers
         => Ok(await _serviceManager.ThesesSupervisingService.GetAllSupervisings(parameters));
 
 
+        [ProducesResponseType(typeof(PaginatedResult<SupervisingThsesResponseDTO>), StatusCodes.Status200OK)]
+        [HttpGet("RecommendedThesesSupervisions")]
+        public async Task<ActionResult<PaginatedResult<SupervisingThsesResponseDTO>>> GetAllRecommendedThesesSupervisions
+      ([FromQuery] ThesesSupervisingSpecificationParameters parameters)
+         => Ok(await _serviceManager.ThesesSupervisingService.GetAllRecommendedThesesSupervisons(parameters));
+
+
+        [ProducesResponseType(typeof(SupervisingThsesResponseDTO), StatusCodes.Status200OK)]
+        [HttpGet("RecommendedThesesSupervisions/{id}")]
+        public async Task<ActionResult<SupervisingThsesResponseDTO>> GetRecommendedThesesSupervisionById
+        (int id)
+           => Ok(await _serviceManager.ThesesSupervisingService.GetRecommendedThesesSupervisonById(id));
+
+
+
+
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("RemoveThesesSupervising/{thesesId}")]
         public async Task<ActionResult> RemoveThesesSupervising(int thesesId)
@@ -124,11 +141,28 @@ namespace Presentation.Controllers
             return NoContent();
         }
 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [HttpDelete("RejectRecommendedThesesSupervison/{id}")]
+        public async Task<ActionResult> RejectRecommendedThesesSupervison(int id)
+        {
+            await _serviceManager.ThesesSupervisingService.RejectRecommendedThesesSupervison(id);
+            return NoContent();
+
+        }
+
+
         [ProducesResponseType(typeof(SupervisingThsesResponseDTO), StatusCodes.Status200OK)]
         [HttpPut("UpdateThesesSupervising/{thesesId}")]
         public async Task<ActionResult<SupervisingThsesResponseDTO>> UpdateThesesSupervising
                 (int thesesId, SupervisingThesesUpdateDTO supervisingThesesUpdateDTO)
             => Ok(await _serviceManager.ThesesSupervisingService.UpdateThesesSupervising(thesesId, supervisingThesesUpdateDTO));
+
+
+        [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
+        [HttpPut("AcceptRecommendedThesesSupervision/{id}")]
+        public async Task<ActionResult<ThesesResponseDTO>> AcceptRecommendedThesesSupervisions
+      (int id)
+       => Ok(await _serviceManager.ThesesSupervisingService.AcceptRecommendedThesesSupervison(id));
 
 
         #endregion
@@ -154,21 +188,7 @@ namespace Presentation.Controllers
             ([FromQuery] ThesesSpecificationParameters parameters)
                => Ok(await _serviceManager.ThesesService.GetAllTheses(parameters));
 
-        [ProducesResponseType(typeof(PaginatedResult<ThesesResponseDTO>), StatusCodes.Status200OK)]
-        [HttpGet("RecommendedThesesSupervisions")]
-        public async Task<ActionResult<PaginatedResult<ThesesResponseDTO>>> GetAllRecommendedThesesSupervisions
-         ([FromQuery] ThesesSpecificationParameters parameters)
-            => Ok(await _serviceManager.ThesesService.GetAllRecommendedThesesSupervisons(parameters));
-
-
-        [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
-        [HttpGet("RecommendedThesesSupervisions/{id}")]
-        public async Task<ActionResult<ThesesResponseDTO>> GetRecommendedThesesSupervisionById
-        (int id)
-           => Ok(await _serviceManager.ThesesService.GetRecommendedThesesSupervisonById(id));
-
-
-
+     
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("RemoveTheses/{id}")]
         public async Task<ActionResult> RemoveTheses(int id)
@@ -178,28 +198,12 @@ namespace Presentation.Controllers
 
         }
 
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [HttpDelete("RejectRecommendedThesesSupervison/{id}")]
-        public async Task<ActionResult> RejectRecommendedThesesSupervison(int id)
-        {
-            await _serviceManager.ThesesService.RejectRecommendedThesesSupervison(id);
-            return NoContent();
-
-        }
-
+      
 
         [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
         [HttpPut("UpdateTheses/{id}")]
         public async Task<ActionResult<ThesesResponseDTO>> UpdateTheses(int id, [FromBody] ThesesUpdateDTO theses)
              => Ok(await _serviceManager.ThesesService.UpdateTheses(id, theses));
-
-
-        [ProducesResponseType(typeof(ThesesResponseDTO), StatusCodes.Status200OK)]
-        [HttpPut("AcceptRecommendedThesesSupervision/{id}")]
-        public async Task<ActionResult<ThesesResponseDTO>> AcceptRecommendedThesesSupervisions
-        (int id)
-         => Ok(await _serviceManager.ThesesService.AcceptRecommendedThesesSupervison(id));
-
 
         #endregion
 

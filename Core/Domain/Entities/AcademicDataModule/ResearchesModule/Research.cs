@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
+using Domain.Entities.EntitesAttachments;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Domain.Entities.AcademicDataModule.ResearchesModule

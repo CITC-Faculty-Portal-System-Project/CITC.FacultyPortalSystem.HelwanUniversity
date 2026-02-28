@@ -1,6 +1,9 @@
 ﻿using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.EntitesAttachments;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Shared.Dtos.AcademicDataModule.MissionsModule;
+using Shared.Dtos.AttachmentsModule;
 
 namespace Services.MappingProfiles.AcademicDataModule
 {
@@ -26,7 +29,8 @@ namespace Services.MappingProfiles.AcademicDataModule
                  .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type));
 
             CreateMap<ConferencesAndSeminarsCreateDto, ConferencesAndSeminars>();
-    
+            CreateMap<AttachmentReferenceDTO, ConferencesAndSeminarsAttachment>();
+            CreateMap<ConferencesAndSeminarsAttachment, AttachmentResponseDTO>();
 
             CreateMap<ConferencesAndSeminarsUpdateDto, ConferencesAndSeminars>();
 

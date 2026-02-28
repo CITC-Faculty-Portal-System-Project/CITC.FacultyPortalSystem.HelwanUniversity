@@ -33,11 +33,14 @@ namespace Services.Specifications.AcademicDataModule.PrizesModule
                     break;
             }
             applyPagination(parameters.PageSize, parameters.PageIndex);
+            AddIncludes(m => m.Attachments!);
 
         }
 
         public ManifestationsOfScientificAppreciationSpecifications(int id) : base(msa => !msa.IsDeleted && msa.Id == id)
         {
+            AddIncludes(m => m.Attachments!);
+
         }
     }
 }

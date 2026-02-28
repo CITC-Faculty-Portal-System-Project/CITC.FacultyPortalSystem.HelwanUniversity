@@ -1,7 +1,8 @@
 ﻿using Domain.Contracts;
+using Domain.Entities.AcademicDataModule.ResearchesModule;
 using static Domain.Entities.BaseAttachmentEntity;
 
-namespace Domain.Entities.AcademicDataModule.ResearchesModule
+namespace Domain.Entities.EntitesAttachments
 {
     public class ResearchAttachment : BaseAttachmentEntity
     {

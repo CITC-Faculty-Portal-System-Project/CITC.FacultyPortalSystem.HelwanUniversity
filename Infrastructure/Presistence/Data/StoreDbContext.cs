@@ -7,6 +7,7 @@ using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Domain.Entities.AcademicDataModule.WritingsAndPatents;
+using Domain.Entities.EntitesAttachments;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection;
 
@@ -92,6 +93,7 @@ namespace Presistence.Data
         public DbSet<IdentificationCard> IdentificationCard { get; set; }
         public DbSet<SocialMediaPlatforms> SocialMediaPlatforms { get; set; }
         public DbSet<FacultyMember> FacultyMembers { get; set; }
+        public DbSet<ProfilePictures> ProfilePictures { get; set; }
 
         #endregion
 
@@ -99,12 +101,14 @@ namespace Presistence.Data
 
         #region ScientificProgressionModule DbSets
         public DbSet<AcademicQualifications> AcademicQualifications { get; set; }
+        public DbSet<AcademicQualificationAttachment> AcademicQualificationAttachments { get; set; }
         public DbSet<JobRanks> JobRanks { get; set; }
         public DbSet<AdministrativePositions> AdministrativePositions { get; set; }
         #endregion
 
         #region MissionsModule DbSets
         public DbSet<ConferencesAndSeminars> ConferencesAndSeminars { get; set; }
+        public DbSet<ConferencesAndSeminarsAttachment> ConferencesAndSeminarsAttachments { get; set; }
         public DbSet<ScientificMissions> ScientificMissions { get; set; }
         public DbSet<TrainingPrograms> TrainingPrograms { get; set; }
         #endregion
@@ -146,11 +150,14 @@ namespace Presistence.Data
         #region WritingsAndPatents
         public DbSet<ScientificWritings> ScientificWritings { get; set; }
         public DbSet<Patents> Patents { get; set; }
+        public DbSet<PatentsAttachment> PatentsAttachments { get; set; }
         #endregion
 
         #region Prizes Module
         public DbSet<PrizesAndRewards> PrizesAndRewards { get; set; }
+        public DbSet<PrizesAndAwardsAttachment> PrizesAndAwardsAttachments { get; set; }
         public DbSet<ManifestationsOfScientificAppreciation> ManifestationsOfScientificAppreciations { get; set; }
+        public DbSet<ManifestationsOfScientificAppreciationAttachment> ManifestationsOfScientificAppreciationAttachments { get; set; }
         #endregion
 
         #region Contributions Module

@@ -6,65 +6,93 @@ using System.Linq.Expressions;
 
 namespace Services.Specifications.ResearchesModule
 {
-    internal class RecommendedThesesSupervisionSpecifications : BaseSpecifications<Thesis, int>
+    internal class RecommendedThesesSupervisionSpecifications : BaseSpecifications<Supervising, int>
     {
         public RecommendedThesesSupervisionSpecifications
-            (ThesesSpecificationParameters parameters , Guid memberId) 
+            (ThesesSupervisingSpecificationParameters parameters , Guid memberId) 
             :base(BuildCriteria(parameters , memberId))
         {
             switch (parameters.Sort)
             {
-                case ThesesSortingOptions.TitleASC:
+                case ThesesSupervisingSortingOptions.TitleASC:
                     AddOrderBy(ts => ts.Title);
                     break;
-                case ThesesSortingOptions.TitleDESC:
+
+                case ThesesSupervisingSortingOptions.TitleDESC:
                     AddOrderByDescending(ts => ts.Title);
                     break;
-                case ThesesSortingOptions.EnrollmentDateASC:
-                    AddOrderBy(ts => ts.EnrollmentDate);
+
+                case ThesesSupervisingSortingOptions.StudentNameASC:
+                    AddOrderBy(ts => ts.StudentName);
                     break;
-                case ThesesSortingOptions.EnrollmentDateDESC:
-                    AddOrderByDescending(ts => ts.EnrollmentDate);
+
+                case ThesesSupervisingSortingOptions.StudentNameDESC:
+                    AddOrderByDescending(ts => ts.StudentName);
                     break;
-                case ThesesSortingOptions.RegisterationDateASC:
+
+                case ThesesSupervisingSortingOptions.RegistrationDateASC:
                     AddOrderBy(ts => ts.RegistrationDate!);
                     break;
-                case ThesesSortingOptions.RegisterationDateDESC:
+
+                case ThesesSupervisingSortingOptions.RegistrationDateDESC:
                     AddOrderByDescending(ts => ts.RegistrationDate!);
                     break;
+
+                case ThesesSupervisingSortingOptions.SupervisionFormationDateASC:
+                    AddOrderBy(ts => ts.SupervisionFormationDate!);
+                    break;
+
+                case ThesesSupervisingSortingOptions.SupervisionFormationDateDESC:
+                    AddOrderByDescending(ts => ts.SupervisionFormationDate!);
+                    break;
+
+                case ThesesSupervisingSortingOptions.DiscussionDateASC:
+                    AddOrderBy(ts => ts.DiscussionDate!);
+                    break;
+
+                case ThesesSupervisingSortingOptions.DiscussionDateDESC:
+                    AddOrderByDescending(ts => ts.DiscussionDate!);
+                    break;
+
+                case ThesesSupervisingSortingOptions.GrantingDateASC:
+                    AddOrderBy(ts => ts.GrantingDate!);
+                    break;
+
+                case ThesesSupervisingSortingOptions.GrantingDateDESC:
+                    AddOrderByDescending(ts => ts.GrantingDate!);
+                    break;
+
                 default:
                     break;
             }
 
 
 
-            AddIncludes(t => t.Researches!);
-            AddIncludes(t => t.Attachments!);
-            AddIncludes(t => t.Grade!);
-            AddIncludeWithChain(t => t
-                        .Include(t => t.ComitteeMembers!)
-                        .ThenInclude(t => t.JobLevel));
-
+            AddIncludes(ts => ts.Grade!);
+            AddIncludeWithChain(ts => 
+                        ts.Include(t => t.Thesis)
+                        .ThenInclude(t => t!.ComitteeMembers!
+                            .Where(cm => cm.MemberId == memberId)));
+            
             applyPagination(parameters.PageSize, parameters.PageIndex);
 
         }
 
         public RecommendedThesesSupervisionSpecifications(int id , Guid memberId)
             :base(rth => rth.Id == id && !rth.IsDeleted 
-                && rth.ComitteeMembers!.Any(cm => cm.MemberId == memberId && !cm.isConfirmed)) 
+                && rth.FacultyMemberId == memberId && !rth.isConfirmed) 
         {
-            AddIncludes(t => t.Researches!);
-            AddIncludes(t => t.Attachments!);
             AddIncludes(t => t.Grade!);
-            AddIncludeWithChain(t => t
-                        .Include(t => t.ComitteeMembers!)
-                        .ThenInclude(t => t.JobLevel));
+            AddIncludeWithChain(ts =>
+                        ts.Include(t => t.Thesis)
+                        .ThenInclude(t => t!.ComitteeMembers!
+                            .Where(cm => cm.MemberId == memberId)));
 
         }
 
-        private static Expression<Func<Thesis, bool>> BuildCriteria(
-        ThesesSpecificationParameters parameters,
-        Guid facultyMemberId)
+        private static Expression<Func<Supervising, bool>> BuildCriteria(
+             ThesesSupervisingSpecificationParameters parameters,
+             Guid facultyMemberId)
         {
             Domain.Enums.ThesisType? mappedType = null;
             if (parameters.Type.HasValue)
@@ -74,17 +102,28 @@ namespace Services.Specifications.ResearchesModule
                     ignoreCase: true);
             }
 
-            return rth =>
-                !rth.IsDeleted &&
-                rth.ComitteeMembers!.Any(cm => cm.MemberId == facultyMemberId && !cm.isConfirmed)
+            Domain.Enums.FacultyMemberRoleInSupervisingThesis? mappedRole = null;
+            if (parameters.Role.HasValue)
+            {
+                mappedRole = Enum.Parse<Domain.Enums.FacultyMemberRoleInSupervisingThesis>(
+                    parameters.Role.Value.ToString(),
+                    ignoreCase: true);
+            }
 
-                && (!mappedType.HasValue || rth.Type == mappedType.Value)
+            return ts =>
+                !ts.IsDeleted
+                && ts.FacultyMemberId == facultyMemberId && !ts.isConfirmed
+
+                && (!mappedType.HasValue || ts.Type == mappedType.Value)
+
+                && (!mappedRole.HasValue || ts.FacultyMemberRole == mappedRole.Value)
 
                 && (parameters.GradeIds == null || !parameters.GradeIds.Any()
-                    || parameters.GradeIds.Contains(rth.GradeId))
+                    || parameters.GradeIds.Contains(ts.GradeId))
 
                 && (string.IsNullOrEmpty(parameters.Search)
-                    || rth.Title.Contains(parameters.Search));
+                    || ts.Title.Contains(parameters.Search)
+                    || ts.StudentName.Contains(parameters.Search));
         }
 
     }

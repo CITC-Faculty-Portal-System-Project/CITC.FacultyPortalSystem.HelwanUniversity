@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Shared.Dtos.AttachmentsModule;
+using System.Linq;
 
 namespace Shared.Dtos.AcademicDataModule.ScientificProgressionModule
 {
@@ -12,7 +13,7 @@ namespace Shared.Dtos.AcademicDataModule.ScientificProgressionModule
         public string? UniversityOrFaculty { get; set; } = string.Empty;
         public string CountryOrCity { get; set; } = string.Empty;
         public DateOnly DateOfObtainingTheQualification { get; set; }
-        public Guid? AttachmentId { get; set; }
-        public string? AttachmentName { get; set; } = string.Empty;
+        public ICollection<AttachmentResponseDTO>? Attachments { get; set; }
+
     }
 }

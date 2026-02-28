@@ -34,6 +34,16 @@ namespace Presistence.Data.Configurations.PrizesModuleConfigurations
                 .HasForeignKey(par => par.FacultyMemberId)
                 .OnDelete(DeleteBehavior.Cascade);
             #endregion
+
+            #region Attachment RelationShip
+
+            builder.HasMany(p => p.Attachments)
+                .WithOne(a => a.PrizeAndAward)
+                .HasForeignKey(a => a.PrizeAndAwardId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            
+            #endregion
         }
     }
 }

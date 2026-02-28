@@ -4,17 +4,17 @@ using System.Linq.Expressions;
 
 namespace Services.Specifications.ResearchesModule
 {
-    internal class RecommendedThesesSupervisionCountSpecifications : BaseSpecifications<Thesis, int>
+    internal class RecommendedThesesSupervisionCountSpecifications : BaseSpecifications<Supervising, int>
     {
         public RecommendedThesesSupervisionCountSpecifications
-            (ThesesSpecificationParameters parameters , Guid memberId) 
+            (ThesesSupervisingSpecificationParameters parameters , Guid memberId) 
             :base(BuildCriteria(parameters , memberId))
         {
         }
 
-        private static Expression<Func<Thesis, bool>> BuildCriteria(
-         ThesesSpecificationParameters parameters,
-         Guid facultyMemberId)
+        private static Expression<Func<Supervising, bool>> BuildCriteria(
+             ThesesSupervisingSpecificationParameters parameters,
+             Guid facultyMemberId)
         {
             Domain.Enums.ThesisType? mappedType = null;
             if (parameters.Type.HasValue)
@@ -24,17 +24,28 @@ namespace Services.Specifications.ResearchesModule
                     ignoreCase: true);
             }
 
-            return rth =>
-                !rth.IsDeleted &&
-                rth.ComitteeMembers!.Any(cm => cm.MemberId == facultyMemberId && !cm.isConfirmed)
+            Domain.Enums.FacultyMemberRoleInSupervisingThesis? mappedRole = null;
+            if (parameters.Role.HasValue)
+            {
+                mappedRole = Enum.Parse<Domain.Enums.FacultyMemberRoleInSupervisingThesis>(
+                    parameters.Role.Value.ToString(),
+                    ignoreCase: true);
+            }
 
-                && (!mappedType.HasValue || rth.Type == mappedType.Value)
+            return ts =>
+                !ts.IsDeleted
+                && ts.FacultyMemberId == facultyMemberId && !ts.isConfirmed
+
+                && (!mappedType.HasValue || ts.Type == mappedType.Value)
+
+                && (!mappedRole.HasValue || ts.FacultyMemberRole == mappedRole.Value)
 
                 && (parameters.GradeIds == null || !parameters.GradeIds.Any()
-                    || parameters.GradeIds.Contains(rth.GradeId))
+                    || parameters.GradeIds.Contains(ts.GradeId))
 
                 && (string.IsNullOrEmpty(parameters.Search)
-                    || rth.Title.Contains(parameters.Search));
+                    || ts.Title.Contains(parameters.Search)
+                    || ts.StudentName.Contains(parameters.Search));
         }
     }
 }

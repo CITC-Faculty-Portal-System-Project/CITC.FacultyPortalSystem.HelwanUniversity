@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.EntitesAttachments;
 
 namespace Domain.Entities.AcademicDataModule.HigherStuidesModule
 {
@@ -13,11 +14,13 @@ namespace Domain.Entities.AcademicDataModule.HigherStuidesModule
         public DateOnly RegistrationDate { get; set; }
         public DateOnly? InternalGradeDate { get; set; }
         public DateOnly? SupervisionConfirmationDate { get; set; }
+        public DateOnly? DiscussionDate { get; set; }
+        public string? UniversityOrFaculty { get; set; }
         public Guid FacultyMemberId { get; set; }
         public FacultyMember? FacultyMember { get; set; }
         public ICollection<ThesisComittee>? ComitteeMembers = new List<ThesisComittee>();
         public ICollection<Research>? Researches { get; set; } = new List<Research>();
         public ICollection<ThesesAttachment>? Attachments { get; set; } = new List<ThesesAttachment>();
-
+        public ICollection<Supervising>? Supervisings { get; set; } = new List<Supervising>();
     }
 }

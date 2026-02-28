@@ -45,11 +45,23 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                  .HasForeignKey(a => a.ThesisId)
                  .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(th => th.Supervisings)
+                 .WithOne(s => s.Thesis)
+                 .HasForeignKey(s => s.ThesisId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+
             #endregion
 
             #region AddingIndcies
 
             builder.HasIndex(th => th.Title);
+            builder.HasIndex(th => th.EnrollmentDate);
+            builder.HasIndex(th => th.RegistrationDate);
+            builder.HasIndex(th => th.GradeId);
+            builder.HasIndex(th => th.Type);
+            builder.HasIndex(th => th.UniversityOrFaculty);
+            builder.HasIndex(th => th.DiscussionDate);
             
             #endregion
         

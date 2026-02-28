@@ -1,5 +1,7 @@
 ﻿using Domain.Entities.AcademicDataModule.WritingsAndPatents;
+using Domain.Entities.EntitesAttachments;
 using Shared.Dtos.AcademicDataModule.WritingsAndPatentsModule;
+using Shared.Dtos.AttachmentsModule;
 
 namespace Services.MappingProfiles.AcademicDataModule
 {
@@ -19,6 +21,8 @@ namespace Services.MappingProfiles.AcademicDataModule
                 .ForMember(dest => dest.LocalOrInternational, opt => opt.MapFrom(src => src.LocalOrInternational));
             CreateMap<PatentsCreateDTO, Patents>();
             CreateMap<PatentsUpdateDTO, Patents>();
+            CreateMap<AttachmentReferenceDTO, PatentsAttachment>();
+            CreateMap<PatentsAttachment, AttachmentResponseDTO>();
             #endregion
         }
     }
