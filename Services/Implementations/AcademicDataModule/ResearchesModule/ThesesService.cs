@@ -199,7 +199,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 mapUpdate: (dto, entity) =>
                 {
                     if (entity!.Theses!.Supervisings!
-                    .Any(tc => tc.FacultyMemberId == e.MemberId && tc.isConfirmed == true))
+                    .Any(tc => tc.FacultyMemberId == entity.MemberId && tc.isConfirmed == true))
                         throw new ForbiddenException("Confirmed comitee member supervising can't be updated");
 
                     Mapper.Map(dto, entity);
