@@ -80,7 +80,7 @@ namespace Services.Specifications.ResearchesModule
 
         public RecommendedThesesSupervisionSpecifications(int id , Guid memberId)
             :base(rth => rth.Id == id && !rth.IsDeleted 
-                && rth.FacultyMemberId == memberId && !rth.isConfirmed) 
+                && rth.FacultyMemberId == memberId && rth.isConfirmed == false) 
         {
             AddIncludes(t => t.Grade!);
             AddIncludeWithChain(ts =>
@@ -112,7 +112,7 @@ namespace Services.Specifications.ResearchesModule
 
             return ts =>
                 !ts.IsDeleted
-                && ts.FacultyMemberId == facultyMemberId && !ts.isConfirmed
+                && ts.FacultyMemberId == facultyMemberId && ts.isConfirmed == false
 
                 && (!mappedType.HasValue || ts.Type == mappedType.Value)
 
