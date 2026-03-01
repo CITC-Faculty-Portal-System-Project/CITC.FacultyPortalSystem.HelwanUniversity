@@ -199,8 +199,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 mapUpdate: (dto, entity) =>
                 {
                     if (entity!.Theses!.Supervisings!
-                    .SingleOrDefault(tc => tc.FacultyMemberId == entity.MemberId && entity.MemberId != null)
-                    !.isConfirmed == true)
+                    .Any(tc => tc.FacultyMemberId == e.MemberId && tc.isConfirmed == true))
                         throw new ForbiddenException("Confirmed comitee member supervising can't be updated");
 
                     Mapper.Map(dto, entity);
@@ -208,7 +207,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
                 onDelete: e =>
                 {
-                    if (e!.Theses!.Supervisings!.SingleOrDefault(tc => tc.FacultyMemberId == e.MemberId && e.MemberId != null)!.isConfirmed == true)
+                    if (e!.Theses!.Supervisings!.Any(tc => tc.FacultyMemberId == e.MemberId && tc.isConfirmed == true))
                         throw new ForbiddenException("Confirmed comitee member supervising can't be deleted");
 
                     e.IsDeleted = true;
