@@ -39,7 +39,7 @@ namespace Services.Specifications.ResearchesModule
 
             return ts =>
                 !ts.IsDeleted
-                && ts.FacultyMemberId == facultyMemberId
+                && ts.FacultyMemberId == facultyMemberId && ts.isConfirmed == true
 
                 && (!mappedType.HasValue || ts.Type == mappedType.Value)
 
