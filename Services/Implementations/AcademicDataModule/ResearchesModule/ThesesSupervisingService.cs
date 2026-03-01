@@ -43,6 +43,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             
             var thesesSupervisingEntity = Mapper.Map<Supervising>(thesesDTO);
 
+            thesesSupervisingEntity.isConfirmed = true;
+
             await Repo.AddAsync(thesesSupervisingEntity);
 
             await UnitOfWork.SaveChangesAsync();
