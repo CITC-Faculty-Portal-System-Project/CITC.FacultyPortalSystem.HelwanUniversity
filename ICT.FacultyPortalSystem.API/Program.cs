@@ -1,4 +1,8 @@
+using Domain.Entities.IdentityModule.Users;
 using ICIT.FacultyPortalSystem.API.Extensions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Presistence.Identity;
 
 namespace ICIT.FacultyPortalSystem.API
 {
@@ -25,6 +29,7 @@ namespace ICIT.FacultyPortalSystem.API
             #endregion
             
             var app = builder.Build();
+
 
             app.UseExceptionHandlingMiddlewares();
 

@@ -1,5 +1,5 @@
 ﻿using Domain.Contracts;
-using Domain.Entities.IdentityModule;
+using Domain.Entities.IdentityModule.Users;
 using FtpFileStorage.Factories;
 using FtpFileStorage.Implementation;
 using Integrations.HttpClientFactory;
@@ -22,7 +22,7 @@ using StackExchange.Redis;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using UserRole = Domain.Entities.IdentityModule.Role;
+using UserRole = Domain.Entities.IdentityModule.Users.Role;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -32,12 +32,18 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer
+                    (configuration.GetConnectionString("DefaultConnection") , 
+                        ac => ac.MigrationsAssembly(typeof(StoreDbContext).Assembly.FullName));
             });
+
             services.AddDbContext<IdentityStoreDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
+                options.UseSqlServer
+                    (configuration.GetConnectionString("IdentityConnection")
+                    , ic => ic.MigrationsAssembly(typeof(IdentityStoreDbContext).Assembly.FullName));
             });
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
            
 
@@ -126,6 +132,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                     }
                 };
             });
+            services.AddHostedService<IdentitySeedHostedService>();
             services.AddAuthorization();
             return services;
         }
