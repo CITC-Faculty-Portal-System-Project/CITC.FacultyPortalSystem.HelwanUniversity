@@ -60,11 +60,18 @@ namespace Services.Specifications.ResearchesModule
                     AddOrderByDescending(r => r.JournalOrConfernce);
                     break;
                 case ResearchesSortingOptions.PubYearASC:
-                    AddOrderBy(r => int.Parse(r.PubYear));
+                    AddOrderBy(r => r.PubYear!.All(char.IsDigit) ? int.Parse(r.PubYear!) : int.MaxValue);
                     break;
                 case ResearchesSortingOptions.PubYearDESC:
-                    AddOrderByDescending(r => int.Parse(r.PubYear));
+                    AddOrderByDescending(r => r.PubYear!.All(char.IsDigit) ? int.Parse(r.PubYear!) : int.MaxValue);
                     break;
+                case ResearchesSortingOptions.CitesASC:
+                    AddOrderBy(r => r.NoOfCititations!);
+                    break;
+                case ResearchesSortingOptions.CitesDESC:
+                    AddOrderByDescending(r => r.NoOfCititations!);
+                    break;
+
                 default:
                     break;
             }
