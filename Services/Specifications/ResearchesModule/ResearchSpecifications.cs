@@ -60,10 +60,10 @@ namespace Services.Specifications.ResearchesModule
                     AddOrderByDescending(r => r.JournalOrConfernce);
                     break;
                 case ResearchesSortingOptions.PubYearASC:
-                    AddOrderBy(r => Convert.ToInt32(r.PubYear));
+                    AddOrderBy(r => int.Parse(r.PubYear));
                     break;
                 case ResearchesSortingOptions.PubYearDESC:
-                    AddOrderByDescending(r => Convert.ToInt32(r.PubYear));
+                    AddOrderByDescending(r => int.Parse(r.PubYear));
                     break;
                 default:
                     break;
