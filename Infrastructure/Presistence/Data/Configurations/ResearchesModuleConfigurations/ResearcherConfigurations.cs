@@ -71,6 +71,12 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
                 .HasForeignKey(rc => rc.ResearcherId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+            builder.HasMany(r => r.CoAuthors)
+            .WithOne(rc => rc.Researcher)
+            .HasForeignKey(rc => rc.ResearcherId)
+            .OnDelete(DeleteBehavior.Cascade);
+
             #endregion
 
             #region AddingIndcies

@@ -2,15 +2,16 @@
 
 namespace Domain.Entities.AcademicDataModule.ResearchesModule
 {
-    public class ResearcherInterest : IAuditablFields
+    public class ResearcherCoAuthor : IAuditablFields
     {
         public int ResearcherId { get; set; }
         public ResearcherProfile? Researcher { get; set; }
 
-        public int InterestId { get; set; }
-        public ScientificInterest? Interest { get; set; }
+        public int CoAuthorId { get; set; }
+        public CoAuthor? CoAuthor { get; set; }
 
-        #region AduitFields
+
+        #region AuditFields
 
         public string CreatedBy { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
@@ -23,8 +24,6 @@ namespace Domain.Entities.AcademicDataModule.ResearchesModule
         public string? DeletionReason { get; set; }
         public int VersionNo { get; set; }
 
-
         #endregion
-
     }
 }

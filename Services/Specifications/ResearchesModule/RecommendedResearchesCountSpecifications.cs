@@ -67,8 +67,7 @@ namespace Services.Specifications.ResearchesModule
                 (
                     string.IsNullOrEmpty(parameters.Search)
                     || r.Title.Contains(parameters.Search)
-                    || r.JournalOrConfernce.Contains(parameters.Search)
-                    || (r.PubYear != null && r.PubYear.Contains(parameters.Search)));
+                    || r.JournalOrConfernce.Contains(parameters.Search));
         }
 
     }

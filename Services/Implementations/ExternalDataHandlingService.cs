@@ -2,18 +2,19 @@
 using Domain.Entities.AcademicDataModule.MissionsModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
-using Services.Specifications.HigherStudiesModule;
+using Services.Specifications.AcademicDataModule.HigherStudiesModule;
 using Services.Specifications.AcademicDataModule.MissionsModule;
-using Services.Specifications.ResearchesModule;
 using Services.Specifications.AcademicDataModule.ScientificProgressionModule;
-using Shared.Dtos.DataFetchingFromExternalService;
-using Shared.Dtos.FacultyMemberDataModule;
+using Services.Specifications.HigherStudiesModule;
+using Services.Specifications.ResearchesModule;
 using Shared.Dtos.AcademicDataModule.HigherStudiesModule;
 using Shared.Dtos.AcademicDataModule.MissionsModule;
 using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+using Shared.Dtos.DataFetchingFromExternalService;
+using Shared.Dtos.FacultyMemberDataModule;
 using System.Text.Json;
-using Services.Specifications.AcademicDataModule.HigherStudiesModule;
 
 namespace Services.Implementations
 {
@@ -321,6 +322,7 @@ namespace Services.Implementations
             var interestsRepo = _unitOfWork.GetRepository<ScientificInterest, int>();
             var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
             var researchRepo = _unitOfWork.GetRepository<Research, int>();
+            var coAuthorsRepo = _unitOfWork.GetRepository<CoAuthor, int>();
 
             var dto = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json!)
                       ?? throw new Exception("Invalid JSON");
@@ -351,6 +353,7 @@ namespace Services.Implementations
             }
 
             researcher!.ResearcherInterests = researcher.ResearcherInterests.EnsureList();
+            researcher!.CoAuthors = researcher.CoAuthors.EnsureList();
             researcher.ResearcherCites = researcher.ResearcherCites.EnsureList();
 
             var incomingInterestNames = (dto.Interests ?? new List<ExternalResearcherInterestsFetchingDTO>())
@@ -393,6 +396,42 @@ namespace Services.Implementations
                 }
             }
 
+
+            var incomingCoAuthorsProfiles = (dto.CoAuthors ?? new List<ResearcherCoAuthorFetchingDTO>());
+            var coAuthorsEntities = new List<CoAuthor>();
+
+            foreach (var profile in incomingCoAuthorsProfiles)
+            {
+                var coAuthor = await UpsertHelpers.GetOrCreateAsync(
+                    getter: async () => await coAuthorsRepo.GetAsync(new CoAuthorSpecification(profile.ScholarProfileLink)),
+                    factory: () =>
+                    {
+                        var created = _mapper.Map<CoAuthor>(profile);
+                        created.Researchers = created.Researchers.EnsureList();
+                        return created;
+                    });
+
+                coAuthor.Researchers = coAuthor.Researchers.EnsureList();
+                coAuthorsEntities.Add(coAuthor);
+            }
+
+            foreach (var coAuthor in coAuthorsEntities)
+            {
+                var alreadyLinked = researcher.CoAuthors.Any(ri =>
+                    ri.CoAuthor != null &&
+                    string.Equals(ri.CoAuthor.ScholarProfileLink, coAuthor.ScholarProfileLink)
+                );
+
+                if (!alreadyLinked)
+                {
+                    var link = new ResearcherCoAuthor { Researcher = researcher, CoAuthor = coAuthor };
+                    researcher.CoAuthors.Add(link);
+                    coAuthor.Researchers!.Add(link);
+                }
+            }
+
+
+
             var incomingResearcherCites = dto.ResearcherCites ?? new List<ExternalResearcherCitesFetchingDTO>();
 
             researcher.ResearcherCites.UpsertMany(
@@ -425,7 +464,7 @@ namespace Services.Implementations
                     researchEntity.Cites = researchEntity.Cites.EnsureList();
 
                     researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
-                    researchEntity.PublicationType = Domain.Enums.PublicationType.Unspecified;
+                    researchEntity.PublicationType = Domain.Enums.PublicationType.International;
                     researchEntity.Source = Domain.Enums.ResearchSource.External;
                     researchEntity.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
 
