@@ -89,7 +89,7 @@ namespace Services.Implementations
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName ?? ""),
-                new Claim(ClaimTypes.Email, user.Email ?? "")
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
             };
             var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
