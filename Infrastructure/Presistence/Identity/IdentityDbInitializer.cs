@@ -12,10 +12,10 @@ namespace Presistence.Identity
             Guid.Parse("10000000-0000-0000-0000-000000000002");
 
         private static readonly Guid SupportAdminUserId =
-            Guid.Parse("A9923638-8866-4A89-A9FE-9CF329CFC8F7");
+            Guid.Parse("C24E082C-244B-49D1-A2D9-39A994DC77E5");
 
         private static readonly Guid ManagementAdminUserId =
-            Guid.Parse("C24E082C-244B-49D1-A2D9-39A994DC77E5");
+            Guid.Parse("A9923638-8866-4A89-A9FE-9CF329CFC8F7");
 
         public static async Task SeedAsync(
             UserManager<User> userManager,
