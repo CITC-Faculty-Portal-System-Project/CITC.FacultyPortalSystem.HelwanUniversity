@@ -1,20 +1,50 @@
-﻿using System.Collections.Concurrent;
+﻿using Presistence.Identity;
 
 namespace Presistence.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public sealed class UnitOfWork(
+      StoreDbContext _storeDb,
+      IdentityStoreDbContext _identityDb) : IUnitOfWork
     {
-        private readonly StoreDbContext _dbContext;
-        private ConcurrentDictionary<string, object> _repositories;
-        public UnitOfWork(StoreDbContext dbContext)
+        private readonly Dictionary<(Type entity, Type key), object> _repos = new();
+        private readonly HashSet<DbContext> _touchedContexts = new();
+
+        public IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
+         where TEntity : class
+        where TKey : notnull
         {
-            _dbContext = dbContext;
-            _repositories = new();
+            var cacheKey = (typeof(TEntity), typeof(TKey));
+
+            if (_repos.TryGetValue(cacheKey, out var repo))
+                return (IGenericRepository<TEntity, TKey>)repo;
+
+            var ctx = ResolveContextFor<TEntity>();
+            _touchedContexts.Add(ctx);
+
+            var newRepo = new GenericRepository<TEntity, TKey>(ctx);
+            _repos[cacheKey] = newRepo;
+
+            return newRepo;
         }
-        public IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseEntity<TKey> where TKey : notnull
-            => (IGenericRepository<TEntity, TKey>)_repositories.GetOrAdd(typeof(TEntity).Name, (_) => new GenericRepository<TEntity, TKey>(_dbContext));
 
         public async Task<int> SaveChangesAsync()
-            => await _dbContext.SaveChangesAsync();
+        {
+            var total = 0;
+            foreach (var ctx in _touchedContexts)
+                total += await ctx.SaveChangesAsync();
+
+            return total;
+        }
+
+        private DbContext ResolveContextFor<TEntity>()
+        {
+            var ns = typeof(TEntity).Namespace ?? "";
+
+            if (ns.StartsWith("Domain.Entities.IdentityModule", StringComparison.Ordinal))
+                return _identityDb;
+
+            return _storeDb;
+        }
+
     }
 }

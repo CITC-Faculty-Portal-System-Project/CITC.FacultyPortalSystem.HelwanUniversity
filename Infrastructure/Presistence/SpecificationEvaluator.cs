@@ -3,7 +3,7 @@
     internal static class SpecificationEvaluator
     {
         public static IQueryable<TEntity> CreateQuery<TEntity, TKey>(IQueryable<TEntity> inputQuery,
-            ISpecifications<TEntity, TKey> specifications) where TEntity : BaseEntity<TKey> where TKey : notnull
+            ISpecifications<TEntity, TKey> specifications) where TEntity : class where TKey : notnull
         {
             var query = inputQuery;
             if (specifications.Criteria is not null) //where
@@ -17,8 +17,6 @@
 
             if (specifications.IncludeExpressions is not null && specifications.IncludeExpressions.Count > 0)
             {
-                //foreach (var expression in specifications.IncludeExpressions)
-                //    query = query.Include(expression);
                 query = specifications.IncludeExpressions.Aggregate(query, (currentQuery, expression) => currentQuery.Include(expression));
             }
 
@@ -35,7 +33,6 @@
 
             if (specifications.IsSplitQuery)
                 query = query.AsSplitQuery();
-
 
             return query;
         }

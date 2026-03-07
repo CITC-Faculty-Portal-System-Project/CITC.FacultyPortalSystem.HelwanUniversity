@@ -8,6 +8,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
+using Services.Abstraction.Contracts.AdminModule;
 
 
 namespace Services.Abstraction.Contracts
@@ -75,6 +76,16 @@ namespace Services.Abstraction.Contracts
 
 
         #endregion
+
+
+
+        #endregion
+
+        #region AdminModule
+
+        public IUserManagementService UserManagementService { get; }
+
+
         #endregion
     }
 }

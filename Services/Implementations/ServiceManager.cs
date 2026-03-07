@@ -6,6 +6,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesMod
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 
 namespace Services.Implementations
@@ -40,6 +41,7 @@ namespace Services.Implementations
         , Func<IContributionsToUniversityService> _contributionsToUniversityServiceFactory
         , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
         , Func<IProfileDashboardService> _profileDashboardServiceFactory
+        , Func<IUserManagementService> _userManagementService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -108,6 +110,12 @@ namespace Services.Implementations
         #endregion
 
 
+
+        #endregion
+
+        #region AdminModule
+
+        public IUserManagementService UserManagementService => _userManagementService.Invoke();
 
         #endregion
 

@@ -1,23 +1,29 @@
-﻿using System.Linq.Expressions;
+﻿using Domain.Contracts;
+using System.Linq.Expressions;
 
 namespace Services.Specifications
 {
     internal class BaseSpecifications<TEntity, TKey>
-        : ISpecifications<TEntity, TKey> where TEntity : BaseEntity<TKey> where TKey : notnull
+        : ISpecifications<TEntity, TKey>
+        where TEntity : class
+        where TKey : notnull
     {
         #region Criteria [Where]
+
         protected BaseSpecifications(Expression<Func<TEntity, bool>>? criteria)
         {
             Criteria = criteria;
         }
+
         public Expression<Func<TEntity, bool>>? Criteria { get; private set; }
+
         #endregion
 
+
         #region Include
+
         public List<Expression<Func<TEntity, object>>> IncludeExpressions { get; } = [];
         public List<Func<IQueryable<TEntity>, IQueryable<TEntity>>> IncludeChains { get; } = [];
-
-
 
         protected void AddIncludes(Expression<Func<TEntity, object>> includeExpression)
         {
@@ -31,9 +37,11 @@ namespace Services.Specifications
         }
 
         public bool IsSplitQuery { get; private set; }
+
         protected void EnableSplitQuery() => IsSplitQuery = true;
 
         #endregion
+
 
         #region Sorting [OrderBy - OrderByDescending]
 
@@ -41,16 +49,22 @@ namespace Services.Specifications
 
         public Expression<Func<TEntity, object>>? OrderByDescending { get; private set; }
 
-        protected void AddOrderBy(Expression<Func<TEntity, object>> orderByExpression) => OrderBy = orderByExpression;
-        protected void AddOrderByDescending(Expression<Func<TEntity, object>> orderByDescendingExpression) => OrderByDescending = orderByDescendingExpression;
+        protected void AddOrderBy(Expression<Func<TEntity, object>> orderByExpression)
+            => OrderBy = orderByExpression;
+
+        protected void AddOrderByDescending(Expression<Func<TEntity, object>> orderByDescendingExpression)
+            => OrderByDescending = orderByDescendingExpression;
+
         #endregion
 
+
         #region Pagination [Skip-Take]
+
         public int Skip { get; private set; }
 
         public int Take { get; private set; }
 
-        public bool isPaginated { get; private set; } //false by default
+        public bool isPaginated { get; private set; }
 
         protected void applyPagination(int pageSize, int pageIndex)
         {
@@ -58,6 +72,7 @@ namespace Services.Specifications
             Take = pageSize;
             Skip = (pageIndex - 1) * pageSize;
         }
+
         #endregion
     }
 }

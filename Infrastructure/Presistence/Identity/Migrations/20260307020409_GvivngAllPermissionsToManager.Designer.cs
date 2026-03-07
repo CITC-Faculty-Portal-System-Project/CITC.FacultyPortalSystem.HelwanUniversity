@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Presistence.Identity;
 
@@ -11,9 +12,11 @@ using Presistence.Identity;
 namespace Presistence.Identity.Migrations
 {
     [DbContext(typeof(IdentityStoreDbContext))]
-    partial class IdentityStoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260307020409_GvivngAllPermissionsToManager")]
+    partial class GvivngAllPermissionsToManager
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

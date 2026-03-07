@@ -7,7 +7,14 @@ using System.Reflection.Emit;
 
 namespace Presistence.Identity
 {
-    public class IdentityStoreDbContext(DbContextOptions<IdentityStoreDbContext> options) : IdentityDbContext<User, Role, Guid>(options)
+    public class IdentityStoreDbContext(DbContextOptions<IdentityStoreDbContext> options) : IdentityDbContext<User,
+                Role,
+                Guid,
+                IdentityUserClaim<Guid>,
+                UserRole,
+                IdentityUserLogin<Guid>,
+                IdentityRoleClaim<Guid>,
+                IdentityUserToken<Guid>>(options)
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {

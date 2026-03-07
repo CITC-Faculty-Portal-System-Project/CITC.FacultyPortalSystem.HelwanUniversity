@@ -11,6 +11,8 @@ namespace Domain.Entities.IdentityModule.Users
 
         #region NavigationsAndRelations
         public ICollection<UserPermission>? Permissions { get; set; } = new List<UserPermission>();
+        public ICollection<UserRole> Roles { get; set; } = new List<UserRole>();
+
 
         #endregion
     }

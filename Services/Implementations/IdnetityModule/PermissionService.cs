@@ -1,37 +1,59 @@
-﻿//using Domain.Entities.IdentityModule.Users;
-//using Microsoft.AspNetCore.Identity;
-//using Services.Abstraction.Contracts.IdentityModule;
+﻿using Domain.Entities.IdentityModule.Authorization;
+using Domain.Entities.IdentityModule.Users;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Services.Abstraction.Contracts.IdentityModule;
+using Services.Specifications.IdnetityModuleSpecifications;
 
-//namespace Services.Implementations.IdnetityModule
-//{
-//    public class PermissionService(UserManager<User> _userManager 
-//                                    , RoleManager<Role> _roleManager) : IPermissionService
-//    {
-//        public async Task<IReadOnlyList<string>> GetEffectivePermissionsAsync(Guid userId, CancellationToken ct = default)
-//        {
-//            var userOverride = await _userPermissionRead.GetOverrideAsync(userId, permissionCode, ct);
-//            if (userOverride is not null)
-//                return userOverride.IsGranted; // deny overrides allow
+namespace Services.Implementations.IdnetityModule
+{
+    public sealed class PermissionService(UserManager<User> _userManager 
+                    , IAuthenticationService _authenticationService
+                    , IUnitOfWork _unitOfWork
+                    , RoleManager<Role> _roleManager) : IPermissionService
+    {
+    
+        public async Task<IReadOnlyList<string>> GetEffectivePermissionsAsync()
+        {
+            
+            var user = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
-//            // 2) role-based permissions
-//            var roleIds = await GetUserRoleIdsAsync(userId, ct);
-//            if (roleIds.Count == 0) return false;
+            var permissionRepo = _unitOfWork.GetRepository<Permission, int>();
+            
+            var userPerms = await permissionRepo.GetAllAsync(new UserPermissionsSpecifications(user.UserId));
 
-//            return await _rolePermissionRead.AnyRoleHasPermissionAsync(roleIds, permissionCode, ct);
-//        }
 
-//        public async Task<bool> HasPermissionAsync
-//            (Guid userId, string permissionCode, CancellationToken ct = default)
-//        {
-//            var userOverride = await _userManager.FindByIdAsync(userId.ToString());.GetOverrideAsync(userId, permissionCode, ct);
-//            if (userOverride is not null)
-//                return userOverride.IsGranted; // deny overrides allow
+            var identityUser = await _userManager.FindByIdAsync(user.UserId.ToString());
+            if (identityUser is null) return [];
 
-//            // 2) role-based permissions
-//            var roleIds = await GetUserRoleIdsAsync(userId, ct);
-//            if (roleIds.Count == 0) return false;
+            var roleNames = await _userManager.GetRolesAsync(identityUser); 
+            if (roleNames.Count == 0)
+                return userPerms.Select(p => p.Code).Distinct().ToList();
 
-//            return await _rolePermissionRead.AnyRoleHasPermissionAsync(roleIds, permissionCode, ct);
-//        }
-//    }
-//}
+            var roleIds = await _roleManager.Roles
+                                .Where(r => roleNames.Contains(r.Name!))
+                                .Select(r => r.Id)
+                                .ToListAsync();
+
+
+            var rolePerms = roleIds.Count == 0
+                ? new List<Permission>()
+                : (await permissionRepo.GetAllAsync(new RolePermissionsSpecifications(roleIds)));
+
+            return userPerms
+                .Select(p => p.Code)
+                .Concat(rolePerms.Select(p => p.Code))
+                .Where(code => !string.IsNullOrWhiteSpace(code))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        public async Task<bool> HasPermissionAsync(string permissionCode)
+        {
+            if (string.IsNullOrWhiteSpace(permissionCode)) return false;
+
+            var permissions = await GetEffectivePermissionsAsync();
+            return permissions.Contains(permissionCode, StringComparer.OrdinalIgnoreCase);
+        }
+    }
+}

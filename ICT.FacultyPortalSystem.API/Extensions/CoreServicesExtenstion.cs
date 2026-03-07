@@ -9,6 +9,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesMod
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
@@ -20,6 +21,7 @@ using Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Implementations.AcademicDataModule.ResearchesModule;
 using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Implementations.AdminModule;
 using Services.Implementations.AttachmentsModule;
 using Services.Implementations.AttachmentsModule.Helpers;
 using Services.Implementations.AttachmentsModule.Helpers.Handlers;
@@ -178,6 +180,12 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IContributionsToUniversityService>()
             );
 
+            services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddScoped<Func<IUserManagementService>>(provider =>
+            () => provider.GetRequiredService<IUserManagementService>()
+            );
+
+
             services.AddScoped<IParticipationInQualityWorksService, ParticipationInQualityWorksService>();
             services.AddScoped<Func<IParticipationInQualityWorksService>>(provider =>
             () => provider.GetRequiredService<IParticipationInQualityWorksService>()
@@ -189,7 +197,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             );
 
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
-            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
             services.AddScoped<IExternalDataHandlingService, ExternalDataHandlingService>();
             services.AddScoped<IEncryptionService, EncryptionService>();

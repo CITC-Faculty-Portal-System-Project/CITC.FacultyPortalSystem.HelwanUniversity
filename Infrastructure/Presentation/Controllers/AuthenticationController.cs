@@ -75,6 +75,14 @@ namespace Presentation.Controllers
             return Ok(user);
         }
 
+        [ProducesResponseType(typeof(IEnumerable<PermissionResponseDTO>), StatusCodes.Status200OK)]
+        [Authorize]
+        [HttpGet("CurrentUserPermissions")]
+        public async Task<ActionResult<UserResultDto>> GetCurrentUserPermissionsAsync()
+            => Ok(await _serviceManager.UserManagementService.GetCurrentLoggedInUserPermissionsAsync());
+
+
+
         [HttpPost("Logout")]
         [Authorize]
         public IActionResult Logout()

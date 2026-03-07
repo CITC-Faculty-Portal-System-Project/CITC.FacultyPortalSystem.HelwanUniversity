@@ -9,14 +9,18 @@ using Messaging.AsyncMessaging.Consumer;
 using Messaging.AsyncMessaging.Publisher;
 using Messaging.AsyncMessaging.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Presentation.Authorization;
 using Presistence.Data;
 using Presistence.Identity;
 using Presistence.Repositories;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.IdentityModule;
+using Services.Implementations.IdnetityModule;
 using Shared.Common;
 using StackExchange.Redis;
 using System.Net.Http.Headers;
@@ -132,6 +136,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                     }
                 };
             });
+
+            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
             services.AddHostedService<IdentitySeedHostedService>();
             services.AddAuthorization();
             return services;

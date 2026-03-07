@@ -49,7 +49,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                academicRepo,
                 _unitOfWork
             );
         }
@@ -77,7 +76,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                contactRepo,
                 _unitOfWork
             );
         }
@@ -106,7 +104,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                jobRanksRepo,
                 _unitOfWork
             );
         }
@@ -138,7 +135,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                adminRepo,
                 _unitOfWork
             );
         }
@@ -174,7 +170,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                personalDataRepo,
                 _unitOfWork
             );
         }
@@ -202,7 +197,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                missionRepo,
                 _unitOfWork
             );
         }
@@ -251,7 +245,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                thesesRepo,
                 _unitOfWork
             );
         }
@@ -281,7 +274,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                supervisingRepo,
                 _unitOfWork
             );
         }
@@ -310,7 +302,6 @@ namespace Services.Implementations
                     return dto;
                 },
                 _mapper,
-                trainingRepo,
                 _unitOfWork
             );
         }
