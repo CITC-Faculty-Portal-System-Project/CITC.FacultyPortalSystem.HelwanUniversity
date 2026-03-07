@@ -5,55 +5,88 @@ namespace Presistence.Identity
 {
     public static class IdentityDbInitializer
     {
+        private static readonly Guid SupportAdminRoleId =
+            Guid.Parse("10000000-0000-0000-0000-000000000001");
+
+        private static readonly Guid ManagementAdminRoleId =
+            Guid.Parse("10000000-0000-0000-0000-000000000002");
+
+        private static readonly Guid SupportAdminUserId =
+            Guid.Parse("A9923638-8866-4A89-A9FE-9CF329CFC8F7");
+
+        private static readonly Guid ManagementAdminUserId =
+            Guid.Parse("C24E082C-244B-49D1-A2D9-39A994DC77E5");
+
         public static async Task SeedAsync(
             UserManager<User> userManager,
             RoleManager<Role> roleManager,
             CancellationToken ct = default)
         {
-            string[] roles = { "SupportAdmin", "ManagementAdmin" };
+            await EnsureRoleAsync(
+                roleManager,
+                SupportAdminRoleId,
+                "SupportAdmin",
+                ct);
 
-            foreach (var roleName in roles)
-            {
-                ct.ThrowIfCancellationRequested();
-
-                if (!await roleManager.RoleExistsAsync(roleName))
-                {
-                    var createRole = await roleManager.CreateAsync(new Role
-                    {
-                        Id = Guid.NewGuid(),
-                        Name = roleName,
-                        NormalizedName = roleName.ToUpperInvariant()
-                    });
-
-                    if (!createRole.Succeeded)
-                        throw new InvalidOperationException(
-                            $"Failed to create role '{roleName}': {FormatErrors(createRole)}");
-                }
-            }
+            await EnsureRoleAsync(
+                roleManager,
+                ManagementAdminRoleId,
+                "ManagementAdmin",
+                ct);
 
             await EnsureUserAsync(
                 userManager,
+                id: SupportAdminUserId,
                 email: "TestSupportAdmin@capu.edu.eg",
                 userName: "TestSupportAdmin2026",
                 name: "Support Admin",
                 nationalNumber: "11111111111111",
                 password: "Support@123",
                 role: "SupportAdmin",
-                ct);
+                ct: ct);
 
             await EnsureUserAsync(
                 userManager,
+                id: ManagementAdminUserId,
                 email: "TestManagementAdmin@capu.edu.eg",
                 userName: "TestManagementAdmin2026",
                 name: "Management Admin",
                 nationalNumber: "22222222222222",
                 password: "Management@123",
                 role: "ManagementAdmin",
-                ct);
+                ct: ct);
+        }
+
+        private static async Task EnsureRoleAsync(
+            RoleManager<Role> roleManager,
+            Guid id,
+            string roleName,
+            CancellationToken ct)
+        {
+            ct.ThrowIfCancellationRequested();
+
+            var existingRole = await roleManager.FindByNameAsync(roleName);
+
+            if (existingRole is not null)
+                return;
+
+            var createRole = await roleManager.CreateAsync(new Role
+            {
+                Id = id,
+                Name = roleName,
+                NormalizedName = roleName.ToUpperInvariant()
+            });
+
+            if (!createRole.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    $"Failed to create role '{roleName}': {FormatErrors(createRole)}");
+            }
         }
 
         private static async Task EnsureUserAsync(
             UserManager<User> userManager,
+            Guid id,
             string email,
             string userName,
             string name,
@@ -66,41 +99,85 @@ namespace Presistence.Identity
 
             var user = await userManager.FindByEmailAsync(email);
 
-            if (user is not null)
+            if (user is null)
             {
-                if (!await userManager.IsInRoleAsync(user, role))
+                user = new User
                 {
-                    var addToRole = await userManager.AddToRoleAsync(user, role);
-                    if (!addToRole.Succeeded)
-                        throw new InvalidOperationException(
-                            $"Failed to add existing user '{email}' to role '{role}': {FormatErrors(addToRole)}");
+                    Id = id,
+                    UserName = userName,
+                    Email = email,
+                    Name = name,
+                    NationalNumber = nationalNumber,
+                    EmailConfirmed = true
+                };
+
+                var createUser = await userManager.CreateAsync(user, password);
+
+                if (!createUser.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to create user '{email}': {FormatErrors(createUser)}");
                 }
-                return;
+            }
+            else
+            {
+                var shouldUpdate = false;
+
+                if (user.Id != id)
+                {
+                    throw new InvalidOperationException(
+                        $"User '{email}' already exists with different Id '{user.Id}'. Expected fixed Id '{id}'.");
+                }
+
+                if (user.UserName != userName)
+                {
+                    user.UserName = userName;
+                    shouldUpdate = true;
+                }
+
+                if (user.Name != name)
+                {
+                    user.Name = name;
+                    shouldUpdate = true;
+                }
+
+                if (user.NationalNumber != nationalNumber)
+                {
+                    user.NationalNumber = nationalNumber;
+                    shouldUpdate = true;
+                }
+
+                if (!user.EmailConfirmed)
+                {
+                    user.EmailConfirmed = true;
+                    shouldUpdate = true;
+                }
+
+                if (shouldUpdate)
+                {
+                    var updateUser = await userManager.UpdateAsync(user);
+
+                    if (!updateUser.Succeeded)
+                    {
+                        throw new InvalidOperationException(
+                            $"Failed to update existing user '{email}': {FormatErrors(updateUser)}");
+                    }
+                }
             }
 
-            user = new User
+            if (!await userManager.IsInRoleAsync(user, role))
             {
-                Id = Guid.NewGuid(),
-                UserName = userName,
-                Email = email,
-                Name = name,
-                NationalNumber = nationalNumber,
-                EmailConfirmed = true
-            };
+                var addToRole = await userManager.AddToRoleAsync(user, role);
 
-            var createUser = await userManager.CreateAsync(user, password);
-            if (!createUser.Succeeded)
-                throw new InvalidOperationException(
-                    $"Failed to create user '{email}': {FormatErrors(createUser)}");
-
-            var addRole = await userManager.AddToRoleAsync(user, role);
-            if (!addRole.Succeeded)
-                throw new InvalidOperationException(
-                    $"Failed to add user '{email}' to role '{role}': {FormatErrors(addRole)}");
+                if (!addToRole.Succeeded)
+                {
+                    throw new InvalidOperationException(
+                        $"Failed to add user '{email}' to role '{role}': {FormatErrors(addToRole)}");
+                }
+            }
         }
 
         private static string FormatErrors(IdentityResult result)
             => string.Join(" | ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
     }
 }
-
