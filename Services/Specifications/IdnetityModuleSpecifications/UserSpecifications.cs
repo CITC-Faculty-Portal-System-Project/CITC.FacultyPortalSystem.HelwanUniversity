@@ -24,7 +24,7 @@ namespace Services.Specifications.IdnetityModuleSpecifications
                     u.Roles.Any(ur =>
                         parameters.Role
                             .Select(x => x.ToString().ToUpper())
-                            .Contains(ur.Role.NormalizedName!))
+                            .Contains(ur.Role.NormalizedName!.ToUpper().Replace(" " , "")))
                 ))
         {
             AddIncludeWithChain(u =>
@@ -47,18 +47,15 @@ namespace Services.Specifications.IdnetityModuleSpecifications
                 case UsersSortingOptions.UsernameDESC:
                     AddOrderByDescending(u => u.UserName!);
                     break;
-                case UsersSortingOptions.NationalNumberASC:
-                    AddOrderBy(u => u.NationalNumber);
-                    break;
-                case UsersSortingOptions.NationalNumberDESC:
-                    AddOrderByDescending(u => u.NationalNumber);
-                    break;
                 case UsersSortingOptions.NumberOfAcessedPermissionsASC:
-                    AddOrderBy(u => u.Roles.Sum(ur => ur.Role.Permissions!.Count) + u.Permissions!.Count);
+                    AddOrderBy(u =>
+                        u.Roles.SelectMany(r => r.Role.Permissions!).Count()
+                        + u.Permissions!.Count()); 
                     break;
                 case UsersSortingOptions.NumberOfAcessedPermissionsDESC:
-                    AddOrderByDescending(u => u.Roles.Sum(ur => ur.Role.Permissions!.Count) + u.Permissions!.Count);
-                    break;
+                    AddOrderByDescending(u =>
+                        u.Roles.SelectMany(r => r.Role.Permissions!).Count()
+                        + u.Permissions!.Count()); break;
                 default:
                     break;
 
