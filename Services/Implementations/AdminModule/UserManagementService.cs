@@ -356,19 +356,16 @@ namespace Services.Implementations.AdminModule
             return permissions;
         }
 
-        public async Task<PaginatedResult<PermissionResponseDTO>> GetAllSystemPermissionsAsync(PermissionSpecificationParameters parameters)
+        public async Task<IEnumerable<PermissionResponseDTO>> GetAllSystemPermissionsAsync(PermissionSpecificationParameters parameters)
         {
             var permissionRepo = UnitOfWork.GetRepository<Permission, int>();
             
             var permissions = await permissionRepo.GetAllAsync(new PermissionsSpecifications(parameters));
 
-            var totalPagesCount = await permissionRepo.CountAsync(new PermissionsCountSpecification(parameters));
-
             var currentPage = permissions.Count();
 
-            var permissionsResponse = Mapper.Map<IEnumerable<PermissionResponseDTO>>(permissions);
+            return Mapper.Map<IEnumerable<PermissionResponseDTO>>(permissions);
 
-            return new PaginatedResult<PermissionResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, permissionsResponse);
         }
     }
 }

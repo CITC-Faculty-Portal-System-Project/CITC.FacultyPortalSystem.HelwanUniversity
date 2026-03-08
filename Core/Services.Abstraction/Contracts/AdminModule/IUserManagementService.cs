@@ -5,7 +5,7 @@ namespace Services.Abstraction.Contracts.AdminModule
 {
     public interface IUserManagementService
     {
-        public Task<PaginatedResult<PermissionResponseDTO>> GetAllSystemPermissionsAsync(PermissionSpecificationParameters parameters);
+        public Task<IEnumerable<PermissionResponseDTO>> GetAllSystemPermissionsAsync(PermissionSpecificationParameters parameters);
         public Task<PaginatedResult<UserShowForAdminResponseDTO>> GetAllUsersAsync(UserSpecificationParameters parameters);
         public Task<UserShowForAdminResponseDTO> GetUserByIdAsync(Guid userId);
         public Task<UserShowForAdminResponseDTO> AddUserAsync(UserAddDTO user);

@@ -40,7 +40,6 @@ namespace Services.Specifications.IdnetityModuleSpecifications
                     break;
             }
 
-            applyPagination(parameters.PageSize , parameters.PageIndex);
         }
     }
 }
