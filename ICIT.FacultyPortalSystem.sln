@@ -21,9 +21,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Presistence", "Infrastructu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{E542E71F-0B9B-4B51-ACE5-338AF594D31A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messaging", "Infrastructure\Messaging\Messaging.csproj", "{425B2FDE-ABF5-473F-8667-B1CA35DB94FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messaging", "Infrastructure\Messaging\Messaging.csproj", "{425B2FDE-ABF5-473F-8667-B1CA35DB94FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FtpFileStorage", "FtpFileStorage\FtpFileStorage.csproj", "{3CFA34F6-27DA-4D57-970E-8364AF70C8D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FtpFileStorage", "FtpFileStorage\FtpFileStorage.csproj", "{3CFA34F6-27DA-4D57-970E-8364AF70C8D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

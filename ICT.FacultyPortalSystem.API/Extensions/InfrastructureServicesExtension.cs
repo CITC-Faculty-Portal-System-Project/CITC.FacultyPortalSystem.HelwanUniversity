@@ -18,7 +18,9 @@ using Shared.Common;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
+using Serilog;
 using UserRole = Domain.Entities.IdentityModule.Role;
+using ICIT.FacultyPortalSystem.API.Logger;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -41,7 +43,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 return ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection")!);
             });
 
-            services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
+			services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
 			services.Configure<RabbitMQSettings>(
                 configuration.GetSection("RabbitMQSettings"));
@@ -58,6 +60,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
             services.AddHostedService<ResearchDataConsumerClient>();
 
+			services.AddHttpContextAccessor(); //To get HttpContext in Serilog Custom Log Formatter
 
 			services.AddSingleton(new JsonSerializerOptions
             {
