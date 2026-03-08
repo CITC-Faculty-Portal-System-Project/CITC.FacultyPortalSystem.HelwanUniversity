@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.PrizesModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.PrizesModule;
 using Shared.Dtos.AcademicDataModule.PrizesModule;
@@ -8,83 +9,76 @@ using Shared.SpecificationParameters.AcademicDataModule.PrizesModule;
 namespace Services.Implementations.AcademicDataModule.PrizesModule
 {
     public class ManifestationsOfScientificAppreciationService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ManifestationsOfScientificAppreciation, int>(unitOfWork, authenticationService, mapper), IManifestationsOfScientificAppreciationService
+      IUnitOfWork unitOfWork,
+      IMapper mapper,
+      IAuthenticationService authenticationService,
+      IManifestationsOfScientificAppreciationHelper manifestationsOfScientificAppreciationHelper)
+      : BaseService<ManifestationsOfScientificAppreciation, int>(unitOfWork, authenticationService, mapper),
+        IManifestationsOfScientificAppreciationService
     {
+        private readonly IManifestationsOfScientificAppreciationHelper _helper =
+            manifestationsOfScientificAppreciationHelper;
+
         protected override string EntityName => "Manifestations of Scientific Appreciation";
-        public async Task<PaginatedResult<ManifestationsOfScientificAppreciationResponseDTO>> GetAllManifestationsOfScientificAppreciationAsync(ManifestationsOfScientificAppreciationSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<ManifestationsOfScientificAppreciationResponseDTO>> GetAllManifestationsOfScientificAppreciationAsync(
+            ManifestationsOfScientificAppreciationSpecificationParameters parameters)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var manifestationsOfScientificAppreciation = await Repo.GetAllAsync(new ManifestationsOfScientificAppreciationSpecifications(parameters, currentUser.Email))
-                ?? throw NotFound();
-
-            var manifestationsOfScientificAppreciationResult = Mapper.Map<IEnumerable<ManifestationsOfScientificAppreciationResponseDTO>>(manifestationsOfScientificAppreciation);
-
-            var currentPageCount = manifestationsOfScientificAppreciationResult.Count();
-
-            var totalCount = await Repo.CountAsync(new ManifestationsOfScientificAppreciationCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<ManifestationsOfScientificAppreciationResponseDTO>(parameters.PageIndex, currentPageCount, totalCount, manifestationsOfScientificAppreciationResult);
+            return await _helper.GetAllManifestationsOfScientificAppreciationAsync(parameters, currentUser.Email);
         }
 
         public async Task<ManifestationsOfScientificAppreciationResponseDTO> GetManifestationOfScientificAppreciationByIdAsync(int id)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var manifestationOfScientificAppreciation = await Repo.GetAsync(new ManifestationsOfScientificAppreciationSpecifications(id))
+            var manifestation = await Repo.GetAsync(new ManifestationsOfScientificAppreciationSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(manifestationOfScientificAppreciation.FacultyMemberId, currentUser.UserId, EntityName);
+            EnsureOwnership(manifestation.FacultyMemberId, currentUser.UserId, EntityName);
 
-            return Mapper.Map<ManifestationsOfScientificAppreciationResponseDTO>(manifestationOfScientificAppreciation);
+            return await _helper.GetManifestationOfScientificAppreciationByIdAsync(id);
         }
 
-        public async Task<ManifestationsOfScientificAppreciationResponseDTO> CreateManifestationOfScientificAppreciationAsync(ManifestationsOfScientificAppreciationCreateDTO ManifestationsOfScientificAppreciationCreateDto)
+        public async Task<ManifestationsOfScientificAppreciationResponseDTO> CreateManifestationOfScientificAppreciationAsync(
+            ManifestationsOfScientificAppreciationCreateDTO manifestationsOfScientificAppreciationCreateDto)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var manifestationOfScientificAppreciation = Mapper.Map<ManifestationsOfScientificAppreciation>(ManifestationsOfScientificAppreciationCreateDto);
-            manifestationOfScientificAppreciation.FacultyMemberId = currentUser.UserId;
-
-            await Repo.AddAsync(manifestationOfScientificAppreciation);
-            await SaveChangesAsync();
-
-            return Mapper.Map<ManifestationsOfScientificAppreciationResponseDTO>(manifestationOfScientificAppreciation);
+            return await _helper.CreateManifestationOfScientificAppreciationAsync(
+                manifestationsOfScientificAppreciationCreateDto,
+                currentUser.Email);
         }
 
-        public async Task<ManifestationsOfScientificAppreciationResponseDTO> UpdateManifestationOfScientificAppreciationAsync(int manifestationsOfScientificAppreciationId, ManifestationsOfScientificAppreciationUpdateDTO manifestationsOfScientificAppreciationUpdateDto)
+        public async Task<ManifestationsOfScientificAppreciationResponseDTO> UpdateManifestationOfScientificAppreciationAsync(
+            int manifestationsOfScientificAppreciationId,
+            ManifestationsOfScientificAppreciationUpdateDTO manifestationsOfScientificAppreciationUpdateDto)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var manifestationOfScientificAppreciation = await Repo.GetAsync(new ManifestationsOfScientificAppreciationSpecifications(manifestationsOfScientificAppreciationId))
+            var manifestation = await Repo.GetAsync(
+                new ManifestationsOfScientificAppreciationSpecifications(manifestationsOfScientificAppreciationId))
                 ?? throw NotFound();
 
-            EnsureOwnership(manifestationOfScientificAppreciation.FacultyMemberId, currentUser.UserId, EntityName);
+            EnsureOwnership(manifestation.FacultyMemberId, currentUser.UserId, EntityName);
 
-            Mapper.Map(manifestationsOfScientificAppreciationUpdateDto, manifestationOfScientificAppreciation);
-
-            Repo.Update(manifestationOfScientificAppreciation);
-            await SaveChangesAsync();
-
-            return Mapper.Map<ManifestationsOfScientificAppreciationResponseDTO>(manifestationOfScientificAppreciation);
+            return await _helper.UpdateManifestationOfScientificAppreciationAsync(
+                manifestationsOfScientificAppreciationId,
+                manifestationsOfScientificAppreciationUpdateDto);
         }
 
         public async Task DeleteManifestationOfScientificAppreciationAsync(int manifestationsOfScientificAppreciationId)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var manifestationOfScientificAppreciation = await Repo.GetAsync(new ManifestationsOfScientificAppreciationSpecifications(manifestationsOfScientificAppreciationId))
+            var manifestation = await Repo.GetAsync(
+                new ManifestationsOfScientificAppreciationSpecifications(manifestationsOfScientificAppreciationId))
                 ?? throw NotFound();
 
-            EnsureOwnership(manifestationOfScientificAppreciation.FacultyMemberId, currentUser.UserId, EntityName);
+            EnsureOwnership(manifestation.FacultyMemberId, currentUser.UserId, EntityName);
 
-            manifestationOfScientificAppreciation.IsDeleted = true;
-
-            Repo.Update(manifestationOfScientificAppreciation);
-            await SaveChangesAsync();
+            await _helper.DeleteManifestationOfScientificAppreciationAsync(manifestationsOfScientificAppreciationId);
         }
     }
 }

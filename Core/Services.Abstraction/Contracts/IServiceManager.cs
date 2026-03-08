@@ -84,6 +84,25 @@ namespace Services.Abstraction.Contracts
         #region AdminModule
 
         public IUserManagementService UserManagementService { get; }
+        public IFacultyMemberMainDataManagementService FacultyMemberMainDataManagementService { get; }
+        public IContributionsToCommunityServiceManagementService CommunityServiceManagementService { get; }
+        public IFacultyMemberContributionsToUniversityManagementService ContributionsToUniversityManagementService { get; }
+        public IFacultyMemberParticipationInQualityWorksManagementService ParticipationInQualityWorksManagementService { get; }
+        public IFacultyMemberGeneralExperiencesManagementService GeneralExperiencesManagementService { get; }
+        public IFacultyMemberTeachingExperiencesManagementService TeachingExperiencesManagementService { get; }
+        public IFacultyMemberScientificMissionsManagementService ScientificMissionsManagementService { get; }
+        public IFacultyMemberSeminarsAndConferencesManagementService SeminarsAndConferencesManagementService { get; }
+        public IFacultyMemberTrainingProgramsManagementService TrainingProgramsManagementService { get; }
+        public IFacultyMemberManifestationsOfScientificAppreciationManagementService ManifestationsOfScientificAppreciationManagementService { get; }
+        public IFacultyMemberPrizesAndRewardsManagementService PrizesAndRewardsManagementService { get; }
+        public IFacultyMemberCommitteesAndAssociationsManagementService CommitteesAndAssociationsManagementService { get; }
+        public IFacultyMemberParticipationInMagazinesManagementService ParticipationInMagazinesManagementService { get; }
+        public IFacultyMemberProjectsManagementService ProjectsManagementService { get; }
+        public IFacultyMemberReviewingArticlesManagementService ReviewingArticlesManagementService { get; }
+        public IFacultyMemberAcademicQualificationsManagementService AcademicQualificationsManagementService { get; }
+        public IFacutlyMemberAdministrativePositionsManagementService AdministrativePositionsManagementService {  get; }
+        public IFacultyMemberJobRanksManagementService JobRanksManagementService {  get; }
+        public IFacultyMemberPatentsManagementService PatentsManagementService {  get; }
 
 
         #endregion

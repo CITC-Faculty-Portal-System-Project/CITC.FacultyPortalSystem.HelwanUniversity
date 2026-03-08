@@ -42,6 +42,25 @@ namespace Services.Implementations
         , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
         , Func<IProfileDashboardService> _profileDashboardServiceFactory
         , Func<IUserManagementService> _userManagementService
+        , Func<IFacultyMemberMainDataManagementService> _facultyMemberDataManagementService
+        , Func<IContributionsToCommunityServiceManagementService> _contributionsToCommunityServiceManagementService
+        , Func<IFacultyMemberContributionsToUniversityManagementService> _contributionsToUniversityManagementService
+        , Func<IFacultyMemberParticipationInQualityWorksManagementService> _participationInQualityWorksManagementService
+        , Func<IFacultyMemberGeneralExperiencesManagementService> _facultyMemberGeneralExperiencesManagementService
+        , Func<IFacultyMemberTeachingExperiencesManagementService> _facultyMemberTeachingExperiencesManagementService
+        , Func<IFacultyMemberScientificMissionsManagementService> _facultyMemberScientificMissionsManagementService
+        , Func<IFacultyMemberSeminarsAndConferencesManagementService> _facultyMemberSeminarsAndConferencesManagementService
+        , Func<IFacultyMemberTrainingProgramsManagementService> _facultyMemberTrainingProgramsManagementService
+        , Func<IFacultyMemberManifestationsOfScientificAppreciationManagementService> _facultyMemberManifestationsOfScientificAppreciationManagementService
+        , Func<IFacultyMemberPrizesAndRewardsManagementService> _facultyMemberPrizesAndRewardsManagementService
+        , Func<IFacultyMemberCommitteesAndAssociationsManagementService> _facultyMemberCommitteesAndAssociationsManagementService
+        , Func<IFacultyMemberParticipationInMagazinesManagementService> _facultyMemberParticipationInMagazinesManagementService
+        , Func<IFacultyMemberProjectsManagementService> _facultyMemberProjectsManagementService
+        , Func<IFacultyMemberReviewingArticlesManagementService> _facultyMemberReviewingArticlesManagementService
+        , Func<IFacultyMemberAcademicQualificationsManagementService> _facultyMemberAcademicQualificationsManagementService
+        , Func<IFacutlyMemberAdministrativePositionsManagementService> _facutlyMemberAdministrativePositionsManagementService
+        , Func<IFacultyMemberJobRanksManagementService> _facultyMemberJobRanksManagementService
+        , Func<IFacultyMemberPatentsManagementService> _facultyMemberPatentsManagementService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -116,6 +135,25 @@ namespace Services.Implementations
         #region AdminModule
 
         public IUserManagementService UserManagementService => _userManagementService.Invoke();
+        public IFacultyMemberMainDataManagementService FacultyMemberMainDataManagementService => _facultyMemberDataManagementService.Invoke();
+        public IContributionsToCommunityServiceManagementService CommunityServiceManagementService => _contributionsToCommunityServiceManagementService.Invoke();
+        public IFacultyMemberContributionsToUniversityManagementService ContributionsToUniversityManagementService => _contributionsToUniversityManagementService.Invoke();
+        public IFacultyMemberParticipationInQualityWorksManagementService ParticipationInQualityWorksManagementService => _participationInQualityWorksManagementService.Invoke();
+        public IFacultyMemberGeneralExperiencesManagementService GeneralExperiencesManagementService => _facultyMemberGeneralExperiencesManagementService.Invoke();
+        public IFacultyMemberTeachingExperiencesManagementService TeachingExperiencesManagementService => _facultyMemberTeachingExperiencesManagementService.Invoke();
+        public IFacultyMemberScientificMissionsManagementService ScientificMissionsManagementService => _facultyMemberScientificMissionsManagementService.Invoke();
+        public IFacultyMemberSeminarsAndConferencesManagementService SeminarsAndConferencesManagementService => _facultyMemberSeminarsAndConferencesManagementService.Invoke();
+        public IFacultyMemberTrainingProgramsManagementService TrainingProgramsManagementService => _facultyMemberTrainingProgramsManagementService.Invoke();
+        public IFacultyMemberManifestationsOfScientificAppreciationManagementService ManifestationsOfScientificAppreciationManagementService => _facultyMemberManifestationsOfScientificAppreciationManagementService.Invoke();
+        public IFacultyMemberPrizesAndRewardsManagementService PrizesAndRewardsManagementService => _facultyMemberPrizesAndRewardsManagementService.Invoke();
+        public IFacultyMemberCommitteesAndAssociationsManagementService CommitteesAndAssociationsManagementService => _facultyMemberCommitteesAndAssociationsManagementService.Invoke();
+        public IFacultyMemberParticipationInMagazinesManagementService ParticipationInMagazinesManagementService => _facultyMemberParticipationInMagazinesManagementService.Invoke();
+        public IFacultyMemberProjectsManagementService ProjectsManagementService => _facultyMemberProjectsManagementService.Invoke();
+        public IFacultyMemberReviewingArticlesManagementService ReviewingArticlesManagementService => _facultyMemberReviewingArticlesManagementService.Invoke();
+        public IFacultyMemberAcademicQualificationsManagementService AcademicQualificationsManagementService => _facultyMemberAcademicQualificationsManagementService.Invoke();
+        public IFacutlyMemberAdministrativePositionsManagementService AdministrativePositionsManagementService => _facutlyMemberAdministrativePositionsManagementService.Invoke();
+        public IFacultyMemberJobRanksManagementService JobRanksManagementService => _facultyMemberJobRanksManagementService.Invoke();
+        public IFacultyMemberPatentsManagementService PatentsManagementService => _facultyMemberPatentsManagementService.Invoke();
 
         #endregion
 

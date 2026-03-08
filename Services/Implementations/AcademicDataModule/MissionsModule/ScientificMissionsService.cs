@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.MissionsModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.MissionsModule;
 using Shared.Dtos.AcademicDataModule.MissionsModule;
@@ -8,27 +9,23 @@ using Shared.SpecificationParameters.AcademicDataModule.MissionsModule;
 namespace Services.Implementations.AcademicDataModule.MissionsModule
 {
     public class ScientificMissionsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ScientificMissions, int>(unitOfWork, authenticationService, mapper), IScientificMissionsService
+       IUnitOfWork unitOfWork,
+       IMapper mapper,
+       IAuthenticationService authenticationService,
+       IScientificMissionsHelper scientificMissionsHelper)
+       : BaseService<ScientificMissions, int>(unitOfWork, authenticationService, mapper),
+         IScientificMissionsService
     {
+        private readonly IScientificMissionsHelper _helper = scientificMissionsHelper;
+
         protected override string EntityName => "Scientific Missions";
-        public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(ScientificMissionSpecificationParamaters parameters)
+
+        public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(
+            ScientificMissionSpecificationParamaters parameters)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var scientificMissions = await Repo.GetAllAsync(new ScientificMissionsSpecifications(parameters, currentUser.Email))
-                ?? throw NotFound();
-
-            var scientificMissionsResult = Mapper.Map<IEnumerable<ScientificMissionResponseDto>>(scientificMissions);
-
-            var currentPageCount = scientificMissions.Count();
-
-            var totalCount = await Repo.CountAsync(new ScientificMissionsCountSpecification(parameters, currentUser.Email));
-
-            return new PaginatedResult<ScientificMissionResponseDto?>(parameters.PageIndex, currentPageCount, totalCount, scientificMissionsResult);
-
+            return await _helper.GetAllScientificMissionsAsync(parameters, currentUser.Email);
         }
 
         public async Task<ScientificMissionResponseDto?> GetScientificMissionByIdAsync(int id)
@@ -40,24 +37,20 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 
             EnsureOwnership(scientificMission.FacultyMemberId, currentUser.UserId, EntityName);
 
-            return Mapper.Map<ScientificMissionResponseDto>(scientificMission);
+            return await _helper.GetScientificMissionByIdAsync(id);
         }
 
-        public async Task<ScientificMissionResponseDto> CreateScientificMissionAsync(ScientificMissionCreateDto scientificMissionCreateDto)
+        public async Task<ScientificMissionResponseDto> CreateScientificMissionAsync(
+            ScientificMissionCreateDto scientificMissionCreateDto)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var scientificMission = Mapper.Map<ScientificMissions>(scientificMissionCreateDto);
-            scientificMission.FacultyMemberId = currentUser.UserId;
-
-            await Repo.AddAsync(scientificMission);
-            await SaveChangesAsync();
-
-            return Mapper.Map<ScientificMissionResponseDto>(scientificMission);
-
+            return await _helper.CreateScientificMissionAsync(scientificMissionCreateDto, currentUser.Email);
         }
 
-        public async Task<ScientificMissionResponseDto> UpdateScientificMissionAsync(int id, ScientificMissionUpdateDto scientificMissionUpdateDto)
+        public async Task<ScientificMissionResponseDto> UpdateScientificMissionAsync(
+            int id,
+            ScientificMissionUpdateDto scientificMissionUpdateDto)
         {
             var currentUser = await GetCurrentUserAsync();
 
@@ -66,12 +59,7 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 
             EnsureOwnership(scientificMission.FacultyMemberId, currentUser.UserId, EntityName);
 
-            scientificMission = Mapper.Map(scientificMissionUpdateDto, scientificMission);
-
-            Repo.Update(scientificMission);
-            await SaveChangesAsync();
-
-            return Mapper.Map<ScientificMissionResponseDto>(scientificMission);
+            return await _helper.UpdateScientificMissionAsync(id, scientificMissionUpdateDto);
         }
 
         public async Task DeleteScientificMissionAsync(int id)
@@ -83,10 +71,7 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 
             EnsureOwnership(scientificMission.FacultyMemberId, currentUser.UserId, EntityName);
 
-            scientificMission.IsDeleted = true;
-
-            Repo.Update(scientificMission);
-            await SaveChangesAsync();
+            await _helper.DeleteScientificMissionAsync(id);
         }
     }
 }

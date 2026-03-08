@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ProjectsAndComiteesModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ProjectsAndCommitteesModule;
 using Shared.Dtos.AcademicDataModule.ProjectsAndCommitteesModule;
@@ -8,26 +9,23 @@ using Shared.SpecificationParameters.AcademicDataModule.ProjectsAndCommitteesMod
 namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule
 {
     public class ParticipationInMagazinesService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ParticipationInMagazines, int>(unitOfWork, authenticationService, mapper), IParticipationInMagazinesService
+          IUnitOfWork unitOfWork,
+          IMapper mapper,
+          IAuthenticationService authenticationService,
+          IParticipationInMagazinesHelper participationInMagazinesHelper)
+          : BaseService<ParticipationInMagazines, int>(unitOfWork, authenticationService, mapper),
+            IParticipationInMagazinesService
     {
+        private readonly IParticipationInMagazinesHelper _helper = participationInMagazinesHelper;
+
         protected override string EntityName => "Participation In Magazines";
-        public async Task<PaginatedResult<ParticipationInMagazinesResponseDto>> GetAllParticipationInMagazinesAsync(ParticipationInMagazinesSpecificationsParameters parameters)
+
+        public async Task<PaginatedResult<ParticipationInMagazinesResponseDto>> GetAllParticipationInMagazinesAsync(
+            ParticipationInMagazinesSpecificationsParameters parameters)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var participationInMagazines = await Repo.GetAllAsync(new ParticipationInMagazinesSpecifications(parameters, currentUser.Email))
-                ?? throw NotFound();
-
-            var participationIndMagazinesResult = Mapper.Map<IEnumerable<ParticipationInMagazinesResponseDto>>(participationInMagazines);
-
-            var currentPageSize = participationInMagazines.Count();
-
-            var totalCount = await Repo.CountAsync(new ParticipationInMagazinesCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<ParticipationInMagazinesResponseDto>(parameters.PageIndex, currentPageSize, totalCount, participationIndMagazinesResult);
+            return await _helper.GetAllParticipationInMagazinesAsync(parameters, currentUser.Email);
         }
 
         public async Task<ParticipationInMagazinesResponseDto> GetParticipationInMagazineByIdAsync(int id)
@@ -39,52 +37,47 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 
             EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, EntityName);
 
-            return Mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
+            return await _helper.GetParticipationInMagazineByIdAsync(id);
         }
 
-        public async Task<ParticipationInMagazinesResponseDto> CreateParticipationInMagazineAsync(ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
+        public async Task<ParticipationInMagazinesResponseDto> CreateParticipationInMagazineAsync(
+            ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var participationInMagazine = Mapper.Map<ParticipationInMagazines>(participationInMagazinesCreateDto);
-            participationInMagazine.FacultyMemberId = currentUser.UserId;
-
-            await Repo.AddAsync(participationInMagazine);
-            await SaveChangesAsync();
-
-            return Mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
+            return await _helper.CreateParticipationInMagazineAsync(
+                participationInMagazinesCreateDto,
+                currentUser.Email);
         }
 
-        public async Task<ParticipationInMagazinesResponseDto> UpdateParticipationInMagazineAsync(int participationInMagazineId, ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
+        public async Task<ParticipationInMagazinesResponseDto> UpdateParticipationInMagazineAsync(
+            int participationInMagazineId,
+            ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var participationInMagazine = await Repo.GetAsync(new ParticipationInMagazinesSpecifications(participationInMagazineId))
+            var participationInMagazine = await Repo.GetAsync(
+                new ParticipationInMagazinesSpecifications(participationInMagazineId))
                 ?? throw NotFound();
 
             EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, EntityName);
 
-            Mapper.Map(participationInMagazinesUpdateDto, participationInMagazine);
-
-            Repo.Update(participationInMagazine);
-            await SaveChangesAsync();
-
-            return Mapper.Map<ParticipationInMagazinesResponseDto>(participationInMagazine);
+            return await _helper.UpdateParticipationInMagazineAsync(
+                participationInMagazineId,
+                participationInMagazinesUpdateDto);
         }
 
         public async Task DeleteParticipationInMagazineAsync(int participationInMagazineId)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var participationInMagazine = await Repo.GetAsync(new ParticipationInMagazinesSpecifications(participationInMagazineId))
+            var participationInMagazine = await Repo.GetAsync(
+                new ParticipationInMagazinesSpecifications(participationInMagazineId))
                 ?? throw NotFound();
 
             EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, EntityName);
 
-            participationInMagazine.IsDeleted = true;
-
-            Repo.Update(participationInMagazine);
-            await SaveChangesAsync();
+            await _helper.DeleteParticipationInMagazineAsync(participationInMagazineId);
         }
     }
 }

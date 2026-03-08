@@ -12,6 +12,14 @@ using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule
 using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ContributionsModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ExperiencesModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.FacultyMemberDataModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.MissionsModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.PrizesModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ProjectsAndComiteesModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ScientificProgressionModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.WritingsAndPatentsModule;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
 using Services.Implementations.AcademicDataModule.ContributionsModule;
 using Services.Implementations.AcademicDataModule.ExperiencesModule;
@@ -25,6 +33,15 @@ using Services.Implementations.AdminModule;
 using Services.Implementations.AttachmentsModule;
 using Services.Implementations.AttachmentsModule.Helpers;
 using Services.Implementations.AttachmentsModule.Helpers.Handlers;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.AcademicDataModule.ContributionsModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.ContributionsModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.ExperiencesModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.FacultyMemberDataModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.MissionsModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.PrizesModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.ProjectsAndComiteesModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.ScientificProgressionModule;
+using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.WritingsAndPatentsModule;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -196,6 +213,120 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IProfileDashboardService>()
             );
 
+            services.AddScoped<IFacultyMemberMainDataManagementService, FacultyMemberMainDataManagementService>();
+            services.AddScoped<Func<IFacultyMemberMainDataManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberMainDataManagementService>()
+            );
+
+
+
+            services.AddScoped<IContributionsToCommunityServiceManagementService, ContributionsToCommunityServiceManagementService>();
+            services.AddScoped<Func<IContributionsToCommunityServiceManagementService>>(provider =>
+            () => provider.GetRequiredService<IContributionsToCommunityServiceManagementService>()
+            );
+
+
+
+            services.AddScoped<IFacultyMemberContributionsToUniversityManagementService, FacultyMemberContributionsToUniversityManagementService>();
+            services.AddScoped<Func<IFacultyMemberContributionsToUniversityManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberContributionsToUniversityManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberParticipationInQualityWorksManagementService, FacultyMemberParticipationInQualityWorksManagementService>();
+            services.AddScoped<Func<IFacultyMemberParticipationInQualityWorksManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberParticipationInQualityWorksManagementService>()
+            );
+
+            services.AddScoped<IFacultyMemberGeneralExperiencesManagementService, FacultyMemberGeneralExperiencesManagementService>();
+            services.AddScoped<Func<IFacultyMemberGeneralExperiencesManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberGeneralExperiencesManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberTeachingExperiencesManagementService, FacultyMemberTeachingExperiencesManagementService>();
+            services.AddScoped<Func<IFacultyMemberTeachingExperiencesManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberTeachingExperiencesManagementService>()
+            );
+
+            services.AddScoped<IFacultyMemberScientificMissionsManagementService, FacultyMemberScientificMissionsManagementService>();
+            services.AddScoped<Func<IFacultyMemberScientificMissionsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberScientificMissionsManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberSeminarsAndConferencesManagementService, FacultyMemberSeminarsAndConferencesManagementService>();
+            services.AddScoped<Func<IFacultyMemberSeminarsAndConferencesManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberSeminarsAndConferencesManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberTrainingProgramsManagementService, FacultyMemberTrainingProgramsManagementService>();
+            services.AddScoped<Func<IFacultyMemberTrainingProgramsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberTrainingProgramsManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberManifestationsOfScientificAppreciationManagementService, FacultyMemberManifestationsOfScientificAppreciationManagementService>();
+            services.AddScoped<Func<IFacultyMemberManifestationsOfScientificAppreciationManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberManifestationsOfScientificAppreciationManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberPrizesAndRewardsManagementService, FacultyMemberPrizesAndRewardsManagementService>();
+            services.AddScoped<Func<IFacultyMemberPrizesAndRewardsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberPrizesAndRewardsManagementService>()
+            );
+
+
+
+            services.AddScoped<IFacultyMemberCommitteesAndAssociationsManagementService, FacultyMemberCommitteesAndAssociationsManagementService>();
+            services.AddScoped<Func<IFacultyMemberCommitteesAndAssociationsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberCommitteesAndAssociationsManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberParticipationInMagazinesManagementService, FacultyMemberParticipationInMagazinesManagementService>();
+            services.AddScoped<Func<IFacultyMemberParticipationInMagazinesManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberParticipationInMagazinesManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberProjectsManagementService, FacultyMemberProjectsManagementService>();
+            services.AddScoped<Func<IFacultyMemberProjectsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberProjectsManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberReviewingArticlesManagementService, FacultyMemberReviewingArticlesManagementService>();
+            services.AddScoped<Func<IFacultyMemberReviewingArticlesManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberReviewingArticlesManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberAcademicQualificationsManagementService, FacultyMemberAcademicQualificationsManagementService>();
+            services.AddScoped<Func<IFacultyMemberAcademicQualificationsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberAcademicQualificationsManagementService>()
+            );
+
+
+            services.AddScoped<IFacutlyMemberAdministrativePositionsManagementService, FacutlyMemberAdministrativePositionsManagementService>();
+            services.AddScoped<Func<IFacutlyMemberAdministrativePositionsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacutlyMemberAdministrativePositionsManagementService>()
+            );
+
+            services.AddScoped<IFacultyMemberJobRanksManagementService, FacultyMemberJobRanksManagementService>();
+            services.AddScoped<Func<IFacultyMemberJobRanksManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberJobRanksManagementService>()
+            );
+
+
+            services.AddScoped<IFacultyMemberPatentsManagementService, FacultyMemberPatentsManagementService>();
+            services.AddScoped<Func<IFacultyMemberPatentsManagementService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberPatentsManagementService>()
+            );
+
+
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
@@ -212,6 +343,28 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IAttachmentContextHandler, PrizeAndAwardAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, ConferenceOrSeminarAttachmentHandler>();
+            
+            
+            
+            services.AddScoped<IFacultyMemberDataHelper, FacultyMemberDataHelper>();
+            services.AddScoped<IContributionsToCommunityServiceHelper, ContributionsToCommunityServiceHelper>();
+            services.AddScoped<IContributionsToUniversityHelper, ContributionsToUniversityHelper>();
+            services.AddScoped<IParticipationInQualityWorksServiceHelper, ParticipationInQualityWorksHelper>();
+            services.AddScoped<IGeneralExperiencesHelper, GeneralExperiencesHelper>();
+            services.AddScoped<ITeachingExperiencesHelper, TeachingExperiencesHelper>();
+            services.AddScoped<IScientificMissionsHelper, ScientificMissionsHelper>();
+            services.AddScoped<ISeminarsAndConferencesHelper, SeminarsAndConferencesHelper>();
+            services.AddScoped<ITrainingProgramsHelper, TrainingProgramsHelper>();
+            services.AddScoped<IManifestationsOfScientificAppreciationHelper, ManifestationsOfScientificAppreciationHelper>();
+            services.AddScoped<IPrizesAndRewardsHelper, PrizesAndRewardsHelper>();
+            services.AddScoped<ICommitteesAndAssociationsHelper, CommitteesAndAssociationsHelper>();
+            services.AddScoped<IParticipationInMagazinesHelper, ParticipationInMagazinesHelper>();
+            services.AddScoped<IProjectsHelper, ProjectsHelper>();
+            services.AddScoped<IReviewingArticlesHelper, ReviewingArticlesHelper>();
+            services.AddScoped<IAcademicQualificationsHelper, AcademicQualificationsHelper>();
+            services.AddScoped<IAdministrativePositionsHelper, AdministrativePositionsHelper>();
+            services.AddScoped<IJobRanksHelper, JobRanksHelper>();
+            services.AddScoped<IPatentsHelper, PatentsHelper>();
 
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));

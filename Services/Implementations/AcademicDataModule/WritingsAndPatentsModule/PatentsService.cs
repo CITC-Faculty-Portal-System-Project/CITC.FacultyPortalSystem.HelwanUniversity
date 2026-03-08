@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.WritingsAndPatents;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.WritingsAndPatentsModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.WritingsAndPatentsModule;
 using Shared.Dtos.AcademicDataModule.WritingsAndPatentsModule;
@@ -8,26 +9,23 @@ using Shared.SpecificationParameters.AcademicDataModule.WritingsAndPatentsModule
 namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 {
     public class PatentsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<Patents, int>(unitOfWork, authenticationService, mapper), IPatentsService
+      IUnitOfWork unitOfWork,
+      IMapper mapper,
+      IAuthenticationService authenticationService,
+      IPatentsHelper patentsHelper)
+      : BaseService<Patents, int>(unitOfWork, authenticationService, mapper),
+        IPatentsService
     {
+        private readonly IPatentsHelper _helper = patentsHelper;
+
         protected override string EntityName => "Patents";
-        public async Task<PaginatedResult<PatentsResponseDTO>> GetAllPatentsAsync(PatentsSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<PatentsResponseDTO>> GetAllPatentsAsync(
+            PatentsSpecificationParameters parameters)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var patents = await Repo.GetAllAsync(new PatentsSpecifications(parameters, currentUser.Email))
-                ?? throw NotFound();
-
-            var patentsResult = Mapper.Map<IEnumerable<PatentsResponseDTO>>(patents);
-
-            var currentPageCount = patentsResult.Count();
-
-            var totalCount = await Repo.CountAsync(new PatentsCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<PatentsResponseDTO>(parameters.PageIndex, currentPageCount, totalCount, patentsResult);
+            return await _helper.GetAllPatentsAsync(parameters, currentUser.Email);
         }
 
         public async Task<PatentsResponseDTO> GetPatentByIdAsync(int id)
@@ -39,20 +37,14 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 
             EnsureOwnership(patent.FacultyMemberId, currentUser.UserId, EntityName);
 
-            return Mapper.Map<PatentsResponseDTO>(patent);
+            return await _helper.GetPatentByIdAsync(id);
         }
 
         public async Task<PatentsResponseDTO> CreatePatentAsync(PatentsCreateDTO patentCreateDto)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            var patent = Mapper.Map<Patents>(patentCreateDto);
-            patent.FacultyMemberId = currentUser.UserId;
-
-            await Repo.AddAsync(patent);
-            await SaveChangesAsync();
-
-            return Mapper.Map<PatentsResponseDTO>(patent);
+            return await _helper.CreatePatentAsync(patentCreateDto, currentUser.Email);
         }
 
         public async Task<PatentsResponseDTO> UpdatePatentAsync(int patentId, PatentsUpdateDTO patentUpdateDto)
@@ -64,12 +56,7 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 
             EnsureOwnership(patent.FacultyMemberId, currentUser.UserId, EntityName);
 
-            Mapper.Map(patentUpdateDto, patent);
-
-            Repo.Update(patent);
-            await SaveChangesAsync();
-
-            return Mapper.Map<PatentsResponseDTO>(patent);
+            return await _helper.UpdatePatentAsync(patentId, patentUpdateDto);
         }
 
         public async Task DeletePatentAsync(int patentId)
@@ -81,10 +68,7 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 
             EnsureOwnership(patent.FacultyMemberId, currentUser.UserId, EntityName);
 
-            patent.IsDeleted = true;
-
-            Repo.Update(patent);
-            await SaveChangesAsync();
+            await _helper.DeletePatentAsync(patentId);
         }
     }
 }
