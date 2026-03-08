@@ -2,9 +2,10 @@
 {
     public class ResearchCite : BaseEntity<int>
     {
-        public string Year { get; set; } = string.Empty;
-        public int NoOfCitations { get; set; }
-        public int ResearcherId { get; set; }
-        public Researcher? Researcher { get; set; }
+        public int ResearchId { get; set; }
+        public Research? Research { get; set; }
+
+        public int Year { get; set; }
+        public int NumberOfCites { get; set; }
     }
 }

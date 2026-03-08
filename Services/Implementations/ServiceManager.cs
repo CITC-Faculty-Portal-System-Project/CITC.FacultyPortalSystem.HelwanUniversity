@@ -3,6 +3,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
@@ -25,6 +26,10 @@ namespace Services.Implementations
         , Func<IAcademicQualificationsService> _academicQualificationsServiceFactory
         , Func<IAdministrativePositionsService> _administrativePositionsServiceFactory
         , Func<IJobRanksService> _jobRanksServiceFactory
+        , Func<IResearchesService> _researchesService
+        , Func<IResearcherProfileService> _researcherProfileService
+        , Func<IThesesSupervisingService> _thesesSupervisingService
+        , Func<IThesesService> _thesesService
         , Func<IGeneralExperiencesService> _generalExperiencesServiceFactory
         , Func<ITeachingExperiencesService> _teachingExperiencesServiceFactory
         , Func<IPrizesAndRewardsService> _prizesAndRewardsServiceFactory
@@ -34,6 +39,7 @@ namespace Services.Implementations
         , Func<IContributionsToCommunityServiceService> _contributionsToCommunityServiceFactory
         , Func<IContributionsToUniversityService> _contributionsToUniversityServiceFactory
         , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
+        , Func<IProfileDashboardService> _profileDashboardServiceFactory
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -45,6 +51,8 @@ namespace Services.Implementations
         public IFacultyMemberDataService FacultyMemberDataService => _facultyMemberDataFactory.Invoke();
         public ILookUpItemService LookUpItemService => _lookUpItemSerivce.Invoke();
         public IAttachmentService AttachmentService => _attachmentService.Invoke();
+
+        public IProfileDashboardService ProfileDashboardService => _profileDashboardServiceFactory.Invoke();
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
 
         #region Academic Data Module
@@ -90,6 +98,19 @@ namespace Services.Implementations
         public IParticipationInQualityWorksService ParticipationInQualityWorksService => _participationInQualityWorksServiceFactory.Invoke();
         #endregion
 
+        #region ResearchesModule
+
+        public IResearchesService ResearchesService => _researchesService.Invoke();
+        public IResearcherProfileService ResearcherProfileService => _researcherProfileService.Invoke();
+        public IThesesSupervisingService ThesesSupervisingService => _thesesSupervisingService.Invoke();
+        public IThesesService ThesesService => _thesesService.Invoke();
+
         #endregion
+
+
+
+        #endregion
+
+
     }
 }

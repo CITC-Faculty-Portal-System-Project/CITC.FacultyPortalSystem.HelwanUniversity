@@ -7,6 +7,8 @@ using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
+
 
 namespace Services.Abstraction.Contracts
 {
@@ -18,6 +20,7 @@ namespace Services.Abstraction.Contracts
         public IFacultyMemberDataService FacultyMemberDataService { get; }
         public ILookUpItemService LookUpItemService { get; }
         public IAttachmentService AttachmentService { get; }
+        public IProfileDashboardService ProfileDashboardService { get; }
         //public IExternalDataHandlingService ExternalDataHandlingService { get; }
 
         #region Academic Data Module
@@ -62,6 +65,16 @@ namespace Services.Abstraction.Contracts
         public IParticipationInQualityWorksService ParticipationInQualityWorksService { get; }
         #endregion
 
+
+        #region ResearchesModule
+
+        public IResearchesService ResearchesService { get; }
+        public IResearcherProfileService ResearcherProfileService { get; }
+        public IThesesSupervisingService ThesesSupervisingService { get; }
+        public IThesesService ThesesService { get; }
+
+
+        #endregion
         #endregion
     }
 }

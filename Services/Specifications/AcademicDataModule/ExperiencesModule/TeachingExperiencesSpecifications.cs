@@ -39,5 +39,9 @@ namespace Services.Specifications.AcademicDataModule.ExperiencesModule
         {
 
         }
+
+        public TeachingExperiencesSpecifications(Guid facultyMemberId) : base(te => !te.IsDeleted && te.FacultyMemberId == facultyMemberId)
+        {
+        }
     }
 }

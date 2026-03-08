@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Contracts;
 using Shared.Dtos.Auth;
 using Shared.Dtos.IdentityModule;
@@ -32,6 +35,7 @@ namespace Presentation.Controllers
                 Email = result.Email,
                 UserName = result.UserName,
                 Role = result.Role,
+                NationalNumber = result.NationalNumber,
             };
             return Ok(frontendResponse);
         }
@@ -69,6 +73,31 @@ namespace Presentation.Controllers
             var email = User.FindFirstValue(ClaimTypes.Email);
             var user = await _serviceManager.AuthenticationService.GetCurrentUserAsync(email ?? "");
             return Ok(user);
+        }
+
+        [HttpPost("Logout")]
+        [Authorize]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("jwtToken", new CookieOptions
+            {
+                Path = "/",
+                Secure = true,
+                SameSite = SameSiteMode.None
+            });
+
+            return Ok("Logged out");
+        }
+
+        [HttpGet("AuthMe")]
+        public IActionResult AuthMe()
+        {
+            if (!Request.Cookies.TryGetValue("jwtToken", out var token))
+            {
+                return Unauthorized("JWT cookie not found.");
+            }
+
+            return Ok("Authorized");
         }
     }
 }

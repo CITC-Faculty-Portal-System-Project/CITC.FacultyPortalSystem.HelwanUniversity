@@ -6,18 +6,23 @@ using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
 using Services.Implementations.AcademicDataModule.ContributionsModule;
 using Services.Implementations.AcademicDataModule.ExperiencesModule;
 using Services.Implementations.AcademicDataModule.MissionsModule;
 using Services.Implementations.AcademicDataModule.PrizesModule;
 using Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule;
+using Services.Implementations.AcademicDataModule.ResearchesModule;
 using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AttachmentsModule;
+using Services.Implementations.AttachmentsModule.Helpers;
+using Services.Implementations.AttachmentsModule.Helpers.Handlers;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -105,6 +110,29 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IJobRanksService>()
             );
 
+            services.AddScoped<IResearchesService, ResearchesService>();
+            services.AddScoped<Func<IResearchesService>>(provider =>
+            () => provider.GetRequiredService<IResearchesService>()
+            );
+
+
+            services.AddScoped<IResearcherProfileService, ResearcherProfileService>();
+            services.AddScoped<Func<IResearcherProfileService>>(provider =>
+            () => provider.GetRequiredService<IResearcherProfileService>()
+            );
+
+
+            services.AddScoped<IThesesSupervisingService, ThesesSupervisingService>();
+            services.AddScoped<Func<IThesesSupervisingService>>(provider =>
+            () => provider.GetRequiredService<IThesesSupervisingService>()
+            );
+
+            services.AddScoped<IThesesService, ThesesService>();
+            services.AddScoped<Func<IThesesService>>(provider =>
+            () => provider.GetRequiredService<IThesesService>()
+            );
+
+
             services.AddScoped<IGeneralExperiencesService, GeneralExperiencesService>();
             services.AddScoped<Func<IGeneralExperiencesService>>(provider =>
             () => provider.GetRequiredService<IGeneralExperiencesService>()
@@ -155,7 +183,10 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IParticipationInQualityWorksService>()
             );
 
-            services.AddScoped<IAttachmentsAcsessabilityService, AttachmentsAcsessablityService>();
+            services.AddScoped<IProfileDashboardService, ProfileDashboardService>();
+            services.AddScoped<Func<IProfileDashboardService>>(provider =>
+            () => provider.GetRequiredService<IProfileDashboardService>()
+            );
 
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
@@ -164,6 +195,15 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IEncryptionService, EncryptionService>();
             services.AddScoped<IProcessingService, ProcessingService>();
 
+            services.AddScoped<AttachmentCore>();
+            services.AddScoped<IAttachmentContextHandler, ResearchAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ThesisAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ProfilePictureAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, PatentAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ManifestationOfScientificAppreciationAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, PrizeAndAwardAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ConferenceOrSeminarAttachmentHandler>();
 
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));

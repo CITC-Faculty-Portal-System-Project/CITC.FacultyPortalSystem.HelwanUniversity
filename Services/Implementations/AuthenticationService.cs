@@ -272,6 +272,17 @@ namespace Services.Implementations
 				throw new UnauthorizedException();
 			}
 
+            var token = await CreateTokenAsync(user);
+            var response = new LoginClaims
+            {
+                Email = user.Email!,
+                Role = role.FirstOrDefault()!,
+                UserName = user.UserName!,
+                Token = token,
+                NationalNumber = user.NationalNumber
+            };
+            return (response);
+        }
 			var token = await CreateTokenAsync(user);
 			var response = new LoginClaims
 			{
@@ -396,21 +407,21 @@ namespace Services.Implementations
 			};
 		}
 
-		//GetCurrentUser
-		public async Task<UserResultDto> GetCurrentUserAsync(string userEmail)
-		{
-			var user = await _userManager.FindByEmailAsync(userEmail)
-				?? throw new UserNotFoundException(userEmail);
-			return new UserResultDto(UserName: user.UserName ?? "", user.Email ?? "",
-				user.Id);
-		}
+        //GetCurrentUser
+        public async Task<UserResultDto> GetCurrentUserAsync(string userEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(userEmail)
+                ?? throw new UserNotFoundException(userEmail);
+            return new UserResultDto(UserName: user.UserName ?? "", user.Email ?? "" ,  
+                user.Id ,null ,  user.NationalNumber ?? "");
+        }
 
-		public string GetLoggedUserEmail()
-		{
-			var user = _httpContextAccessor.HttpContext?.User;
-			var email = user.FindFirst(ClaimTypes.Email)?.Value.ToString();
+        public string GetLoggedUserEmail()
+        {
+            var user = _httpContextAccessor.HttpContext?.User;
+            var email = user!.FindFirst(ClaimTypes.Email)?.Value.ToString();
 
-			return email;
+            return email!;
 
 		}
 		#endregion

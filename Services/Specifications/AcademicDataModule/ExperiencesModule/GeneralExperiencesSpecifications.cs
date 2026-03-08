@@ -37,7 +37,12 @@ namespace Services.Specifications.AcademicDataModule.ExperiencesModule
         }
         public GeneralExperiencesSpecifications(int id) : base(aq => !aq.IsDeleted && aq.Id == id)
         {
-            
+
+        }
+
+        public GeneralExperiencesSpecifications(Guid facultyMemberId) : base(ge => !ge.IsDeleted && ge.FacultyMemberId == facultyMemberId)
+        {
+
         }
     }
 }

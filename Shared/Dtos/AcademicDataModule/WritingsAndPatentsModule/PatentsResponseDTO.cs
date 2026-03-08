@@ -1,4 +1,5 @@
-﻿using Shared.Enums.AcademicDataModule.WritingsAndPatentsModule;
+﻿using Shared.Dtos.AttachmentsModule;
+using Shared.Enums.AcademicDataModule.WritingsAndPatentsModule;
 
 namespace Shared.Dtos.AcademicDataModule.WritingsAndPatentsModule
 {
@@ -11,5 +12,7 @@ namespace Shared.Dtos.AcademicDataModule.WritingsAndPatentsModule
         public DateOnly ApplyingDate { get; set; }
         public DateOnly? AccreditationDate { get; set; }
         public string? Description { get; set; }
+        public ICollection<AttachmentResponseDTO>? Attachments { get; set; }
+
     }
 }

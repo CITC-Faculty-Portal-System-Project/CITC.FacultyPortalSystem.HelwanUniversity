@@ -14,5 +14,13 @@ namespace Services.Specifications.AcademicDataModule.ContributionsModule
             )
         {
         }
+
+        public ParticipationInQualityWorksCountSpecifications(Guid facultyMemberId)
+            : base(piqw =>
+                  !piqw.IsDeleted &&
+                   piqw.FacultyMemberId == facultyMemberId
+            )
+        {
+        }
     }
 }

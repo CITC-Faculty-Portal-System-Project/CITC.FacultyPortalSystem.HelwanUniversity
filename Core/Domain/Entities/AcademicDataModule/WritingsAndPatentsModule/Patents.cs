@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities.AcademicDataModule.WritingsAndPatents
+﻿using Domain.Entities.EntitesAttachments;
+
+namespace Domain.Entities.AcademicDataModule.WritingsAndPatents
 {
     public class Patents : BaseEntity<int>
     {
@@ -15,6 +17,7 @@
 
         #region Navigations Properties
         public FacultyMember? FacultyMember { get; set; }
+        public ICollection<PatentsAttachment>? Attachments { get; set; } = new List<PatentsAttachment>();
         #endregion
     }
 }

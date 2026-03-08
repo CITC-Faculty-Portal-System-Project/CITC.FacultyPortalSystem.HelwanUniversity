@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
+using Microsoft.EntityFrameworkCore;
 using Shared.Dtos.DataFetchingFromExternalService;
 
 namespace Services.Specifications.FacultyMemberDataModule
@@ -15,9 +16,9 @@ namespace Services.Specifications.FacultyMemberDataModule
             AddIncludes(pd => pd.Department);
             AddIncludes(pd => pd.Authority);
             AddIncludes(pd => pd.Field);
+            AddIncludes(pd => pd.ProfilePicture!);
 
             AddIncludes(pd => pd.FacultyMember!);
-            AddIncludes(pd => pd.ProfilePicture!);
         }
 
         public PersonalDataWithIncludesSpecifications(PersonalDataFetchingDTO dTO)
@@ -27,7 +28,7 @@ namespace Services.Specifications.FacultyMemberDataModule
             && pd.NameInComposition == dTO.NameInCompositions && pd.CompositionTopics == dTO.CompositionTopics &&
             pd.Authority.ValueAr == dTO.FacultyName && pd.Field.ValueAr == dTO.FieldOfStudy && pd.Department.ValueAr == dTO.Department
             && pd.GeneralSpecialization == dTO.GeneralSpecialization && pd.AccurateSpecialization == dTO.AccurateSpecialization
-            && pd.Name == dTO.Name && pd.FacultyMember.NationalNumber == dTO.NationalNumber)
+            && pd.Name == dTO.Name && pd.FacultyMember!.NationalNumber == dTO.NationalNumber)
         {
             AddIncludes(pd => pd.Gender);
             AddIncludes(pd => pd.Title);
@@ -37,6 +38,7 @@ namespace Services.Specifications.FacultyMemberDataModule
             AddIncludes(pd => pd.Department);
             AddIncludes(aq => aq.FacultyMember!);
             AddIncludes(pd => pd.ProfilePicture!);
+
 
 
         }

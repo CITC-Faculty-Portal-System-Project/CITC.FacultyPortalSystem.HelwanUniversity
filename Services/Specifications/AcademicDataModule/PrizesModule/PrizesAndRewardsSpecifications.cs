@@ -19,6 +19,7 @@ namespace Services.Specifications.AcademicDataModule.PrizesModule
             )
         {
             AddIncludes(par => par.Prize);
+            AddIncludes(par => par.Attachments!);
 
             switch (parameters.Sort)
             {
@@ -38,6 +39,7 @@ namespace Services.Specifications.AcademicDataModule.PrizesModule
         public PrizesAndRewardsSpecifications(int id) : base(par => !par.IsDeleted && par.Id == id)
         {
             AddIncludes(par => par.Prize);
+            AddIncludes(par => par.Attachments!);
         }
     }
 }

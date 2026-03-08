@@ -37,6 +37,15 @@ namespace Presistence.Data.Configurations.WritingsAndPatentsModuleConfigurations
                 .HasForeignKey(p => p.FacultyMemberId)
                 .OnDelete(DeleteBehavior.Cascade);
             #endregion
+
+            #region Relation With Attachments
+
+            builder.HasMany(p => p.Attachments)
+                .WithOne(a => a.Patent)
+                .HasForeignKey(a => a.PatentId)
+                .OnDelete(DeleteBehavior.Cascade);
+          
+            #endregion
         }
     }
 }

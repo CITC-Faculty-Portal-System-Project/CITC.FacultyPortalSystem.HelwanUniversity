@@ -1,5 +1,7 @@
 ﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.EntitesAttachments;
 using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+using Shared.Dtos.AttachmentsModule;
 
 namespace Services.MappingProfiles.AcademicDataModule
 {
@@ -10,16 +12,12 @@ namespace Services.MappingProfiles.AcademicDataModule
             CreateMap<AcademicQualifications, AcademicQualificationResponseDto>()
                 .ForMember(dest => dest.Qualification, opt => opt.MapFrom(src => src.Qualification))
                 .ForMember(dest => dest.Grade, opt => opt.MapFrom(src => src.Grade))
-                .ForMember(dest => dest.DispatchType, opt => opt.MapFrom(src => src.DispatchType))
-                .ForMember(dest => dest.AttachmentId, opt => 
-                        opt.MapFrom(src => src.Attachment != null ? src.Attachment.Id : Guid.Empty))
+                .ForMember(dest => dest.DispatchType, opt => opt.MapFrom(src => src.DispatchType));
                 
-                .ForMember(dest => dest.AttachmentName, opt =>
-                        opt.MapFrom(src => src.Attachment != null ? src.Attachment.FileName: string.Empty));
-
 
             CreateMap<AcademicQualificationCreateDto, AcademicQualifications>();
-            CreateMap<AcademicQualificationsUpdateDto, AcademicQualifications>();
+            CreateMap<AttachmentReferenceDTO, AcademicQualificationAttachment>();
+            CreateMap<AcademicQualificationAttachment, AttachmentResponseDTO>();
 
             CreateMap<JobRanks, JobRankResponseDto>()
                 .ForMember(dest => dest.JobRank, opt => opt.MapFrom(src => src.JobRank));

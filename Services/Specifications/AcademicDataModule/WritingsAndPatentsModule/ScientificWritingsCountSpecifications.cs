@@ -18,5 +18,13 @@ namespace Services.Specifications.AcademicDataModule.WritingsAndPatentsModule
         {
 
         }
+
+        public ScientificWritingsCountSpecifications(Guid facultyMemberId)
+            : base(sw =>
+                  !sw.IsDeleted &&
+                  sw.FacultyMemberId == facultyMemberId
+            )
+        {
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Domain.Entities.Attachments;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Shared.Dtos.AttachmentsModule;
 
@@ -26,7 +25,7 @@ namespace Services.Implementations.AttachmentsModule
             {
                 Encrypted = encrypted,
                 File = file,
-                RemotePath = "/files/",
+                RemotePath = storedPath,
                 Creator = creator
             };
 

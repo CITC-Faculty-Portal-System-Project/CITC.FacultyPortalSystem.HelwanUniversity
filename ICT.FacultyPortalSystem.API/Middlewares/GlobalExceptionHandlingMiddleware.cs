@@ -1,4 +1,6 @@
-﻿namespace ICIT.FacultyPortalSystem.API.Middlewares
+﻿using Integrations.Exceptions;
+
+namespace ICIT.FacultyPortalSystem.API.Middlewares
 {
     public class GlobalExceptionHandlingMiddleware(RequestDelegate _next, ILogger<GlobalExceptionHandlingMiddleware> _logger)
     {
@@ -42,6 +44,8 @@
                 AttachmentAlreadyExist => StatusCodes.Status409Conflict,
                 UnauthorizedException => StatusCodes.Status401Unauthorized,
                 UserAlreadyExistsException => StatusCodes.Status409Conflict,
+                IntegrationNotFoundException => StatusCodes.Status404NotFound,
+                ForbiddenException => StatusCodes.Status403Forbidden,
                 ValidationException validationException => HandleValidationException(validationException, response),
                 (_) => StatusCodes.Status500InternalServerError
             };

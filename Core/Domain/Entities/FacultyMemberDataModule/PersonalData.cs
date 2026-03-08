@@ -1,4 +1,5 @@
-﻿using Domain.Entities.Attachments;
+﻿
+using Domain.Entities.EntitesAttachments;
 
 namespace Domain.Entities.FacultyMemberDataModule
 {
@@ -36,18 +37,18 @@ namespace Domain.Entities.FacultyMemberDataModule
         public string? NameInComposition { get; set; } 
         public string? CompositionTopics { get; set; }
 
+        public string? BioSummary { get; set; }
+        public string? Skills { get; set; }
+
         #region Relation With FacultyMember
         public Guid FacultyMemberId { get; set; }
         #endregion
 
-        #region RelationShip With Attachments
-        public Guid? ProfilePictureId { get; set; }
-        #endregion
-
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
-        public AttachmentReference? ProfilePicture { get; set; }
-
+       
+        [NotMapped]
+        public ProfilePictures? ProfilePicture { get; set; }
         #endregion
     }
 }

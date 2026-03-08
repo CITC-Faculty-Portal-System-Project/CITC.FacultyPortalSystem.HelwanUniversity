@@ -38,6 +38,7 @@ namespace Services.MappingProfiles
 
             CreateMap<SupervisingsFetchingDTO, SupervisingCreateDTO>()
                   .ForMember(dest => dest.UniversityOrFaculty, opt => opt.MapFrom(src => src.UniversityFaculty))
+                  .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.ThesisTitle))
                   .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.ThesisType.Trim() == "ماجستير"
                                                                                 ? ThesesType.Master
                                                                                 : ThesesType.PHD))

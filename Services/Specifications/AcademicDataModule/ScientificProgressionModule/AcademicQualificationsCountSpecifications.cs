@@ -20,7 +20,15 @@ namespace Services.Specifications.AcademicDataModule.ScientificProgressionModule
                    aq.Qualification.ValueEn.Contains(parameters.Search) ||
                    aq.Specialization.Contains(parameters.Search))
             )
-        { 
+        {
+        }
+
+        public AcademicQualificationsCountSpecifications(Guid facultyMemberId)
+            : base(aq =>
+                  !aq.IsDeleted &&
+                    aq.FacultyMemberId == facultyMemberId
+            )
+        {
         }
     }
 }

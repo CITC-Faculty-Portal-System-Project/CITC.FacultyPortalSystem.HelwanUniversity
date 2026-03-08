@@ -1,7 +1,4 @@
-﻿
-using Domain.Entities.Attachments;
-
-namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
+﻿namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {
     public class FacultyMemberConfigurations : IEntityTypeConfiguration<FacultyMember>
     {
@@ -24,11 +21,22 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
                 .HasColumnType("NVARCHAR(150)");
 
 
-            #region Configuring Relation With Attachments
+            #region Configuring Relation With Researches
 
-            builder.HasMany(f => f.Attachments)
-                .WithOne(a => a.FacultyMember)
-                .HasForeignKey(a => a.FacultyMemberId)
+            builder.HasMany(f => f.ResearchContributions)
+                    .WithOne(a => a.Contributor)
+                    .HasForeignKey(a => a.ContributorId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(f => f.Theses)
+                .WithOne(th => th.FacultyMember)
+                .HasForeignKey(th => th.FacultyMemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            builder.HasMany(f=> f.ThesisComittees)
+                .WithOne(tc => tc.Member)
+                .HasForeignKey(tc => tc.MemberId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             #endregion

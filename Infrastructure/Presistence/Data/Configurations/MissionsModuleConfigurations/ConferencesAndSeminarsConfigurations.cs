@@ -54,14 +54,15 @@ namespace Presistence.Data.Configurations.MissionsModuleConfigurations
                    .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
-            #region RelationShip With Attachments
+            #region Relation With Attachments
 
             builder.HasMany(cas => cas.Attachments)
-                .WithOne(a => a.ConferenceOrSeminar)
-                .HasForeignKey(a => a.ConferenceOrSeminarId)
-                .OnDelete(DeleteBehavior.Cascade);
-
+                    .WithOne(a => a.ConferenceOrSeminar)
+                    .HasForeignKey(a => a.ConferenceOrSeminarId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            
             #endregion
+
         }
     }
 }
