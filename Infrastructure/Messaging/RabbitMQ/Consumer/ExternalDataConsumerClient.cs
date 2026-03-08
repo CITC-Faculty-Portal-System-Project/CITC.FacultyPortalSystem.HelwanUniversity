@@ -291,6 +291,13 @@ namespace Messaging.AsyncMessaging.Consumer
 					_channels.Add(channel);
 					await StartConsumerAsync(channel, queue.QueueName, queue.RoutingKey, cancellationToken);
 				}
+				#region Log
+				consumerLog.Timestamp = DateTime.Now;
+				consumerLog.Level = "Information";
+				consumerLog.RenderedMessage = "Started consuming messages successfully";
+				consumerLog.AdditionalData = $"External Data Consumer is consuming with prefetch count: [{30}]";
+				_logger.LogInformation("{@LogDetails}", consumerLog);
+				#endregion
 			}
 			catch (Exception ex)
 			{
@@ -358,13 +365,7 @@ namespace Messaging.AsyncMessaging.Consumer
 				};
 
 				await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer);
-				#region Log
-				consumeBackgroundLog.Timestamp = DateTime.Now;
-				consumeBackgroundLog.Level = "Information";
-				consumeBackgroundLog.RenderedMessage = "Started consuming messages successfully";
-				consumeBackgroundLog.AdditionalData = $"External Data Consumer is consuming with prefetch count: [{30}]";
-				_logger.LogInformation("{@LogDetails}", consumeBackgroundLog); 
-				#endregion
+
 			}
 			catch (Exception ex)
 			{

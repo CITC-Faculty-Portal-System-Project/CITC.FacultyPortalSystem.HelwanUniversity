@@ -25,11 +25,11 @@ namespace ICIT.FacultyPortalSystem.API
 			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 			{
 				var accessor = services.GetRequiredService<IHttpContextAccessor>();
-				var scopeFactory = services.GetRequiredService<IServiceScopeFactory>();
+				//var scopeFactory = services.GetRequiredService<IServiceScopeFactory>();
 
 				loggerConfiguration
 					.ReadFrom.Configuration(context.Configuration)
-					.AuditTo.Sink(new KafkaLogSink(accessor, scopeFactory));
+                    .WriteTo.Sink(new KafkaLogSink(accessor/*, scopeFactory*/));
 			});
 			#endregion
 
