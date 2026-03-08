@@ -272,17 +272,7 @@ namespace Services.Implementations
 				throw new UnauthorizedException();
 			}
 
-            var token = await CreateTokenAsync(user);
-            var response = new LoginClaims
-            {
-                Email = user.Email!,
-                Role = role.FirstOrDefault()!,
-                UserName = user.UserName!,
-                Token = token,
-                NationalNumber = user.NationalNumber
-            };
-            return (response);
-        }
+      
 			var token = await CreateTokenAsync(user);
 			var response = new LoginClaims
 			{
