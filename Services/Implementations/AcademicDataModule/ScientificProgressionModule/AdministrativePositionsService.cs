@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
-using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ScientificProgressionModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ScientificProgressionModule;
 using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
@@ -10,74 +9,103 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 {
     public class AdministrativePositionsService(
         IUnitOfWork unitOfWork,
-        IMapper mapper,
         IAuthenticationService authenticationService,
-        IAdministrativePositionsHelper administrativePositionsHelper)
+        IMapper mapper)
         : BaseService<AdministrativePositions, int>(unitOfWork, authenticationService, mapper),
           IAdministrativePositionsService
     {
-        private readonly IAdministrativePositionsHelper _helper = administrativePositionsHelper;
-
         protected override string EntityName => "Administrative Positions";
 
         public async Task<PaginatedResult<AdministrativePositionDto>> GetAllAdministrativePositionsAsync(
-            AdministrativePositionsSpecificationParameters parameters)
+            AdministrativePositionsSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.GetAllAdministrativePositionsAsync(parameters, currentUser.Email);
-        }
-
-        public async Task<AdministrativePositionDto> GetAdministrativePositionByIdAsync(int id)
-        {
-            var currentUser = await GetCurrentUserAsync();
-
-            var administrativePosition = await Repo.GetAsync(new AdministrativePositionsSpecifications(id))
+            var positions = await Repo.GetAllAsync(
+                new AdministrativePositionsSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            EnsureOwnership(administrativePosition.FacultyMemberId, currentUser.UserId, EntityName);
+            var mapped = Mapper.Map<IEnumerable<AdministrativePositionDto>>(positions);
 
-            return await _helper.GetAdministrativePositionByIdAsync(id);
+            var totalCount = await Repo.CountAsync(
+                new AdministrativePositionsCountSpecifications(parameters, email));
+
+            return new PaginatedResult<AdministrativePositionDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<AdministrativePositionDto> GetAdministrativePositionByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            var position = await Repo.GetAsync(new AdministrativePositionsSpecifications(id))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                position.FacultyMemberId,
+                facultyMemberEmail);
+
+            return Mapper.Map<AdministrativePositionDto>(position);
         }
 
         public async Task<AdministrativePositionDto> CreateAdministrativePositionAsync(
-            AdministrativePositionCreateDto administrativePositionCreateDto)
+            AdministrativePositionCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.CreateAdministrativePositionAsync(
-                administrativePositionCreateDto,
-                currentUser.Email);
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var position = Mapper.Map<AdministrativePositions>(dto);
+            position.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(position);
+            await SaveChangesAsync();
+
+            return Mapper.Map<AdministrativePositionDto>(position);
         }
 
         public async Task<AdministrativePositionDto> UpdateAdministrativePositionAsync(
-            int administrativePositionId,
-            AdministrativePositionDto administrativePositionUpdateDto)
+            int id,
+            AdministrativePositionDto dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var administrativePosition = await Repo.GetAsync(
-                new AdministrativePositionsSpecifications(administrativePositionId))
+            var position = await Repo.GetAsync(new AdministrativePositionsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(administrativePosition.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                position.FacultyMemberId,
+                facultyMemberEmail);
 
-            return await _helper.UpdateAdministrativePositionAsync(
-                administrativePositionId,
-                administrativePositionUpdateDto);
+            Mapper.Map(dto, position);
+
+            Repo.Update(position);
+            await SaveChangesAsync();
+
+            return Mapper.Map<AdministrativePositionDto>(position);
         }
 
-        public async Task DeleteAdministrativePositionAsync(int administrativePositionId)
+        public async Task DeleteAdministrativePositionAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var administrativePosition = await Repo.GetAsync(
-                new AdministrativePositionsSpecifications(administrativePositionId))
+            var position = await Repo.GetAsync(new AdministrativePositionsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(administrativePosition.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                position.FacultyMemberId,
+                facultyMemberEmail);
 
-            await _helper.DeleteAdministrativePositionAsync(administrativePositionId);
+            position.IsDeleted = true;
+
+            Repo.Update(position);
+            await SaveChangesAsync();
         }
     }
 }

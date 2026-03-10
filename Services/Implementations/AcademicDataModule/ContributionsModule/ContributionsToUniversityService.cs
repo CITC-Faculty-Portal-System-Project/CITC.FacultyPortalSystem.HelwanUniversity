@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.ContributionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
-using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ContributionsModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ContributionsModule;
 using Shared.Dtos.AcademicDataModule.ContributionsModule;
@@ -9,75 +8,107 @@ using Shared.SpecificationParameters.AcademicDataModule.ContributionsModule;
 namespace Services.Implementations.AcademicDataModule.ContributionsModule
 {
     public class ContributionsToUniversityService(
-          IUnitOfWork unitOfWork,
-          IMapper mapper,
-          IAuthenticationService authenticationService,
-          IContributionsToUniversityHelper contributionsToUniversityHelper)
-          : BaseService<ContributionsToUniversity, int>(unitOfWork, authenticationService, mapper),
-            IContributionsToUniversityService
+       IUnitOfWork unitOfWork,
+       IAuthenticationService authenticationService,
+       IMapper mapper)
+       : BaseService<ContributionsToUniversity, int>(unitOfWork, authenticationService, mapper),
+         IContributionsToUniversityService
     {
-        private readonly IContributionsToUniversityHelper _helper = contributionsToUniversityHelper;
-
         protected override string EntityName => "Contributions To University";
 
         public async Task<PaginatedResult<ContributionsToUniversityResponseDTO>> GetAllContributionsToUniversityAsync(
-            ContributionsToUniversitySpecificationParameters parameters)
+            ContributionsToUniversitySpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.GetAllContributionsToUniversityAsync(
-                parameters,
-                currentUser.Email);
-        }
-
-        public async Task<ContributionsToUniversityResponseDTO> GetContributionToUniversityByIdAsync(int id)
-        {
-            var currentUser = await GetCurrentUserAsync();
-
-            var contribution = await Repo.GetAsync(new ContributionsToUniversitySpecifications(id))
+            var contributions = await Repo.GetAllAsync(
+                new ContributionsToUniversitySpecifications(parameters, email))
                 ?? throw NotFound();
 
-            EnsureOwnership(contribution.FacultyMemberId, currentUser.UserId, EntityName);
+            var mapped = Mapper.Map<IEnumerable<ContributionsToUniversityResponseDTO>>(contributions);
 
-            return await _helper.GetContributionToUniversityByIdAsync(id);
+            var totalCount = await Repo.CountAsync(
+                new ContributionsToUniversityCountSpecifications(parameters, email));
+
+            return new PaginatedResult<ContributionsToUniversityResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<ContributionsToUniversityResponseDTO> GetContributionToUniversityByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            var contribution = await Repo.GetAsync(
+                new ContributionsToUniversitySpecifications(id))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                contribution.FacultyMemberId,
+                facultyMemberEmail);
+
+            return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
         }
 
         public async Task<ContributionsToUniversityResponseDTO> CreateContributionToUniversityAsync(
-            ContributionsToUniversityCreateDTO contributionsToUniversityCreateDto)
+            ContributionsToUniversityCreateDTO contributionsToUniversityCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.CreateContributionToUniversityAsync(
-                contributionsToUniversityCreateDto,
-                currentUser.Email);
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var contribution = Mapper.Map<ContributionsToUniversity>(contributionsToUniversityCreateDto);
+            contribution.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(contribution);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
         }
 
         public async Task<ContributionsToUniversityResponseDTO> UpdateContributionToUniversityAsync(
             int contributionToUniversityId,
-            ContributionsToUniversityUpdateDTO contributionsToUniversityUpdateDto)
+            ContributionsToUniversityUpdateDTO contributionsToUniversityUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var contribution = await Repo.GetAsync(new ContributionsToUniversitySpecifications(contributionToUniversityId))
+            var contribution = await Repo.GetAsync(
+                new ContributionsToUniversitySpecifications(contributionToUniversityId))
                 ?? throw NotFound();
 
-            EnsureOwnership(contribution.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                contribution.FacultyMemberId,
+                facultyMemberEmail);
 
-            return await _helper.UpdateContributionToUniversityAsync(
-                contributionToUniversityId,
-                contributionsToUniversityUpdateDto);
+            Mapper.Map(contributionsToUniversityUpdateDto, contribution);
+
+            Repo.Update(contribution);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
         }
 
-        public async Task DeleteContributionToUniversityAsync(int contributionToUniversityId)
+        public async Task DeleteContributionToUniversityAsync(
+            int contributionToUniversityId,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var contribution = await Repo.GetAsync(new ContributionsToUniversitySpecifications(contributionToUniversityId))
+            var contribution = await Repo.GetAsync(
+                new ContributionsToUniversitySpecifications(contributionToUniversityId))
                 ?? throw NotFound();
 
-            EnsureOwnership(contribution.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                contribution.FacultyMemberId,
+                facultyMemberEmail);
 
-            await _helper.DeleteContributionToUniversityAsync(contributionToUniversityId);
+            contribution.IsDeleted = true;
+
+            Repo.Update(contribution);
+            await SaveChangesAsync();
         }
     }
 }

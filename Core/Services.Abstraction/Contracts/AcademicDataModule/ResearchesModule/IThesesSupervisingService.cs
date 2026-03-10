@@ -6,15 +6,41 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
 {
     public interface IThesesSupervisingService
     {
-        public Task<SupervisingThesesAddDTO> AddThesesSupervising(SupervisingThesesAddDTO thesesDTO);
-        public Task<SupervisingThsesResponseDTO> GetThesesSupervisingById(int id);
-        public Task<SupervisingThsesResponseDTO> UpdateThesesSupervising(int id , SupervisingThesesUpdateDTO supervisingThesesUpdateDTO);
-        public Task DeleteThesesSupervising(int id);
-        public Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllSupervisings(ThesesSupervisingSpecificationParameters supervisingSpecificationParameters);
-        public Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllRecommendedThesesSupervisons(ThesesSupervisingSpecificationParameters parameters);
-        public Task<SupervisingThsesResponseDTO> GetRecommendedThesesSupervisonById(int id);
-        public Task<SupervisingThsesResponseDTO> AcceptRecommendedThesesSupervison(int thesisId);
-        public Task RejectRecommendedThesesSupervison(int thesisId);
+        Task<SupervisingThesesAddDTO> AddThesesSupervising(
+         SupervisingThesesAddDTO thesesDTO,
+         Guid? facultyMemberId = null);
 
+        Task<SupervisingThsesResponseDTO> GetThesesSupervisingById(
+            int id,
+            Guid? facultyMemberId = null);
+
+        Task<SupervisingThsesResponseDTO> UpdateThesesSupervising(
+            int id,
+            SupervisingThesesUpdateDTO supervisingThesesUpdateDTO,
+            Guid? facultyMemberId = null);
+
+        Task DeleteThesesSupervising(
+            int id,
+            Guid? facultyMemberId = null);
+
+        Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllSupervisings(
+            ThesesSupervisingSpecificationParameters supervisingSpecificationParameters,
+            Guid? facultyMemberId = null);
+
+        Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllRecommendedThesesSupervisons(
+            ThesesSupervisingSpecificationParameters parameters,
+            Guid? facultyMemberId = null);
+
+        Task<SupervisingThsesResponseDTO> GetRecommendedThesesSupervisonById(
+            int id,
+            Guid? facultyMemberId = null);
+
+        Task<SupervisingThsesResponseDTO> AcceptRecommendedThesesSupervison(
+            int thesisId,
+            Guid? facultyMemberId = null);
+
+        Task RejectRecommendedThesesSupervison(
+            int thesisId,
+            Guid? facultyMemberId = null);
     }
 }

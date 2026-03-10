@@ -78,6 +78,9 @@ namespace Services.MappingProfiles
             CreateMap<Research, ResearchResponseDTO>();
             CreateMap<ResearchResponseDTO, ResearchDTO>();
             CreateMap<ThesesSupervisorResponseDTO, ThesesSupervisorDTO>();
+            CreateMap<ThesesUpdateDTO, ThesesDTO>()
+                .ForMember(dest => dest.ComitteeMembers, opt => opt.MapFrom(src => src.SupervisorsToAdd));
+            
 
             CreateMap<ResearchResponseDTO, Research>()
                 .ForMember(d => d.Id, opt => opt.Ignore())

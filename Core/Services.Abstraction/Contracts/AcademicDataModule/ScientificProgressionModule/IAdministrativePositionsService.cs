@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressio
 {
     public interface IAdministrativePositionsService
     {
-        public Task<PaginatedResult<AdministrativePositionDto>> GetAllAdministrativePositionsAsync(AdministrativePositionsSpecificationParameters parameters);
-        public Task<AdministrativePositionDto> GetAdministrativePositionByIdAsync(int id);
-        public Task<AdministrativePositionDto> CreateAdministrativePositionAsync(AdministrativePositionCreateDto administrativePositionCreateDto);
-        public Task<AdministrativePositionDto> UpdateAdministrativePositionAsync(int administrativePositionId, AdministrativePositionDto administrativePositionUpdateDto);
-        public Task DeleteAdministrativePositionAsync(int administrativePositionId);
+        Task<PaginatedResult<AdministrativePositionDto>> GetAllAdministrativePositionsAsync(
+        AdministrativePositionsSpecificationParameters parameters,
+        string? facultyMemberEmail = null);
+
+        Task<AdministrativePositionDto> GetAdministrativePositionByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<AdministrativePositionDto> CreateAdministrativePositionAsync(
+            AdministrativePositionCreateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task<AdministrativePositionDto> UpdateAdministrativePositionAsync(
+            int id,
+            AdministrativePositionDto dto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteAdministrativePositionAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

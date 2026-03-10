@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
-using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ProjectsAndComiteesModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ProjectsAndCommitteesModule;
 using Shared.Dtos.AcademicDataModule.ProjectsAndCommitteesModule;
@@ -9,75 +8,107 @@ using Shared.SpecificationParameters.AcademicDataModule.ProjectsAndCommitteesMod
 namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule
 {
     public class ParticipationInMagazinesService(
-          IUnitOfWork unitOfWork,
-          IMapper mapper,
-          IAuthenticationService authenticationService,
-          IParticipationInMagazinesHelper participationInMagazinesHelper)
-          : BaseService<ParticipationInMagazines, int>(unitOfWork, authenticationService, mapper),
-            IParticipationInMagazinesService
+      IUnitOfWork unitOfWork,
+      IAuthenticationService authenticationService,
+      IMapper mapper)
+      : BaseService<ParticipationInMagazines, int>(unitOfWork, authenticationService, mapper),
+        IParticipationInMagazinesService
     {
-        private readonly IParticipationInMagazinesHelper _helper = participationInMagazinesHelper;
-
         protected override string EntityName => "Participation In Magazines";
 
         public async Task<PaginatedResult<ParticipationInMagazinesResponseDto>> GetAllParticipationInMagazinesAsync(
-            ParticipationInMagazinesSpecificationsParameters parameters)
+            ParticipationInMagazinesSpecificationsParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.GetAllParticipationInMagazinesAsync(parameters, currentUser.Email);
-        }
-
-        public async Task<ParticipationInMagazinesResponseDto> GetParticipationInMagazineByIdAsync(int id)
-        {
-            var currentUser = await GetCurrentUserAsync();
-
-            var participationInMagazine = await Repo.GetAsync(new ParticipationInMagazinesSpecifications(id))
+            var magazines = await Repo.GetAllAsync(
+                new ParticipationInMagazinesSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, EntityName);
+            var mapped = Mapper.Map<IEnumerable<ParticipationInMagazinesResponseDto>>(magazines);
 
-            return await _helper.GetParticipationInMagazineByIdAsync(id);
+            var totalCount = await Repo.CountAsync(
+                new ParticipationInMagazinesCountSpecifications(parameters, email));
+
+            return new PaginatedResult<ParticipationInMagazinesResponseDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<ParticipationInMagazinesResponseDto> GetParticipationInMagazineByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            var participation = await Repo.GetAsync(
+                new ParticipationInMagazinesSpecifications(id))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                participation.FacultyMemberId,
+                facultyMemberEmail);
+
+            return Mapper.Map<ParticipationInMagazinesResponseDto>(participation);
         }
 
         public async Task<ParticipationInMagazinesResponseDto> CreateParticipationInMagazineAsync(
-            ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
+            ParticipationInMagazineCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.CreateParticipationInMagazineAsync(
-                participationInMagazinesCreateDto,
-                currentUser.Email);
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var participation = Mapper.Map<ParticipationInMagazines>(dto);
+            participation.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(participation);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ParticipationInMagazinesResponseDto>(participation);
         }
 
         public async Task<ParticipationInMagazinesResponseDto> UpdateParticipationInMagazineAsync(
-            int participationInMagazineId,
-            ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
+            int id,
+            ParticipationInMagazineUpdateDto dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var participationInMagazine = await Repo.GetAsync(
-                new ParticipationInMagazinesSpecifications(participationInMagazineId))
+            var participation = await Repo.GetAsync(
+                new ParticipationInMagazinesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                participation.FacultyMemberId,
+                facultyMemberEmail);
 
-            return await _helper.UpdateParticipationInMagazineAsync(
-                participationInMagazineId,
-                participationInMagazinesUpdateDto);
+            Mapper.Map(dto, participation);
+
+            Repo.Update(participation);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ParticipationInMagazinesResponseDto>(participation);
         }
 
-        public async Task DeleteParticipationInMagazineAsync(int participationInMagazineId)
+        public async Task DeleteParticipationInMagazineAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var participationInMagazine = await Repo.GetAsync(
-                new ParticipationInMagazinesSpecifications(participationInMagazineId))
+            var participation = await Repo.GetAsync(
+                new ParticipationInMagazinesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(participationInMagazine.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                participation.FacultyMemberId,
+                facultyMemberEmail);
 
-            await _helper.DeleteParticipationInMagazineAsync(participationInMagazineId);
+            participation.IsDeleted = true;
+
+            Repo.Update(participation);
+            await SaveChangesAsync();
         }
     }
 }

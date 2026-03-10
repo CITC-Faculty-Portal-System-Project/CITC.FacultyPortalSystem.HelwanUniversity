@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule
 {
     public interface IContributionsToUniversityService
     {
-        public Task<PaginatedResult<ContributionsToUniversityResponseDTO>> GetAllContributionsToUniversityAsync(ContributionsToUniversitySpecificationParameters parameters);
-        public Task<ContributionsToUniversityResponseDTO> GetContributionToUniversityByIdAsync(int id);
-        public Task<ContributionsToUniversityResponseDTO> CreateContributionToUniversityAsync(ContributionsToUniversityCreateDTO contributionsToUniversityCreateDto);
-        public Task<ContributionsToUniversityResponseDTO> UpdateContributionToUniversityAsync(int contributionToUniversityId, ContributionsToUniversityUpdateDTO contributionsToUniversityUpdateDto);
-        public Task DeleteContributionToUniversityAsync(int contributionToUniversityId);
+        Task<PaginatedResult<ContributionsToUniversityResponseDTO>> GetAllContributionsToUniversityAsync(
+         ContributionsToUniversitySpecificationParameters parameters,
+         string? facultyMemberEmail = null);
+
+        Task<ContributionsToUniversityResponseDTO> GetContributionToUniversityByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<ContributionsToUniversityResponseDTO> CreateContributionToUniversityAsync(
+            ContributionsToUniversityCreateDTO contributionsToUniversityCreateDto,
+            string? facultyMemberEmail = null);
+
+        Task<ContributionsToUniversityResponseDTO> UpdateContributionToUniversityAsync(
+            int contributionToUniversityId,
+            ContributionsToUniversityUpdateDTO contributionsToUniversityUpdateDto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteContributionToUniversityAsync(
+            int contributionToUniversityId,
+            string? facultyMemberEmail = null);
     }
 }

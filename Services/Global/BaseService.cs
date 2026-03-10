@@ -52,6 +52,23 @@ namespace Services.Global
                     $"You do not have permission to access this {(entityNameOverride ?? "resource")}."
                 );
         }
+
+
+        protected async Task EnsureOwnershipIfClientAsync(
+         Guid entityFacultyMemberId,
+         string? facultyMemberEmail)
+        {
+            if (facultyMemberEmail is not null)
+                return;
+
+            var currentUser = await GetCurrentUserAsync();
+
+            EnsureOwnership(
+                entityFacultyMemberId,
+                currentUser.UserId,
+                EntityName);
+        }
+
         #endregion
 
         #region Persistence

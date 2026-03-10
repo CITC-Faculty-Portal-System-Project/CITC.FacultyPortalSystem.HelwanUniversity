@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressio
 {
     public interface IJobRanksService
     {
-        public Task<PaginatedResult<JobRankResponseDto>> GetAllJobRanksAsync(JobRanksSpecificationsParameters parameters);
-        public Task<JobRankResponseDto> GetJobRankByIdAsync(int id);
-        public Task<JobRankResponseDto> CreateJobRankAsync(JobRankCreateDto jobRanksCreateDto);
-        public Task<JobRankResponseDto> UpdateJobRankAsync(int jobRankId, JobRankUpdateDto jobRanksUpdateDto);
-        public Task DeleteJobRankAsync(int jobRankId);
+        Task<PaginatedResult<JobRankResponseDto>> GetAllAsync(
+       JobRanksSpecificationsParameters parameters,
+       string? facultyMemberEmail = null);
+
+        Task<JobRankResponseDto> GetByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<JobRankResponseDto> CreateAsync(
+            JobRankCreateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task<JobRankResponseDto> UpdateAsync(
+            int id,
+            JobRankUpdateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

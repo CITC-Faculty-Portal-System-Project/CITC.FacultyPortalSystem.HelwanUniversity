@@ -10,22 +10,22 @@ using System.Threading;
 
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
-    public class ResearchesService(IUnitOfWork unitOfWork 
-                , IMapper mapper 
-                , IAuthenticationService authenticationService) :  
-                     BaseService<Research , int>(unitOfWork 
-                         , authenticationService  
-                         , mapper) , IResearchesService
+    public class ResearchesService(
+      IUnitOfWork unitOfWork,
+      IMapper mapper,
+      IAuthenticationService authenticationService)
+      : BaseService<Research, int>(unitOfWork, authenticationService, mapper),
+        IResearchesService
     {
         protected override string EntityName => "Researches";
-
 
         #region Helpers
 
         private async Task AttachUniversityContributorsAsync(
             Research entity,
-            IUnitOfWork unitOfWork)
-                {
+            IUnitOfWork unitOfWork
+            , Guid targetFacultyMemberId)
+        {
             if (entity.Contributions is null || !entity.Contributions.Any())
                 return;
 
@@ -38,176 +38,225 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                     continue;
 
                 var teammate = await personalDataRepo.GetAsync(
-                    new PersonalDataWithNameSpecification(cont.MemberAcademicName)
-                );
+                    new PersonalDataWithNameSpecification(cont.MemberAcademicName));
 
                 if (teammate?.FacultyMember is null)
                     continue;
 
-                cont.ContributorType = Domain.Enums.ContributorType.FromUniverstity;
+                if (teammate.FacultyMember.Id != targetFacultyMemberId)
+                {
+                    cont.ContributorType = Domain.Enums.ContributorType.FromUniverstity;
 
-                teammate.FacultyMember.ResearchContributions ??= new List<ResearchContribution>();
-
-                teammate.FacultyMember.ResearchContributions.Add(cont);
+                    teammate.FacultyMember.ResearchContributions ??= new List<ResearchContribution>();
+                    teammate.FacultyMember.ResearchContributions.Add(cont);
+                }
             }
         }
 
-
         #endregion
 
-
-        public async Task<ResearchResponseDTO> AddResearch(ResearchDTO research)
+        public async Task<ResearchResponseDTO> AddResearch(
+            ResearchDTO research,
+            Guid? facultyMemberId = null)
         {
             var personalDataRepo = UnitOfWork.GetRepository<PersonalData, int>();
             var facultyMemberRepo = UnitOfWork.GetRepository<FacultyMember, Guid>();
-            
+
             var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            if (facultyMemberId is null)
+                EnsureOwnership(targetFacultyMemberId, currentUser.UserId, EntityName);
 
             var entity = Mapper.Map<Research>(research);
             entity.Source = Domain.Enums.ResearchSource.Internal;
-            entity.CreatedBy = currentUser.UserId.ToString();
+            entity.CreatedBy = targetFacultyMemberId.ToString();
 
-            await AttachUniversityContributorsAsync(entity, UnitOfWork);
+            await AttachUniversityContributorsAsync(entity, UnitOfWork , targetFacultyMemberId);
 
-            var currentContributor = await facultyMemberRepo.GetAsync
-                (new FacultyMemberWithEmailSpecifications(currentUser.Email));
+            var currentContributor = await facultyMemberRepo.GetByIdAsync(targetFacultyMemberId)
+                ?? throw new NotFoundException("Faculty Member is Not Found.");
 
-            currentContributor!.ResearchContributions!.Add(new ResearchContribution
+            currentContributor.ResearchContributions ??= new List<ResearchContribution>();
+
+            currentContributor.ResearchContributions.Add(new ResearchContribution
             {
                 Contributor = currentContributor,
                 Research = entity,
-                MemberAcademicName = currentContributor.PersonalData!.Name,
+                MemberAcademicName = currentContributor.PersonalData?.NameInComposition
+                                     ?? currentContributor.PersonalData?.Name
+                                     ?? currentContributor.Name,
                 IsConfirmed = true,
                 IsTheMajorResearcher = true,
             });
 
             await Repo.AddAsync(entity);
-            await UnitOfWork.SaveChangesAsync();
-            
+            await SaveChangesAsync();
+
             return Mapper.Map<ResearchResponseDTO>(entity);
         }
 
-        public async Task<ResearchResponseDTO> ConfirmRecommendedResearch(int researchId)
+        public async Task<ResearchResponseDTO> ConfirmRecommendedResearch(
+            int researchId,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var researchEntity = await Repo.GetAsync(new RecommendedResearchesSpecifications(researchId , user.UserId))
+            var researchEntity = await Repo.GetAsync(
+                new RecommendedResearchesSpecifications(researchId, targetFacultyMemberId))
                 ?? throw NotFound();
 
-            if (!researchEntity.Contributions!.Any(c => c.ContributorId == user.UserId))
-                throw new UnauthorizedException("You Can't Modify this research!");
-           
+            
+            if(targetFacultyMemberId == currentUser.UserId)
+                if (!researchEntity.Contributions!.Any(c => c.ContributorId == targetFacultyMemberId))
+                    throw new UnauthorizedException("You Can't Modify this research!");
+
             researchEntity.Contributions!
-             .SingleOrDefault(c=> c.ContributorId == user.UserId)!.IsConfirmed = true;
+                .SingleOrDefault(c => c.ContributorId == targetFacultyMemberId)!.IsConfirmed = true;
 
             Repo.Update(researchEntity);
-
-            await unitOfWork.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return Mapper.Map<ResearchResponseDTO>(researchEntity);
-
         }
 
-        public async Task DeleteResearch(int researchId)
+        public async Task DeleteResearch(
+            int researchId,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var researchEntity = await Repo.GetAsync(new ResearchSpecifications(researchId , user.UserId))
+            var researchEntity = await Repo.GetAsync(
+                new ResearchSpecifications(researchId, targetFacultyMemberId))
                 ?? throw NotFound();
 
-            if (!researchEntity.Contributions!.Any(c => c.ContributorId == user.UserId))
-                throw new UnauthorizedException("You Can't Modify this research!");
+            if (targetFacultyMemberId == currentUser.UserId)
+                if (!researchEntity.Contributions!.Any(c => c.ContributorId == targetFacultyMemberId))
+                    throw new UnauthorizedException("You Can't Modify this research!");
 
-            var researcherContribution = researchEntity.Contributions!.FirstOrDefault(c => c.ContributorId == user.UserId);
+            var researcherContribution = researchEntity.Contributions!
+                .FirstOrDefault(c => c.ContributorId == targetFacultyMemberId);
 
             researcherContribution!.IsDeleted = true;
             researcherContribution.DeletedAt = DateTime.Now;
-            researcherContribution.DeletedBy = user.UserName;
+            researcherContribution.DeletedBy = currentUser.UserName;
 
             Repo.Update(researchEntity);
-            await unitOfWork.SaveChangesAsync();
-
+            await SaveChangesAsync();
         }
 
-        public async Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches
-                                    (ResearchSpecificationParameters parameters)
-        {
-            var user = await GetCurrentUserAsync();
-
-            var recommendedResearchesEntites = await Repo.GetAllAsync(new RecommendedResearchesSpecifications(parameters, user.UserId))
-                        ?? throw NotFound();
-
-            var totalPagesCount = await Repo.CountAsync(new RecommendedResearchesCountSpecifications(parameters, user.UserId));
-            
-            var currentPage = recommendedResearchesEntites.Count();
-
-            var recommendedResearchesResponse = Mapper.Map<IEnumerable<ResearchResponseDTO>>(recommendedResearchesEntites);
-
-            return new PaginatedResult<ResearchResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, recommendedResearchesResponse);
-        }
-
-        public async Task<PaginatedResult<ResearchResponseDTO>> GetAllResearches(ResearchSpecificationParameters parameters)
-        {
-            var user = await GetCurrentUserAsync();
-
-            var researchesEntites = await Repo.GetAllAsync(new ResearchSpecifications(parameters, user.UserId))
-                        ?? throw NotFound();
-
-            var totalPagesCount = await Repo.CountAsync(new ResearchCountSpecifications(parameters, user.UserId));
-
-            var currentPage = researchesEntites.Count();
-
-            var researchesResponse = Mapper.Map<IEnumerable<ResearchResponseDTO>>(researchesEntites);
-
-            return new PaginatedResult<ResearchResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, researchesResponse);
-        }
-
-        public async Task<ResearchResponseDTO> GetResarchById(int researchId)
+        public async Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches(
+            ResearchSpecificationParameters parameters,
+            Guid? facultyMemberId = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var research = await Repo.GetAsync(new ResearchSpecifications(researchId, currentUser.UserId))
-                            ?? throw NotFound();
+            var recommendedResearchesEntities = await Repo.GetAllAsync(
+                new RecommendedResearchesSpecifications(parameters, targetFacultyMemberId))
+                ?? throw NotFound();
+
+            var totalCount = await Repo.CountAsync(
+                new RecommendedResearchesCountSpecifications(parameters, targetFacultyMemberId));
+
+            var mapped = Mapper.Map<IEnumerable<ResearchResponseDTO>>(recommendedResearchesEntities);
+
+            return new PaginatedResult<ResearchResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<PaginatedResult<ResearchResponseDTO>> GetAllResearches(
+            ResearchSpecificationParameters parameters,
+            Guid? facultyMemberId = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            var researchesEntities = await Repo.GetAllAsync(
+                new ResearchSpecifications(parameters, targetFacultyMemberId))
+                ?? throw NotFound();
+
+            var totalCount = await Repo.CountAsync(
+                new ResearchCountSpecifications(parameters, targetFacultyMemberId));
+
+            var mapped = Mapper.Map<IEnumerable<ResearchResponseDTO>>(researchesEntities);
+
+            return new PaginatedResult<ResearchResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<ResearchResponseDTO> GetResarchById(
+            int researchId,
+            Guid? facultyMemberId = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            var research = await Repo.GetAsync(
+                new ResearchSpecifications(researchId, targetFacultyMemberId))
+                ?? throw NotFound();
 
             return Mapper.Map<ResearchResponseDTO>(research);
         }
 
-        public async Task<ResearchResponseDTO> GetResearchByTitle(string title)
+        public async Task<ResearchResponseDTO> GetResearchByTitle(
+            string title,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var researchEntity = await Repo.GetAsync(new ResearchSpecifications(title, user.UserId))
-                        ?? throw NotFound();
+            var researchEntity = await Repo.GetAsync(
+                new ResearchSpecifications(title, targetFacultyMemberId))
+                ?? throw NotFound();
 
             return Mapper.Map<ResearchResponseDTO>(researchEntity);
         }
 
-        public async Task RejectResearch(int researchId)
-        {
-            var user = await GetCurrentUserAsync();
-
-            var researchEntity = await Repo.GetAsync(new RecommendedResearchesSpecifications(researchId, user.UserId))
-                ?? throw NotFound();
-
-            if (!researchEntity.Contributions!.Any(c => c.ContributorId == user.UserId))
-                throw new UnauthorizedException("You Can't Modify this research!");
-
-            researchEntity.Contributions!.SingleOrDefault(c => c.ContributorId == user.UserId)!
-                .IsDeleted = true;
-
-            Repo.Update(researchEntity);
-            await unitOfWork.SaveChangesAsync();
-        }
-
-        public async Task<ResearchResponseDTO> UpdateResearch(int researchId, ResearchUpdateDTO researchUpdate)
+        public async Task RejectResearch(
+            int researchId,
+            Guid? facultyMemberId = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var researchEntity = await Repo.GetAsync(new ResearchSpecifications(researchId, currentUser.UserId))
+            var researchEntity = await Repo.GetAsync(
+                new RecommendedResearchesSpecifications(researchId, targetFacultyMemberId))
+                ?? throw NotFound();
+
+            if (targetFacultyMemberId == currentUser.UserId)
+                if (!researchEntity.Contributions!.Any(c => c.ContributorId == targetFacultyMemberId))
+                    throw new UnauthorizedException("You Can't Modify this research!");
+
+            researchEntity.Contributions!
+                .SingleOrDefault(c => c.ContributorId == targetFacultyMemberId)!.IsDeleted = true;
+
+            Repo.Update(researchEntity);
+            await SaveChangesAsync();
+        }
+
+        public async Task<ResearchResponseDTO> UpdateResearch(
+            int researchId,
+            ResearchUpdateDTO researchUpdate,
+            Guid? facultyMemberId = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            var researchEntity = await Repo.GetAsync(
+                new ResearchSpecifications(researchId, targetFacultyMemberId))
                 ?? throw NotFound();
 
             if (researchEntity.Contributions!
-                .Any(c => c.ContributorId == currentUser.UserId && c.IsTheMajorResearcher == false))
+                .Any(c => c.ContributorId == targetFacultyMemberId && c.IsTheMajorResearcher == false))
                 throw new ForbiddenException("You Can't Modify this research data as you aren't a major researcher!");
 
             CollectionSync.Sync<
@@ -227,7 +276,6 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
                 mapAdd: d => Mapper.Map<ResearchContribution>(d),
 
-
                 mapUpdate: (dto, entity) =>
                 {
                     if (entity.IsConfirmed)
@@ -238,7 +286,6 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
                     Mapper.Map(dto, entity);
                 },
-
 
                 onDelete: e =>
                 {
@@ -251,24 +298,21 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                     e.IsDeleted = true;
                 },
 
-
                 onUpdateNotFound: id =>
-                    throw new NotFoundException($"ResearchContribution not found"),
+                    throw new NotFoundException("ResearchContribution not found"),
 
                 onDeleteNotFound: id =>
-                    throw new NotFoundException($"ResearchContribution not found for delete")
+                    throw new NotFoundException("ResearchContribution not found for delete")
             );
-
 
             Mapper.Map(researchUpdate, researchEntity);
 
-            await AttachUniversityContributorsAsync(researchEntity, UnitOfWork);
+            await AttachUniversityContributorsAsync(researchEntity, UnitOfWork, targetFacultyMemberId);
 
             Repo.Update(researchEntity);
-            await UnitOfWork.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return Mapper.Map<ResearchResponseDTO>(researchEntity);
-
         }
     }
 }

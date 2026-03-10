@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommittee
 {
     public interface IProjectsService
     {
-        public Task<PaginatedResult<ProjectsResponseDto>> GetAllProjectsAsync(ProjectsSpecifcationsParameters parameters);
-        public Task<ProjectsResponseDto> GetProjectByIdAsync(int id);
-        public Task<ProjectsResponseDto> CreateProjectAsync(ProjectCreateDto projectCreateDto);
-        public Task<ProjectsResponseDto> UpdateProjectAsync(int projectId, ProjectUpdateDto projectUpdateDto);
-        public Task DeleteProjectAsync(int projectId);
+        Task<PaginatedResult<ProjectsResponseDto>> GetAllProjectsAsync(
+      ProjectsSpecifcationsParameters parameters,
+      string? facultyMemberEmail = null);
+
+        Task<ProjectsResponseDto> GetProjectByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<ProjectsResponseDto> CreateProjectAsync(
+            ProjectCreateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task<ProjectsResponseDto> UpdateProjectAsync(
+            int id,
+            ProjectUpdateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteProjectAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

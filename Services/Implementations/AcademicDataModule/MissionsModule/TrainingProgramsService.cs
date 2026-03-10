@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.MissionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
-using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.MissionsModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.MissionsModule;
 using Shared.Dtos.AcademicDataModule.MissionsModule;
@@ -9,69 +8,107 @@ using Shared.SpecificationParameters.AcademicDataModule.MissionsModule;
 namespace Services.Implementations.AcademicDataModule.MissionsModule
 {
     public class TrainingProgramsService(
-           IUnitOfWork unitOfWork,
-           IMapper mapper,
-           IAuthenticationService authenticationService,
-           ITrainingProgramsHelper trainingProgramsHelper)
-           : BaseService<TrainingPrograms, int>(unitOfWork, authenticationService, mapper),
-             ITrainingProgramsService
+       IUnitOfWork unitOfWork,
+       IAuthenticationService authenticationService,
+       IMapper mapper)
+       : BaseService<TrainingPrograms, int>(unitOfWork, authenticationService, mapper),
+         ITrainingProgramsService
     {
-        private readonly ITrainingProgramsHelper _helper = trainingProgramsHelper;
-
         protected override string EntityName => "Training Programs";
 
         public async Task<PaginatedResult<TrainingProgramsResponseDto>> GetAllTrainingProgramsAsync(
-            TrainingProgramsSpecificationParameters parameters)
+            TrainingProgramsSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.GetAllTrainingProgramsAsync(parameters, currentUser.Email);
+            var trainingPrograms = await Repo.GetAllAsync(
+                new TrainingProgramsSpecifications(parameters, email))
+                ?? throw NotFound();
+
+            var mapped = Mapper.Map<IEnumerable<TrainingProgramsResponseDto>>(trainingPrograms);
+
+            var totalCount = await Repo.CountAsync(
+                new TrainingProgramsCountSpecifications(parameters, email));
+
+            return new PaginatedResult<TrainingProgramsResponseDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<TrainingProgramsResponseDto> GetTrainingProgramByIdAsync(int id)
+        public async Task<TrainingProgramsResponseDto> GetTrainingProgramByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var trainingProgram = await Repo.GetAsync(
+                new TrainingProgramsSpecifications(id))
+                ?? throw NotFound();
 
-            var trainingProgram = await Repo.GetAsync(new TrainingProgramsSpecifications(id))
-                ?? throw new NotFoundException("Training Program is Not Found.");
+            await EnsureOwnershipIfClientAsync(
+                trainingProgram.FacultyMemberId,
+                facultyMemberEmail);
 
-            EnsureOwnership(trainingProgram.FacultyMemberId, currentUser.UserId, EntityName);
-
-            return await _helper.GetTrainingProgramByIdAsync(id);
+            return Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
         }
 
         public async Task<TrainingProgramsResponseDto> CreateTrainingProgramAsync(
-            TrainingProgramsCreateDto trainingProgramsCreateDto)
+            TrainingProgramsCreateDto trainingProgramsCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.CreateTrainingProgramAsync(trainingProgramsCreateDto, currentUser.Email);
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var trainingProgram = Mapper.Map<TrainingPrograms>(trainingProgramsCreateDto);
+            trainingProgram.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(trainingProgram);
+            await SaveChangesAsync();
+
+            return Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
         }
 
         public async Task<TrainingProgramsResponseDto> UpdateTrainingProgramAsync(
             int id,
-            TrainingProgramsUpdateDto trainingProgramsUpdateDto)
+            TrainingProgramsUpdateDto trainingProgramsUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var trainingProgram = await Repo.GetAsync(new TrainingProgramsSpecifications(id))
+            var trainingProgram = await Repo.GetAsync(
+                new TrainingProgramsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(trainingProgram.FacultyMemberId, currentUser.UserId, "Training Program");
+            await EnsureOwnershipIfClientAsync(
+                trainingProgram.FacultyMemberId,
+                facultyMemberEmail);
 
-            return await _helper.UpdateTrainingProgramAsync(id, trainingProgramsUpdateDto);
+            Mapper.Map(trainingProgramsUpdateDto, trainingProgram);
+
+            Repo.Update(trainingProgram);
+            await SaveChangesAsync();
+
+            return Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
         }
 
-        public async Task DeleteTrainingProgramAsync(int id)
+        public async Task DeleteTrainingProgramAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var trainingProgram = await Repo.GetAsync(new TrainingProgramsSpecifications(id))
+            var trainingProgram = await Repo.GetAsync(
+                new TrainingProgramsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(trainingProgram.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                trainingProgram.FacultyMemberId,
+                facultyMemberEmail);
 
-            await _helper.DeleteTrainingProgramAsync(id);
+            trainingProgram.IsDeleted = true;
+
+            Repo.Update(trainingProgram);
+            await SaveChangesAsync();
         }
     }
 }

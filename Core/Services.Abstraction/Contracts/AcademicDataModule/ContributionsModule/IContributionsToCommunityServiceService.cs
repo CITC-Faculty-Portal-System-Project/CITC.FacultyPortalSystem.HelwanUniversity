@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule
 {
     public interface IContributionsToCommunityServiceService
     {
-        public Task<PaginatedResult<ContributionsToCommunityServiceResponseDTO>> GetAllContributionsToCommunityServiceAsync(ContributionsToCommunityServiceSpecificationParameters parameters);
-        public Task<ContributionsToCommunityServiceResponseDTO> GetContributionToCommunityServiceByIdAsync(int id);
-        public Task<ContributionsToCommunityServiceResponseDTO> CreateContributionToCommunityServiceAsync(ContributionsToCommunityServiceCreateDTO contributionsToCommunityServiceCreateDto);
-        public Task<ContributionsToCommunityServiceResponseDTO> UpdateContributionToCommunityServiceAsync(int contributionToCommunityServiceId, ContributionsToCommunityServiceUpdateDTO contributionsToCommunityServiceUpdateDto);
-        public Task DeleteContributionToCommunityServiceAsync(int contributionToCommunityServiceId);
+        Task<PaginatedResult<ContributionsToCommunityServiceResponseDTO>> GetAllContributionsToCommunityServiceAsync(
+       ContributionsToCommunityServiceSpecificationParameters parameters,
+       string? facultyMemberEmail = null);
+
+        Task<ContributionsToCommunityServiceResponseDTO> GetContributionToCommunityServiceByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<ContributionsToCommunityServiceResponseDTO> CreateContributionToCommunityServiceAsync(
+            ContributionsToCommunityServiceCreateDTO contributionsToCommunityServiceCreateDto,
+            string? facultyMemberEmail = null);
+
+        Task<ContributionsToCommunityServiceResponseDTO> UpdateContributionToCommunityServiceAsync(
+            int contributionToCommunityServiceId,
+            ContributionsToCommunityServiceUpdateDTO contributionsToCommunityServiceUpdateDto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteContributionToCommunityServiceAsync(
+            int contributionToCommunityServiceId,
+            string? facultyMemberEmail = null);
     }
 }

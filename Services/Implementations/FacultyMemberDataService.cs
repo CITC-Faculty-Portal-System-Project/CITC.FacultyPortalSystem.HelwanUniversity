@@ -1,76 +1,230 @@
-﻿using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.FacultyMemberDataModule;
-using Services.Global;
-using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+﻿using Services.Global;
 using Shared.Dtos.FacultyMemberDataModule;
-using Shared.Dtos.IdentityModule;
 
 namespace Services.Implementations
 {
     public class FacultyMemberDataService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService,
-        IFacultyMemberDataHelper facultyMemberDataHelper)
-        : BaseService<FacultyMember, Guid>(unitOfWork, authenticationService, mapper), IFacultyMemberDataService
+     IUnitOfWork unitOfWork,
+     IMapper mapper,
+     IAuthenticationService authenticationService)
+     : BaseService<FacultyMember, Guid>(unitOfWork, authenticationService, mapper),
+       IFacultyMemberDataService
     {
-        private readonly IFacultyMemberDataHelper _facultyMemberDataHelper = facultyMemberDataHelper;
-
         protected override string EntityName => "Faculty Member";
 
-        #region Personal Data
-        public async Task<PersonalDataResponseDto?> GetPersonalDataAsync()
+        private IGenericRepository<PersonalData, int> PersonalDataRepo
+            => GetRepository<PersonalData, int>();
+
+        private IGenericRepository<ContactData, int> ContactDataRepo
+            => GetRepository<ContactData, int>();
+
+        private IGenericRepository<IdentificationCard, int> IdentificationCardRepo
+            => GetRepository<IdentificationCard, int>();
+
+        private IGenericRepository<SocialMediaPlatforms, int> SocialMediaPlatformsRepo
+            => GetRepository<SocialMediaPlatforms, int>();
+
+        public async Task<PersonalDataResponseDto?> GetPersonalDataAsync(string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.GetPersonalDataAsync(currentUser.Email);
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
+
+            var personalData = await PersonalDataRepo.GetAsync(
+                new PersonalDataWithIncludesSpecifications(email))
+                ?? throw new NotFoundException("Personal Data is Not Found.");
+
+            await EnsureOwnershipIfClientAsync(
+                personalData.FacultyMemberId,
+                facultyMemberEmail);
+
+            var result = Mapper.Map<PersonalDataResponseDto>(personalData);
+            result.NationalNumber = personalData.FacultyMember?.NationalNumber ?? string.Empty;
+
+            return result;
         }
 
-        public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(PersonalDataUpdateDto personalDataUpdateDto)
+        public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(
+            PersonalDataUpdateDto personalDataUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.UpdatePersonalDataAsync(personalDataUpdateDto, currentUser.Email);
-        }
-        #endregion
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
 
-        #region Contact Data
-        public async Task<ContactDataResponseDto?> GetContactDataAsync()
-        {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.GetContactDataAsync(currentUser.Email);
-        }
+            var personalData = await PersonalDataRepo.GetAsync(
+                new PersonalDataWithIncludesSpecifications(email))
+                ?? throw new NotFoundException("Personal Data is Not Found.");
 
-        public async Task<ContactDataResponseDto?> UpdateContactDataAsync(ContactDataUpdateDto contactDataUpdateDto)
-        {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.UpdateContactDataAsync(contactDataUpdateDto, currentUser.Email);
-        }
-        #endregion
+            await EnsureOwnershipIfClientAsync(
+                personalData.FacultyMemberId,
+                facultyMemberEmail);
 
-        #region Identification Card
-        public async Task<IdentificationCardDto> GetIdentificationCardAsync()
-        {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.GetIdentificationCardAsync(currentUser.Email);
+            Mapper.Map(personalDataUpdateDto, personalData);
+
+            PersonalDataRepo.Update(personalData);
+            await SaveChangesAsync();
+
+            var result = Mapper.Map<PersonalDataResponseDto>(personalData);
+            result.NationalNumber = personalData.FacultyMember?.NationalNumber ?? string.Empty;
+
+            return result;
         }
 
-        public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(IdentificationCardDto identificationCardDto)
+        public async Task<ContactDataResponseDto?> GetContactDataAsync(string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.UpdateIdentificationCardAsync(identificationCardDto, currentUser.Email);
-        }
-        #endregion
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
 
-        #region Social Media
-        public async Task<SocialMediaPlatformsDto> GetSocialMediaPlatformsAsync()
-        {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.GetSocialMediaPlatformsAsync(currentUser.Email);
+            var contactData = await ContactDataRepo.GetAsync(
+                new ContactDataWithFacultyMemberEmailSpecifications(email))
+                ?? throw new NotFoundException("Contact Data is Not Found.");
+
+            await EnsureOwnershipIfClientAsync(
+                contactData.FacultyMemberId,
+                facultyMemberEmail);
+
+            return Mapper.Map<ContactDataResponseDto>(contactData);
         }
 
-        public async Task<SocialMediaPlatformsDto> UpdateSocialMediaPlatformsAsync(SocialMediaPlatformsDto socialMediaPlatformsDto)
+        public async Task<ContactDataResponseDto?> UpdateContactDataAsync(
+            ContactDataUpdateDto contactDataUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-            return await _facultyMemberDataHelper.UpdateSocialMediaPlatformsAsync(socialMediaPlatformsDto, currentUser.Email);
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
+
+            var contactData = await ContactDataRepo.GetAsync(
+                new ContactDataWithFacultyMemberEmailSpecifications(email))
+                ?? throw new NotFoundException("Contact Data is Not Found.");
+
+            await EnsureOwnershipIfClientAsync(
+                contactData.FacultyMemberId,
+                facultyMemberEmail);
+
+            Mapper.Map(contactDataUpdateDto, contactData);
+
+            ContactDataRepo.Update(contactData);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ContactDataResponseDto>(contactData);
         }
-        #endregion
+
+        public async Task<IdentificationCardDto> GetIdentificationCardAsync(string? facultyMemberEmail = null)
+        {
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
+
+            var identificationCard = await IdentificationCardRepo.GetAsync(
+                new IdentificationCardWithFacultyMemberEmailSpecifications(email));
+
+            if (identificationCard is not null)
+            {
+                await EnsureOwnershipIfClientAsync(
+                    identificationCard.FacultyMemberId,
+                    facultyMemberEmail);
+
+                return Mapper.Map<IdentificationCardDto>(identificationCard);
+            }
+
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            await EnsureOwnershipIfClientAsync(
+                facultyMember.Id,
+                facultyMemberEmail);
+
+            var newCard = new IdentificationCard
+            {
+                FacultyMemberId = facultyMember.Id,
+                ORCID = null,
+                EKB = null,
+                ResearcherId = null,
+                ResearcherGate = null,
+                AcademiaEdu = null
+            };
+
+            await IdentificationCardRepo.AddAsync(newCard);
+            await SaveChangesAsync();
+
+            return Mapper.Map<IdentificationCardDto>(newCard);
+        }
+
+        public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(
+            IdentificationCardDto identificationCardDto,
+            string? facultyMemberEmail = null)
+        {
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
+
+            var identificationCard = await IdentificationCardRepo.GetAsync(
+                new IdentificationCardWithFacultyMemberEmailSpecifications(email))
+                ?? throw new NotFoundException("Identification Card is Not Found.");
+
+            await EnsureOwnershipIfClientAsync(
+                identificationCard.FacultyMemberId,
+                facultyMemberEmail);
+
+            Mapper.Map(identificationCardDto, identificationCard);
+
+            IdentificationCardRepo.Update(identificationCard);
+            await SaveChangesAsync();
+
+            return Mapper.Map<IdentificationCardDto>(identificationCard);
+        }
+
+        public async Task<SocialMediaPlatformsDto> GetSocialMediaPlatformsAsync(string? facultyMemberEmail = null)
+        {
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
+
+            var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
+                new SocialMediaWithFacultyMemberEmailSpecifications(email));
+
+            if (socialMediaPlatforms is not null)
+            {
+                await EnsureOwnershipIfClientAsync(
+                    socialMediaPlatforms.FacultyMemberId,
+                    facultyMemberEmail);
+
+                return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
+            }
+
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            await EnsureOwnershipIfClientAsync(
+                facultyMember.Id,
+                facultyMemberEmail);
+
+            var newSocialMediaPlatforms = new SocialMediaPlatforms
+            {
+                FacultyMemberId = facultyMember.Id,
+                LinkedIn = null,
+                Instagram = null,
+                PersonalWebsite = null,
+                GoogleScholar = null,
+                Scopus = null,
+                Facebook = null,
+                X = null,
+                YouTube = null
+            };
+
+            await SocialMediaPlatformsRepo.AddAsync(newSocialMediaPlatforms);
+            await SaveChangesAsync();
+
+            return Mapper.Map<SocialMediaPlatformsDto>(newSocialMediaPlatforms);
+        }
+
+        public async Task<SocialMediaPlatformsDto> UpdateSocialMediaPlatformsAsync(
+            SocialMediaPlatformsDto socialMediaPlatformsDto,
+            string? facultyMemberEmail = null)
+        {
+            var email = facultyMemberEmail ?? (await GetCurrentUserAsync()).Email;
+
+            var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
+                new SocialMediaWithFacultyMemberEmailSpecifications(email))
+                ?? throw new NotFoundException("Social Media Platforms Are Not Found.");
+
+            await EnsureOwnershipIfClientAsync(
+                socialMediaPlatforms.FacultyMemberId,
+                facultyMemberEmail);
+
+            Mapper.Map(socialMediaPlatformsDto, socialMediaPlatforms);
+
+            SocialMediaPlatformsRepo.Update(socialMediaPlatforms);
+            await SaveChangesAsync();
+
+            return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
+        }
     }
 }

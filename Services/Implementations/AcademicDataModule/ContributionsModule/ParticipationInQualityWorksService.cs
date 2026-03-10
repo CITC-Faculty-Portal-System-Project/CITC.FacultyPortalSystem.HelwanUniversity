@@ -1,8 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.ContributionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
-using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ContributionsModule;
 using Services.Global;
-using Services.Implementations.SharedLogicBetweenAdminAndFacultyMember.ContributionsModule;
 using Services.Specifications.AcademicDataModule.ContributionsModule;
 using Shared.Dtos.AcademicDataModule.ContributionsModule;
 using Shared.SpecificationParameters.AcademicDataModule.ContributionsModule;
@@ -10,73 +8,107 @@ using Shared.SpecificationParameters.AcademicDataModule.ContributionsModule;
 namespace Services.Implementations.AcademicDataModule.ContributionsModule
 {
     public class ParticipationInQualityWorksService(
-         IUnitOfWork unitOfWork,
-         IMapper mapper,
-         IAuthenticationService authenticationService,
-         IParticipationInQualityWorksServiceHelper participationInQualityWorksHelper)
-         : BaseService<ParticipationInQualityWorks, int>(unitOfWork, authenticationService, mapper),
-           IParticipationInQualityWorksService
+    IUnitOfWork unitOfWork,
+    IAuthenticationService authenticationService,
+    IMapper mapper)
+    : BaseService<ParticipationInQualityWorks, int>(unitOfWork, authenticationService, mapper),
+      IParticipationInQualityWorksService
     {
-        private readonly IParticipationInQualityWorksServiceHelper _helper = participationInQualityWorksHelper;
-
         protected override string EntityName => "Participation In Quality Works";
 
         public async Task<PaginatedResult<ParticipationInQualityWorksResponseDTO>> GetAllParticipationsInQualityWorksAsync(
-            ParticipationInQualityWorksSpecificationParameters parameters)
+            ParticipationInQualityWorksSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.GetAllParticipationsInQualityWorksAsync(parameters, currentUser.Email);
-        }
-
-        public async Task<ParticipationInQualityWorksResponseDTO> GetParticipationInQualityWorksByIdAsync(int id)
-        {
-            var currentUser = await GetCurrentUserAsync();
-
-            var participation = await Repo.GetAsync(new ParticipationInQualityWorksSpecifications(id))
+            var participations = await Repo.GetAllAsync(
+                new ParticipationInQualityWorksSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            EnsureOwnership(participation.FacultyMemberId, currentUser.UserId, EntityName);
+            var mapped = Mapper.Map<IEnumerable<ParticipationInQualityWorksResponseDTO>>(participations);
 
-            return await _helper.GetParticipationInQualityWorksByIdAsync(id);
+            var totalCount = await Repo.CountAsync(
+                new ParticipationInQualityWorksCountSpecifications(parameters, email));
+
+            return new PaginatedResult<ParticipationInQualityWorksResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<ParticipationInQualityWorksResponseDTO> GetParticipationInQualityWorksByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            var participation = await Repo.GetAsync(
+                new ParticipationInQualityWorksSpecifications(id))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                participation.FacultyMemberId,
+                facultyMemberEmail);
+
+            return Mapper.Map<ParticipationInQualityWorksResponseDTO>(participation);
         }
 
         public async Task<ParticipationInQualityWorksResponseDTO> CreateParticipationInQualityWorksAsync(
-            ParticipationInQualityWorksCreateDTO participationInQualityWorksCreateDto)
+            ParticipationInQualityWorksCreateDTO participationInQualityWorksCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.CreateParticipationInQualityWorksAsync(
-                participationInQualityWorksCreateDto,
-                currentUser.Email);
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var participation = Mapper.Map<ParticipationInQualityWorks>(participationInQualityWorksCreateDto);
+            participation.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(participation);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ParticipationInQualityWorksResponseDTO>(participation);
         }
 
         public async Task<ParticipationInQualityWorksResponseDTO> UpdateParticipationInQualityWorksAsync(
             int participationInQualityWorksId,
-            ParticipationInQualityWorksUpdateDTO participationInQualityWorksUpdateDto)
+            ParticipationInQualityWorksUpdateDTO participationInQualityWorksUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var participation = await Repo.GetAsync(new ParticipationInQualityWorksSpecifications(participationInQualityWorksId))
+            var participation = await Repo.GetAsync(
+                new ParticipationInQualityWorksSpecifications(participationInQualityWorksId))
                 ?? throw NotFound();
 
-            EnsureOwnership(participation.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                participation.FacultyMemberId,
+                facultyMemberEmail);
 
-            return await _helper.UpdateParticipationInQualityWorksAsync(
-                participationInQualityWorksId,
-                participationInQualityWorksUpdateDto);
+            Mapper.Map(participationInQualityWorksUpdateDto, participation);
+
+            Repo.Update(participation);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ParticipationInQualityWorksResponseDTO>(participation);
         }
 
-        public async Task DeleteParticipationInQualityWorksAsync(int participationInQualityWorksId)
+        public async Task DeleteParticipationInQualityWorksAsync(
+            int participationInQualityWorksId,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var participation = await Repo.GetAsync(new ParticipationInQualityWorksSpecifications(participationInQualityWorksId))
+            var participation = await Repo.GetAsync(
+                new ParticipationInQualityWorksSpecifications(participationInQualityWorksId))
                 ?? throw NotFound();
 
-            EnsureOwnership(participation.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                participation.FacultyMemberId,
+                facultyMemberEmail);
 
-            await _helper.DeleteParticipationInQualityWorksAsync(participationInQualityWorksId);
+            participation.IsDeleted = true;
+
+            Repo.Update(participation);
+            await SaveChangesAsync();
         }
     }
 }

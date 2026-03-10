@@ -1,6 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesModule;
-using Services.Abstraction.Contracts.SharedLogicBetweenAdminAndFacultyMember.ProjectsAndComiteesModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ProjectsAndCommitteesModule;
 using Shared.Dtos.AcademicDataModule.ProjectsAndCommitteesModule;
@@ -9,69 +8,107 @@ using Shared.SpecificationParameters.AcademicDataModule.ProjectsAndCommitteesMod
 namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule
 {
     public class ReviewingArticlesService(
-     IUnitOfWork unitOfWork,
-     IMapper mapper,
-     IAuthenticationService authenticationService,
-     IReviewingArticlesHelper reviewingArticlesHelper)
-     : BaseService<ReviewingArticles, int>(unitOfWork, authenticationService, mapper),
-       IReviewingArticlesService
+        IUnitOfWork unitOfWork,
+        IAuthenticationService authenticationService,
+        IMapper mapper)
+        : BaseService<ReviewingArticles, int>(unitOfWork, authenticationService, mapper),
+          IReviewingArticlesService
     {
-        private readonly IReviewingArticlesHelper _helper = reviewingArticlesHelper;
-
         protected override string EntityName => "Reviewing Articles";
 
         public async Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(
-            ReviewingArticlesSpecificationsParameters parameters)
+            ReviewingArticlesSpecificationsParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.GetAllReviewingArticlesAsync(parameters, currentUser.Email);
-        }
-
-        public async Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(int id)
-        {
-            var currentUser = await GetCurrentUserAsync();
-
-            var reviewingArticle = await Repo.GetAsync(new ReviewingArticlesSpecifications(id))
+            var reviewingArticles = await Repo.GetAllAsync(
+                new ReviewingArticlesSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, EntityName);
+            var mapped = Mapper.Map<IEnumerable<ReviewingArticlesDto>>(reviewingArticles);
 
-            return await _helper.GetReviewingArticleByIdAsync(id);
+            var totalCount = await Repo.CountAsync(
+                new ReviewingArticlesCountSpecifications(parameters, email));
+
+            return new PaginatedResult<ReviewingArticlesDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            var reviewingArticle = await Repo.GetAsync(
+                new ReviewingArticlesSpecifications(id))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                reviewingArticle.FacultyMemberId,
+                facultyMemberEmail);
+
+            return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
         public async Task<ReviewingArticlesDto> CreateReviewingArticleAsync(
-            ReviewingArticleCreateDto reviewingArticleCreateDto)
+            ReviewingArticleCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            return await _helper.CreateReviewingArticleAsync(reviewingArticleCreateDto, currentUser.Email);
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var reviewingArticle = Mapper.Map<ReviewingArticles>(dto);
+            reviewingArticle.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(reviewingArticle);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
         public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(
-            int reviewingArticleId,
-            ReviewArticleUpdateDto reviewingArticleUpdateDto)
+            int id,
+            ReviewArticleUpdateDto dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var reviewingArticle = await Repo.GetAsync(new ReviewingArticlesSpecifications(reviewingArticleId))
+            var reviewingArticle = await Repo.GetAsync(
+                new ReviewingArticlesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                reviewingArticle.FacultyMemberId,
+                facultyMemberEmail);
 
-            return await _helper.UpdateReviewingArticleAsync(reviewingArticleId, reviewingArticleUpdateDto);
+            Mapper.Map(dto, reviewingArticle);
+
+            Repo.Update(reviewingArticle);
+            await SaveChangesAsync();
+
+            return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task DeleteReviewingArticleAsync(int reviewingArticleId)
+        public async Task DeleteReviewingArticleAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var reviewingArticle = await Repo.GetAsync(new ReviewingArticlesSpecifications(reviewingArticleId))
+            var reviewingArticle = await Repo.GetAsync(
+                new ReviewingArticlesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                reviewingArticle.FacultyMemberId,
+                facultyMemberEmail);
 
-            await _helper.DeleteReviewingArticleAsync(reviewingArticleId);
+            reviewingArticle.IsDeleted = true;
+
+            Repo.Update(reviewingArticle);
+            await SaveChangesAsync();
         }
     }
 }
