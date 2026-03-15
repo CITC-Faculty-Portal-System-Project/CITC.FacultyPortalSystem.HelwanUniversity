@@ -31,7 +31,7 @@ namespace Services.MappingProfiles
             CreateMap<PersonalDataFetchingDTO, PersonalDataCreateDTO>();
             
             CreateMap<SceintificMissionsFetchingDTO, ScientificMissionCreateDto>()
-                .ForMember(dest => dest.name, opt => opt.MapFrom(src => src.Name))
+                .ForMember(dest => dest.MissionName, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.UniversityOrFaculty, opt => opt.MapFrom(src => src.UniversityFaculty))
                 .ForMember(dest => dest.CountryOrCity, opt => opt.MapFrom(src => src.CountryCity));
 
