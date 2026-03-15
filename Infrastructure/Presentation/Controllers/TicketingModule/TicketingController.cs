@@ -2,6 +2,7 @@
 using Shared;
 using Shared.Dtos.IdentityModule;
 using Shared.Dtos.TicketingModule;
+using Shared.Enums.TicketingModule;
 using Shared.SpecificationParameters.TicketingModule;
 using System;
 using System.Collections.Generic;
@@ -43,8 +44,8 @@ namespace Presentation.Controllers.TicketingModule
         [ProducesResponseType(typeof(IEnumerable<UserShowForAdminResponseDTO>), StatusCodes.Status200OK)]
         [HttpGet("Ticket/SuitableSupportAdmins")]
         public async Task<ActionResult<IEnumerable<UserShowForAdminResponseDTO>>> GetAllSuitableAdminsForTicketAsync(
-            [FromBody] TicketResponseDTO ticket)
-            => Ok(await _serviceManager.TicketingService.GetAllSuitableAdminsForTicketAsync(ticket));
+            TicketType type)
+            => Ok(await _serviceManager.TicketingService.GetAllSuitableAdminsForTicketAsync(type));
 
 
         [Authorize(Policy = "Permission:Tickets.Assign")]

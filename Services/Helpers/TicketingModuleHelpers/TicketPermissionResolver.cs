@@ -42,8 +42,6 @@ namespace Services.Helpers.TicketingModuleHelpers
 
             return
             [
-                "Tickets.ViewAssigned",
-                "Tickets.ChangeStatus",
                 .. GetFullCrudPermissions(moduleName)
             ];
         }

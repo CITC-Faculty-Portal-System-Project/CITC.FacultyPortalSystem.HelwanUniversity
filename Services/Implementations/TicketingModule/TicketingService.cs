@@ -145,7 +145,7 @@ namespace Services.Implementations.TicketingModule
 
         }
 
-        public async Task<IEnumerable<UserShowForAdminResponseDTO>> GetAllSuitableAdminsForTicketAsync(TicketResponseDTO ticket)
+        public async Task<IEnumerable<UserShowForAdminResponseDTO>> GetAllSuitableAdminsForTicketAsync(TicketType type)
         {
             
             var currentUser = await GetCurrentUserAsync();
@@ -153,7 +153,7 @@ namespace Services.Implementations.TicketingModule
             var usersRepo = UnitOfWork.GetRepository<User, Guid>();
             
             var ticketPermissions = TicketPermissionResolver
-                .GetRequiredPermissionsForAssignment((Domain.Enums.TicketType)ticket.Type);
+                .GetRequiredPermissionsForAssignment((Domain.Enums.TicketType)type);
 
             var suitableAdmins = await usersRepo.GetAllAsync(new UserSpecifications(ticketPermissions, currentUser.UserId))
                 ?? throw new UserNotFoundException("No Suitable Admin Found For this ticket");

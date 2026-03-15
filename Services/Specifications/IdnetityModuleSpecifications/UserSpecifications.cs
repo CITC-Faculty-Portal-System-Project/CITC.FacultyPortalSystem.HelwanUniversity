@@ -99,7 +99,7 @@ namespace Services.Specifications.IdnetityModuleSpecifications
 
 
         public UserSpecifications(List<string> permissionCodes , Guid currentUserId)
-      : base(u =>
+      : base(u => u.Id != currentUserId && 
           u.Permissions!.Any(up =>
               up.Permission != null &&
               permissionCodes.Contains(up.Permission.Code))
@@ -108,7 +108,7 @@ namespace Services.Specifications.IdnetityModuleSpecifications
               ur.Role.Permissions!.Any(rp =>
                   rp.Permission != null &&
                   permissionCodes.Contains(rp.Permission.Code))
-          && u.Id != currentUserId)
+          )
       )
         {
          AddIncludeWithChain(u =>

@@ -30,9 +30,6 @@ namespace Services.MappingProfiles.AdminModule
 
                      .ForMember(dest => dest.Permissions, opt => opt.MapFrom(src =>
                         src.Permissions!.Select(up => up.Permission)
-                        .Concat(
-                            src.Roles!.SelectMany(ur => ur.Role.Permissions!.Select(rp => rp.Permission))
-                        )
                         .Distinct()
                         .Select(p => new PermissionResponseDTO
                         {
