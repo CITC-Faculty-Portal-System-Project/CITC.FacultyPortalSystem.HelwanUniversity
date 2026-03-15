@@ -28,14 +28,11 @@ namespace Presentation.Controllers.TicketingModule
             => Ok(await _serviceManager.TicketingService.GetAllMemberTicketsAsync(parameters));
 
         
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TicketResponseDTO) , StatusCodes.Status200OK)]
         [HttpPut("Ticket/Revoke/{ticketId:int}")]
         public async Task<ActionResult> RevokeTicketAsync(int ticketId)
-        {
-            await _serviceManager.TicketingService.RevokeTicketAsync(ticketId);
-            return Ok(new ApiResponseHandler("Ticket revoked successfully."));
-        }
-
+            => Ok(await _serviceManager.TicketingService.RevokeTicketAsync(ticketId));
+        
         [ProducesResponseType(typeof(TicketResponseDTO) , StatusCodes.Status200OK)]
         [HttpPut("Ticket/Reopen/{ticketId:int}")]
         public async Task<ActionResult> ReopenTicketAsync(int ticketId)

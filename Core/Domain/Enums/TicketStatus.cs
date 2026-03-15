@@ -13,6 +13,6 @@ namespace Domain.Enums
         Resolved = 3,
         Reopened = 4,
         Closed = 5,
-        WithdrawbyUser = 6
+        WithdrawByUser = 6,
     }
 }

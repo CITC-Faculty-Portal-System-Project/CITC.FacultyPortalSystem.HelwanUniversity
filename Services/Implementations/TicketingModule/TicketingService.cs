@@ -174,7 +174,7 @@ namespace Services.Implementations.TicketingModule
             await ChangeTicketStatusAsync(
                 ticket,
                 [Domain.Enums.TicketStatus.Opened],
-                Domain.Enums.TicketStatus.WithdrawbyUser,
+                Domain.Enums.TicketStatus.WithdrawByUser,
                 "You can't revoke this ticket because it is already being processed.");
 
             return Mapper.Map<TicketResponseDTO>(ticket);

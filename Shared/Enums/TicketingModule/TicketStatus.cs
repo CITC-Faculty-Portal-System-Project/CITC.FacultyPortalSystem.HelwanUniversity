@@ -6,6 +6,8 @@
         InProgress = 2,
         Resolved = 3,
         Reopened = 4,
-        Closed = 5
+        Closed = 5,
+        WithdrawByUser = 6,
+
     }
 }
