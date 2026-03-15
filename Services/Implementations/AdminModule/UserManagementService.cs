@@ -200,6 +200,41 @@ namespace Services.Implementations.AdminModule
             facultyRepo.Update(facultyMember);
         }
 
+        private async Task EnsureUserCredentialsValidForUpdateAsync(Guid userId, UserEditDTO user)
+        {
+            var currentUser = await userManager.FindByIdAsync(userId.ToString());
+
+            if (currentUser is null)
+                throw new NotFoundException("User not found");
+
+            if (currentUser.NationalNumber != user.NationalNumber)
+            {
+                var foundUser = await Repo.GetAsync(new UserSpecifications(user.NationalNumber));
+
+                if (foundUser is not null)
+                    throw new UserAlreadyExistsException(
+                        $"User with national number {user.NationalNumber} already exists.");
+            }
+
+            if (currentUser.Email != user.Email)
+            {
+                var emailUser = await userManager.FindByEmailAsync(user.Email);
+
+                if (emailUser is not null)
+                    throw new UserAlreadyExistsException(
+                        $"User with email {user.Email} already exists.");
+            }
+
+            if (currentUser.UserName != user.UserName)
+            {
+                var usernameUser = await userManager.FindByNameAsync(user.UserName);
+
+                if (usernameUser is not null)
+                    throw new UserAlreadyExistsException(
+                        $"User with username {user.UserName} already exists.");
+            }
+        }
+
         #endregion
 
         protected override string EntityName => "User";
@@ -257,7 +292,7 @@ namespace Services.Implementations.AdminModule
             var foundUserEntity = await userManager.FindByIdAsync(userId.ToString())
                                                 ?? throw NotFound();
 
-            await EnsureUserDoesNotExistAsync(Mapper.Map<UserAddDTO>(user));
+            await EnsureUserCredentialsValidForUpdateAsync(userId , user);
 
             await UpdateUserNameIfChangedAsync(foundUserEntity, user.UserName);
             await UpdateEmailIfChangedAsync(foundUserEntity, user.Email);

@@ -129,7 +129,6 @@ namespace Presistence.Data
         #region AdminDbSets
 
         public DbSet<Ticket> Tickets { get; set; }
-        public DbSet<TicketMessage> TicketsMessages { get; set; }
 
         #endregion
 

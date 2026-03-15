@@ -1,6 +1,7 @@
-﻿namespace Domain.Entities
+﻿
+namespace Domain.Entities
 {
-    public class BaseAttachmentEntity : BaseEntity<Guid>
+    public class BaseAttachmentEntity : BaseEntity<Guid> 
     {
         public string FileName { get; set; } = string.Empty;
         public string ContentType { get; set; } = string.Empty;

@@ -8,6 +8,8 @@ using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionMod
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.MessagingAndChattingModule;
+using Services.Abstraction.Contracts.TicketingModule;
 
 namespace Services.Implementations
 {
@@ -42,6 +44,9 @@ namespace Services.Implementations
         , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
         , Func<IProfileDashboardService> _profileDashboardServiceFactory
         , Func<IUserManagementService> _userManagementService
+        , Func<IChatService> _chatService
+        , Func<IConversationService> _conversationService
+        , Func<ITicketingService> _ticketingService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -116,9 +121,23 @@ namespace Services.Implementations
         #region AdminModule
 
         public IUserManagementService UserManagementService => _userManagementService.Invoke();
-      
+
         #endregion
 
+        #region MessagingAndChattingModule
+
+        public IChatService ChatService => _chatService.Invoke();
+        public IConversationService ConversationService => _conversationService.Invoke();
+
+
+        #endregion
+
+        #region TicketingModule
+
+        public ITicketingService TicketingService => _ticketingService.Invoke();
+
+
+        #endregion
 
     }
 }

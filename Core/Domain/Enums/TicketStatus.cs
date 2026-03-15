@@ -8,11 +8,11 @@ namespace Domain.Enums
 {
     public enum TicketStatus
     {
-        Open = 1,
+        Opened = 1,
         InProgress = 2,
         Resolved = 3,
         Reopened = 4,
         Closed = 5,
-        Rejected = 6
+        WithdrawbyUser = 6
     }
 }

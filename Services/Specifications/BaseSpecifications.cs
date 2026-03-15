@@ -73,6 +73,12 @@ namespace Services.Specifications
             Skip = (pageIndex - 1) * pageSize;
         }
 
+        protected void ApplyCursorTake(int take)
+        {
+            Take = take + 1;
+            isPaginated = true;
+        }
+
         #endregion
     }
 }

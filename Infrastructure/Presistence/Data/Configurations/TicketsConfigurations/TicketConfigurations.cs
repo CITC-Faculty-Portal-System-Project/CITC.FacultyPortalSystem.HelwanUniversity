@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.AdminModule;
+using Domain.Entities.Messaging;
 
 namespace Presistence.Data.Configurations.TicketsConfigurations
 {
@@ -29,14 +30,6 @@ namespace Presistence.Data.Configurations.TicketsConfigurations
 
             #endregion
 
-            #region ConfiguringRelations
-
-            builder.HasMany(t => t.Messages)
-                .WithOne(m => m.Ticket)
-                .HasForeignKey(m => m.TicketId)
-                .OnDelete(DeleteBehavior.Cascade);
-            
-            #endregion
         }
     }
 }

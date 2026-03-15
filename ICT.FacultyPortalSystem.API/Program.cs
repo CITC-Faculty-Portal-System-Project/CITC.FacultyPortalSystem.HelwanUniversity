@@ -1,5 +1,6 @@
 using Domain.Entities.IdentityModule.Users;
 using ICIT.FacultyPortalSystem.API.Extensions;
+using ICIT.FacultyPortalSystem.API.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Identity;
@@ -55,6 +56,8 @@ namespace ICIT.FacultyPortalSystem.API
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.MapHub<ChatHub>("/hubs/chat");
 
             app.Run();
         }

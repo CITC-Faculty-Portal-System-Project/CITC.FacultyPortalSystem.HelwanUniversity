@@ -37,7 +37,7 @@ namespace Services.Specifications.IdnetityModuleSpecifications
                 .ThenInclude(u => u.Permissions!)
                 .ThenInclude(u => u.Permission));
 
-            AddIncludes(u => u.Roles);
+            EnableSplitQuery();
 
             switch (parameters.Sort)
             {
@@ -81,7 +81,8 @@ namespace Services.Specifications.IdnetityModuleSpecifications
                 .ThenInclude(u => u.Permissions!)
                 .ThenInclude(u => u.Permission));
 
-            AddIncludes(u => u.Roles);
+            EnableSplitQuery();
+
 
 
         }
@@ -94,5 +95,35 @@ namespace Services.Specifications.IdnetityModuleSpecifications
         {
        
         }
+
+
+        public UserSpecifications(List<string> permissionCodes , Guid currentUserId)
+      : base(u =>
+          u.Permissions!.Any(up =>
+              up.Permission != null &&
+              permissionCodes.Contains(up.Permission.Code))
+          ||
+          u.Roles!.Any(ur =>
+              ur.Role.Permissions!.Any(rp =>
+                  rp.Permission != null &&
+                  permissionCodes.Contains(rp.Permission.Code))
+          && u.Id != currentUserId)
+      )
+        {
+         AddIncludeWithChain(u =>
+         u.Include(u => u.Permissions!)
+         .ThenInclude(u => u.Permission));
+
+            AddIncludeWithChain(u =>
+                u.Include(u => u.Roles!)
+                .ThenInclude(u => u.Role!)
+                .ThenInclude(u => u.Permissions!)
+                .ThenInclude(u => u.Permission));
+
+            EnableSplitQuery();
+
+        }
+
+
     }
 }

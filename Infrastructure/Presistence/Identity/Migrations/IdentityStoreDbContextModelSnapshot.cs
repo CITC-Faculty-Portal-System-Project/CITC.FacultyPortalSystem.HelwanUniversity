@@ -829,6 +829,73 @@ namespace Presistence.Identity.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("RolesPermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 46,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 47,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 50,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 54,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 56,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.IdentityModule.Authorization.UserPermission", b =>

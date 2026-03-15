@@ -21,5 +21,7 @@ namespace Domain.Contracts
         int Take { get; }
         bool isPaginated { get; }
         bool IsSplitQuery { get; }
+
+
     }
 }
