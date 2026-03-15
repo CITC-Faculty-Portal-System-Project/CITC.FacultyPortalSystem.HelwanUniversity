@@ -37,7 +37,6 @@ namespace Services.Specifications.IdnetityModuleSpecifications
                 .ThenInclude(u => u.Permissions!)
                 .ThenInclude(u => u.Permission));
 
-            EnableSplitQuery();
 
             switch (parameters.Sort)
             {
@@ -55,13 +54,15 @@ namespace Services.Specifications.IdnetityModuleSpecifications
                 case UsersSortingOptions.NumberOfAcessedPermissionsDESC:
                     AddOrderByDescending(u =>
                         u.Roles.SelectMany(r => r.Role.Permissions!).Count()
-                        + u.Permissions!.Count()); break;
+                        + u.Permissions!.Count()); 
+                    break;
                 default:
+                    AddOrderBy(u => u.Id);
                     break;
 
             }
-
             applyPagination(parameters.PageSize, parameters.PageIndex);
+            EnableSplitQuery();
 
         }
 
