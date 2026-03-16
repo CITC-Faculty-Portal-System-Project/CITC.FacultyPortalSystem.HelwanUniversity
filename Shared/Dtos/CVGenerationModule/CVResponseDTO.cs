@@ -13,7 +13,7 @@ namespace Shared.Dtos.CVGenerationModule
     public record CVResponseDTO
     {
         #region Personal Data
-        public Guid? ProfilePictureId { get; set; }
+        //public ? ProfilePictureId { get; set; }
         public LookupItemDto? Title { get; set; }
         public string Name { get; set; } = string.Empty;
         public LookupItemDto? University { get; set; } 
