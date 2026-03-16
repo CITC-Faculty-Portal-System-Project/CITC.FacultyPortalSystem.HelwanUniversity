@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ICIT.FacultyPortalSystem.API.Hubs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Shared;
 using Shared.Dtos.MessagingAndChattingModule;
@@ -7,7 +8,7 @@ using Shared.SpecificationParameters.MessagingAndChattingModule;
 namespace Presentation.Controllers.MessagingAndChattingModule
 {
     [Authorize]
-    public class MessagingController(IServiceManager _serviceManager , IHubContext _hubContext) : ApiController
+    public class MessagingController(IServiceManager _serviceManager , IHubContext<ChatHub> _hubContext) : ApiController
     {
         #region Chat
 

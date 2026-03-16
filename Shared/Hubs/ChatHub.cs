@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace ICIT.FacultyPortalSystem.API.Hubs
+namespace Shared.Hubs
 {
     public class ChatHub : Hub
     {
