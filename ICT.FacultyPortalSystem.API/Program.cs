@@ -1,9 +1,9 @@
 using Domain.Entities.IdentityModule.Users;
 using ICIT.FacultyPortalSystem.API.Extensions;
-using ICIT.FacultyPortalSystem.API.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Identity;
+using Shared.Hubs;
 
 namespace ICIT.FacultyPortalSystem.API
 {
