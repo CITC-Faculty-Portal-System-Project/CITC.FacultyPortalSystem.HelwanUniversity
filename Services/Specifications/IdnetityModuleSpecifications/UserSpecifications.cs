@@ -4,6 +4,7 @@ using Shared.Enums.AcademicDataModule.MissionsModule;
 using Shared.Enums.IdentityModule.SpecificationEnums;
 using Shared.SpecificationParameters.IdentityModule;
 using System.Linq.Expressions;
+using System.Xml.Linq;
 
 namespace Services.Specifications.IdnetityModuleSpecifications
 {
@@ -99,7 +100,7 @@ namespace Services.Specifications.IdnetityModuleSpecifications
 
 
         public UserSpecifications(List<string> permissionCodes , Guid currentUserId)
-      : base(u => u.Id != currentUserId && 
+      : base(u => u.Id != currentUserId && u.Roles.Any(r => r.Role!.Name!.Equals("SupportAdmin")) &&
           u.Permissions!.Any(up =>
               up.Permission != null &&
               permissionCodes.Contains(up.Permission.Code))
@@ -107,7 +108,7 @@ namespace Services.Specifications.IdnetityModuleSpecifications
           u.Roles!.Any(ur =>
               ur.Role.Permissions!.Any(rp =>
                   rp.Permission != null &&
-                  permissionCodes.Contains(rp.Permission.Code) && string.Equals(ur.Role.Name , "SupportAdmin"))
+                  permissionCodes.Contains(rp.Permission.Code))
           )
       )
         {
