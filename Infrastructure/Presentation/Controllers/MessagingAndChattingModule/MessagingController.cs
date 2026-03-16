@@ -1,8 +1,8 @@
-﻿using ICIT.FacultyPortalSystem.API.Hubs;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Shared;
 using Shared.Dtos.MessagingAndChattingModule;
+using Shared.Hubs;
 using Shared.SpecificationParameters.MessagingAndChattingModule;
 
 namespace Presentation.Controllers.MessagingAndChattingModule
