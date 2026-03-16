@@ -1,4 +1,6 @@
-﻿namespace Shared.Dtos.FacultyMemberDataModule
+﻿using Shared.Dtos.AttachmentsModule;
+
+namespace Shared.Dtos.FacultyMemberDataModule
 {
     public record PersonalDataResponseDto
     {
@@ -19,7 +21,7 @@
         public string? AccurateSpecialization { get; set; }
         public string? NameInComposition { get; set; }
         public string? CompositionTopics { get; set; }
+        public AttachmentResponseDTO? ProfilePicture { get; set; }
 
-        public Guid? ProfilePictureId { get; set; }
     }
 }

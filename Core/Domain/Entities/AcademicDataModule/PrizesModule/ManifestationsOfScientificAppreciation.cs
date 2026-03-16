@@ -1,4 +1,7 @@
-﻿namespace Domain.Entities.AcademicDataModule.PrizesModule
+﻿using Domain.Entities.EntitesAttachments;
+using System.Reflection.PortableExecutable;
+
+namespace Domain.Entities.AcademicDataModule.PrizesModule
 {
     public class ManifestationsOfScientificAppreciation : BaseEntity<int>
     {
@@ -13,6 +16,7 @@
 
         #region Navigation Properties
         public FacultyMember? FacultyMember { get; set; }
+        public ICollection<ManifestationsOfScientificAppreciationAttachment>? Attachments { get; set; } = new List<ManifestationsOfScientificAppreciationAttachment>();
         #endregion
     }
 }

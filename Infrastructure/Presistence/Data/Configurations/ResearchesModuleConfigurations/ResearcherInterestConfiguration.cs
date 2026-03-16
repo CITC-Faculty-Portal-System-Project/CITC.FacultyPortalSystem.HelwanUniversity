@@ -22,11 +22,9 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
 
             #endregion
 
-            #region AddingIndcies
+            #region ConfiguringKey
 
-            builder.HasIndex(ri => new { ri.ResearcherId, ri.InterestId })
-                .IsUnique();
-
+                builder.HasKey(ri => new {ri.ResearcherId , ri.InterestId});
 
             #endregion
         }

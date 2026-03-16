@@ -27,10 +27,10 @@ namespace Services.Specifications.AcademicDataModule.WritingsAndPatentsModule
                     AddOrderByDescending(p => p.ApplyingDate);
                     break;
                 case PatentsSortingOptions.AccreditationDateAsc:
-                    AddOrderBy(p => p.AccreditationDate);
+                    AddOrderBy(p => p.AccreditationDate!);
                     break;
                 case PatentsSortingOptions.AccreditationDateDesc:
-                    AddOrderByDescending(p => p.AccreditationDate);
+                    AddOrderByDescending(p => p.AccreditationDate!);
                     break;
                 case PatentsSortingOptions.NameAsc:
                     AddOrderBy(p => p.NameOfPatent);
@@ -42,9 +42,12 @@ namespace Services.Specifications.AcademicDataModule.WritingsAndPatentsModule
                     break;
             }
             applyPagination(parameters.PageSize, parameters.PageIndex);
+            AddIncludes(p => p.Attachments!);
         }
         public PatentsSpecifications(int id) : base(p => p.Id == id && !p.IsDeleted)
         {
+            AddIncludes(p => p.Attachments!);
+
         }
     }
 }

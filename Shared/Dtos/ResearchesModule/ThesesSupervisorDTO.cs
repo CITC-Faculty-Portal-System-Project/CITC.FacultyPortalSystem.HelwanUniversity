@@ -4,11 +4,11 @@ namespace Shared.Dtos.ResearchesModule
 {
     public record ThesesSupervisorDTO
     {
-        public SupervisorRole Role { get; set; }
+        public Guid? MemberId { get; set; }
+        public FacultyMemberRoleInSupervisingThesis Role { get; set; }
         public string Name { get; set; } = string.Empty;
         public Guid JobLevelId { get; set; }
         public string Authority { get; set; } = string.Empty;
         public int? ThesesId { get; set; }
-
     }
 }

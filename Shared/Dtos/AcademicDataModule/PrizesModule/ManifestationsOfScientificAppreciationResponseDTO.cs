@@ -1,4 +1,6 @@
-﻿namespace Shared.Dtos.AcademicDataModule.PrizesModule
+﻿using Shared.Dtos.AttachmentsModule;
+
+namespace Shared.Dtos.AcademicDataModule.PrizesModule
 {
     public record ManifestationsOfScientificAppreciationResponseDTO
     {
@@ -7,5 +9,7 @@
         public string IssuingAuthority { get; set; } = string.Empty;
         public DateOnly DateOfAppreciation { get; set; }
         public string? Description { get; set; }
+        public ICollection<AttachmentResponseDTO>? Attachments { get; set; }
+
     }
 }

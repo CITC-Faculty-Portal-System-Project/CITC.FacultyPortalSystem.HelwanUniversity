@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using Shared.Dtos.AttachmentsModule;
+using System.Linq;
 
 namespace Shared.Dtos.AcademicDataModule.PrizesModule
 {
@@ -9,5 +10,7 @@ namespace Shared.Dtos.AcademicDataModule.PrizesModule
         public string AwardingAuthority { get; set; } = string.Empty;
         public DateOnly DateReceived { get; set; }
         public string? Description { get; set; }
+        public ICollection<AttachmentResponseDTO>? Attachments { get; set; }
+
     }
 }

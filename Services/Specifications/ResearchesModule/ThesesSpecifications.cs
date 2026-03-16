@@ -15,15 +15,16 @@ namespace Services.Specifications.ResearchesModule
             AddIncludes(t => t.Attachments!);
             AddIncludes(t => t.Grade!);
             AddIncludeWithChain(t => t
-                        .Include(t => t.Supervisors!)
+                        .Include(t => t.ComitteeMembers!)
                         .ThenInclude(t => t.JobLevel));
+
+            AddIncludes(t => t.Supervisings!);
 
         }
 
 
         public ThesesSpecifications(ThesesSpecificationParameters parameters , Guid facultyMemberId)
-            :base(t => !t.IsDeleted
-                    && t.FacultyMemberId == facultyMemberId)
+            :base(BuildCriteria(parameters, facultyMemberId))
         {
 
 
@@ -47,6 +48,12 @@ namespace Services.Specifications.ResearchesModule
                 case ThesesSortingOptions.RegisterationDateDESC:
                     AddOrderByDescending(ts => ts.RegistrationDate!);
                     break;
+                case ThesesSortingOptions.DiscussionDateASC:
+                    AddOrderBy(ts => ts.DiscussionDate!);
+                    break;
+                case ThesesSortingOptions.DiscussionDateDESC:
+                    AddOrderByDescending(ts => ts.DiscussionDate!);
+                    break;
                 default:
                     break;
             }
@@ -57,11 +64,38 @@ namespace Services.Specifications.ResearchesModule
             AddIncludes(t => t.Attachments!);
             AddIncludes(t => t.Grade!);
             AddIncludeWithChain(t => t
-                        .Include(t => t.Supervisors!)
+                        .Include(t => t.ComitteeMembers!)
                         .ThenInclude(t => t.JobLevel));
 
             applyPagination(parameters.PageSize, parameters.PageIndex);
 
+        }
+
+
+        private static Expression<Func<Thesis, bool>> BuildCriteria(
+          ThesesSpecificationParameters parameters,
+          Guid facultyMemberId)
+        {
+            Domain.Enums.ThesisType? mappedType = null;
+            if (parameters.Type.HasValue)
+            {
+                mappedType = Enum.Parse<Domain.Enums.ThesisType>(
+                    parameters.Type.Value.ToString(),
+                    ignoreCase: true);
+            }
+
+            return t =>
+                !t.IsDeleted
+                && t.FacultyMemberId == facultyMemberId
+
+                && (!mappedType.HasValue || t.Type == mappedType.Value)
+
+                && (parameters.GradeIds == null || !parameters.GradeIds.Any()
+                    || parameters.GradeIds.Contains(t.GradeId))
+
+                && (string.IsNullOrEmpty(parameters.Search)
+                    || t.Title.Contains(parameters.Search)
+                    || t.UniversityOrFaculty!.Contains(parameters.Search));
         }
     }
 }

@@ -4,7 +4,7 @@
     {
         public string DOI { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
-        public string PubYear { get; set; } = string.Empty;
+        public int? PubYear { get; set; }
         public string? PubDate { get; set; } = string.Empty;
         public string Journal { get; set; } = string.Empty;
         public string? Publisher { get; set; }

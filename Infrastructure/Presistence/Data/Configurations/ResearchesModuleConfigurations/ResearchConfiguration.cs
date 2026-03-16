@@ -30,9 +30,6 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
                    .HasMaxLength(800)
                    .IsRequired();
 
-            builder.Property(e => e.PubYear)
-                   .HasMaxLength(10);
-
             builder.Property(e => e.PubDate)
                    .HasMaxLength(100)
                    .IsRequired(false);
@@ -62,7 +59,26 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
               .HasForeignKey(a => a.ResearchId)
               .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasOne(r => r.Thesis)
+                .WithMany(th => th.Researches)
+                .HasForeignKey(r => r.ThesisId)
+                .OnDelete(DeleteBehavior.SetNull);
 
+
+            #endregion
+
+            #region AddingIndcies
+
+            builder.HasIndex(r => r.Source);
+            builder.HasIndex(r => r.ResearchDerivedFrom);
+            builder.HasIndex(r => r.PublisherType);
+            builder.HasIndex(r => r.PublicationType);
+            builder.HasIndex(r => r.PublicationType);
+            builder.HasIndex(r => r.Title);
+            builder.HasIndex(r => r.JournalOrConfernce);
+            builder.HasIndex(r => r.PubYear);
+            builder.HasIndex(r => r.DOI).IsUnique();
+            
             #endregion
         }
     }

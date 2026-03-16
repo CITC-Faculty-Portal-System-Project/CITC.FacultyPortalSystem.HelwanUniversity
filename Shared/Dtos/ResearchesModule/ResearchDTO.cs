@@ -1,4 +1,5 @@
-﻿using Shared.Dtos.AttachmentsModule;
+﻿using Microsoft.AspNetCore.Http;
+using Shared.Dtos.AttachmentsModule;
 using Shared.Enums.ResearchesModule;
 
 namespace Shared.Dtos.ResearchesModule
@@ -16,7 +17,7 @@ namespace Shared.Dtos.ResearchesModule
         public string? Issue { get; set; }
         public string? Volume { get; set; }
         public string? NoOfPages { get; set; }
-        public string? PubYear { get; set; } = string.Empty;
+        public int? PubYear { get; set; }
         public ResearchSource Source { get; set; }
         public ResearchDerivedFrom ResearchDerivedFrom { get; set; }
         public string? Abstract { get; set; } = string.Empty;

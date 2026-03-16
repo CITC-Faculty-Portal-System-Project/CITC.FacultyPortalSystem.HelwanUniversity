@@ -1,4 +1,5 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿using Domain.Entities.EntitesAttachments;
+using Domain.Entities.FacultyMemberDataModule;
 
 namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
 {
@@ -71,7 +72,15 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
                .OnDelete(DeleteBehavior.Cascade);
             #endregion
 
-        
+            #region Relation With Attachment
+
+            builder.HasOne(pd => pd.ProfilePicture)
+                   .WithOne(a => a.PersonalData)
+                   .HasForeignKey<ProfilePictures>(pd => pd.PersonalDataId)
+                   .OnDelete(DeleteBehavior.Cascade);
+            
+            #endregion
+
         }
     }
 }

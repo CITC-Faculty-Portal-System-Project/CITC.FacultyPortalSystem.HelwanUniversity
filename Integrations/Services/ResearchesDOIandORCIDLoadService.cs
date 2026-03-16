@@ -100,7 +100,7 @@ namespace Integrations.Services
             );
 
             if (!res.IsSuccess || res.Data?.Message is null)
-                throw new BadRequestException ("An Error Ocurred maybe there is no research with this doi!");
+                throw new IntegrationNotFoundException ("An Error Ocurred maybe there is no research with this doi!");
 
             var msg = res.Data.Message;
 
@@ -141,7 +141,7 @@ namespace Integrations.Services
         public async Task<ResearcherDataGetByORCIDResponseDTO?> GetContributorNameByORCIDAsync(string orcid, CancellationToken ct = default)
         {
             if (string.IsNullOrWhiteSpace(orcid))
-                throw new BadRequestException("ORCID is required.");
+                throw new IntegrationNotFoundException("ORCID is required.");
 
             orcid = CleanOrcid(orcid);
 
@@ -158,7 +158,7 @@ namespace Integrations.Services
             );
 
             if (!res.IsSuccess || res.Data?.Results is null || !res.Data.Results.Any())
-                throw new BadRequestException("No researcher found with this ORCID.");
+                throw new IntegrationNotFoundException("No researcher found with this ORCID.");
 
             var author = res.Data.Results.First();
 

@@ -13,8 +13,11 @@ namespace Shared.Dtos.ResearchesModule
         public DateOnly RegistrationDate { get; set; }
         public DateOnly? InternalGradeDate { get; set; }
         public DateOnly? SupervisionConfirmationDate { get; set; }
+        public string? UniversityOrFaculty { get; set; }
+
+        public DateOnly? DiscussionDate { get; set; }
         public Guid? FacultyMemberId { get; set; }
-        public List<ThesesSupervisorDTO>? Supervisors { get; set; }
+        public List<ThesesSupervisorDTO>? ComitteeMembers { get; set; }
         public List<ResearchResponseDTO>? Researches { get; set; }
     }
 }

@@ -25,7 +25,8 @@ namespace Services.Specifications.AcademicDataModule.ScientificProgressionModule
             ) 
         {
             AddIncludes(aq => aq.Qualification);
-            AddIncludes(aq => aq.Grade);
+            AddIncludes(aq => aq.Grade!);
+            AddIncludes(aq => aq.Attachments!);
             AddIncludes(aq => aq.DispatchType);
 
             switch (parameters.Sort)
@@ -46,8 +47,9 @@ namespace Services.Specifications.AcademicDataModule.ScientificProgressionModule
         public AcademicQualificationsSpecifications(int id) : base(aq => !aq.IsDeleted && aq.Id == id)
         {
             AddIncludes(aq => aq.Qualification);
-            AddIncludes(aq => aq.Grade);
+            AddIncludes(aq => aq.Grade!);
             AddIncludes(aq => aq.DispatchType);
+            AddIncludes(aq => aq.Attachments!);
         }
 
 
@@ -55,12 +57,12 @@ namespace Services.Specifications.AcademicDataModule.ScientificProgressionModule
             : base(aq => aq.Qualification.ValueAr == dTO.Qualification && 
                   aq.Specialization == dTO.Specialization && aq.CountryOrCity == dTO.CountryCity
             && aq.UniversityOrFaculty == dTO.UniversityFaculty && aq.DispatchType.ValueAr == dTO.Dispatch
-            && aq.Grade.ValueAr == dTO.Grade && aq.FacultyMember.NationalNumber == dTO.NationalNumber)
+            && aq.Grade!.ValueAr == dTO.Grade && aq.FacultyMember!.NationalNumber == dTO.NationalNumber)
         {
             AddIncludes(aq => aq.Qualification);
-            AddIncludes(aq => aq.Grade);
+            AddIncludes(aq => aq.Grade!);
             AddIncludes(aq => aq.DispatchType);
-            AddIncludes(aq => aq.FacultyMember);
+            AddIncludes(aq => aq.FacultyMember!);
 
         }
     }

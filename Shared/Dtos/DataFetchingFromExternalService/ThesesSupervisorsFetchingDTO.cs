@@ -6,6 +6,7 @@
         public string Name { get; set; } = string.Empty;
         public string JobLevel { get; set; } = string.Empty;
         public string Authority { get; set; } = string.Empty;
+        public bool isConfirmed { get; set; }
 
     }
 }
