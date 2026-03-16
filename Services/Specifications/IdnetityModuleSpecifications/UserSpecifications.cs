@@ -107,7 +107,7 @@ namespace Services.Specifications.IdnetityModuleSpecifications
           u.Roles!.Any(ur =>
               ur.Role.Permissions!.Any(rp =>
                   rp.Permission != null &&
-                  permissionCodes.Contains(rp.Permission.Code))
+                  permissionCodes.Contains(rp.Permission.Code) && string.Equals(ur.Role.Name , "SupportAdmin"))
           )
       )
         {
