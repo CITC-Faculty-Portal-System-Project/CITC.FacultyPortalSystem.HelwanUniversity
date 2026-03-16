@@ -7,6 +7,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.CVGenerationModule;
 
 namespace Services.Implementations
 {
@@ -40,6 +41,7 @@ namespace Services.Implementations
         , Func<IContributionsToUniversityService> _contributionsToUniversityServiceFactory
         , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
         , Func<IProfileDashboardService> _profileDashboardServiceFactory
+        , Func<ICVGenerationService> _cvGenerationServiceFactory
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -54,6 +56,8 @@ namespace Services.Implementations
 
         public IProfileDashboardService ProfileDashboardService => _profileDashboardServiceFactory.Invoke();
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
+
+        public ICVGenerationService CVGenerationService => _cvGenerationServiceFactory.Invoke();
 
         #region Academic Data Module
 
