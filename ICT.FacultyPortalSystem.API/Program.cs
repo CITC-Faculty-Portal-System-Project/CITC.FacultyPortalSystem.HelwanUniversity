@@ -57,7 +57,7 @@ namespace ICIT.FacultyPortalSystem.API
 
             app.MapControllers();
 
-            app.MapHub<ChatHub>("/hubs/chat");
+            app.MapHub<ChatHub>("/hubs/chatHub");
 
             app.Run();
         }
