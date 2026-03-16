@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Services.Abstraction.Contracts.AdminModule;
 using Services.Global;
 using Services.Specifications.IdnetityModuleSpecifications;
-
 using Shared.SpecificationParameters.IdentityModule;
 
 namespace Services.Implementations.AdminModule
@@ -402,5 +401,19 @@ namespace Services.Implementations.AdminModule
             return Mapper.Map<IEnumerable<PermissionResponseDTO>>(permissions);
 
         }
+
+        public async Task<UserIdentifiersResposnseDTO> GetUserEmailAndIdByUsername(string username)
+        {
+            var user = await userManager.FindByNameAsync(username) ??
+                throw new UserNotFoundException("User Wasn't Found");
+
+            return new UserIdentifiersResposnseDTO
+            {
+                Email = user.Email!,
+                Id = user.Id,
+            };
+
+        }
+
     }
 }

@@ -82,7 +82,6 @@ namespace Presentation.Controllers
             => Ok(await _serviceManager.UserManagementService.GetCurrentLoggedInUserPermissionsAsync());
 
 
-
         [HttpPost("Logout")]
         [Authorize]
         public IActionResult Logout()

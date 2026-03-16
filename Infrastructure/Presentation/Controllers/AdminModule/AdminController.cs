@@ -43,6 +43,13 @@ namespace Presentation.Controllers.AdminModule
                      ([FromQuery] UserSpecificationParameters parameters)
                => Ok(await _serviceManager.UserManagementService.GetAllUsersAsync(parameters));
 
+        [ProducesResponseType(typeof(UserIdentifiersResposnseDTO), StatusCodes.Status200OK)]
+        [Authorize(Roles = "SupportAdmin,ManagementAdmin")]
+        [HttpGet("UserIdenitifiers")]
+        public async Task<ActionResult<UserIdentifiersResposnseDTO>> GetUserIdentitfiers(string username)
+     => Ok(await _serviceManager.UserManagementService.GetUserEmailAndIdByUsername(username));
+
+
         [Authorize(Policy = "Permission:UserAccount.Read")]
         [ProducesResponseType(typeof(UserShowForAdminResponseDTO), StatusCodes.Status200OK)]
         [HttpGet("User/{id}")]

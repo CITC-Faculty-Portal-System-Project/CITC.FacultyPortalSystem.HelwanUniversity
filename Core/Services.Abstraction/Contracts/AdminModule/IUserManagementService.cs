@@ -13,5 +13,7 @@ namespace Services.Abstraction.Contracts.AdminModule
         public Task<UserShowForAdminResponseDTO> AssignPermissionsToUserAsync(IList<PermissionResponseDTO> permissions , Guid userId);
         public Task<UserShowForAdminResponseDTO> RevokePermissionsFromUserAsync(IList<PermissionResponseDTO> permissions , Guid userId);
         public Task<IEnumerable<PermissionResponseDTO>> GetCurrentLoggedInUserPermissionsAsync();
+        public Task<UserIdentifiersResposnseDTO> GetUserEmailAndIdByUsername(string username);
+
     }
 }

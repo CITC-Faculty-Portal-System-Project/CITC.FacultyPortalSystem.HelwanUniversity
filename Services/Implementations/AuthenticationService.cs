@@ -12,6 +12,7 @@ using Shared.Dtos.IdentityModule;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Services.Implementations
 {
@@ -281,7 +282,6 @@ namespace Services.Implementations
             return email!;
 
         }
-
         #endregion
     }
 }
