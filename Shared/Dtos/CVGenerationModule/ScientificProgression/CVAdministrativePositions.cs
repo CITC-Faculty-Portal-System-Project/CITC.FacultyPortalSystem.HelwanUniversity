@@ -1,0 +1,10 @@
+﻿namespace Shared.Dtos.CVGenerationModule.ScientificProgression
+{
+    public record CVAdministrativePositions
+    {
+        public int Id { get; set; }
+        public string? Position { get; set; } 
+        public DateOnly? StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
+    }
+}
