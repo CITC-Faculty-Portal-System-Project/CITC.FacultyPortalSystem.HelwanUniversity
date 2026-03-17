@@ -256,8 +256,8 @@ namespace Messaging.AsyncMessaging.Consumer
 				#region Log
 				initializerLog.Timestamp = DateTime.Now;
 				initializerLog.Level = "Information";
-				initializerLog.RenderedMessage = "External Data Consumer Setup Completed Successfully";
-				initializerLog.AdditionalData = $"Declare the Consumer Exchanges and Queues + Dead Letter Queue {_settings.ExternalDataDLQ} with routing key {_settings.ExternalDataDLRK}";
+				initializerLog.RenderedMessage = "External Data Consumer setup Completed Successfully";
+				initializerLog.AdditionalData = $"Declare the Consumer Exchanges and Queues in addition to the Dead Letter Queue {_settings.ExternalDataDLQ} with routing key {_settings.ExternalDataDLRK}";
 				_logger.LogInformation("{@LogEntry}", initializerLog);
 				#endregion
 			}
@@ -266,7 +266,7 @@ namespace Messaging.AsyncMessaging.Consumer
 				#region Log
 				initializerLog.Timestamp = DateTime.Now;
 				initializerLog.Level = "Error";
-				initializerLog.RenderedMessage = "External Data Consumer Setup Failed";
+				initializerLog.RenderedMessage = "External Data Consumer setup Failed";
 				initializerLog.AdditionalData = $"Error during External Data Setup [Exchanges - Queues]";
 				initializerLog.Exception = ex.ToString();
 				initializerLog.ExceptionMessage = ex.Message;

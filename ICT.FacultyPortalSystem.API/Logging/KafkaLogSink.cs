@@ -11,10 +11,10 @@ namespace ICIT.FacultyPortalSystem.API.Logger
 		private readonly KafkaLogPublisher _publisher;
 		private readonly ITextFormatter _formatter;
 
-		public KafkaLogSink(IHttpContextAccessor httpContextAccessor/*, IServiceScopeFactory scopeFactory*/, ITextFormatter? formatter = null)
+		public KafkaLogSink(ITextFormatter? formatter = null)
 		{
 
-			_formatter = formatter ?? new CustomLogFormatter(httpContextAccessor/*, scopeFactory*/);
+			_formatter = formatter ?? new CustomLogFormatter();
 			_publisher = new KafkaLogPublisher();
 		}
 		public async void Emit(LogEvent logEvent)

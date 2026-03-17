@@ -18,5 +18,12 @@
 		MessageHandling = 14,
 		BackgroundExecution = 15,
 		StopBackgroundExecution = 16,
+		ExternalDataProcessing = 17,
+		PersonalData = 18,
+		ContactData = 19,
+		IdentificationCardData = 20,
+		SocialMediaData = 21,
+		ProfileDashboardData = 22,
+		EnsureOwnership = 23
 	}
 }

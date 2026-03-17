@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Shared.Dtos.IdentityModule;
 using Shared.Enums.Logging;
@@ -7,7 +8,11 @@ using System.Text.Json;
 
 namespace Services.Implementations
 {
-    public class RegistrationClientService(HttpClient _httpClient, IConfiguration _configuration, ILogger<RegistrationClientService> _logger) : IRegistrationClientService
+    public class RegistrationClientService(
+		HttpClient _httpClient,
+		IConfiguration _configuration,
+		IHttpContextAccessor _httpContextAccessor,
+		ILogger<RegistrationClientService> _logger) : IRegistrationClientService
     {
         public async Task<UserRegistrationClientDto?> CheckNationalNumber(string nationalNumber)
         {
@@ -29,7 +34,7 @@ namespace Services.Implementations
 					clientLog.Level = "Information";
 					clientLog.RenderedMessage = $"Successfully retrieved data for national number: {nationalNumber}";
 					clientLog.AdditionalData = $"Retrieved user national number and email after registeration from the endpoint {_configuration["FarooqExternalSystem"]}/{nationalNumber}";
-					clientLog.UserIP = "REQUEST_IP";
+					clientLog.UserIP = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(); ;
 					_logger.LogInformation("{@LogDetails}", clientLog);
 					#endregion
 					return data;
@@ -56,7 +61,7 @@ namespace Services.Implementations
 				clientLog.Level = "Warning";
 				clientLog.RenderedMessage = $"No data found for national number: {nationalNumber}";
 				clientLog.AdditionalData = $"The external system returned a 404 Not Found for national number: {nationalNumber}. This may indicate that the national number is invalid or not registered.";
-				clientLog.UserIP = "REQUEST_IP";
+				clientLog.UserIP = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
 				_logger.LogWarning("{@LogDetails}", clientLog);
 				#endregion
 				throw new NotFoundException($"User with National Number {nationalNumber} not Found.");
@@ -66,7 +71,7 @@ namespace Services.Implementations
 			clientLog.Level = "Error";
 			clientLog.RenderedMessage = $"Failed to retrieve data for national number: {nationalNumber}";
 			clientLog.AdditionalData = $"The external endpoint {_configuration["FarooqExternalSystem"]}/{nationalNumber} returned an unsuccessful status code ({response.StatusCode}) for national number: {nationalNumber}.";
-			clientLog.UserIP = "REQUEST_IP";
+			clientLog.UserIP = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
 			_logger.LogError("{@LogDetails}", clientLog);
 			#endregion
 			throw new Exception("An error occurred while communicating with the external system.");
