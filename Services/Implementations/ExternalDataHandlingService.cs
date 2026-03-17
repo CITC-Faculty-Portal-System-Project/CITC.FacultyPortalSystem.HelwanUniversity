@@ -142,7 +142,7 @@ namespace Services.Implementations
 								_logger.LogInformation("Contact data record already exists for faculty member with national number: {NationalNumber}. Skipping record.", item.NationalNumber);
 								return null!;
 							}
-								
+
 							var dto = _mapper.Map<ContactDataCreateDTO>(item);
 							dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
 							#region Log
@@ -227,7 +227,7 @@ namespace Services.Implementations
 							var spec = new JobRanksSpecifications(item);
 							if (await jobRanksRepo.ExistsAsync(spec))
 							{
-								_logger.LogInformation("Employment data record already exists for faculty member with national number: {NationalNumber}. Skipping record.", item.NationalNumber);	
+								_logger.LogInformation("Employment data record already exists for faculty member with national number: {NationalNumber}. Skipping record.", item.NationalNumber);
 								return null!;
 							}
 
@@ -344,7 +344,7 @@ namespace Services.Implementations
 						_unitOfWork
 					);
 				#region Log
-				if(!flag)
+				if (!flag)
 				{
 					#region Log
 					managerialDataLog.Timestamp = DateTime.Now;
@@ -394,7 +394,7 @@ namespace Services.Implementations
 
 			try
 			{
-				var flag =  await BulkHelper.HandleAsync<
+				var flag = await BulkHelper.HandleAsync<
 						PersonalDataFetchingDTO,
 						PersonalDataCreateDTO,
 						PersonalData,
@@ -623,7 +623,7 @@ namespace Services.Implementations
 						_unitOfWork
 					);
 				#region Log
-				if(!flag)
+				if (!flag)
 				{
 					#region Log
 					thesisDataLog.Timestamp = DateTime.Now;
@@ -796,7 +796,7 @@ namespace Services.Implementations
 							_unitOfWork
 						);
 				#region Log
-				if(!flag)
+				if (!flag)
 				{
 					#region Log
 					trainingProgramDataLog.Timestamp = DateTime.Now;
@@ -1033,241 +1033,243 @@ namespace Services.Implementations
 			return await _unitOfWork.SaveChangesAsync() > 0;
 		}
 
+
 	}
-            var researchersRepo = _unitOfWork.GetRepository<ResearcherProfile, int>();
-            var interestsRepo = _unitOfWork.GetRepository<ScientificInterest, int>();
-            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-            var researchRepo = _unitOfWork.GetRepository<Research, int>();
-            var coAuthorsRepo = _unitOfWork.GetRepository<CoAuthor, int>();
-
-            var dto = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json!)
-                      ?? throw new Exception("Invalid JSON");
-
-            var facultyMember = await facultyMemberRepo.GetAsync(
-                new FacultyMemberWithNationalNumberSpecifications(dto.NationalNumber)
-            );
-            if (facultyMember is null) throw new Exception("Faculty member not found");
-
-            facultyMember.ResearchContributions = facultyMember.ResearchContributions.EnsureList();
-
-            var researcher = await researchersRepo.GetAsync(
-                new ResearcherProfileSpceification(dto.ScholarProfileLink)
-            );
-
-            var isNewResearcher = researcher is null;
-            if (isNewResearcher)
-            {
-                researcher = _mapper.Map<ResearcherProfile>(dto);
-            }
-            else
-            {
-                researcher!.AcademicName = dto.AcademicName?.Trim() ?? researcher.AcademicName;
-                researcher.OrganisationalDomain = dto.OrganisationalDomain ?? researcher.OrganisationalDomain;
-                researcher.JobTitle = dto.JobTitle ?? researcher.JobTitle;
-                researcher.ScholarProfileLink = dto.ScholarProfileLink ?? researcher.ScholarProfileLink;
-                researcher.ScholarProfileImageURL = dto.ScholarProfileImageURL ?? researcher.ScholarProfileImageURL;
-            }
-
-            researcher!.ResearcherInterests = researcher.ResearcherInterests.EnsureList();
-            researcher!.CoAuthors = researcher.CoAuthors.EnsureList();
-            researcher.ResearcherCites = researcher.ResearcherCites.EnsureList();
-
-            var incomingInterestNames = (dto.Interests ?? new List<ExternalResearcherInterestsFetchingDTO>())
-                .Select(x => x.Name?.Trim())
-                .Where(x => !string.IsNullOrWhiteSpace(x))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToList();
-
-            var interestEntities = new List<ScientificInterest>();
-
-            foreach (var name in incomingInterestNames)
-            {
-                var interest = await UpsertHelpers.GetOrCreateAsync(
-                    getter: () => interestsRepo.GetAsync(new ResearcherInterestSpecification(name!)),
-                    factory: () =>
-                    {
-                        var created = _mapper.Map<ScientificInterest>(
-                            new ExternalResearcherInterestsFetchingDTO { Name = name! }
-                        );
-                        created.Researchers = created.Researchers.EnsureList();
-                        return created;
-                    });
-
-                interest.Researchers = interest.Researchers.EnsureList();
-                interestEntities.Add(interest);
-            }
-
-            foreach (var interest in interestEntities)
-            {
-                var alreadyLinked = researcher.ResearcherInterests.Any(ri =>
-                    ri.Interest != null &&
-                    string.Equals(ri.Interest.Name, interest.Name, StringComparison.OrdinalIgnoreCase)
-                );
-
-                if (!alreadyLinked)
-                {
-                    var link = new ResearcherInterest { Researcher = researcher, Interest = interest };
-                    researcher.ResearcherInterests.Add(link);
-                    interest.Researchers!.Add(link);
-                }
-            }
-
-
-            var incomingCoAuthorsProfiles = (dto.CoAuthors ?? new List<ResearcherCoAuthorFetchingDTO>());
-            var coAuthorsEntities = new List<CoAuthor>();
-
-            foreach (var profile in incomingCoAuthorsProfiles)
-            {
-                var coAuthor = await UpsertHelpers.GetOrCreateAsync(
-                    getter: async () => await coAuthorsRepo.GetAsync(new CoAuthorSpecification(profile.ScholarProfileLink)),
-                    factory: () =>
-                    {
-                        var created = _mapper.Map<CoAuthor>(profile);
-                        created.Researchers = created.Researchers.EnsureList();
-                        return created;
-                    });
-
-                coAuthor.Researchers = coAuthor.Researchers.EnsureList();
-                coAuthorsEntities.Add(coAuthor);
-            }
-
-            foreach (var coAuthor in coAuthorsEntities)
-            {
-                var alreadyLinked = researcher.CoAuthors.Any(ri =>
-                    ri.CoAuthor != null &&
-                    string.Equals(ri.CoAuthor.ScholarProfileLink, coAuthor.ScholarProfileLink)
-                );
-
-                if (!alreadyLinked)
-                {
-                    var link = new ResearcherCoAuthor { Researcher = researcher, CoAuthor = coAuthor };
-                    researcher.CoAuthors.Add(link);
-                    coAuthor.Researchers!.Add(link);
-                }
-            }
-
-
-
-            var incomingResearcherCites = dto.ResearcherCites ?? new List<ExternalResearcherCitesFetchingDTO>();
-
-            researcher.ResearcherCites.UpsertMany(
-                dtos: incomingResearcherCites,
-                match: (d, c) => Convert.ToInt32(c.Year) == d.Year,
-                createAction: d =>
-                {
-                    var citeEntity = _mapper.Map<ResearcherCite>(d);
-                    citeEntity.Researcher = researcher;
-                    return citeEntity;
-                },
-                updateAction: (d, existing) => _mapper.Map(d, existing)
-            );
-
-            var incomingResearchDtos = dto.Researches ?? new List<ExternalResearchesFetchingDTO>();
-
-            foreach (var rDto in incomingResearchDtos)
-            {
-                var existingResearch = await researchRepo.GetAsync(
-                    new RecommendedResearchesSpecifications(rDto.Title!)
-                );
-
-                var researchEntity = existingResearch;
-                var isNewResearch = researchEntity is null;
-
-                if (isNewResearch)
-                {
-                    researchEntity = _mapper.Map<Research>(rDto);
-                    researchEntity.Contributions = researchEntity.Contributions.EnsureList();
-                    researchEntity.Cites = researchEntity.Cites.EnsureList();
-
-                    researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
-                    researchEntity.PublicationType = Domain.Enums.PublicationType.International;
-                    researchEntity.Source = Domain.Enums.ResearchSource.External;
-                    researchEntity.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
-
-                    await researchRepo.AddAsync(researchEntity);
-                }
-                else
-                {
-                    researchEntity!.Title = rDto.Title ?? researchEntity.Title;
-                    researchEntity.DOI = rDto.DOI ?? researchEntity.DOI;
-
-                    researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
-                    researchEntity.PublicationType = Domain.Enums.PublicationType.Unspecified;
-                    researchEntity.Source = Domain.Enums.ResearchSource.External;
-                    researchEntity.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
-
-                    researchEntity.Contributions = researchEntity.Contributions.EnsureList();
-                    researchEntity.Cites = researchEntity.Cites.EnsureList();
-                }
-
-                var incomingContribs = rDto.Contributions ?? new List<ExternalResearchContributionFetchingDTO>();
-
-                foreach (var cDto in incomingContribs)
-                {
-                    var exists = researchEntity!.Contributions
-                        .FirstOrDefault(c =>
-                            string.Equals(c.MemberAcademicName, cDto.MemberAcademicName, StringComparison.OrdinalIgnoreCase)
-                        );
-
-                    if (exists is not null) continue; 
-
-                    var contEntity = _mapper.Map<ResearchContribution>(cDto);
-                    contEntity.ContributorType = Domain.Enums.ContributorType.Unspecified;
-                    contEntity.Research = researchEntity;
-
-                    if (string.Equals(
-                        UpsertHelpers.NormalizeName(cDto.MemberAcademicName),
-                        UpsertHelpers.NormalizeName(researcher.AcademicName),
-                        StringComparison.OrdinalIgnoreCase
-                    ))
-                    {
-                        contEntity.ContributorType = Domain.Enums.ContributorType.FromUniverstity;
-                        contEntity.IsTheMajorResearcher = true;
-
-                        contEntity.Contributor = facultyMember;
-                        facultyMember.ResearchContributions.Add(contEntity);
-                    }
-
-                    researchEntity.Contributions.Add(contEntity);
-                }
-
-                if (researchEntity!.Contributions.All(c => c.Contributor != facultyMember))
-                {
-                    researchEntity.Contributions.Add(new ResearchContribution
-                    {
-                        Contributor = facultyMember,
-                        MemberAcademicName = facultyMember.Id.ToString(),
-                        IsTheMajorResearcher = true,
-                        ContributorType = Domain.Enums.ContributorType.FromUniverstity
-                    });
-                }
-
-                var incomingCites = rDto.Cites ?? new List<ExternalResearchCitesFetchingDTO>();
-
-                researchEntity.Cites.UpsertMany(
-                    dtos: incomingCites,
-                    match: (d, c) => c.Year == d.Year && c.NumberOfCites == d.NumberOfCites,
-                    createAction: d =>
-                    {
-                        var citeEntity = _mapper.Map<ResearchCite>(d);
-                        citeEntity.Research = researchEntity;
-                        return citeEntity;
-                    },
-                    updateAction: (d, existing) =>
-                    {
-                        existing.Year = d.Year;
-                        existing.NumberOfCites = d.NumberOfCites;
-                    }
-                );
-            }
-
-            researcher.FacultyMember = facultyMember;
-
-            if (isNewResearcher) await researchersRepo.AddAsync(researcher);
-            else researchersRepo.Update(researcher);
-
-            return await _unitOfWork.SaveChangesAsync() > 0;
-        }
-
-    }
 }
+//            var researchersRepo = _unitOfWork.GetRepository<ResearcherProfile, int>();
+//            var interestsRepo = _unitOfWork.GetRepository<ScientificInterest, int>();
+//            var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+//            var researchRepo = _unitOfWork.GetRepository<Research, int>();
+//            var coAuthorsRepo = _unitOfWork.GetRepository<CoAuthor, int>();
+
+//            var dto = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json!)
+//                      ?? throw new Exception("Invalid JSON");
+
+//            var facultyMember = await facultyMemberRepo.GetAsync(
+//                new FacultyMemberWithNationalNumberSpecifications(dto.NationalNumber)
+//            );
+//            if (facultyMember is null) throw new Exception("Faculty member not found");
+
+//            facultyMember.ResearchContributions = facultyMember.ResearchContributions.EnsureList();
+
+//            var researcher = await researchersRepo.GetAsync(
+//                new ResearcherProfileSpceification(dto.ScholarProfileLink)
+//            );
+
+//            var isNewResearcher = researcher is null;
+//            if (isNewResearcher)
+//            {
+//                researcher = _mapper.Map<ResearcherProfile>(dto);
+//            }
+//            else
+//            {
+//                researcher!.AcademicName = dto.AcademicName?.Trim() ?? researcher.AcademicName;
+//                researcher.OrganisationalDomain = dto.OrganisationalDomain ?? researcher.OrganisationalDomain;
+//                researcher.JobTitle = dto.JobTitle ?? researcher.JobTitle;
+//                researcher.ScholarProfileLink = dto.ScholarProfileLink ?? researcher.ScholarProfileLink;
+//                researcher.ScholarProfileImageURL = dto.ScholarProfileImageURL ?? researcher.ScholarProfileImageURL;
+//            }
+
+//            researcher!.ResearcherInterests = researcher.ResearcherInterests.EnsureList();
+//            researcher!.CoAuthors = researcher.CoAuthors.EnsureList();
+//            researcher.ResearcherCites = researcher.ResearcherCites.EnsureList();
+
+//            var incomingInterestNames = (dto.Interests ?? new List<ExternalResearcherInterestsFetchingDTO>())
+//                .Select(x => x.Name?.Trim())
+//                .Where(x => !string.IsNullOrWhiteSpace(x))
+//                .Distinct(StringComparer.OrdinalIgnoreCase)
+//                .ToList();
+
+//            var interestEntities = new List<ScientificInterest>();
+
+//            foreach (var name in incomingInterestNames)
+//            {
+//                var interest = await UpsertHelpers.GetOrCreateAsync(
+//                    getter: () => interestsRepo.GetAsync(new ResearcherInterestSpecification(name!)),
+//                    factory: () =>
+//                    {
+//                        var created = _mapper.Map<ScientificInterest>(
+//                            new ExternalResearcherInterestsFetchingDTO { Name = name! }
+//                        );
+//                        created.Researchers = created.Researchers.EnsureList();
+//                        return created;
+//                    });
+
+//                interest.Researchers = interest.Researchers.EnsureList();
+//                interestEntities.Add(interest);
+//            }
+
+//            foreach (var interest in interestEntities)
+//            {
+//                var alreadyLinked = researcher.ResearcherInterests.Any(ri =>
+//                    ri.Interest != null &&
+//                    string.Equals(ri.Interest.Name, interest.Name, StringComparison.OrdinalIgnoreCase)
+//                );
+
+//                if (!alreadyLinked)
+//                {
+//                    var link = new ResearcherInterest { Researcher = researcher, Interest = interest };
+//                    researcher.ResearcherInterests.Add(link);
+//                    interest.Researchers!.Add(link);
+//                }
+//            }
+
+
+//            var incomingCoAuthorsProfiles = (dto.CoAuthors ?? new List<ResearcherCoAuthorFetchingDTO>());
+//            var coAuthorsEntities = new List<CoAuthor>();
+
+//            foreach (var profile in incomingCoAuthorsProfiles)
+//            {
+//                var coAuthor = await UpsertHelpers.GetOrCreateAsync(
+//                    getter: async () => await coAuthorsRepo.GetAsync(new CoAuthorSpecification(profile.ScholarProfileLink)),
+//                    factory: () =>
+//                    {
+//                        var created = _mapper.Map<CoAuthor>(profile);
+//                        created.Researchers = created.Researchers.EnsureList();
+//                        return created;
+//                    });
+
+//                coAuthor.Researchers = coAuthor.Researchers.EnsureList();
+//                coAuthorsEntities.Add(coAuthor);
+//            }
+
+//            foreach (var coAuthor in coAuthorsEntities)
+//            {
+//                var alreadyLinked = researcher.CoAuthors.Any(ri =>
+//                    ri.CoAuthor != null &&
+//                    string.Equals(ri.CoAuthor.ScholarProfileLink, coAuthor.ScholarProfileLink)
+//                );
+
+//                if (!alreadyLinked)
+//                {
+//                    var link = new ResearcherCoAuthor { Researcher = researcher, CoAuthor = coAuthor };
+//                    researcher.CoAuthors.Add(link);
+//                    coAuthor.Researchers!.Add(link);
+//                }
+//            }
+
+
+
+//            var incomingResearcherCites = dto.ResearcherCites ?? new List<ExternalResearcherCitesFetchingDTO>();
+
+//            researcher.ResearcherCites.UpsertMany(
+//                dtos: incomingResearcherCites,
+//                match: (d, c) => Convert.ToInt32(c.Year) == d.Year,
+//                createAction: d =>
+//                {
+//                    var citeEntity = _mapper.Map<ResearcherCite>(d);
+//                    citeEntity.Researcher = researcher;
+//                    return citeEntity;
+//                },
+//                updateAction: (d, existing) => _mapper.Map(d, existing)
+//            );
+
+//            var incomingResearchDtos = dto.Researches ?? new List<ExternalResearchesFetchingDTO>();
+
+//            foreach (var rDto in incomingResearchDtos)
+//            {
+//                var existingResearch = await researchRepo.GetAsync(
+//                    new RecommendedResearchesSpecifications(rDto.Title!)
+//                );
+
+//                var researchEntity = existingResearch;
+//                var isNewResearch = researchEntity is null;
+
+//                if (isNewResearch)
+//                {
+//                    researchEntity = _mapper.Map<Research>(rDto);
+//                    researchEntity.Contributions = researchEntity.Contributions.EnsureList();
+//                    researchEntity.Cites = researchEntity.Cites.EnsureList();
+
+//                    researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
+//                    researchEntity.PublicationType = Domain.Enums.PublicationType.International;
+//                    researchEntity.Source = Domain.Enums.ResearchSource.External;
+//                    researchEntity.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
+
+//                    await researchRepo.AddAsync(researchEntity);
+//                }
+//                else
+//                {
+//                    researchEntity!.Title = rDto.Title ?? researchEntity.Title;
+//                    researchEntity.DOI = rDto.DOI ?? researchEntity.DOI;
+
+//                    researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
+//                    researchEntity.PublicationType = Domain.Enums.PublicationType.Unspecified;
+//                    researchEntity.Source = Domain.Enums.ResearchSource.External;
+//                    researchEntity.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
+
+//                    researchEntity.Contributions = researchEntity.Contributions.EnsureList();
+//                    researchEntity.Cites = researchEntity.Cites.EnsureList();
+//                }
+
+//                var incomingContribs = rDto.Contributions ?? new List<ExternalResearchContributionFetchingDTO>();
+
+//                foreach (var cDto in incomingContribs)
+//                {
+//                    var exists = researchEntity!.Contributions
+//                        .FirstOrDefault(c =>
+//                            string.Equals(c.MemberAcademicName, cDto.MemberAcademicName, StringComparison.OrdinalIgnoreCase)
+//                        );
+
+//                    if (exists is not null) continue; 
+
+//                    var contEntity = _mapper.Map<ResearchContribution>(cDto);
+//                    contEntity.ContributorType = Domain.Enums.ContributorType.Unspecified;
+//                    contEntity.Research = researchEntity;
+
+//                    if (string.Equals(
+//                        UpsertHelpers.NormalizeName(cDto.MemberAcademicName),
+//                        UpsertHelpers.NormalizeName(researcher.AcademicName),
+//                        StringComparison.OrdinalIgnoreCase
+//                    ))
+//                    {
+//                        contEntity.ContributorType = Domain.Enums.ContributorType.FromUniverstity;
+//                        contEntity.IsTheMajorResearcher = true;
+
+//                        contEntity.Contributor = facultyMember;
+//                        facultyMember.ResearchContributions.Add(contEntity);
+//                    }
+
+//                    researchEntity.Contributions.Add(contEntity);
+//                }
+
+//                if (researchEntity!.Contributions.All(c => c.Contributor != facultyMember))
+//                {
+//                    researchEntity.Contributions.Add(new ResearchContribution
+//                    {
+//                        Contributor = facultyMember,
+//                        MemberAcademicName = facultyMember.Id.ToString(),
+//                        IsTheMajorResearcher = true,
+//                        ContributorType = Domain.Enums.ContributorType.FromUniverstity
+//                    });
+//                }
+
+//                var incomingCites = rDto.Cites ?? new List<ExternalResearchCitesFetchingDTO>();
+
+//                researchEntity.Cites.UpsertMany(
+//                    dtos: incomingCites,
+//                    match: (d, c) => c.Year == d.Year && c.NumberOfCites == d.NumberOfCites,
+//                    createAction: d =>
+//                    {
+//                        var citeEntity = _mapper.Map<ResearchCite>(d);
+//                        citeEntity.Research = researchEntity;
+//                        return citeEntity;
+//                    },
+//                    updateAction: (d, existing) =>
+//                    {
+//                        existing.Year = d.Year;
+//                        existing.NumberOfCites = d.NumberOfCites;
+//                    }
+//                );
+//            }
+
+//            researcher.FacultyMember = facultyMember;
+
+//            if (isNewResearcher) await researchersRepo.AddAsync(researcher);
+//            else researchersRepo.Update(researcher);
+
+//            return await _unitOfWork.SaveChangesAsync() > 0;
+//        }
+
+//    }
+//}
