@@ -71,12 +71,6 @@ namespace Messaging.AsyncMessaging
 			{
 				if (_connection is null)
 					throw new InvalidOperationException("RabbitMQ connection is not initialized.");
-				#region Log
-				connectionLog.Level = "Information";
-				connectionLog.Timestamp = DateTime.Now;
-				connectionLog.RenderedMessage = "RabbitMQ connection retrieved successfully.";
-				_logger.LogInformation("{@LogDetails}", connectionLog);
-				#endregion
 				return _connection;
 			}
 			catch (Exception ex)

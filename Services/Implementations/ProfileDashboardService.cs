@@ -1,25 +1,14 @@
-﻿using Domain.Entities.AcademicDataModule.ContributionsModule;
-using Domain.Entities.AcademicDataModule.ExperiencesModule;
-using Domain.Entities.AcademicDataModule.PrizesModule;
-using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
-using Domain.Entities.AcademicDataModule.ResearchesModule;
-using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
-using Domain.Entities.AcademicDataModule.WritingsAndPatents;
-using Services.Specifications.AcademicDataModule.ContributionsModule;
-using Services.Specifications.AcademicDataModule.ExperiencesModule;
-using Services.Specifications.AcademicDataModule.PrizesModule;
-using Services.Specifications.AcademicDataModule.ProjectsAndCommitteesModule;
-using Services.Specifications.AcademicDataModule.ScientificProgressionModule;
-using Services.Specifications.AcademicDataModule.WritingsAndPatentsModule;
-using Services.Specifications.ResearchesModule;
+﻿using Microsoft.Extensions.Logging;
 using Shared.Dtos.FacultyMemberDataModule;
+using Shared.Enums.Logging;
 
 namespace Services.Implementations
 {
-    public class ProfileDashboardService(
+	public class ProfileDashboardService(
         IUnitOfWork _unitOfWork,
         IMapper _mapper,
-        IAuthenticationService _authenticationService) : IProfileDashboardService
+        IAuthenticationService _authenticationService,
+        ILogger<ProfileDashboardService> _logger) : IProfileDashboardService
     {
         #region Helper Methods
         private async Task<UserResultDto> GetCurrentUserAsync()
@@ -35,7 +24,7 @@ namespace Services.Implementations
             string? entityNameOverride = null)
         {
             if (entityFacultyMemberId != currentUserId)
-                throw new UnauthorizedAccessException(
+				throw new UnauthorizedAccessException(
                     $"You do not have permission to access this {(entityNameOverride ?? "resource")}."
                 );
         }
@@ -43,14 +32,58 @@ namespace Services.Implementations
 
         public async Task<BioSummaryDTO> UpdateBioSummaryAsync(BioSummaryDTO bioSummaryDTO)
         {
+            var bioSummaryLog = new LogEntry
+            {
+                Category = Category.FacultyMemberService.ToString(),
+                CategoryAction = CategoryAction.ProfileDashboardData.ToString()
+            };
+
             var currentUser = await GetCurrentUserAsync();
 
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
-            var personalData = await personalDataRepo.GetAsync(new PersonalDataWithFacultyMemberIdSpecifications(currentUser.UserId))
-                ?? throw new NotFoundException($"Personal data not found.");
+            var personalData = await personalDataRepo.GetAsync(new PersonalDataWithFacultyMemberIdSpecifications(currentUser.UserId));
+            #region Log
+            if (personalData is null)
+            {
+                #region Log
+                bioSummaryLog.Timestamp = DateTime.Now;
+                bioSummaryLog.RenderedMessage = $"Personal Data Not Found for User: {currentUser.UserName}";
+                bioSummaryLog.Level = "Warning";
+                bioSummaryLog.UserIP = _authenticationService.GetUserIP();
+                bioSummaryLog.UserName = currentUser.UserName;
+                bioSummaryLog.AdditionalData = $"User tried to get their personal data, but no personal data was found in the database for user with email : {currentUser.Email}";
+                _logger.LogWarning("{@LogDetails}", bioSummaryLog);
+                #endregion
+                throw new NotFoundException($"Personal data not found.");
+            } 
+            //Old data for logging:
+            var oldBioSummary = personalData.BioSummary;
+            #endregion
 
-            EnsureOwnership(personalData.FacultyMemberId, currentUser.UserId, "bio summary");
+            try
+            {
+                EnsureOwnership(personalData.FacultyMemberId, currentUser.UserId, "bio summary");
+            }
+            catch (Exception ex)
+            {
+                #region Log
+                var ensureOwnershipLog = new LogEntry
+                {
+                    Category = Category.FacultyMemberService.ToString(),
+                    CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+                    Level = "Error",
+                    UserIP = _authenticationService.GetUserIP(),
+                    UserName = currentUser.UserName,
+                    RenderedMessage = "User does not have permission to access [profile bio summary]",
+                    AdditionalData = $"User: {currentUser.UserName} with id: {currentUser.UserId} failed to access bio summary that is registered to user with id: {personalData.FacultyMemberId}.",
+                    ExceptionMessage = ex.Message,
+                    Timestamp = DateTime.Now
+                };
+                _logger.LogError("{@LogDetails}", ensureOwnershipLog);
+                #endregion
+                throw;
+            }
 
             personalData.BioSummary = bioSummaryDTO.BioSummary;
 
@@ -58,19 +91,67 @@ namespace Services.Implementations
 
             await _unitOfWork.SaveChangesAsync();
 
+            #region Log
+            bioSummaryLog.Timestamp = DateTime.Now;
+            bioSummaryLog.Level = "Information";
+            bioSummaryLog.UserIP = _authenticationService.GetUserIP();
+            bioSummaryLog.UserName = currentUser.UserName;
+            bioSummaryLog.RenderedMessage = "User updated thier profile bio";
+            bioSummaryLog.AdditionalData = $"User: {currentUser.UserName} updated thier bio from: {oldBioSummary} to {personalData.BioSummary} successfully";
+            _logger.LogInformation("{@LogDetails}", bioSummaryLog);
+            #endregion
             return bioSummaryDTO;
         }
 
         public async Task<SkillsDTO> UpdateSkillAsync(SkillsDTO skillsDTO)
         {
+            var skillsLog = new LogEntry
+            {
+                Category  = Category.FacultyMemberService.ToString(),
+                CategoryAction = CategoryAction.ProfileDashboardData.ToString()
+            };
             var currentUser = await GetCurrentUserAsync();
 
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
-            var personalData = await personalDataRepo.GetAsync(new PersonalDataWithFacultyMemberIdSpecifications(currentUser.UserId))
-                ?? throw new NotFoundException($"Personal data not found.");
+            var personalData = await personalDataRepo.GetAsync(new PersonalDataWithFacultyMemberIdSpecifications(currentUser.UserId));
+			if (personalData is null)
+			{
+				#region Log
+				skillsLog.Timestamp = DateTime.Now;
+				skillsLog.RenderedMessage = $"Personal Data Not Found for User: {currentUser.UserName}";
+				skillsLog.Level = "Warning";
+				skillsLog.UserIP = _authenticationService.GetUserIP();
+				skillsLog.UserName = currentUser.UserName;
+				skillsLog.AdditionalData = $"User tried to get their personal data, but no personal data was found in the database for user with email : {currentUser.Email}";
+				_logger.LogWarning("{@LogDetails}", skillsLog);
+				#endregion
+				throw new NotFoundException($"Personal data not found.");
+			}
 
-            EnsureOwnership(personalData.FacultyMemberId, currentUser.UserId, "skills");
+            try
+            {
+                EnsureOwnership(personalData.FacultyMemberId, currentUser.UserId, "skills");
+            }
+            catch (Exception ex)
+            {
+				#region Log
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Level = "Error",
+					UserIP = _authenticationService.GetUserIP(),
+					UserName = currentUser.UserName,
+					RenderedMessage = "User does not have permission to access [profile skills]",
+					AdditionalData = $"User: {currentUser.UserName} with id: {currentUser.UserId} failed to access skill in profile that is registered to user with id: {personalData.FacultyMemberId}.",
+					ExceptionMessage = ex.Message,
+					Timestamp = DateTime.Now
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
+				#endregion
+				throw;
+            }
 
             var normalizedSkills = skillsDTO.Skills?
                 .Where(s => !string.IsNullOrWhiteSpace(s))
@@ -84,8 +165,16 @@ namespace Services.Implementations
 
             personalDataRepo.Update(personalData);
             await _unitOfWork.SaveChangesAsync();
-
-            return skillsDTO;
+            #region Log
+            skillsLog.Timestamp = DateTime.Now;
+            skillsLog.Level = "Information";
+            skillsLog.UserIP = _authenticationService.GetUserIP();
+            skillsLog.UserName = currentUser.UserName;
+            skillsLog.RenderedMessage = "User updated thier profile skills";
+			skillsLog.AdditionalData = $"User: {currentUser.UserName} updated thier skills to {personalData.Skills} successfully";
+            _logger.LogInformation("{@LogDetails}", skillsLog);
+			#endregion
+			return skillsDTO;
         }
 
         public async Task<ProfileDashboardResponseDTO> GetProfileDashboardAsync()
