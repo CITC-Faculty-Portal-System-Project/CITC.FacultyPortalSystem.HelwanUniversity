@@ -1428,6 +1428,74 @@ namespace Presistence.Data.Migrations
                     b.ToTable("ReviewingArticles", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.CoAuthor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OrganisationalDomain")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("ScholarProfileImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ScholarProfileLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcademicName");
+
+                    b.HasIndex("OrganisationalDomain");
+
+                    b.HasIndex("ScholarProfileLink");
+
+                    b.ToTable("CoAuthor");
+                });
+
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.Research", b =>
                 {
                     b.Property<int>("Id")
@@ -1479,9 +1547,8 @@ namespace Presistence.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("PubYear")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                    b.Property<int?>("PubYear")
+                        .HasColumnType("int");
 
                     b.Property<string>("PublicationType")
                         .IsRequired()
@@ -1535,6 +1602,10 @@ namespace Presistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DOI")
+                        .IsUnique()
+                        .HasFilter("[DOI] IS NOT NULL");
 
                     b.HasIndex("JournalOrConfernce");
 
@@ -1748,13 +1819,13 @@ namespace Presistence.Data.Migrations
                     b.ToTable("ResearchersCites");
                 });
 
-            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherInterest", b =>
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherCoAuthor", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ResearcherId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("CoAuthorId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -1772,14 +1843,8 @@ namespace Presistence.Data.Migrations
                     b.Property<string>("DeletionReason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("InterestId")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
-
-                    b.Property<int>("ResearcherId")
-                        .HasColumnType("int");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -1795,12 +1860,57 @@ namespace Presistence.Data.Migrations
                     b.Property<int>("VersionNo")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ResearcherId", "CoAuthorId");
+
+                    b.HasIndex("CoAuthorId");
+
+                    b.ToTable("ResearcherCoAuthor");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherInterest", b =>
+                {
+                    b.Property<int>("ResearcherId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InterestId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("ResearcherId", "InterestId");
 
                     b.HasIndex("InterestId");
-
-                    b.HasIndex("ResearcherId", "InterestId")
-                        .IsUnique();
 
                     b.ToTable("ResearchersInterests");
                 });
@@ -3098,6 +3208,59 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("ThesisId");
 
                     b.ToTable("ThesesAttachments");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CVGenerationModule.CVVisibilitySettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VisibilityJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("{}");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CVVisibilitySettings");
                 });
 
             modelBuilder.Entity("Domain.Entities.FacultyMemberDataModule.ContactData", b =>
@@ -6518,6 +6681,25 @@ namespace Presistence.Data.Migrations
                     b.Navigation("Researcher");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherCoAuthor", b =>
+                {
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.CoAuthor", "CoAuthor")
+                        .WithMany("Researchers")
+                        .HasForeignKey("CoAuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", "Researcher")
+                        .WithMany("CoAuthors")
+                        .HasForeignKey("ResearcherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CoAuthor");
+
+                    b.Navigation("Researcher");
+                });
+
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherInterest", b =>
                 {
                     b.HasOne("Domain.Entities.AcademicDataModule.ResearchesModule.ScientificInterest", "Interest")
@@ -6856,6 +7038,11 @@ namespace Presistence.Data.Migrations
                     b.Navigation("Attachments");
                 });
 
+            modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.CoAuthor", b =>
+                {
+                    b.Navigation("Researchers");
+                });
+
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.Research", b =>
                 {
                     b.Navigation("Attachments");
@@ -6867,6 +7054,8 @@ namespace Presistence.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ResearchesModule.ResearcherProfile", b =>
                 {
+                    b.Navigation("CoAuthors");
+
                     b.Navigation("ResearcherCites");
 
                     b.Navigation("ResearcherInterests");

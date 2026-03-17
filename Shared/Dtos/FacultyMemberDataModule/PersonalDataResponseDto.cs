@@ -21,7 +21,7 @@ namespace Shared.Dtos.FacultyMemberDataModule
         public string? AccurateSpecialization { get; set; }
         public string? NameInComposition { get; set; }
         public string? CompositionTopics { get; set; }
-        public AttachmentReferenceDTO? ProfilePicture { get; set; }
+        public AttachmentResponseDTO? ProfilePicture { get; set; }
 
     }
 }

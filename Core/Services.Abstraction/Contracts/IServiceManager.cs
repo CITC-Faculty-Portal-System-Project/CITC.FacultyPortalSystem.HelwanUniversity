@@ -8,6 +8,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
+using Services.Abstraction.Contracts.CVGenerationModule;
 
 
 namespace Services.Abstraction.Contracts
@@ -22,6 +23,8 @@ namespace Services.Abstraction.Contracts
         public IAttachmentService AttachmentService { get; }
         public IProfileDashboardService ProfileDashboardService { get; }
         //public IExternalDataHandlingService ExternalDataHandlingService { get; }
+
+        public ICVGenerationService CVGenerationService { get; }
 
         #region Academic Data Module
 
