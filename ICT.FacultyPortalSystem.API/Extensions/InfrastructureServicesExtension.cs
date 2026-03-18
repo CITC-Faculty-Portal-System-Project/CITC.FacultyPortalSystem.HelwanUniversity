@@ -28,7 +28,6 @@ using System.Text;
 using System.Text.Json;
 using UserRole = Domain.Entities.IdentityModule.Users.Role;
 using Serilog;
-using UserRole = Domain.Entities.IdentityModule.Role;
 using ICIT.FacultyPortalSystem.API.Logger;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
