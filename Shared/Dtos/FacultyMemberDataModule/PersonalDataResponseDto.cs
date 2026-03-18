@@ -4,7 +4,8 @@ namespace Shared.Dtos.FacultyMemberDataModule
 {
     public record PersonalDataResponseDto
     {
-        public string Name { get; set; } = string.Empty;
+        public string NameAr { get; set; } = string.Empty;
+        public string NameEn { get; set; } = string.Empty;
         public string NationalNumber {  get; set; } = string.Empty;
 
         public LookupItemDto Title { get; set; } = null!;

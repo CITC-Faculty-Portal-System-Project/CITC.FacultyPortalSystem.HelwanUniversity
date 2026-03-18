@@ -5,7 +5,8 @@ namespace Domain.Entities.FacultyMemberDataModule
 {
     public class PersonalData : BaseEntity<int>
     {
-        public string Name { get; set; } = string.Empty;
+        public string NameAr { get; set; } = string.Empty;
+        public string NameEn { get; set; } = string.Empty;
 
         public Guid TitleId { get; set; }
         public Lookup Title { get; set; } = null!;

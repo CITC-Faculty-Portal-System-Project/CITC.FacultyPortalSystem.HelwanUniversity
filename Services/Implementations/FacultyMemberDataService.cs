@@ -469,8 +469,6 @@ namespace Services.Implementations
                 LinkedIn = null,
                 Instagram = null,
                 PersonalWebsite = null,
-                GoogleScholar = null,
-                Scopus = null,
                 Facebook = null,
                 X = null,
                 YouTube = null

@@ -101,7 +101,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var supervisings = await BuildSupervisingsAsync(
                 theses,
                 targetFacultyMemberId,
-                currentStudent?.NameInComposition ?? currentStudent?.Name ?? currentUser.UserName,
+                currentStudent?.NameInComposition ?? currentStudent?.NameEn ?? currentStudent?.NameAr ?? currentUser.UserName,
                 currentStudent?.GeneralSpecialization ?? currentStudent?.AccurateSpecialization ?? "-",
                 personalRepo);
 
@@ -210,7 +210,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var supervisingsToAdd = await BuildSupervisingsAsync(
                 Mapper.Map<ThesesDTO>(theses),
                 targetFacultyMemberId,
-                currentStudent?.NameInComposition ?? currentStudent?.Name ?? currentUser.UserName,
+                currentStudent?.NameInComposition ?? currentStudent?.NameAr ?? currentUser.UserName,
                 currentStudent?.GeneralSpecialization ?? currentStudent?.AccurateSpecialization ?? "-",
                 personalRepo);
 

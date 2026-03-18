@@ -97,7 +97,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 Contributor = currentContributor,
                 Research = entity,
                 MemberAcademicName = currentContributor.PersonalData?.NameInComposition
-                                     ?? currentContributor.PersonalData?.Name
+                                     ?? currentContributor.PersonalData?.NameEn ?? currentContributor.PersonalData?.NameAr
                                      ?? currentContributor.Name,
                 IsConfirmed = true,
                 IsTheMajorResearcher = true,

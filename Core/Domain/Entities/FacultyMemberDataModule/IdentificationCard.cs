@@ -7,6 +7,9 @@
         public string? ResearcherId { get; set; }
         public string? ResearcherGate { get; set; }
         public string? AcademiaEdu { get; set; }
+        public string? GoogleScholar { get; set; }
+        public string? Scopus { get; set; }
+
 
         #region Relation With FacultyMember
         public Guid FacultyMemberId { get; set; }
