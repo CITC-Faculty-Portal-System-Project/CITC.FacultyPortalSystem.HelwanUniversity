@@ -37,10 +37,16 @@ namespace Services.Specifications.ResearchesModule
                     AddOrderByDescending(r => r.JournalOrConfernce);
                     break;
                 case ResearchesSortingOptions.PubYearASC:
-                    AddOrderBy(r => Convert.ToInt32(r.PubYear));
+                    AddOrderBy(r =>r.PubYear!);
                     break;
                 case ResearchesSortingOptions.PubYearDESC:
-                    AddOrderByDescending(r => Convert.ToInt32(r.PubYear));
+                    AddOrderByDescending(r => r.PubYear!);
+                    break;
+                case ResearchesSortingOptions.CitesASC:
+                    AddOrderBy(r => r.NoOfCititations!);
+                    break;
+                case ResearchesSortingOptions.CitesDESC:
+                    AddOrderByDescending(r => r.NoOfCititations!);
                     break;
                 default:
                     break;
@@ -53,10 +59,10 @@ namespace Services.Specifications.ResearchesModule
         public RecommendedResearchesSpecifications(int researchId , Guid facultyMemberId)
             : base(r => !r.IsDeleted &&
                     r.Id == researchId && !r.Contributions!
-            .SingleOrDefault(r => r.ContributorId == facultyMemberId)!
+            .FirstOrDefault(r => r.ContributorId == facultyMemberId)!
             .IsDeleted &&
 
-            r.Contributions!.SingleOrDefault(c => c.ContributorId == facultyMemberId)!.IsConfirmed == false)
+            r.Contributions!.FirstOrDefault(c => c.ContributorId == facultyMemberId)!.IsConfirmed == false)
         {
             AddIncludes(r => r.Contributions!);
         }
@@ -127,8 +133,7 @@ namespace Services.Specifications.ResearchesModule
                 (
                     string.IsNullOrEmpty(parameters.Search)
                     || r.Title.Contains(parameters.Search)
-                    || r.JournalOrConfernce.Contains(parameters.Search)
-                    || (r.PubYear != null && r.PubYear.Contains(parameters.Search)));
+                    || r.JournalOrConfernce.Contains(parameters.Search));
         }
     }
 }

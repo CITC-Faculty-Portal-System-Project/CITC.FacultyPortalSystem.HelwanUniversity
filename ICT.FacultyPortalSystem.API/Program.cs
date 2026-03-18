@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Identity;
 using Shared.Hubs;
+using ICIT.FacultyPortalSystem.API.Logger;
+using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace ICIT.FacultyPortalSystem.API
 {
@@ -23,16 +26,24 @@ namespace ICIT.FacultyPortalSystem.API
             //Core Services
             builder.Services.AddCoreServices(builder.Configuration);
 
-            #endregion
+			//Serilog Configuration
+			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+			{
+				loggerConfiguration
+					.ReadFrom.Configuration(context.Configuration)
+                    .WriteTo.Sink(new KafkaLogSink());
+			});
+			#endregion
 
-            #region Pipelines - Middlewares
+			#region Pipelines - Middlewares
 
-            #endregion
-            
-            var app = builder.Build();
+			#endregion
+
+			var app = builder.Build();
 
 
             app.UseExceptionHandlingMiddlewares();
+			app.UseExceptionHandlingMiddlewares();
 
             if (app.Environment.IsDevelopment())
             {

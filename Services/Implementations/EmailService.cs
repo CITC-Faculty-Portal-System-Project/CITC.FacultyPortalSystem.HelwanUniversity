@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Shared.Enums.Logging;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -124,9 +125,23 @@ namespace Services.Implementations
         //SendAsync
         private async Task SendAsync(string to, string subject, string htmlBody)
         {
-            if (string.IsNullOrWhiteSpace(to))
-                _logger.LogWarning("Email Can't be Empty");
+            var emailLog = new LogEntry
+			{
+				Category = Category.Authentication.ToString(),
+				CategoryAction = CategoryAction.SendEmail.ToString(),
+			};
 
+			if (string.IsNullOrWhiteSpace(to))
+            {
+                #region Log
+                emailLog.Timestamp = DateTime.Now;
+				emailLog.Level = "Warning";
+				emailLog.RenderedMessage = "Attempted to send email with empty recipient address.";
+				emailLog.AdditionalData = "The SendAsync method was called with an empty or whitespace 'to' parameter, which is required for sending an email. This may indicate a bug in the code that calls SendAsync or an issue with how email addresses are being retrieved or passed to this method.";
+				_logger.LogWarning("{@LogDetails}", emailLog); 
+                #endregion
+            }
+                
             using var client = CreateSmtpClient();
             using var mail = new MailMessage
             {
@@ -155,30 +170,62 @@ namespace Services.Implementations
 
             mail.AlternateViews.Add(view);
             await client.SendMailAsync(mail);
-        }
+		}
         #endregion
 
         public async Task SendCredentialsAsync(Guid userId, string userName, string password)
         {
+            var credentialsEmailLog = new LogEntry
+            {
+				Category = Category.Authentication.ToString(),
+				CategoryAction = CategoryAction.SendCredentialsByEmail.ToString(),
+			};
+
             string? email = await _cacheService.GetCachedValueAsync($"auth:email:{userId}");
             if (string.IsNullOrWhiteSpace(email))
-                throw new InvalidOperationException("Email not found in cache");
+            {
+                #region Log
+                credentialsEmailLog.Timestamp = DateTime.Now;
+				credentialsEmailLog.Level = "Error";
+				credentialsEmailLog.RenderedMessage = $"Email not found in cache for user: {userName}";
+                credentialsEmailLog.AdditionalData = $"Attempted to send credentials email for user ID {userId} but no email was found in cache. This may indicate a caching issue or that the email was never cached for this user.";
+                _logger.LogError("{@LogDetails}", credentialsEmailLog);
+				#endregion
+				throw new InvalidOperationException("Email not found in cache");
+			}
 
             var content = BuildCredentialsBody(userName, password);
             var html = BuildBaseLayout("بوابة أعضاء هيئة التدريس", content);
 
             await SendAsync(email, "بيانات الدخول الخاصة بك", html);
-        }
+            #region Log
+            credentialsEmailLog.Timestamp = DateTime.Now;
+			credentialsEmailLog.Level = "Information";
+			credentialsEmailLog.RenderedMessage = $"Credentials email sent successfully to {email} for user {userName}.";
+			credentialsEmailLog.AdditionalData = $"Sent credentials email to {email} for user ID {userId} with username : {userName} / password : {password} . This email contains the user's login credentials.";
+			_logger.LogInformation("{@LogDetails}", credentialsEmailLog);
+			#endregion
+		}
 
         public async Task SendOTPAsync(string email)
         {
+            var otpLog = new LogEntry
+            {
+                Category = Category.Authentication.ToString(),
+				CategoryAction = CategoryAction.SendOTP.ToString(),
+			};
+
             if (string.IsNullOrWhiteSpace(email))
             {
-                _logger.LogWarning("Email Can't be Empty");
-                return;
-            }
+                #region Log
+                otpLog.Timestamp = DateTime.Now;
+				otpLog.Level = "Warning";
+				otpLog.RenderedMessage = "Attempted to send OTP email with empty recipient address.";
+				otpLog.AdditionalData = "The SendOTPAsync method was called with an empty or whitespace 'email' parameter, which is required for sending an OTP email.";
+				_logger.LogWarning("{@LogDetails}", otpLog);
+				#endregion
+			}
                 
-
             int otp = Random.Shared.Next(100000, 999999);
 
             var content = BuildOTPBody(otp);
@@ -186,6 +233,15 @@ namespace Services.Implementations
 
             await SendAsync(email, "رمز إعادة التعيين", html);
 
+            #region Log
+            otpLog.Timestamp = DateTime.Now;
+			otpLog.Level = "Information";
+			otpLog.RenderedMessage = $"OTP email sent successfully to {email}.";
+			otpLog.AdditionalData = $"Sent OTP email to {email} with OTP: {otp}. This email contains a one-time password for resetting the user's password.";
+			_logger.LogInformation("{@LogDetails}", otpLog);
+			#endregion
+
+			await _cacheService.SetCachedValueAsync($"auth:otp:{otp}", otp.ToString(), TimeSpan.FromMinutes(5));
             await _cacheService.SetCachedValueAsync($"auth:otp:{email.ToLower()}", otp.ToString(), TimeSpan.FromMinutes(5));
             await _cacheService.SetCachedValueAsync($"auth:email:{email.ToLower()}", email, TimeSpan.FromMinutes(15));
         }

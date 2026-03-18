@@ -13,9 +13,9 @@ namespace Services.Specifications.ResearchesModule
     {
         public ResearchSpecifications(string researchName , Guid facultyMemberId) 
             : base(r => EF.Functions.Like(r.Title, $"%{researchName}%")
-            && !r.IsDeleted && r.Contributions!.SingleOrDefault(c => c.ContributorId == facultyMemberId)!
+            && !r.IsDeleted && r.Contributions!.FirstOrDefault(c => c.ContributorId == facultyMemberId)!
             .IsConfirmed == true && !r.Contributions!
-            .SingleOrDefault(r => r.ContributorId == facultyMemberId)!
+            .FirstOrDefault(r => r.ContributorId == facultyMemberId)!
             .IsDeleted)
         {
             AddIncludes(r => r.Contributions!);
@@ -25,9 +25,9 @@ namespace Services.Specifications.ResearchesModule
 
         public ResearchSpecifications(int id , Guid facultyMemberId)
         : base(r => r.Id == id && !r.IsDeleted &&  
-        r.Contributions!.SingleOrDefault(c => c.ContributorId == facultyMemberId)
+        r.Contributions!.FirstOrDefault(c => c.ContributorId == facultyMemberId)
         !.IsConfirmed == true && !r.Contributions!
-            .SingleOrDefault(r => r.ContributorId == facultyMemberId)!
+            .FirstOrDefault(r => r.ContributorId == facultyMemberId)!
             .IsDeleted)
 
         {
@@ -60,11 +60,18 @@ namespace Services.Specifications.ResearchesModule
                     AddOrderByDescending(r => r.JournalOrConfernce);
                     break;
                 case ResearchesSortingOptions.PubYearASC:
-                    AddOrderBy(r => Convert.ToInt32(r.PubYear));
-                    break;
+                    AddOrderBy(r => r.PubYear!);                    
+                     break;
                 case ResearchesSortingOptions.PubYearDESC:
-                    AddOrderByDescending(r => Convert.ToInt32(r.PubYear));
+                    AddOrderByDescending(r => r.PubYear!);
                     break;
+            case ResearchesSortingOptions.CitesASC:
+                    AddOrderBy(r => r.NoOfCititations!);
+                    break;
+                case ResearchesSortingOptions.CitesDESC:
+                    AddOrderByDescending(r => r.NoOfCititations!);
+                    break;
+
                 default:
                     break;
             }
@@ -133,8 +140,13 @@ namespace Services.Specifications.ResearchesModule
                 (
                     string.IsNullOrEmpty(parameters.Search)
                     || r.Title.Contains(parameters.Search)
-                    || r.JournalOrConfernce.Contains(parameters.Search)
-                    || (r.PubYear != null && r.PubYear.Contains(parameters.Search)));
+                    || r.JournalOrConfernce.Contains(parameters.Search));
+        }
+
+
+        public ResearchSpecifications(string DOI)
+            : base(r => !r.IsDeleted && r.DOI == DOI)
+        {
         }
     }
 }

@@ -16,6 +16,7 @@ namespace Services.MappingProfiles
 
 
             CreateMap<ExternalResearcherInterestsFetchingDTO, ScientificInterest>();
+            CreateMap<ResearcherCoAuthorFetchingDTO, CoAuthor>();
             CreateMap<ExternalResearchCitesFetchingDTO, ResearchCite>();
             CreateMap<ExternalResearcherCitesFetchingDTO, ResearcherCite>();
             CreateMap<ExternalResearchesFetchingDTO, Research>()

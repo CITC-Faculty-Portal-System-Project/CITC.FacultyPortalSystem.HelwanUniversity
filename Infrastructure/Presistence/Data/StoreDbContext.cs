@@ -8,6 +8,7 @@ using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Domain.Entities.AcademicDataModule.WritingsAndPatents;
 using Domain.Entities.AdminModule;
+using Domain.Entities.CVGenerationModule;
 using Domain.Entities.EntitesAttachments;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Presistence.Identity;
@@ -51,6 +52,7 @@ namespace Presistence.Data
         public DbSet<IdentificationCard> IdentificationCard { get; set; }
         public DbSet<SocialMediaPlatforms> SocialMediaPlatforms { get; set; }
         public DbSet<FacultyMember> FacultyMembers { get; set; }
+        public DbSet<CVVisibilitySettings> CVVisibilitySettings { get; set; }
         public DbSet<ProfilePictures> ProfilePictures { get; set; }
 
         #endregion

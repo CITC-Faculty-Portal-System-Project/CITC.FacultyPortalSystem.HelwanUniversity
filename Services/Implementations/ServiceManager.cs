@@ -10,6 +10,7 @@ using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
+using Services.Abstraction.Contracts.CVGenerationModule;
 
 namespace Services.Implementations
 {
@@ -47,6 +48,7 @@ namespace Services.Implementations
         , Func<IChatService> _chatService
         , Func<IConversationService> _conversationService
         , Func<ITicketingService> _ticketingService
+        , Func<ICVGenerationService> _cvGenerationServiceFactory
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -61,6 +63,8 @@ namespace Services.Implementations
 
         public IProfileDashboardService ProfileDashboardService => _profileDashboardServiceFactory.Invoke();
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
+
+        public ICVGenerationService CVGenerationService => _cvGenerationServiceFactory.Invoke();
 
         #region Academic Data Module
 

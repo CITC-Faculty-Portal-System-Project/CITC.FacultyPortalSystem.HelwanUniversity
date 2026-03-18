@@ -1,5 +1,6 @@
 ﻿using Shared.Dtos.IdentityModule;
 
+using Shared.Enums.Logging;
 namespace Services.Global
 {
     public abstract class BaseService<TEntity, TId>(
@@ -29,10 +30,15 @@ namespace Services.Global
             return await repo.GetAsync(new FacultyMemberWithEmailSpecifications(email))
                 ?? throw new NotFoundException($"Faculty Member with email {email} not found.");
         }
-        #endregion
 
         #region Repository
         protected IGenericRepository<TEntity, TId> Repo
+        protected string? GetUserIP()
+            => AuthService.GetUserIP();
+		#endregion
+
+		#region Repository
+		protected IGenericRepository<TEntity, TId> Repo 
             => UnitOfWork.GetRepository<TEntity, TId>();
 
         protected IGenericRepository<T, TKey> GetRepository<T, TKey>()
@@ -69,6 +75,25 @@ namespace Services.Global
                 EntityName);
         }
 
+            if(entityFacultyMemberId != currentUserId)
+            {
+				#region Log
+				var ownershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					RenderedMessage = $"User does not have permission to access {(entityNameOverride ?? "resource")}.",
+					Level = "Warning",
+					AdditionalData = $"User with Id: {currentUserId} does not have access on {(entityNameOverride ?? "resource")} that has the faculty member Id: {entityFacultyMemberId}",
+					Timestamp = DateTime.Now,
+				};
+                //Add ILogger here!!
+				#endregion
+				throw new UnauthorizedAccessException(
+                    $"You do not have permission to access this {(entityNameOverride ?? "resource")}."
+                );
+			}
+		}
         #endregion
 
         #region Persistence

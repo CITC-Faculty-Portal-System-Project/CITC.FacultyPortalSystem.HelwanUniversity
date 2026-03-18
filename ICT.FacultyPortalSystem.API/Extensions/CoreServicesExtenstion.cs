@@ -9,6 +9,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionMod
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
@@ -25,6 +26,16 @@ using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AdminModule;
 using Services.Implementations.AttachmentsModule;
+using Services.Implementations.CVGenerationModule;
+using Services.Implementations.CVGenerationModule.DataFilters;
+using Services.Implementations.CVGenerationModule.SectionFilters;
+using Services.Implementations.CVGenerationModule.SectionFilters.Contributions;
+using Services.Implementations.CVGenerationModule.SectionFilters.Experiences;
+using Services.Implementations.CVGenerationModule.SectionFilters.Missions;
+using Services.Implementations.CVGenerationModule.SectionFilters.Prizes;
+using Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAndCommittees;
+using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgression;
+using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
 using Services.Implementations.AttachmentsModule.Helpers;
 using Services.Implementations.AttachmentsModule.Helpers.Handlers;
 using Services.Implementations.MessagingAndChattingModule;
@@ -219,6 +230,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
 
 
+            services.AddScoped<ICVGenerationService, CVGenerationService>();
+            services.AddScoped<Func<ICVGenerationService>>(provider =>
+            () => provider.GetRequiredService<ICVGenerationService>()
+            );
+
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
@@ -227,6 +243,28 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IMessageEncryptionService, MessageEncryptionService>();
             services.AddScoped<IProcessingService, ProcessingService>();
 
+            services.AddScoped<ICVSectionVisibilityFilter, PersonalDataVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ContactVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, SocialMediaVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, AcademicQualificationVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, JobRanksVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, AdministrativePositionsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ConferencesAndSeminarsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ScientificMissionsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, TrainingProgramsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, CommitteesAndAssociationsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ParticipationInMagazinesVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ProjectsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ReviewingArticlesVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, GeneralExperiencesVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, TeachingExperiencesVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ScientificWritingsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, PatentsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, PrizesAndRewardsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ManifestationsOfScientificAppreciationsVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ParticipationInQualityWorkVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ContributionsToCommunityServiceVisibilityFilter>();
+            services.AddScoped<ICVSectionVisibilityFilter, ContributionsToUniversityVisibilityFilter>();
             services.AddScoped<AttachmentCore>();
             services.AddScoped<IAttachmentContextHandler, ResearchAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, ThesisAttachmentHandler>();

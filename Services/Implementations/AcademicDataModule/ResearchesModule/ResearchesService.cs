@@ -53,6 +53,16 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             }
         }
 
+
+        private async Task<bool> EnsureUniqueResearch (string? DOI)
+        {
+            var research = await Repo.GetAsync(new ResearchSpecifications(DOI));
+            if (research is not null) return true;
+
+            return false;
+        }
+
+
         #endregion
 
         public async Task<ResearchResponseDTO> AddResearch(
@@ -67,6 +77,9 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
             if (facultyMemberId is null)
                 EnsureOwnership(targetFacultyMemberId, currentUser.UserId, EntityName);
+
+            if (await EnsureUniqueResearch(research.DOI))
+                throw new ResearchAlreadyExistsException(research.DOI!);
 
             var entity = Mapper.Map<Research>(research);
             entity.Source = Domain.Enums.ResearchSource.Internal;

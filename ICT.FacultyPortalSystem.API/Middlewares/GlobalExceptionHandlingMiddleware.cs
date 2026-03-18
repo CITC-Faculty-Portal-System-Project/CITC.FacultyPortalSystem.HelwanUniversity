@@ -44,6 +44,7 @@ namespace ICIT.FacultyPortalSystem.API.Middlewares
                 AttachmentAlreadyExist => StatusCodes.Status409Conflict,
                 UnauthorizedException => StatusCodes.Status401Unauthorized,
                 UserAlreadyExistsException => StatusCodes.Status409Conflict,
+                ResearchAlreadyExistsException => StatusCodes.Status409Conflict,
                 IntegrationNotFoundException => StatusCodes.Status404NotFound,
                 ForbiddenException => StatusCodes.Status403Forbidden,
                 ValidationException validationException => HandleValidationException(validationException, response),

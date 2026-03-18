@@ -33,4 +33,6 @@ namespace Services.Abstraction.Contracts
         public string GetLoggedUserEmail();
         
     }
+		string? GetUserIP();
+	}
 }

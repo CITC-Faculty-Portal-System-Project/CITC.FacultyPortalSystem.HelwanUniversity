@@ -30,9 +30,6 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
                    .HasMaxLength(800)
                    .IsRequired();
 
-            builder.Property(e => e.PubYear)
-                   .HasMaxLength(10);
-
             builder.Property(e => e.PubDate)
                    .HasMaxLength(100)
                    .IsRequired(false);
@@ -80,6 +77,7 @@ namespace Presistence.Data.Configurations.ResearchesModuleConfigurations
             builder.HasIndex(r => r.Title);
             builder.HasIndex(r => r.JournalOrConfernce);
             builder.HasIndex(r => r.PubYear);
+            builder.HasIndex(r => r.DOI).IsUnique();
             
             #endregion
         }

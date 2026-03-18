@@ -20,6 +20,7 @@
         public ICollection<ExternalResearchesFetchingDTO>? Researches { get; set; }
         public ICollection<ExternalResearcherInterestsFetchingDTO>? Interests { get; set; }
         public ICollection<ExternalResearcherCitesFetchingDTO>? ResearcherCites { get; set; }
+        public ICollection<ResearcherCoAuthorFetchingDTO>? CoAuthors { get; set; }
 
     }
 }

@@ -17,7 +17,7 @@ namespace Domain.Entities.AcademicDataModule.ResearchesModule
         public string? Issue { get; set; }
         public string? Volume { get; set; }
         public string? NoOfPages { get; set; }
-        public string? PubYear { get; set; } = string.Empty;
+        public int? PubYear { get; set; }
         public ResearchSource Source { get; set; }
         public ResearchDerivedFrom ResearchDerivedFrom { get; set; }
         public string? Abstract { get; set; } = string.Empty;
