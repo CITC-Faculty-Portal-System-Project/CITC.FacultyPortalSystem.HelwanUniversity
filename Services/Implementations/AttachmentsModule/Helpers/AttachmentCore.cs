@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.EncryptionServices;
 using Shared.Dtos.AttachmentsModule;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Implementations.AttachmentsModule.Helpers
 {
     public sealed class AttachmentCore(
-           IEncryptionService _encryptionService,
+           IAttachmentEncryptionService _encryptionService,
            IFTPFileStorageService _fTPClientService,
            IUnitOfWork _unitOfWork,
            IMapper _mapper,

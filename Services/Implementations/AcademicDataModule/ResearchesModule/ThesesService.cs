@@ -9,22 +9,23 @@ using Shared.Dtos.ResearchesModule;
 using Shared.SpecificationParameters.ResearchesModule;
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
-    public class ThesesService
-        (IUnitOfWork unitOfWork, IMapper mapper
-        , IAuthenticationService authenticationService) : BaseService<Thesis, int>
-        (unitOfWork, authenticationService, mapper), IThesesService
+    public class ThesesService(
+        IUnitOfWork unitOfWork,
+        IMapper mapper,
+        IAuthenticationService authenticationService)
+        : BaseService<Thesis, int>(unitOfWork, authenticationService, mapper),
+          IThesesService
     {
-
-
+        protected override string EntityName => "Theses";
 
         #region Helpers
 
-
         private async Task<List<Supervising>> BuildSupervisingsAsync(
-        ThesesDTO theses,
-        Guid currentUserId,
-        PersonalData currentStudent,
-        IGenericRepository<PersonalData, int> personalRepo)
+            ThesesDTO theses,
+            Guid currentUserId,
+            string studentName,
+            string studentSpecialization,
+            IGenericRepository<PersonalData, int> personalRepo)
         {
             var result = new List<Supervising>();
 
@@ -45,8 +46,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
                 var supervisingDto = Mapper.Map<SupervisingThesesAddDTO>(theses);
 
                 supervisingDto.FacultyMemberId = member.MemberId.Value;
-                supervisingDto.StudentName = currentStudent.Name ?? "-";
-                supervisingDto.Specialization = currentStudent.GeneralSpecialization ?? "-";
+                supervisingDto.StudentName = studentName;
+                supervisingDto.Specialization = studentSpecialization;
                 supervisingDto.FacultyMemberRole =
                     (Shared.Enums.ResearchesModule.FacultyMemberRoleInSupervisingThesis)member.Role;
 
@@ -77,28 +78,31 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             }
         }
 
-
         #endregion
 
-        protected override string EntityName => "Theses";
-
-        public async Task<ThesesResponseDTO> AddTheses(ThesesDTO theses)
+        public async Task<ThesesResponseDTO> AddTheses(
+            ThesesDTO theses,
+            Guid? facultyMemberId = null)
         {
             var researchesRepo = UnitOfWork.GetRepository<Research, int>();
             var personalRepo = UnitOfWork.GetRepository<PersonalData, int>();
 
             var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            if (facultyMemberId is null)
+                EnsureOwnership(targetFacultyMemberId, currentUser.UserId, EntityName);
 
             var currentStudent = await personalRepo.GetAsync(
-                new PersonalDataWithFacultyMemberIdSpecifications(currentUser.UserId)) ??
-                 throw new NotFoundException("Student Wasn't found!");
+                new PersonalDataWithFacultyMemberIdSpecifications(targetFacultyMemberId));
 
-            theses.FacultyMemberId = currentUser.UserId;
+            theses.FacultyMemberId = targetFacultyMemberId;
 
             var supervisings = await BuildSupervisingsAsync(
                 theses,
-                currentUser.UserId,
-                currentStudent,
+                targetFacultyMemberId,
+                currentStudent?.NameInComposition ?? currentStudent?.Name ?? currentUser.UserName,
+                currentStudent?.GeneralSpecialization ?? currentStudent?.AccurateSpecialization ?? "-",
                 personalRepo);
 
             var entity = Mapper.Map<Thesis>(theses);
@@ -106,147 +110,175 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             await AddResearchesAsync(
                 entity,
                 theses.Researches,
-                currentUser.UserId,
+                targetFacultyMemberId,
                 researchesRepo);
-
 
             if (supervisings.Count != 0)
                 foreach (var supervising in supervisings)
-                    entity!.Supervisings!.Add(supervising);
-
+                    entity.Supervisings!.Add(supervising);
 
             await Repo.AddAsync(entity);
-
-            await UnitOfWork.SaveChangesAsync();
-
-            return Mapper.Map<ThesesResponseDTO>(entity);
-        }
-
-        public async Task DeleteTheses(int Id)
-        {
-            var user = await GetCurrentUserAsync();
-
-            var thesesEntity = await Repo.GetAsync(new ThesesSpecifications(Id, user.UserId))
-                ?? throw NotFound();
-
-            EnsureOwnership(thesesEntity.FacultyMemberId, user.UserId, EntityName);
-
-            thesesEntity!.IsDeleted = true;
-            thesesEntity.DeletedAt = DateTime.Now;
-            thesesEntity.DeletedBy = user.UserName;
-
-            Repo.Update(thesesEntity);
-            await unitOfWork.SaveChangesAsync();
-        }
-
-        public async Task<PaginatedResult<ThesesResponseDTO>> GetAllTheses
-            (ThesesSpecificationParameters parameters)
-        {
-            var user = await GetCurrentUserAsync();
-
-            var thesesEntites = await Repo.GetAllAsync(new ThesesSpecifications(parameters, user.UserId))
-                        ?? throw NotFound();
-
-            var totalPagesCount = await Repo.CountAsync(new ThesesCountSpecifications(parameters, user.UserId));
-
-            var currentPage = thesesEntites.Count();
-
-            var thesesResponses = Mapper.Map<IEnumerable<ThesesResponseDTO>>(thesesEntites);
-
-            return new PaginatedResult<ThesesResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, thesesResponses);
-        }
-
-       
-        public async Task<ThesesResponseDTO> GetThesesById(int Id)
-        {
-            var user = await GetCurrentUserAsync();
-
-            var entity = await Repo.GetAsync(new ThesesSpecifications(Id, user.UserId))
-                     ??throw NotFound();
-
-            EnsureOwnership(entity.FacultyMemberId, user.UserId , EntityName);
+            await SaveChangesAsync();
 
             return Mapper.Map<ThesesResponseDTO>(entity);
         }
 
-       
-        public async Task<ThesesResponseDTO> UpdateTheses(int id, ThesesUpdateDTO theses)
+        public async Task DeleteTheses(
+            int id,
+            Guid? facultyMemberId = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var thesesEntity = await Repo.GetAsync(new ThesesSpecifications(id, currentUser.UserId))
+            var thesesEntity = await Repo.GetAsync(
+                new ThesesSpecifications(id, targetFacultyMemberId))
                 ?? throw NotFound();
 
-            EnsureOwnership(thesesEntity.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                thesesEntity.FacultyMemberId,
+                facultyMemberId?.ToString());
 
-            
+            thesesEntity.IsDeleted = true;
+            thesesEntity.DeletedAt = DateTime.Now;
+            thesesEntity.DeletedBy = currentUser.UserName;
+
+            Repo.Update(thesesEntity);
+            await SaveChangesAsync();
+        }
+
+        public async Task<PaginatedResult<ThesesResponseDTO>> GetAllTheses(
+            ThesesSpecificationParameters parameters,
+            Guid? facultyMemberId = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            var thesesEntities = await Repo.GetAllAsync(
+                new ThesesSpecifications(parameters, targetFacultyMemberId))
+                ?? throw NotFound();
+
+            var totalCount = await Repo.CountAsync(
+                new ThesesCountSpecifications(parameters, targetFacultyMemberId));
+
+            var mapped = Mapper.Map<IEnumerable<ThesesResponseDTO>>(thesesEntities);
+
+            return new PaginatedResult<ThesesResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
+        }
+
+        public async Task<ThesesResponseDTO> GetThesesById(
+            int id,
+            Guid? facultyMemberId = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            var entity = await Repo.GetAsync(
+                new ThesesSpecifications(id, targetFacultyMemberId))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                entity.FacultyMemberId,
+                facultyMemberId?.ToString());
+
+            return Mapper.Map<ThesesResponseDTO>(entity);
+        }
+
+        public async Task<ThesesResponseDTO> UpdateTheses(
+            int id,
+            ThesesUpdateDTO theses,
+            Guid? facultyMemberId = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var personalRepo = UnitOfWork.GetRepository<PersonalData, int>();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            var thesesEntity = await Repo.GetAsync(
+                new ThesesSpecifications(id, targetFacultyMemberId))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                thesesEntity.FacultyMemberId,
+                facultyMemberId?.ToString());
+
+            var currentStudent = await personalRepo.GetAsync(
+                new PersonalDataWithFacultyMemberIdSpecifications(targetFacultyMemberId));
+
+            var supervisingsToAdd = await BuildSupervisingsAsync(
+                Mapper.Map<ThesesDTO>(theses),
+                targetFacultyMemberId,
+                currentStudent?.NameInComposition ?? currentStudent?.Name ?? currentUser.UserName,
+                currentStudent?.GeneralSpecialization ?? currentStudent?.AccurateSpecialization ?? "-",
+                personalRepo);
+
+            if (supervisingsToAdd.Count > 0)
+                foreach (var supervising in supervisingsToAdd)
+                {
+                    if (thesesEntity.Supervisings!.Any(s => s.FacultyMemberId == supervising.FacultyMemberId))
+                        continue;
+
+                    thesesEntity!.Supervisings!.Add(supervising);
+                }
+
             CollectionSync.Sync<ThesisComittee,
                                 ThesesSupervisorDTO,
                                 ThesesSupervisorDTO,
                                 ThesesSupervisorResponseDTO,
                                 int>(
-                
                 current: thesesEntity.ComitteeMembers!,
                 toAdd: theses.SupervisorsToAdd,
                 toUpdate: theses.SupervisorsToUpdate,
                 toDelete: theses.SupervisorsToDelete,
-
                 childKey: s => s.Id,
                 deleteKey: d => d.Id,
-
                 mapAdd: d => Mapper.Map<ThesisComittee>(d),
-                
                 mapUpdate: (dto, entity) =>
                 {
                     if (entity!.Theses!.Supervisings!
-                    .Any(tc => tc.FacultyMemberId == entity.MemberId && tc.isConfirmed == true))
+                        .Any(tc => tc.FacultyMemberId == entity.MemberId && tc.isConfirmed == true))
                         throw new ForbiddenException("Confirmed comitee member supervising can't be updated");
 
                     Mapper.Map(dto, entity);
                 },
-
                 onDelete: e =>
                 {
-                    if (e!.Theses!.Supervisings!.Any(tc => tc.FacultyMemberId == e.MemberId && tc.isConfirmed == true))
+                    if (e!.Theses!.Supervisings!
+                        .Any(tc => tc.FacultyMemberId == e.MemberId && tc.isConfirmed == true))
                         throw new ForbiddenException("Confirmed comitee member supervising can't be deleted");
 
                     e.IsDeleted = true;
                 },
-
-                onUpdateNotFound: id => throw new NotFoundException($"Supervisor was not found"),
-                onDeleteNotFound: id => throw new NotFoundException($"Supervisor was not found for delete")
+                onUpdateNotFound: id => throw new NotFoundException("Supervisor was not found"),
+                onDeleteNotFound: id => throw new NotFoundException("Supervisor was not found for delete")
             );
 
-
             CollectionSync.Sync<Research,
-                     ResearchDTO,
-                     ResearchDTO,
-                     ResearchResponseDTO,
-                     int>(
-                         current: thesesEntity.Researches!,
-                         toAdd: theses.ResearchesToAdd,
-                         toUpdate: theses.ResearchesToUpdate,
-                         toDelete: theses.ResearchesToDelete,
+                                ResearchDTO,
+                                ResearchDTO,
+                                ResearchResponseDTO,
+                                int>(
+                current: thesesEntity.Researches!,
+                toAdd: theses.ResearchesToAdd,
+                toUpdate: theses.ResearchesToUpdate,
+                toDelete: theses.ResearchesToDelete,
+                childKey: r => r.Id,
+                deleteKey: d => d.Id,
+                mapAdd: d => Mapper.Map<Research>(d),
+                mapUpdate: (dto, entity) => Mapper.Map(dto, entity),
+                onDelete: e => e.ThesisId = null,
+                onUpdateNotFound: id => throw new NotFoundException("Research was not found"),
+                onDeleteNotFound: id => throw new NotFoundException("Research was not found for delete")
+            );
 
-                         childKey: r => r.Id,
-                         deleteKey: d => d.Id,
-
-                         mapAdd: d => Mapper.Map<Research>(d),
-                         mapUpdate: (dto, entity) => Mapper.Map(dto, entity),
-
-                         onDelete: e => e.ThesisId = null,
-
-                         onUpdateNotFound: id => throw new NotFoundException($"Research was not found"),
-                         onDeleteNotFound: id => throw new NotFoundException($"Research was not found for delete")
-                     );
-            
             Mapper.Map(theses, thesesEntity);
 
             Repo.Update(thesesEntity);
-            await UnitOfWork.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return Mapper.Map<ThesesResponseDTO>(thesesEntity);
-
         }
     }
 }

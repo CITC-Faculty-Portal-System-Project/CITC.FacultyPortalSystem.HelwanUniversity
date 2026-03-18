@@ -1,13 +1,15 @@
-﻿using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Parameters;
-using Services.Abstraction.Contracts.AttachmentsModule;
+﻿using Services.Abstraction.EncryptionServices;
 using Shared.Dtos.AttachmentsModule;
 using System.Security.Cryptography;
+using System.Text;
 
-namespace Services.Implementations.AttachmentsModule
+namespace Services.EncryptionServices
 {
-    public class EncryptionService : IEncryptionService
+    public class AttachmentEncryptionService : IAttachmentEncryptionService
     {
+        private const int KeySize = 32;
+        private const int NonceSize = 12;
+        private const int TagSize = 16;
 
         #region Encryption Helpers
 
@@ -83,7 +85,7 @@ namespace Services.Implementations.AttachmentsModule
             return plain;
         }
 
-        
+
         private static void VerifyIntegrity(byte[] plain, string expectedHash)
         {
             var currentHash = ComputeSha256(plain);
@@ -129,5 +131,6 @@ namespace Services.Implementations.AttachmentsModule
                 WrappedDek: dek
             );
         }
+
     }
 }

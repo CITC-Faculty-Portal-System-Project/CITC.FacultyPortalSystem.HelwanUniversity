@@ -6,7 +6,10 @@ using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesMod
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.MessagingAndChattingModule;
+using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 
 namespace Services.Implementations
@@ -41,6 +44,10 @@ namespace Services.Implementations
         , Func<IContributionsToUniversityService> _contributionsToUniversityServiceFactory
         , Func<IParticipationInQualityWorksService> _participationInQualityWorksServiceFactory
         , Func<IProfileDashboardService> _profileDashboardServiceFactory
+        , Func<IUserManagementService> _userManagementService
+        , Func<IChatService> _chatService
+        , Func<IConversationService> _conversationService
+        , Func<ITicketingService> _ticketingService
         , Func<ICVGenerationService> _cvGenerationServiceFactory
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
@@ -115,6 +122,26 @@ namespace Services.Implementations
 
         #endregion
 
+        #region AdminModule
+
+        public IUserManagementService UserManagementService => _userManagementService.Invoke();
+
+        #endregion
+
+        #region MessagingAndChattingModule
+
+        public IChatService ChatService => _chatService.Invoke();
+        public IConversationService ConversationService => _conversationService.Invoke();
+
+
+        #endregion
+
+        #region TicketingModule
+
+        public ITicketingService TicketingService => _ticketingService.Invoke();
+
+
+        #endregion
 
     }
 }

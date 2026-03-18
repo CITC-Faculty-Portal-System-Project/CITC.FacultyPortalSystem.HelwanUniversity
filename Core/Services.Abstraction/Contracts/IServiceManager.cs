@@ -8,6 +8,9 @@ using Services.Abstraction.Contracts.AcademicDataModule.PrizesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
+using Services.Abstraction.Contracts.AdminModule;
+using Services.Abstraction.Contracts.MessagingAndChattingModule;
+using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 
 
@@ -78,6 +81,27 @@ namespace Services.Abstraction.Contracts
 
 
         #endregion
+
+
+
+        #endregion
+
+        #region AdminModule
+
+        public IUserManagementService UserManagementService { get; }
+
+        #endregion
+
+        #region MessagingAndChattingModule
+
+        public IChatService ChatService { get;}
+        public IConversationService ConversationService { get; }
+
+        #endregion
+
+        #region TicketingModule
+        public ITicketingService TicketingService { get; }
+
         #endregion
     }
 }

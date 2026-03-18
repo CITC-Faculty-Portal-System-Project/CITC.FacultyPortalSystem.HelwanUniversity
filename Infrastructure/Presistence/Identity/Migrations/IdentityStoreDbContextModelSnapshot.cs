@@ -22,7 +22,1680 @@ namespace Presistence.Identity.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Domain.Entities.IdentityModule.Role", b =>
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Authorization.Permission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code");
+
+                    b.HasIndex("DisplayName");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("Type");
+
+                    b.ToTable("Permissions");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "UserAccount.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which UserAccount includes",
+                            DisplayName = "UserAccount - Create",
+                            IsDeleted = false,
+                            Type = 1,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "UserAccount.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which UserAccount includes",
+                            DisplayName = "UserAccount - Read",
+                            IsDeleted = false,
+                            Type = 1,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "UserAccount.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which UserAccount includes",
+                            DisplayName = "UserAccount - Update",
+                            IsDeleted = false,
+                            Type = 1,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "UserAccount.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which UserAccount includes",
+                            DisplayName = "UserAccount - Delete",
+                            IsDeleted = false,
+                            Type = 1,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Code = "FacultyMemberData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberData includes",
+                            DisplayName = "FacultyMemberData - Create",
+                            IsDeleted = false,
+                            Type = 2,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Code = "FacultyMemberData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberData includes",
+                            DisplayName = "FacultyMemberData - Read",
+                            IsDeleted = false,
+                            Type = 2,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Code = "FacultyMemberData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberData includes",
+                            DisplayName = "FacultyMemberData - Update",
+                            IsDeleted = false,
+                            Type = 2,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Code = "FacultyMemberData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberData includes",
+                            DisplayName = "FacultyMemberData - Delete",
+                            IsDeleted = false,
+                            Type = 2,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Code = "FacultyMemberContributionsData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberContributionsData includes",
+                            DisplayName = "FacultyMemberContributionsData - Create",
+                            IsDeleted = false,
+                            Type = 3,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Code = "FacultyMemberContributionsData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberContributionsData includes",
+                            DisplayName = "FacultyMemberContributionsData - Read",
+                            IsDeleted = false,
+                            Type = 3,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Code = "FacultyMemberContributionsData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberContributionsData includes",
+                            DisplayName = "FacultyMemberContributionsData - Update",
+                            IsDeleted = false,
+                            Type = 3,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Code = "FacultyMemberContributionsData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberContributionsData includes",
+                            DisplayName = "FacultyMemberContributionsData - Delete",
+                            IsDeleted = false,
+                            Type = 3,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Code = "FacultyMemberExperincesData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberExperincesData includes",
+                            DisplayName = "FacultyMemberExperincesData - Create",
+                            IsDeleted = false,
+                            Type = 4,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Code = "FacultyMemberExperincesData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberExperincesData includes",
+                            DisplayName = "FacultyMemberExperincesData - Read",
+                            IsDeleted = false,
+                            Type = 4,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Code = "FacultyMemberExperincesData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberExperincesData includes",
+                            DisplayName = "FacultyMemberExperincesData - Update",
+                            IsDeleted = false,
+                            Type = 4,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Code = "FacultyMemberExperincesData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberExperincesData includes",
+                            DisplayName = "FacultyMemberExperincesData - Delete",
+                            IsDeleted = false,
+                            Type = 4,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Code = "FacultyMemberHigherStudiesData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberHigherStudiesData includes",
+                            DisplayName = "FacultyMemberHigherStudiesData - Create",
+                            IsDeleted = false,
+                            Type = 5,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Code = "FacultyMemberHigherStudiesData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberHigherStudiesData includes",
+                            DisplayName = "FacultyMemberHigherStudiesData - Read",
+                            IsDeleted = false,
+                            Type = 5,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Code = "FacultyMemberHigherStudiesData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberHigherStudiesData includes",
+                            DisplayName = "FacultyMemberHigherStudiesData - Update",
+                            IsDeleted = false,
+                            Type = 5,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Code = "FacultyMemberHigherStudiesData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberHigherStudiesData includes",
+                            DisplayName = "FacultyMemberHigherStudiesData - Delete",
+                            IsDeleted = false,
+                            Type = 5,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Code = "FacultyMemberMissionsData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberMissionsData includes",
+                            DisplayName = "FacultyMemberMissionsData - Create",
+                            IsDeleted = false,
+                            Type = 6,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Code = "FacultyMemberMissionsData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberMissionsData includes",
+                            DisplayName = "FacultyMemberMissionsData - Read",
+                            IsDeleted = false,
+                            Type = 6,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Code = "FacultyMemberMissionsData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberMissionsData includes",
+                            DisplayName = "FacultyMemberMissionsData - Update",
+                            IsDeleted = false,
+                            Type = 6,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Code = "FacultyMemberMissionsData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberMissionsData includes",
+                            DisplayName = "FacultyMemberMissionsData - Delete",
+                            IsDeleted = false,
+                            Type = 6,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Code = "FacultyMemberPrizesData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberPrizesData includes",
+                            DisplayName = "FacultyMemberPrizesData - Create",
+                            IsDeleted = false,
+                            Type = 7,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Code = "FacultyMemberPrizesData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberPrizesData includes",
+                            DisplayName = "FacultyMemberPrizesData - Read",
+                            IsDeleted = false,
+                            Type = 7,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Code = "FacultyMemberPrizesData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberPrizesData includes",
+                            DisplayName = "FacultyMemberPrizesData - Update",
+                            IsDeleted = false,
+                            Type = 7,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Code = "FacultyMemberPrizesData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberPrizesData includes",
+                            DisplayName = "FacultyMemberPrizesData - Delete",
+                            IsDeleted = false,
+                            Type = 7,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Code = "FacultyMemberProjectsAndComiteesData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberProjectsAndComiteesData includes",
+                            DisplayName = "FacultyMemberProjectsAndComiteesData - Create",
+                            IsDeleted = false,
+                            Type = 8,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Code = "FacultyMemberProjectsAndComiteesData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberProjectsAndComiteesData includes",
+                            DisplayName = "FacultyMemberProjectsAndComiteesData - Read",
+                            IsDeleted = false,
+                            Type = 8,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Code = "FacultyMemberProjectsAndComiteesData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberProjectsAndComiteesData includes",
+                            DisplayName = "FacultyMemberProjectsAndComiteesData - Update",
+                            IsDeleted = false,
+                            Type = 8,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Code = "FacultyMemberProjectsAndComiteesData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberProjectsAndComiteesData includes",
+                            DisplayName = "FacultyMemberProjectsAndComiteesData - Delete",
+                            IsDeleted = false,
+                            Type = 8,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Code = "FacultyMemberResearchesData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberResearchesData includes",
+                            DisplayName = "FacultyMemberResearchesData - Create",
+                            IsDeleted = false,
+                            Type = 9,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Code = "FacultyMemberResearchesData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberResearchesData includes",
+                            DisplayName = "FacultyMemberResearchesData - Read",
+                            IsDeleted = false,
+                            Type = 9,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Code = "FacultyMemberResearchesData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberResearchesData includes",
+                            DisplayName = "FacultyMemberResearchesData - Update",
+                            IsDeleted = false,
+                            Type = 9,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Code = "FacultyMemberResearchesData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberResearchesData includes",
+                            DisplayName = "FacultyMemberResearchesData - Delete",
+                            IsDeleted = false,
+                            Type = 9,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Code = "FacultyMemberScientificProgressionData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberScientificProgressionData includes",
+                            DisplayName = "FacultyMemberScientificProgressionData - Create",
+                            IsDeleted = false,
+                            Type = 10,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Code = "FacultyMemberScientificProgressionData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberScientificProgressionData includes",
+                            DisplayName = "FacultyMemberScientificProgressionData - Read",
+                            IsDeleted = false,
+                            Type = 10,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Code = "FacultyMemberScientificProgressionData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberScientificProgressionData includes",
+                            DisplayName = "FacultyMemberScientificProgressionData - Update",
+                            IsDeleted = false,
+                            Type = 10,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Code = "FacultyMemberScientificProgressionData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberScientificProgressionData includes",
+                            DisplayName = "FacultyMemberScientificProgressionData - Delete",
+                            IsDeleted = false,
+                            Type = 10,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Code = "FacultyMemberWritingsData.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which FacultyMemberWritingsData includes",
+                            DisplayName = "FacultyMemberWritingsData - Create",
+                            IsDeleted = false,
+                            Type = 11,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Code = "FacultyMemberWritingsData.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which FacultyMemberWritingsData includes",
+                            DisplayName = "FacultyMemberWritingsData - Read",
+                            IsDeleted = false,
+                            Type = 11,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Code = "FacultyMemberWritingsData.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which FacultyMemberWritingsData includes",
+                            DisplayName = "FacultyMemberWritingsData - Update",
+                            IsDeleted = false,
+                            Type = 11,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Code = "FacultyMemberWritingsData.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which FacultyMemberWritingsData includes",
+                            DisplayName = "FacultyMemberWritingsData - Delete",
+                            IsDeleted = false,
+                            Type = 11,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Code = "Tickets.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which Tickets includes",
+                            DisplayName = "Tickets - Create",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Code = "Tickets.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which Tickets includes",
+                            DisplayName = "Tickets - Read",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Code = "Tickets.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which Tickets includes",
+                            DisplayName = "Tickets - Update",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Code = "Tickets.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which Tickets includes",
+                            DisplayName = "Tickets - Delete",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Code = "Tickets.Assign",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows assigning tickets to support agents",
+                            DisplayName = "Tickets - Assign",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Code = "Tickets.Reply",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows replying to tickets",
+                            DisplayName = "Tickets - Reply",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Code = "Tickets.Close",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows closing tickets",
+                            DisplayName = "Tickets - Close",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Code = "Tickets.Reopen",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows reopening tickets",
+                            DisplayName = "Tickets - Reopen",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Code = "Tickets.ChangePriority",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows changing ticket priority",
+                            DisplayName = "Tickets - Change Priority",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Code = "Tickets.ChangeStatus",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows changing ticket status",
+                            DisplayName = "Tickets - Change Status",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Code = "Tickets.ViewAll",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows viewing all tickets in the system",
+                            DisplayName = "Tickets - View All",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Code = "Tickets.ViewAssigned",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Allows viewing only assigned tickets",
+                            DisplayName = "Tickets - View Assigned",
+                            IsDeleted = false,
+                            Type = 12,
+                            VersionNo = 0
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Authorization.RolePermission", b =>
+                {
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AssignedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("AssignerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("GrantedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GrantedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("GranterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("RoleId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("RolesPermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 46,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 47,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 50,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 54,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            RoleId = new Guid("10000000-0000-0000-0000-000000000001"),
+                            PermissionId = 56,
+                            AssignedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            AssignedBy = "",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 0
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Authorization.UserPermission", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PermissionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AssignedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("AssignedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("AssignerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("GrantedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GrantedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("GranterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "PermissionId");
+
+                    b.HasIndex("PermissionId");
+
+                    b.ToTable("UsersPermissions");
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 1,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 2,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 3,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 4,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 5,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 6,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 7,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 8,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 9,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 10,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 11,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 12,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 13,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 14,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 15,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 16,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 17,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 18,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 19,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 20,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 21,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 22,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 23,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 24,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 25,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 26,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 27,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 28,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 29,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 30,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 31,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 32,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 33,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 34,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 35,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 36,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 37,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 38,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 39,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 40,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 41,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 42,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 43,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 44,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 45,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 46,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 47,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 48,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 49,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 50,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 51,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 52,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 53,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 54,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 55,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        },
+                        new
+                        {
+                            UserId = new Guid("a9923638-8866-4a89-a9fe-9cf329cfc8f7"),
+                            PermissionId = 56,
+                            AssignedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            AssignedBy = "System",
+                            AssignerId = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedAt = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = "System",
+                            GrantedBy = "",
+                            IsDeleted = false,
+                            VersionNo = 1
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +1723,7 @@ namespace Presistence.Identity.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.IdentityModule.User", b =>
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -124,6 +1797,21 @@ namespace Presistence.Identity.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -193,21 +1881,6 @@ namespace Presistence.Identity.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -227,9 +1900,66 @@ namespace Presistence.Identity.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Authorization.RolePermission", b =>
+                {
+                    b.HasOne("Domain.Entities.IdentityModule.Authorization.Permission", "Permission")
+                        .WithMany("Roles")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IdentityModule.Users.Role", "Role")
+                        .WithMany("Permissions")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Authorization.UserPermission", b =>
+                {
+                    b.HasOne("Domain.Entities.IdentityModule.Authorization.Permission", "Permission")
+                        .WithMany("Users")
+                        .HasForeignKey("PermissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IdentityModule.Users.User", "User")
+                        .WithMany("Permissions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Permission");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.UserRole", b =>
+                {
+                    b.HasOne("Domain.Entities.IdentityModule.Users.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IdentityModule.Users.User", "User")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Entities.IdentityModule.Role", null)
+                    b.HasOne("Domain.Entities.IdentityModule.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -238,7 +1968,7 @@ namespace Presistence.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Entities.IdentityModule.User", null)
+                    b.HasOne("Domain.Entities.IdentityModule.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -247,22 +1977,7 @@ namespace Presistence.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Entities.IdentityModule.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.HasOne("Domain.Entities.IdentityModule.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.IdentityModule.User", null)
+                    b.HasOne("Domain.Entities.IdentityModule.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -271,11 +1986,32 @@ namespace Presistence.Identity.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Domain.Entities.IdentityModule.User", null)
+                    b.HasOne("Domain.Entities.IdentityModule.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Authorization.Permission", b =>
+                {
+                    b.Navigation("Roles");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.Role", b =>
+                {
+                    b.Navigation("Permissions");
+
+                    b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.User", b =>
+                {
+                    b.Navigation("Permissions");
+
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

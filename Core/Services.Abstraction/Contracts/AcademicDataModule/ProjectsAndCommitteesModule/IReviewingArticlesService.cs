@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommittee
 {
     public interface IReviewingArticlesService
     {
-        public Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(ReviewingArticlesSpecificationsParameters parameters);
-        public Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(int id);
-        public Task<ReviewingArticlesDto> CreateReviewingArticleAsync(ReviewingArticleCreateDto reviewingArticleCreateDto);
-        public Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewArticleUpdateDto reviewingArticleUpdateDto);
-        public Task DeleteReviewingArticleAsync(int reviewingArticleId);
+        Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(
+          ReviewingArticlesSpecificationsParameters parameters,
+          string? facultyMemberEmail = null);
+
+        Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<ReviewingArticlesDto> CreateReviewingArticleAsync(
+            ReviewingArticleCreateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(
+            int id,
+            ReviewArticleUpdateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteReviewingArticleAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

@@ -7,9 +7,11 @@ using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Domain.Entities.AcademicDataModule.WritingsAndPatents;
+using Domain.Entities.AdminModule;
 using Domain.Entities.CVGenerationModule;
 using Domain.Entities.EntitesAttachments;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Presistence.Identity;
 using System.Reflection;
 
 namespace Presistence.Data
@@ -20,72 +22,28 @@ namespace Presistence.Data
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AssemblyReference).Assembly);
 
-            // RowVersion Convention
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            var ignoreNamespacePrefix = "Domain.Entities.IdentityModule";
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes().ToList())
             {
-                var rowVersion = entityType.FindProperty("RowVersion");
-                if (rowVersion != null)
+                var clr = entityType.ClrType;
+
+                if (clr.Namespace?.StartsWith(ignoreNamespacePrefix) == true)
                 {
-                    rowVersion.IsConcurrencyToken = true;
-                    rowVersion.ValueGenerated = ValueGenerated.OnAddOrUpdate;
+                    modelBuilder.Ignore(clr);
                 }
             }
 
-            // Soft Delete Filters
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
-            {
-                if (typeof(IAuditablFields).IsAssignableFrom(entityType.ClrType))
-                {
-                    var method = typeof(StoreDbContext)
-                        .GetMethod(nameof(AddSoftDeleteFilter), BindingFlags.NonPublic | BindingFlags.Static)!
-                        .MakeGenericMethod(entityType.ClrType);
-
-                    method.Invoke(null, new object[] { modelBuilder });
-                }
-            }
+            modelBuilder.ApplyAuditConventions();
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            UpdateAuditFields();
+            this.UpdateAuditFields();
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        private static void AddSoftDeleteFilter<TEntity>(ModelBuilder builder) where TEntity : class, IAuditablFields
-        {
-            builder.Entity<TEntity>().HasQueryFilter(e => !e.IsDeleted);
-        }
-
-
-        private void UpdateAuditFields()
-        {
-            var entries = ChangeTracker.Entries<IAuditablFields>();
-            foreach (var entry in entries)
-            {
-                if (entry.State == EntityState.Modified)
-                {
-                    entry.Entity.UpdatedAt = DateTime.Now;
-                    entry.Entity.VersionNo += 1;
-                    entry.Entity.UpdatedBy ??= "System";
-                }
-                if (entry.State == EntityState.Added)
-                {
-                    entry.Entity.CreatedAt = DateTime.Now;
-                    entry.Entity.UpdatedAt = DateTime.Now;
-                    entry.Entity.CreatedBy ??= "System";
-                    entry.Entity.UpdatedBy ??= "System";
-                    entry.Entity.VersionNo = 1;
-                }
-                if (entry.State == EntityState.Deleted)
-                {
-                    entry.State = EntityState.Modified;
-                    entry.Entity.IsDeleted = true;
-                    entry.Entity.DeletedBy = "System";
-                    entry.Entity.DeletedAt = DateTime.Now;
-                    entry.Entity.VersionNo += 1;
-                }
-            }
-        }
+        
         public DbSet<Lookup> Lookups { get; set; }
 
         #region FacultyMemberData DbSets
@@ -170,5 +128,11 @@ namespace Presistence.Data
 
         #endregion
 
-     }
+        #region AdminDbSets
+
+        public DbSet<Ticket> Tickets { get; set; }
+
+        #endregion
+
+    }
 }

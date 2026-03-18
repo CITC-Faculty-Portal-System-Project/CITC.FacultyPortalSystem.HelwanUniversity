@@ -8,82 +8,106 @@ using Shared.SpecificationParameters.AcademicDataModule.ScientificProgressionMod
 namespace Services.Implementations.AcademicDataModule.ScientificProgressionModule
 {
     public class AcademicQualificationsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<AcademicQualifications, int>(unitOfWork, authenticationService, mapper), IAcademicQualificationsService
+     IUnitOfWork unitOfWork,
+     IAuthenticationService authenticationService,
+     IMapper mapper)
+     : BaseService<AcademicQualifications, int>(unitOfWork, authenticationService, mapper),
+       IAcademicQualificationsService
     {
         protected override string EntityName => "Academic Qualifications";
-        public async Task<PaginatedResult<AcademicQualificationResponseDto>> GetAllAcademicQualificationsAsync(AcademicQualificationsSpecificationParamters parameters)
+
+        public async Task<PaginatedResult<AcademicQualificationResponseDto>> GetAllAcademicQualificationsAsync(
+            AcademicQualificationsSpecificationParamters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var academicQualifications = await Repo.GetAllAsync(new AcademicQualificationsSpecifications(parameters, currentUser.Email))
+            var qualifications = await Repo.GetAllAsync(
+                new AcademicQualificationsSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var academicQualificationsResult = Mapper.Map<IEnumerable<AcademicQualificationResponseDto>>(academicQualifications);
+            var mapped = Mapper.Map<IEnumerable<AcademicQualificationResponseDto>>(qualifications);
 
-            var currentPageCount = academicQualificationsResult.Count();
+            var totalCount = await Repo.CountAsync(
+                new AcademicQualificationsCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new AcademicQualificationsCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<AcademicQualificationResponseDto>(parameters.PageIndex, currentPageCount, totalCount, academicQualificationsResult);
-
+            return new PaginatedResult<AcademicQualificationResponseDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
-        public async Task<AcademicQualificationResponseDto> GetAcademicQualificationByIdAsync(int id)
-        {
-            var currentUser = await GetCurrentUserAsync();
 
-            var academicQualification = await Repo.GetAsync(new AcademicQualificationsSpecifications(id)) 
+        public async Task<AcademicQualificationResponseDto> GetAcademicQualificationByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            var qualification = await Repo.GetAsync(
+                new AcademicQualificationsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(academicQualification.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                qualification.FacultyMemberId,
+                facultyMemberEmail);
 
-            return Mapper.Map<AcademicQualificationResponseDto>(academicQualification);
+            return Mapper.Map<AcademicQualificationResponseDto>(qualification);
         }
 
-        public async Task<AcademicQualificationResponseDto> CreateAcademicQualificationAsync(AcademicQualificationCreateDto academicQualificationCreateDto)
+        public async Task<AcademicQualificationResponseDto> CreateAcademicQualificationAsync(
+            AcademicQualificationCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var academicQualification = Mapper.Map<AcademicQualifications>(academicQualificationCreateDto);
-            academicQualification.FacultyMemberId = currentUser.UserId;
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
-            await Repo.AddAsync(academicQualification);
+            var qualification = Mapper.Map<AcademicQualifications>(dto);
+            qualification.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(qualification);
             await SaveChangesAsync();
 
-            return Mapper.Map<AcademicQualificationResponseDto>(academicQualification);
+            return Mapper.Map<AcademicQualificationResponseDto>(qualification);
         }
 
-        public async Task<AcademicQualificationResponseDto> UpdateAcademicQualificationAsync(int academicQualificationId, AcademicQualificationsUpdateDto academicQualificationsUpdateDto)
+        public async Task<AcademicQualificationResponseDto> UpdateAcademicQualificationAsync(
+            int id,
+            AcademicQualificationsUpdateDto dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var academicQualification = await Repo.GetAsync(new AcademicQualificationsSpecifications(academicQualificationId))
+            var qualification = await Repo.GetAsync(
+                new AcademicQualificationsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(academicQualification.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                qualification.FacultyMemberId,
+                facultyMemberEmail);
 
-            Mapper.Map(academicQualificationsUpdateDto, academicQualification);
+            Mapper.Map(dto, qualification);
 
-            Repo.Update(academicQualification);
+            Repo.Update(qualification);
             await SaveChangesAsync();
 
-            return Mapper.Map<AcademicQualificationResponseDto>(academicQualification);
+            return Mapper.Map<AcademicQualificationResponseDto>(qualification);
         }
 
-        public async Task DeleteAcademicQualificationAsync(int academicQualificationId)
+        public async Task DeleteAcademicQualificationAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var academicQualification = await Repo.GetAsync(new AcademicQualificationsSpecifications(academicQualificationId))
+            var qualification = await Repo.GetAsync(
+                new AcademicQualificationsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(academicQualification.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                qualification.FacultyMemberId,
+                facultyMemberEmail);
 
-            academicQualification.IsDeleted = true;
+            qualification.IsDeleted = true;
 
-            Repo.Update(academicQualification);
+            Repo.Update(qualification);
             await SaveChangesAsync();
         }
     }

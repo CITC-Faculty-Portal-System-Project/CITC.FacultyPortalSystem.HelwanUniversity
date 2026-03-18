@@ -1,6 +1,4 @@
-﻿using Domain.Contracts;
-using FtpFileStorage.Configurations;
-using Presistence.Repositories;
+﻿using FtpFileStorage.Configurations;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ExperiencesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.MissionsModule;
@@ -9,9 +7,14 @@ using Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommitteesMod
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
+using Services.Abstraction.Contracts.MessagingAndChattingModule;
+using Services.Abstraction.Contracts.TicketingModule;
+using Services.Abstraction.EncryptionServices;
+using Services.EncryptionServices;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
 using Services.Implementations.AcademicDataModule.ContributionsModule;
 using Services.Implementations.AcademicDataModule.ExperiencesModule;
@@ -21,6 +24,7 @@ using Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule;
 using Services.Implementations.AcademicDataModule.ResearchesModule;
 using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
+using Services.Implementations.AdminModule;
 using Services.Implementations.AttachmentsModule;
 using Services.Implementations.CVGenerationModule;
 using Services.Implementations.CVGenerationModule.DataFilters;
@@ -34,6 +38,8 @@ using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgr
 using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
 using Services.Implementations.AttachmentsModule.Helpers;
 using Services.Implementations.AttachmentsModule.Helpers.Handlers;
+using Services.Implementations.MessagingAndChattingModule;
+using Services.Implementations.TicketingModule;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -189,6 +195,12 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IContributionsToUniversityService>()
             );
 
+            services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddScoped<Func<IUserManagementService>>(provider =>
+            () => provider.GetRequiredService<IUserManagementService>()
+            );
+
+
             services.AddScoped<IParticipationInQualityWorksService, ParticipationInQualityWorksService>();
             services.AddScoped<Func<IParticipationInQualityWorksService>>(provider =>
             () => provider.GetRequiredService<IParticipationInQualityWorksService>()
@@ -199,16 +211,36 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IProfileDashboardService>()
             );
 
+
+            services.AddScoped<IChatService, ChatService>();
+            services.AddScoped<Func<IChatService>>(provider =>
+            () => provider.GetRequiredService<IChatService>()
+            );
+
+            services.AddScoped<IConversationService, ConversationService>();
+            services.AddScoped<Func<IConversationService>>(provider =>
+            () => provider.GetRequiredService<IConversationService>()
+            );
+
+
+            services.AddScoped<ITicketingService, TicketingService>();
+            services.AddScoped<Func<ITicketingService>>(provider =>
+            () => provider.GetRequiredService<ITicketingService>()
+            );
+
+
+
             services.AddScoped<ICVGenerationService, CVGenerationService>();
             services.AddScoped<Func<ICVGenerationService>>(provider =>
             () => provider.GetRequiredService<ICVGenerationService>()
             );
 
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
-            services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
+            //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
             services.AddScoped<IExternalDataHandlingService, ExternalDataHandlingService>();
-            services.AddScoped<IEncryptionService, EncryptionService>();
+            services.AddScoped<IAttachmentEncryptionService, AttachmentEncryptionService>();
+            services.AddScoped<IMessageEncryptionService, MessageEncryptionService>();
             services.AddScoped<IProcessingService, ProcessingService>();
 
             services.AddScoped<ICVSectionVisibilityFilter, PersonalDataVisibilityFilter>();
@@ -242,7 +274,9 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IAttachmentContextHandler, PrizeAndAwardAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, ConferenceOrSeminarAttachmentHandler>();
-
+            
+            
+            
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
 

@@ -7,10 +7,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.PrizesModule
 {
     public interface IPrizesAndRewardsService
     {
-        public Task<PaginatedResult<PrizesAndRewardsResponseDTO>> GetAllPrizesAndRewardsAsync(PrizesAndRewardsSpecificationParameters parameters);
-        public Task<PrizesAndRewardsResponseDTO> GetPrizeOrRewardByIdAsync(int id);
-        public Task<PrizesAndRewardsResponseDTO> CreatePrizeOrRewardAsync(PrizesAndRewardsCreateDTO prizesAndRewardsCreateDto);
-        public Task<PrizesAndRewardsResponseDTO> UpdatePrizeOrRewardAsync(int prizesOrRewardId, PrizesAndRewardsUpdateDTO prizesAndRewardsUpdateDto);
-        public Task DeletePrizeOrRewardAsync(int prizesOrRewardId);
+        Task<PaginatedResult<PrizesAndRewardsResponseDTO>> GetAllPrizesAndRewardsAsync(
+       PrizesAndRewardsSpecificationParameters parameters,
+       string? facultyMemberEmail = null);
+
+        Task<PrizesAndRewardsResponseDTO> GetPrizeOrRewardByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<PrizesAndRewardsResponseDTO> CreatePrizeOrRewardAsync(
+            PrizesAndRewardsCreateDTO dto,
+            string? facultyMemberEmail = null);
+
+        Task<PrizesAndRewardsResponseDTO> UpdatePrizeOrRewardAsync(
+            int id,
+            PrizesAndRewardsUpdateDTO dto,
+            string? facultyMemberEmail = null);
+
+        Task DeletePrizeOrRewardAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

@@ -1,9 +1,13 @@
 ﻿using Shared.Dtos.IdentityModule;
+
 using Shared.Enums.Logging;
 namespace Services.Global
 {
-    public abstract class BaseService<TEntity, TId>(IUnitOfWork _unitOfWork, IAuthenticationService _authenticationService, IMapper _mapper)
-        where TEntity : BaseEntity<TId>
+    public abstract class BaseService<TEntity, TId>(
+        IUnitOfWork _unitOfWork,
+        IAuthenticationService _authenticationService,
+        IMapper _mapper)
+        where TEntity : class
         where TId : notnull
     {
         protected readonly IMapper Mapper = _mapper;
@@ -14,6 +18,7 @@ namespace Services.Global
         protected async Task<UserResultDto> GetCurrentUserAsync()
         {
             var userEmail = AuthService.GetLoggedUserEmail();
+
             return await AuthService.GetCurrentUserAsync(userEmail)
                 ?? throw new UnauthorizedAccessException("Unauthorized.");
         }
@@ -21,10 +26,13 @@ namespace Services.Global
         protected async Task<FacultyMember> GetFacultyMemberByEmailAsync(string email)
         {
             var repo = UnitOfWork.GetRepository<FacultyMember, Guid>();
+
             return await repo.GetAsync(new FacultyMemberWithEmailSpecifications(email))
                 ?? throw new NotFoundException($"Faculty Member with email {email} not found.");
         }
 
+        #region Repository
+        protected IGenericRepository<TEntity, TId> Repo
         protected string? GetUserIP()
             => AuthService.GetUserIP();
 		#endregion
@@ -34,7 +42,7 @@ namespace Services.Global
             => UnitOfWork.GetRepository<TEntity, TId>();
 
         protected IGenericRepository<T, TKey> GetRepository<T, TKey>()
-            where T : BaseEntity<TKey>
+            where T : class
             where TKey : notnull
             => UnitOfWork.GetRepository<T, TKey>();
         #endregion
@@ -45,6 +53,28 @@ namespace Services.Global
             Guid currentUserId,
             string? entityNameOverride = null)
         {
+            if (entityFacultyMemberId != currentUserId)
+                throw new UnauthorizedAccessException(
+                    $"You do not have permission to access this {(entityNameOverride ?? "resource")}."
+                );
+        }
+
+
+        protected async Task EnsureOwnershipIfClientAsync(
+         Guid entityFacultyMemberId,
+         string? facultyMemberEmail)
+        {
+            if (facultyMemberEmail is not null)
+                return;
+
+            var currentUser = await GetCurrentUserAsync();
+
+            EnsureOwnership(
+                entityFacultyMemberId,
+                currentUser.UserId,
+                EntityName);
+        }
+
             if(entityFacultyMemberId != currentUserId)
             {
 				#region Log
@@ -75,6 +105,5 @@ namespace Services.Global
         protected NotFoundException NotFound()
             => new($"The requested {EntityName} resource was not found.");
         #endregion
-
     }
 }

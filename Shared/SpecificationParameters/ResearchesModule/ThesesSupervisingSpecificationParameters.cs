@@ -7,7 +7,7 @@ namespace Shared.SpecificationParameters.ResearchesModule
     {
         private const int defaultPageSize = 9;
         private const int maxPageSize = 9;
-        public string FacultyMemberEmail { get; set; } = string.Empty;
+        public Guid FacultyMemberId { get; set; }
         public ThesesSupervisingSortingOptions Sort { get; set; }
         public List<Guid>? GradeIds { get; set; }
         public ThesisType? Type { get; set; }

@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.PrizesModule
 {
     public interface IManifestationsOfScientificAppreciationService
     {
-        public Task<PaginatedResult<ManifestationsOfScientificAppreciationResponseDTO>> GetAllManifestationsOfScientificAppreciationAsync(ManifestationsOfScientificAppreciationSpecificationParameters parameters);
-        public Task<ManifestationsOfScientificAppreciationResponseDTO> GetManifestationOfScientificAppreciationByIdAsync(int id);
-        public Task<ManifestationsOfScientificAppreciationResponseDTO> CreateManifestationOfScientificAppreciationAsync(ManifestationsOfScientificAppreciationCreateDTO ManifestationsOfScientificAppreciationCreateDto);
-        public Task<ManifestationsOfScientificAppreciationResponseDTO> UpdateManifestationOfScientificAppreciationAsync(int manifestationsOfScientificAppreciationId, ManifestationsOfScientificAppreciationUpdateDTO manifestationsOfScientificAppreciationUpdateDto);
-        public Task DeleteManifestationOfScientificAppreciationAsync(int manifestationsOfScientificAppreciationId);
+        Task<PaginatedResult<ManifestationsOfScientificAppreciationResponseDTO>> GetAllManifestationsOfScientificAppreciationAsync(
+         ManifestationsOfScientificAppreciationSpecificationParameters parameters,
+         string? facultyMemberEmail = null);
+
+        Task<ManifestationsOfScientificAppreciationResponseDTO> GetManifestationOfScientificAppreciationByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<ManifestationsOfScientificAppreciationResponseDTO> CreateManifestationOfScientificAppreciationAsync(
+            ManifestationsOfScientificAppreciationCreateDTO dto,
+            string? facultyMemberEmail = null);
+
+        Task<ManifestationsOfScientificAppreciationResponseDTO> UpdateManifestationOfScientificAppreciationAsync(
+            int id,
+            ManifestationsOfScientificAppreciationUpdateDTO dto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteManifestationOfScientificAppreciationAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

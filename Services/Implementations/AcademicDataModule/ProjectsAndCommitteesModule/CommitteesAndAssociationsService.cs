@@ -8,81 +8,106 @@ using Shared.SpecificationParameters.AcademicDataModule.ProjectsAndCommitteesMod
 namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule
 {
     public class CommitteesAndAssociationsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<CommitteesAndAssociations, int>(unitOfWork, authenticationService, mapper), ICommitteesAndAssociationsService
+      IUnitOfWork unitOfWork,
+      IAuthenticationService authenticationService,
+      IMapper mapper)
+      : BaseService<CommitteesAndAssociations, int>(unitOfWork, authenticationService, mapper),
+        ICommitteesAndAssociationsService
     {
         protected override string EntityName => "Committees And Associations";
-        public async Task<PaginatedResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync(CommitteesAndAssociationsSpecificationsParameters parameters)
+
+        public async Task<PaginatedResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync(
+            CommitteesAndAssociationsSpecificationsParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var committeesAndAssociations = await Repo.GetAllAsync(new CommitteesAndAssociationsSpecifications(parameters, currentUser.Email))
+            var committees = await Repo.GetAllAsync(
+                new CommitteesAndAssociationsSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var committeesAndAssociationsResult = Mapper.Map<IEnumerable<CommitteesAndAssociationsResponseDto>>(committeesAndAssociations);
+            var mapped = Mapper.Map<IEnumerable<CommitteesAndAssociationsResponseDto>>(committees);
 
-            var currentPageCount = committeesAndAssociations.Count();
+            var totalCount = await Repo.CountAsync(
+                new CommitteesAndAssociationsCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new CommitteesAndAssociationsCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<CommitteesAndAssociationsResponseDto>(parameters.PageIndex, currentPageCount, totalCount, committeesAndAssociationsResult);
+            return new PaginatedResult<CommitteesAndAssociationsResponseDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<CommitteesAndAssociationsResponseDto> GetCommitteeOrAssociationByIdAsync(int id)
+        public async Task<CommitteesAndAssociationsResponseDto> GetCommitteeOrAssociationByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var committeeOrAssociation = await Repo.GetAsync(new CommitteesAndAssociationsSpecifications(id))
+            var committee = await Repo.GetAsync(
+                new CommitteesAndAssociationsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(committeeOrAssociation.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                committee.FacultyMemberId,
+                facultyMemberEmail);
 
-            return Mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
+            return Mapper.Map<CommitteesAndAssociationsResponseDto>(committee);
         }
 
-        public async Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(CommitteeOrAssociationCreateDto committeeOrAssociationCreateDto)
+        public async Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(
+            CommitteeOrAssociationCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var committeeOrAssociation = Mapper.Map<CommitteesAndAssociations>(committeeOrAssociationCreateDto);
-            committeeOrAssociation.FacultyMemberId = currentUser.UserId;
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
-            await Repo.AddAsync(committeeOrAssociation);
+            var committee = Mapper.Map<CommitteesAndAssociations>(dto);
+            committee.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(committee);
             await SaveChangesAsync();
 
-            return Mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
+            return Mapper.Map<CommitteesAndAssociationsResponseDto>(committee);
         }
-        public async Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(int committeeOrAssociationId, CommitteeOrAssociationUpdateDto committeeOrAssociationUpdateDto)
-        {
-            var currentUser = await GetCurrentUserAsync();
 
-            var committeeOrAssociation = await Repo.GetAsync(new CommitteesAndAssociationsSpecifications(committeeOrAssociationId))
+        public async Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(
+            int id,
+            CommitteeOrAssociationUpdateDto dto,
+            string? facultyMemberEmail = null)
+        {
+            var committee = await Repo.GetAsync(
+                new CommitteesAndAssociationsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(committeeOrAssociation.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                committee.FacultyMemberId,
+                facultyMemberEmail);
 
-            Mapper.Map(committeeOrAssociationUpdateDto, committeeOrAssociation);
+            Mapper.Map(dto, committee);
 
-            Repo.Update(committeeOrAssociation);
+            Repo.Update(committee);
             await SaveChangesAsync();
 
-            return Mapper.Map<CommitteesAndAssociationsResponseDto>(committeeOrAssociation);
+            return Mapper.Map<CommitteesAndAssociationsResponseDto>(committee);
         }
 
-        public async Task DeleteCommitteeOrAssociationAsync(int committeeOrAssociationId)
+        public async Task DeleteCommitteeOrAssociationAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var committeeOrAssociation = await Repo.GetAsync(new CommitteesAndAssociationsSpecifications(committeeOrAssociationId))
+            var committee = await Repo.GetAsync(
+                new CommitteesAndAssociationsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(committeeOrAssociation.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                committee.FacultyMemberId,
+                facultyMemberEmail);
 
-            committeeOrAssociation.IsDeleted = true;
+            committee.IsDeleted = true;
 
-            Repo.Update(committeeOrAssociation);
+            Repo.Update(committee);
             await SaveChangesAsync();
         }
     }

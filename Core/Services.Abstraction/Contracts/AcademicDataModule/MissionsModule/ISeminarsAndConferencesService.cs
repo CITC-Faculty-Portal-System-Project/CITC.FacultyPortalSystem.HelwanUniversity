@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.MissionsModule
 {
     public interface ISeminarsAndConferencesService
     {
-        public Task<PaginatedResult<ConferencesAndSeminarsResponseDto>> GetAllSeminarsAndConferencesAsync(SeminarsAndConferncesSpecificationParameters parameters);
-        public Task<ConferencesAndSeminarsResponseDto> GetSeminarOrConferenceByIdAsync(int id);
-        public Task<ConferencesAndSeminarsResponseDto> CreateSeminarOrConferenceAsync(ConferencesAndSeminarsCreateDto conferencesAndSeminarsCreateDto);
-        public Task<ConferencesAndSeminarsResponseDto> UpdateSeminarOrConferenceAsync(int id, ConferencesAndSeminarsUpdateDto conferencesAndSeminarsUpdateDto);
-        public Task DeleteSeminarOrConferenceAsync(int id);
+        Task<PaginatedResult<ConferencesAndSeminarsResponseDto>> GetAllSeminarsAndConferencesAsync(
+         SeminarsAndConferncesSpecificationParameters parameters,
+         string? facultyMemberEmail = null);
+
+        Task<ConferencesAndSeminarsResponseDto> GetSeminarOrConferenceByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<ConferencesAndSeminarsResponseDto> CreateSeminarOrConferenceAsync(
+            ConferencesAndSeminarsCreateDto conferencesAndSeminarsCreateDto,
+            string? facultyMemberEmail = null);
+
+        Task<ConferencesAndSeminarsResponseDto> UpdateSeminarOrConferenceAsync(
+            int id,
+            ConferencesAndSeminarsUpdateDto conferencesAndSeminarsUpdateDto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteSeminarOrConferenceAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

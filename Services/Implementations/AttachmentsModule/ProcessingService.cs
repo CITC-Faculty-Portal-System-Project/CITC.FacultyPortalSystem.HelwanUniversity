@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.EncryptionServices;
 using Shared.Dtos.AttachmentsModule;
 
 namespace Services.Implementations.AttachmentsModule
 {
     public class ProcessingService(IMapper _mapper , 
-        IFTPFileStorageService _fTPFileStorageService , IEncryptionService _encryptionService) 
+        IFTPFileStorageService _fTPFileStorageService , IAttachmentEncryptionService _encryptionService) 
         : IProcessingService
     {
         public async Task<AttachmentReferenceDTO> ProcessAsync(IFormFile file, string remotePath, string creator)
