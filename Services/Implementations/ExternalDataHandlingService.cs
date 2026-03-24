@@ -827,8 +827,10 @@ namespace Services.Implementations
 			var interestsRepo = _unitOfWork.GetRepository<ScientificInterest, int>();
 			var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
 			var researchRepo = _unitOfWork.GetRepository<Research, int>();
+            var coAuthorsRepo = _unitOfWork.GetRepository<CoAuthor, int>();
+            var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
-			var dto = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json!)
+            var dto = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json!)
 					  ?? throw new Exception("Invalid JSON");
 
 			var facultyMember = await facultyMemberRepo.GetAsync(
@@ -858,8 +860,9 @@ namespace Services.Implementations
 
 			researcher!.ResearcherInterests = researcher.ResearcherInterests.EnsureList();
 			researcher.ResearcherCites = researcher.ResearcherCites.EnsureList();
+            researcher!.CoAuthors = researcher.CoAuthors.EnsureList();
 
-			var incomingInterestNames = (dto.Interests ?? new List<ExternalResearcherInterestsFetchingDTO>())
+            var incomingInterestNames = (dto.Interests ?? new List<ExternalResearcherInterestsFetchingDTO>())
 				.Select(x => x.Name?.Trim())
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.Distinct(StringComparer.OrdinalIgnoreCase)
@@ -931,9 +934,10 @@ namespace Services.Implementations
 					researchEntity.Cites = researchEntity.Cites.EnsureList();
 
 					researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
-					researchEntity.PublicationType = Domain.Enums.PublicationType.Unspecified;
+					researchEntity.PublicationType = Domain.Enums.PublicationType.International;
 					researchEntity.Source = Domain.Enums.ResearchSource.External;
 					researchEntity.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
+					researchEntity.PubYear = researchEntity.PubYear == 0 ? null : researchEntity.PubYear;
 
 					await researchRepo.AddAsync(researchEntity);
 				}
@@ -943,7 +947,7 @@ namespace Services.Implementations
 					researchEntity.DOI = rDto.DOI ?? researchEntity.DOI;
 
 					researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
-					researchEntity.PublicationType = Domain.Enums.PublicationType.Unspecified;
+					researchEntity.PublicationType = Domain.Enums.PublicationType.International;
 					researchEntity.Source = Domain.Enums.ResearchSource.External;
 					researchEntity.ResearchDerivedFrom = Domain.Enums.ResearchDerivedFrom.Other;
 
@@ -959,6 +963,17 @@ namespace Services.Implementations
 						.FirstOrDefault(c =>
 							string.Equals(c.MemberAcademicName, cDto.MemberAcademicName, StringComparison.OrdinalIgnoreCase)
 						);
+
+					var probableFacultyMemberEntity = await personalDataRepo.GetAsync(new PersonalDataWithNameSpecification(cDto.MemberAcademicName));
+					if(probableFacultyMemberEntity is not null && probableFacultyMemberEntity.FacultyMemberId != facultyMember.Id)
+					{
+                        researchEntity.Contributions.Add(new ResearchContribution
+                        {
+                            Contributor = probableFacultyMemberEntity.FacultyMember,
+                            MemberAcademicName = cDto.MemberAcademicName,
+                            ContributorType = Domain.Enums.ContributorType.FromUniverstity
+                        });
+                    }
 
 					if (exists is not null) continue;
 
@@ -993,7 +1008,10 @@ namespace Services.Implementations
 					});
 				}
 
-				var incomingCites = rDto.Cites ?? new List<ExternalResearchCitesFetchingDTO>();
+
+                
+
+                var incomingCites = rDto.Cites ?? new List<ExternalResearchCitesFetchingDTO>();
 
 				researchEntity.Cites.UpsertMany(
 					dtos: incomingCites,
@@ -1012,7 +1030,43 @@ namespace Services.Implementations
 				);
 			}
 
-			researcher.FacultyMember = facultyMember;
+            var incomingCoAuthorsProfiles = (dto.CoAuthors ?? new List<ResearcherCoAuthorFetchingDTO>());
+            var coAuthorsEntities = new List<CoAuthor>();
+
+            foreach (var profile in incomingCoAuthorsProfiles)
+            {
+				profile.ScholarProfileLink = $"https://scholar.google.com.eg/citations?hl=ar&user={profile.ScholarProfileLink}";
+				profile.ScholarProfileImageURL = $"https://scholar.googleusercontent.com/citations?view_op=view_photo&user={profile.ScholarProfileLink}&citpid=5";
+                
+				var coAuthor = await UpsertHelpers.GetOrCreateAsync(
+                    getter: async () => await coAuthorsRepo.GetAsync(new CoAuthorSpecification(profile.ScholarProfileLink)),
+                    factory: () =>
+                    {
+                        var created = _mapper.Map<CoAuthor>(profile);
+                        created.Researchers = created.Researchers.EnsureList();
+                        return created;
+                    });
+
+                coAuthor.Researchers = coAuthor.Researchers.EnsureList();
+                coAuthorsEntities.Add(coAuthor);
+            }
+
+            foreach (var coAuthor in coAuthorsEntities)
+            {
+                var alreadyLinked = researcher.CoAuthors.Any(ri =>
+                    ri.CoAuthor != null &&
+                    string.Equals(ri.CoAuthor.ScholarProfileLink, coAuthor.ScholarProfileLink)
+                );
+
+                if (!alreadyLinked)
+                {
+                    var link = new ResearcherCoAuthor { Researcher = researcher, CoAuthor = coAuthor };
+                    researcher.CoAuthors.Add(link);
+                    coAuthor.Researchers!.Add(link);
+                }
+            }
+
+            researcher.FacultyMember = facultyMember;
 
 			if (isNewResearcher) await researchersRepo.AddAsync(researcher);
 			else researchersRepo.Update(researcher);

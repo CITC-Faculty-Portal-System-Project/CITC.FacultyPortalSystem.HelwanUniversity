@@ -16,7 +16,13 @@ namespace Services.MappingProfiles
 
 
             CreateMap<ExternalResearcherInterestsFetchingDTO, ScientificInterest>();
-            CreateMap<ResearcherCoAuthorFetchingDTO, CoAuthor>();
+            
+            CreateMap<ResearcherCoAuthorFetchingDTO, CoAuthor>()
+                .ForMember(dest => dest.Researchers, opt => opt.Ignore());
+
+            CreateMap<CoAuthor, ResearcherCoAuthorFetchingDTO>();
+
+
             CreateMap<ExternalResearchCitesFetchingDTO, ResearchCite>();
             CreateMap<ExternalResearcherCitesFetchingDTO, ResearcherCite>();
             CreateMap<ExternalResearchesFetchingDTO, Research>()

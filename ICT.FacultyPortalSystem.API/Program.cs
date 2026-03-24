@@ -43,7 +43,6 @@ namespace ICIT.FacultyPortalSystem.API
 
 
             app.UseExceptionHandlingMiddlewares();
-			app.UseExceptionHandlingMiddlewares();
 
             if (app.Environment.IsDevelopment())
             {

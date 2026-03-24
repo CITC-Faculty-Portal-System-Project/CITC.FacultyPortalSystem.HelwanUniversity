@@ -267,7 +267,7 @@ namespace Services.Implementations.AdminModule
             var currentUser = await GetCurrentUserAsync();
             var users = await Repo.GetAllAsync(new UserSpecifications(parameters , currentUser.UserId));
 
-            var totalPagesCount = await Repo.CountAsync(new UserSpecifications(parameters, currentUser.UserId));
+            var totalPagesCount = await Repo.CountAsync(new UserCountSpecifications(parameters, currentUser.UserId));
 
             var currentPage = users.Count();
 

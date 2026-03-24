@@ -11,6 +11,9 @@ namespace Services.Specifications.ResearchesModule
             AddIncludes(rp => rp.ResearcherCites!);
             AddIncludeWithChain(rp => rp.Include(rp =>rp.ResearcherInterests!)
                                 .ThenInclude(rp => rp.Interest));
+
+            AddIncludeWithChain(rp => rp.Include(rp => rp.CoAuthors!)
+                                        .ThenInclude(co => co.CoAuthor));
         }
 
         public ResearcherProfileSpceification

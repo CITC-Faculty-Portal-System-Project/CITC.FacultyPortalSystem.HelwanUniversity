@@ -19,5 +19,6 @@ namespace Shared.Dtos.ResearchesModule
         public int I10index5y { get; set; }
         public ICollection<ExternalResearcherCitesFetchingDTO>? ResearcherCites { get; set; }
         public ICollection<ExternalResearcherInterestsFetchingDTO>? ResearcherInterests { get; set; }
+        public ICollection<ResearcherCoAuthorFetchingDTO>? CoAuthors { get; set; }
     }
 }
