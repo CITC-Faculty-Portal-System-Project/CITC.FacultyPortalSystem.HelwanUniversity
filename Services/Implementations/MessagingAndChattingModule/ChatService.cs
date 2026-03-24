@@ -75,11 +75,19 @@ namespace Services.Implementations.MessagingAndChattingModule
         {
 
             var currentUser = await GetCurrentUserAsync();
+            var conversationRepo = UnitOfWork.GetRepository<Conversation , int>();
   
             var messages = await Repo.GetAllAsync(new MessageSpecifications(parameters));
             var messagesCount = await Repo.CountAsync(new MessagesCountSpecifications(parameters));
 
-            EnsureConversationParticipant(currentUser.UserId, messages.FirstOrDefault()!.Conversation!);
+            if(messages.Count() > 0)
+                EnsureConversationParticipant(currentUser.UserId, messages.FirstOrDefault()!.Conversation!);
+
+            var targetConverstaion = await conversationRepo.GetAsync(new ConverstationSpecifications(parameters.ConversationId))
+                ?? throw NotFound();
+
+            EnsureConversationParticipant(currentUser.UserId, targetConverstaion);
+
 
             var (orderedMessages, hasMore, nextCursor) =
                 CursorPaginationHelper.ProcessCursorPagination(
