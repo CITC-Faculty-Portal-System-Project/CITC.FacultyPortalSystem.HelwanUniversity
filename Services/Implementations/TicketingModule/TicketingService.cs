@@ -190,6 +190,8 @@ namespace Services.Implementations.TicketingModule
             ticket.IsDeleted = true;
             ticket.DeletedAt = DateTime.UtcNow;
             ticket.DeletedBy = currentUser.UserId.ToString();
+
+            await UnitOfWork.SaveChangesAsync();
         }
 
         public async Task<TicketResponseDTO> MarkTicketAsResolvedAsync(int ticketId)

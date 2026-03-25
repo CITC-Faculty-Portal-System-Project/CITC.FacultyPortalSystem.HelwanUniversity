@@ -932,6 +932,7 @@ namespace Services.Implementations
 					researchEntity = _mapper.Map<Research>(rDto);
 					researchEntity.Contributions = researchEntity.Contributions.EnsureList();
 					researchEntity.Cites = researchEntity.Cites.EnsureList();
+					researchEntity.DOI = null;
 
 					researchEntity.PublisherType = Domain.Enums.PublisherType.Unspecified;
 					researchEntity.PublicationType = Domain.Enums.PublicationType.International;
