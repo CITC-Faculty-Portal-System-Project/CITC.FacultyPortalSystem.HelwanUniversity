@@ -1,4 +1,7 @@
 using ICIT.FacultyPortalSystem.API.Extensions;
+using ICIT.FacultyPortalSystem.API.Logger;
+using Microsoft.Extensions.Configuration;
+using Serilog;
 
 namespace ICIT.FacultyPortalSystem.API
 {
@@ -18,15 +21,25 @@ namespace ICIT.FacultyPortalSystem.API
             //Core Services
             builder.Services.AddCoreServices(builder.Configuration);
 
-            #endregion
+			//Serilog Configuration
+			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+			{
+				var accessor = services.GetRequiredService<IHttpContextAccessor>();
+				//var scopeFactory = services.GetRequiredService<IServiceScopeFactory>();
 
-            #region Pipelines - Middlewares
+				loggerConfiguration
+					.ReadFrom.Configuration(context.Configuration)
+                    .WriteTo.Sink(new KafkaLogSink(accessor/*, scopeFactory*/));
+			});
+			#endregion
 
-            #endregion
-            
-            var app = builder.Build();
+			#region Pipelines - Middlewares
 
-            app.UseExceptionHandlingMiddlewares();
+			#endregion
+
+			var app = builder.Build();
+
+			app.UseExceptionHandlingMiddlewares();
 
             if (app.Environment.IsDevelopment())
             {

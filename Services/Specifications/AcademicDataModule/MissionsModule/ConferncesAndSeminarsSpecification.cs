@@ -26,6 +26,7 @@ namespace Services.Specifications.AcademicDataModule.MissionsModule
             )
         {
             AddIncludes(cas => cas.RoleOfParticipation);
+            AddIncludes(cas => cas.Attachments!);
            
             switch (parameters.Sort)
             {
@@ -51,6 +52,7 @@ namespace Services.Specifications.AcademicDataModule.MissionsModule
         public ConferncesAndSeminarsSpecification(int id) : base(cas => !cas.IsDeleted && cas.Id == id)
         {
             AddIncludes(cas => cas.RoleOfParticipation);
+            AddIncludes(cas => cas.Attachments!);
 
         }
 

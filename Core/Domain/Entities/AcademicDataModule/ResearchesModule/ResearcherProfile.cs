@@ -2,7 +2,7 @@
 {
     public class ResearcherProfile : BaseEntity<int>
     {
-        public string ORCID { get; set; } = string.Empty;
+        public string? ORCID { get; set; } = string.Empty;
         public string ScholarProfileLink { get; set; } = string.Empty;
         public string ScholarProfileImageURL { get; set; } = string.Empty;
         public string AcademicName { get; set; } = string.Empty;
@@ -19,6 +19,7 @@
         public FacultyMember? FacultyMember { get; set; }
         public ICollection<ResearcherCite>? ResearcherCites { get; set; } = new List<ResearcherCite>();
         public ICollection<ResearcherInterest>? ResearcherInterests { get; set; } = new List<ResearcherInterest>();
+        public ICollection<ResearcherCoAuthor>? CoAuthors { get; set; } = new List<ResearcherCoAuthor>();
 
     }
 }

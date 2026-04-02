@@ -1,5 +1,7 @@
 ﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Domain.Entities.EntitesAttachments;
 using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+using Shared.Dtos.AttachmentsModule;
 
 namespace Services.MappingProfiles.AcademicDataModule
 {
@@ -14,7 +16,8 @@ namespace Services.MappingProfiles.AcademicDataModule
                 
 
             CreateMap<AcademicQualificationCreateDto, AcademicQualifications>();
-            CreateMap<AcademicQualificationsUpdateDto, AcademicQualifications>();
+            CreateMap<AttachmentReferenceDTO, AcademicQualificationAttachment>();
+            CreateMap<AcademicQualificationAttachment, AttachmentResponseDTO>();
 
             CreateMap<JobRanks, JobRankResponseDto>()
                 .ForMember(dest => dest.JobRank, opt => opt.MapFrom(src => src.JobRank));

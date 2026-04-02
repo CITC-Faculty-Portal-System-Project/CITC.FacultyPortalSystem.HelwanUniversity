@@ -1,6 +1,9 @@
 ﻿using Domain.Entities.AcademicDataModule.MissionsModule;
+using Domain.Entities.EntitesAttachments;
+using Domain.Enums;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Shared.Dtos.AcademicDataModule.MissionsModule;
+using Shared.Dtos.AttachmentsModule;
 
 namespace Services.MappingProfiles.AcademicDataModule
 {
@@ -9,26 +12,34 @@ namespace Services.MappingProfiles.AcademicDataModule
         public MissionsModuleProfile()
         {
             #region Scientific Missions
+            
             CreateMap<ScientificMissions, ScientificMissionResponseDto>();
 
             CreateMap<ScientificMissionCreateDto, ScientificMissions>()
-         .ForMember(dest => dest.MissionName, opt => opt.MapFrom(src => src.name))
-         .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Description));
-            CreateMap<ScientificMissionUpdateDto, ScientificMissions>();
+                .ForMember(dest => dest.FacultyMember, opt => opt.Ignore());
+            
+            CreateMap<ScientificMissionUpdateDto, ScientificMissions>()
+                 .ForMember(dest => dest.FacultyMember, opt => opt.Ignore());
 
-            CreateMap<ScientificMissionUpdateDto, ScientificMissionResponseDto>();
             #endregion
 
             #region Seminars And Conferences
-            CreateMap<ConferencesAndSeminars, ConferencesAndSeminarsResponseDto>()
-                 .ForMember(dest => dest.RoleOfParticipation, opt => opt.MapFrom(src => src.RoleOfParticipation))
-                 .ForMember(dest => dest.LocalOrInternational, opt => opt.MapFrom(src => src.LocalOrInternational))
-                 .ForMember(dest => dest.Type, opt => opt.MapFrom(src => src.Type));
+           
+            CreateMap<ConferencesAndSeminars, ConferencesAndSeminarsResponseDto>();
 
-            CreateMap<ConferencesAndSeminarsCreateDto, ConferencesAndSeminars>();
-    
 
-            CreateMap<ConferencesAndSeminarsUpdateDto, ConferencesAndSeminars>();
+            CreateMap<ConferencesAndSeminarsCreateDto, ConferencesAndSeminars>()
+                        .ForMember(dest => dest.FacultyMember, opt => opt.Ignore())
+                        .ForMember(dest => dest.RoleOfParticipation, opt => opt.Ignore());
+            
+            CreateMap<AttachmentReferenceDTO, ConferencesAndSeminarsAttachment>();
+            CreateMap<ConferencesAndSeminarsAttachment, AttachmentResponseDTO>();
+
+            CreateMap<ConferencesAndSeminarsUpdateDto, ConferencesAndSeminars>()
+                     .ForMember(dest => dest.FacultyMember, opt => opt.Ignore())
+                     .ForMember(dest => dest.RoleOfParticipation, opt => opt.Ignore());
+
+
 
             #endregion
 

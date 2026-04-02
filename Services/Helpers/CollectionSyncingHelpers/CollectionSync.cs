@@ -58,5 +58,56 @@ namespace Services.Helpers.CollectionSyncingHelpers
             }
         }
 
+
+        public static async Task AddWhenFoundAsync<TSource, TFound, TEntity>(
+          this ICollection<TEntity> target,
+          IEnumerable<TSource>? source,
+          Func<TSource, Task<TFound?>> fetchAsync,
+          Func<TFound, TEntity> createEntity)
+          where TFound : class
+        {
+            if (source is null) return;
+
+            foreach (var item in source)
+            {
+                var found = await fetchAsync(item);
+                if (found is not null)
+                    target.Add(createEntity(found));
+            }
+        }
+
+
+    public static async Task UpdateWhenFoundAsync<TSource, TFound, TEntity>(
+    this ICollection<TEntity> target,
+    IEnumerable<TSource>? source,
+    Func<TSource, Task<TFound?>> fetchAsync,
+    Func<TSource, TEntity?> findEntity,
+    Action<TSource, TFound, TEntity> mapUpdate,
+    Action<TSource>? onEntityNotFound = null,
+    Action<TSource>? onFoundNotFound = null)
+    where TFound : class
+    where TEntity : class
+        {
+            if (source is null) return;
+
+            foreach (var item in source)
+            {
+                var entity = findEntity(item);
+                if (entity is null)
+                {
+                    onEntityNotFound?.Invoke(item);
+                    continue;
+                }
+
+                var found = await fetchAsync(item);
+                if (found is null)
+                {
+                    onFoundNotFound?.Invoke(item);
+                    continue;
+                }
+
+                mapUpdate(item, found, entity);
+            }
+        }
     }
 }

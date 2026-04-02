@@ -11,6 +11,7 @@ using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionMod
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Helpers.ExternalDataFetchingServiceHelpers;
 using Services.Implementations.AcademicDataModule.ContributionsModule;
 using Services.Implementations.AcademicDataModule.ExperiencesModule;
@@ -32,6 +33,8 @@ using Services.Implementations.CVGenerationModule.SectionFilters.Prizes;
 using Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAndCommittees;
 using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgression;
 using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
+using Services.Implementations.AttachmentsModule.Helpers;
+using Services.Implementations.AttachmentsModule.Helpers.Handlers;
 using Services.Implementations.CVGenerationModule.Templates;
 using Shared.Common;
 
@@ -232,6 +235,15 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<ICVSectionVisibilityFilter, ParticipationInQualityWorkVisibilityFilter>();
             services.AddScoped<ICVSectionVisibilityFilter, ContributionsToCommunityServiceVisibilityFilter>();
             services.AddScoped<ICVSectionVisibilityFilter, ContributionsToUniversityVisibilityFilter>();
+            services.AddScoped<AttachmentCore>();
+            services.AddScoped<IAttachmentContextHandler, ResearchAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ThesisAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ProfilePictureAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, PatentAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ManifestationOfScientificAppreciationAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, PrizeAndAwardAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ConferenceOrSeminarAttachmentHandler>();
             services.AddScoped<ICVTemplate, ModernTemplateCV>();
 
             services.AddScoped<CVTemplatesFactory>();

@@ -1,5 +1,7 @@
 ﻿using Domain.Entities.AcademicDataModule.ExperiencesModule;
+using Domain.Entities.EntitesAttachments;
 using Domain.Entities.FacultyMemberDataModule;
+using Shared.Dtos.AttachmentsModule;
 using Shared.Dtos.FacultyMemberDataModule;
 
 namespace Services.MappingProfiles
@@ -15,8 +17,7 @@ namespace Services.MappingProfiles
                .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University))
                .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department))
                .ForMember(dest => dest.Authority, opt => opt.MapFrom(src => src.Authority))
-               .ForMember(dest => dest.Field, opt => opt.MapFrom(src => src.Field))
-               .ForMember(dest => dest.ProfilePictureId, opt => opt.MapFrom(src => src.ProfilePictureId));
+               .ForMember(dest => dest.Field, opt => opt.MapFrom(src => src.Field));
 
             CreateMap<PersonalDataUpdateDto, PersonalData>()
                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) =>
@@ -31,6 +32,8 @@ namespace Services.MappingProfiles
             CreateMap<ContactData, ContactDataResponseDto>();
             CreateMap<ContactDataCreateDTO, ContactData>();
             CreateMap<ContactDataUpdateDto, ContactData>();
+            CreateMap<AttachmentReferenceDTO, ProfilePictures>();
+            CreateMap<ProfilePictures, AttachmentResponseDTO>();
 
             CreateMap<IdentificationCardDto, IdentificationCard>().ReverseMap();
 
@@ -41,7 +44,6 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department))
-                .ForMember(dest => dest.ProfilePictureId, opt => opt.MapFrom(src => src.ProfilePictureId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.BioSummary, opt => opt.MapFrom(src => src.BioSummary))
                 .ForMember(dest => dest.Skills,

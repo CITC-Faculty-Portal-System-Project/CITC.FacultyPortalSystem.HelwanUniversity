@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.EntitesAttachments;
 using Shared.Dtos.AttachmentsModule;
 using Shared.Dtos.DataFetchingFromExternalService;
 using Shared.Dtos.ResearchesModule;
@@ -15,6 +16,7 @@ namespace Services.MappingProfiles
 
 
             CreateMap<ExternalResearcherInterestsFetchingDTO, ScientificInterest>();
+            CreateMap<ResearcherCoAuthorFetchingDTO, CoAuthor>();
             CreateMap<ExternalResearchCitesFetchingDTO, ResearchCite>();
             CreateMap<ExternalResearcherCitesFetchingDTO, ResearcherCite>();
             CreateMap<ExternalResearchesFetchingDTO, Research>()
@@ -62,11 +64,14 @@ namespace Services.MappingProfiles
                  .ForMember(d => d.Attachments, opt => opt.Ignore())
                  .ForMember(d => d.Researches, opt => opt.Ignore());
 
+
             CreateMap<Thesis, ThesesResponseDTO>();
 
 
-            CreateMap<ThesesSupervisorDTO, Supervisor>();
-            CreateMap<Supervisor, ThesesSupervisorDTO>();
+            CreateMap<ThesesSupervisorDTO, ThesisComittee>()
+                    .ForMember(dest => dest.JobLevelId, opt => opt.MapFrom(src => src.JobLevelId));
+                    
+            CreateMap<ThesisComittee, ThesesSupervisorDTO>();
 
             CreateMap<ResearchDTO , Research>();
             CreateMap<ResearchContributionDTO , ResearchContribution>();
@@ -111,11 +116,16 @@ namespace Services.MappingProfiles
             CreateMap<ResearchContribution, ResearchContributionResponseDTO>();
             CreateMap<ResearchUpdateDTO, Research>();
             CreateMap<ResearchCite, ResearchCitesResponseDTO>();
-            CreateMap<ThesesSupervisorDTO, Supervisor>();
+            CreateMap<ThesesSupervisorDTO, ThesisComittee>();
 
 
-            CreateMap<Supervisor, ThesesSupervisorResponseDTO>();
+            CreateMap<ThesisComittee, ThesesSupervisorResponseDTO>();
             CreateMap<ThesesUpdateDTO, Thesis>();
+
+            CreateMap<ThesesDTO, SupervisingThesesAddDTO>()
+                .ForMember(dest => dest.GrantingDate, opt => opt.MapFrom(src => src.InternalGradeDate))
+                .ForMember(dest => dest.SupervisionFormationDate, opt => opt.MapFrom(src => src.SupervisionConfirmationDate))
+                .ForMember(dest => dest.FacultyMemberId, opt => opt.Ignore());
         }
     }
 }

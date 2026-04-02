@@ -11,35 +11,37 @@ namespace Presentation.Controllers
     {
         [ProducesResponseType(typeof(IEnumerable<AttachmentResponseDTO>), StatusCodes.Status201Created)]
         [ServiceFilter(typeof(BlockMaliciousExtensionsFilter))]
-        [HttpPost("UploadAttachment")]
+        [HttpPost("{entityId}")]
         public async Task<ActionResult<IEnumerable<AttachmentResponseDTO>>> UploadAttachment(
-            AttachmentContext context , int ownerId , IList<IFormFile> files)
-            => Ok(await _serviceManager.AttachmentService.AddAsync(context , ownerId , files));
+            AttachmentContext context , int entityId, IList<IFormFile> files)
+            => Ok(await _serviceManager.AttachmentService.AddAsync(context , entityId, files));
 
         [ProducesResponseType(typeof(AttachmentResponseDTO), StatusCodes.Status200OK)]
         [ServiceFilter(typeof(BlockMaliciousExtensionsFilter))]
-        [HttpPut("ReplaceAttachment/{oldAttachmentId}")]
+        [HttpPut("{entityId}/{oldAttachmentId}")]
         public async Task<ActionResult<AttachmentResponseDTO>> ReplaceAttachment
-            (AttachmentContext context , int ownerId , Guid oldAttachmentId , IFormFile newAttachment)
+            (AttachmentContext context , int entityId, Guid oldAttachmentId, IFormFile newAttachment)
 
             => Ok(await _serviceManager.AttachmentService.UpdateAsync
-                (context , ownerId , oldAttachmentId, newAttachment));
+                (context , entityId, oldAttachmentId, newAttachment));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [HttpDelete("RemoveAttachment/{attachmentId}")]
+        [HttpDelete("{entityId}/{attachmentId}")]
         public async Task<ActionResult> RemoveAttachment
-            (AttachmentContext context, int ownerId, Guid attachmentId)
+            (AttachmentContext context, int entityId, Guid attachmentId)
         {
-            await _serviceManager.AttachmentService.DeleteAsync(context , ownerId , attachmentId);
+            await _serviceManager.AttachmentService.DeleteAsync
+                (context , entityId, attachmentId);
             return NoContent();
         }
 
         [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK)]
-        [HttpGet("DownloadAttachment/{attachmentId}")]
+        [HttpGet("{entityId}/{attachmentId}")]
         public async Task<ActionResult> DownloadAttachment
-            (AttachmentContext context, int ownerId, Guid attachmentId)
+            (AttachmentContext context, int entityId, Guid attachmentId)
         {
-            var attachment = await _serviceManager.AttachmentService.GetAsync(context, ownerId, attachmentId);
+            var attachment = await _serviceManager.AttachmentService.GetAsync
+                (context, entityId, attachmentId);
             return new FileContentResult(attachment.AttachmentData, "application/octet-stream")
             {
                 FileDownloadName = attachment.FileName

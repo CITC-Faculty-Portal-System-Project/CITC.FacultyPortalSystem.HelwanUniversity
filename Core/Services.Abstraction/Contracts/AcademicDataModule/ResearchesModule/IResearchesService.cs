@@ -5,7 +5,7 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
 {
     public interface IResearchesService
     {
-        public Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches(RecommendedResearchesSpecificationParameters parameters);
+        public Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches(ResearchSpecificationParameters parameters);
         public Task<ResearchResponseDTO> ConfirmRecommendedResearch(int researchId);
         public Task DeleteResearch(int researchId);
         public Task<ResearchResponseDTO> GetResearchByTitle(string title);
@@ -14,6 +14,7 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
         public Task<ResearchResponseDTO> AddResearch(ResearchDTO research);
         public Task RejectResearch(int researchId);
         public Task<ResearchResponseDTO> UpdateResearch(int researchId , ResearchUpdateDTO researchUpdate);
+
 
     }
 }

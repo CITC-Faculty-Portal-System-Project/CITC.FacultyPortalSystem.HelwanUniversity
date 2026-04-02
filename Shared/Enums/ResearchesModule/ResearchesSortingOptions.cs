@@ -8,5 +8,7 @@
         JournalDESC = 4,
         PubYearASC = 5,
         PubYearDESC = 6,
+        CitesASC = 7,
+        CitesDESC = 8,
     }
 }

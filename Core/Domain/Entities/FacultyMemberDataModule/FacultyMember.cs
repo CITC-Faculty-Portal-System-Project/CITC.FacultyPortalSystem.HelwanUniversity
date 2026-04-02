@@ -53,6 +53,7 @@ namespace Domain.Entities.FacultyMemberDataModule
 
         public ICollection<Supervising>? Supervisings { get; set; }
         public ICollection<Thesis>? Theses { get; set; }
+        public ICollection<ThesisComittee>? ThesisComittees { get; set; }
 
         #endregion
 
