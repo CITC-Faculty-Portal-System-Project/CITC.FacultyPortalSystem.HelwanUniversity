@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.CVGenerationModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Services.Implementations.CVGenerationModule.Factories;
 using Services.Specifications.CVGenerationModule;
 using Shared.Dtos.CVGenerationModule;
 using Shared.Dtos.CVGenerationModule.Contributions;
@@ -17,7 +18,8 @@ namespace Services.Implementations.CVGenerationModule
         IUnitOfWork _unitOfWork,
         IMapper _mapper,
         IAuthenticationService _authenticationService,
-        IEnumerable<ICVSectionVisibilityFilter> _visibilityFilters) : ICVGenerationService
+        IEnumerable<ICVSectionVisibilityFilter> _visibilityFilters,
+        CVTemplatesFactory _cVTemplatesFactory) : ICVGenerationService
     {
         #region Helper Methods
         private async Task<UserResultDto> GetCurrentUserAsync()
@@ -217,6 +219,20 @@ namespace Services.Implementations.CVGenerationModule
             }
 
             return response;
+        }
+
+        public async Task<byte[]> GenerateCVPdfAsync(string templateName)
+        {
+            var cv = await GetCVAsync();
+            var template = _cVTemplatesFactory.Resolve(templateName);
+            return template.GeneratePdf(cv);
+        }
+
+        public async Task<string> PreviewCVAsync(string templateName)
+        {
+            var cv = await GetCVAsync();
+            var template = _cVTemplatesFactory.Resolve(templateName);
+            return template.GenerateHtml(cv);
         }
     }
 }

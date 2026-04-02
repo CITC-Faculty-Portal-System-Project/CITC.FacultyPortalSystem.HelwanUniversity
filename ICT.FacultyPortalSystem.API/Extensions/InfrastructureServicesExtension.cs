@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using Presistence.Data;
 using Presistence.Identity;
 using Presistence.Repositories;
+using QuestPDF.Infrastructure;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Shared.Common;
@@ -72,6 +73,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
             services.AddScoped<IGenericHTTPClient, GenericHttpClient>();
             services.AddScoped<IResearchesDOIandORCIDLoadService, ResearchesDOIandORCIDLoadService>();
+            
+            QuestPDF.Settings.License = LicenseType.Community;
 
             services.AddSingleton(new JsonSerializerOptions
             {

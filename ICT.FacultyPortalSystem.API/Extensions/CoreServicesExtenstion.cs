@@ -23,6 +23,7 @@ using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AttachmentsModule;
 using Services.Implementations.CVGenerationModule;
 using Services.Implementations.CVGenerationModule.DataFilters;
+using Services.Implementations.CVGenerationModule.Factories;
 using Services.Implementations.CVGenerationModule.SectionFilters;
 using Services.Implementations.CVGenerationModule.SectionFilters.Contributions;
 using Services.Implementations.CVGenerationModule.SectionFilters.Experiences;
@@ -31,6 +32,7 @@ using Services.Implementations.CVGenerationModule.SectionFilters.Prizes;
 using Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAndCommittees;
 using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgression;
 using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
+using Services.Implementations.CVGenerationModule.Templates;
 using Shared.Common;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -230,6 +232,9 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<ICVSectionVisibilityFilter, ParticipationInQualityWorkVisibilityFilter>();
             services.AddScoped<ICVSectionVisibilityFilter, ContributionsToCommunityServiceVisibilityFilter>();
             services.AddScoped<ICVSectionVisibilityFilter, ContributionsToUniversityVisibilityFilter>();
+            services.AddScoped<ICVTemplate, ModernTemplateCV>();
+
+            services.AddScoped<CVTemplatesFactory>();
 
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));

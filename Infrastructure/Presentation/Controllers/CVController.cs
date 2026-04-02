@@ -19,5 +19,18 @@ namespace Presentation.Controllers
         public async Task<ActionResult<CVVisibilitySettingResponseDTO>> ManageVisibility(CVVisibilityConfig config)
             => Ok(await _serviceManager.CVGenerationService.ManageCVVisibilityAsync(config));
 
+        [HttpGet("download-pdf")]
+        public async Task<IActionResult> DownloadPdf(string template = "modern")
+        {
+            var pdf = await _serviceManager.CVGenerationService.GenerateCVPdfAsync(template);
+            return File(pdf, "application/pdf", "CV.pdf");
+        }
+
+        [HttpGet("preview")]
+        public async Task<IActionResult> Preview(string template = "modern")
+        {
+            var html = await _serviceManager.CVGenerationService.PreviewCVAsync(template);
+            return Content(html, "text/html");
+        }
     }
 }
