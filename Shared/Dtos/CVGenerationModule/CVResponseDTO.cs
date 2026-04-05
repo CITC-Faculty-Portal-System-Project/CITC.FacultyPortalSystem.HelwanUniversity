@@ -42,31 +42,31 @@ namespace Shared.Dtos.CVGenerationModule
         public string? FaxNumber { get; set; }
         #endregion
 
-        #region Scientific Progression
+        #region Scientific Progression 
         public List<CVAcademicQualificationsDTO> AcademicQualifications { get; set; } = new();
         public List<CVJobRanksDTO> JobRanks { get; set; } = new();
         public List<CVAdministrativePositions> AdministrativePositions { get; set; } = new();
         #endregion
 
-        #region Missions
+        #region Missions 
         public List<CVConferencesAndSeminarsDTO> ConferencesAndSeminars { get; set; } = new();
         public List<CVScientificMissionsDTO> ScientificMissions { get; set; } = new();
         public List<CVTrainingProgramsDTO> TrainingPrograms { get; set; } = new();
-        #endregion
+        #endregion 
 
-        #region ProjectsAndCommittees
+        #region ProjectsAndCommittees 
         public List<CVCommitteesAndAssociationsDTO> CommitteesAndAssociations { get; set; } = new();
         public List<CVParticipationInMagazinesDTO> ParticipationInMagazines { get; set; } = new();
         public List<CVReviewingArticlesDTO> ReviewingArticles { get; set; } = new();
         public List<CVProjectsDTO> Projects { get; set; } = new();
         #endregion
 
-        #region Experiences
+        #region Experiences 
         public List<CVGeneralExperienceDTO> GeneralExperiences { get; set; } = new();
         public List<CVTeachingExperienceDTO> TeachingExperiences { get; set; } = new();
         #endregion
 
-        #region WritingsAndPatents
+        #region WritingsAndPatents 
         public List<CVScientificWritingDTO> ScientificWritings { get; set; } = new();
         public List<CVPatentDTO> Patents { get; set; } = new();
         #endregion

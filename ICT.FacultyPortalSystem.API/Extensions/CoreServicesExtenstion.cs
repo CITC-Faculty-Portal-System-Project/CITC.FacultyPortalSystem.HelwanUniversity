@@ -28,6 +28,7 @@ using Services.Implementations.AdminModule;
 using Services.Implementations.AttachmentsModule;
 using Services.Implementations.CVGenerationModule;
 using Services.Implementations.CVGenerationModule.DataFilters;
+using Services.Implementations.CVGenerationModule.Factories;
 using Services.Implementations.CVGenerationModule.SectionFilters;
 using Services.Implementations.CVGenerationModule.SectionFilters.Contributions;
 using Services.Implementations.CVGenerationModule.SectionFilters.Experiences;
@@ -38,6 +39,7 @@ using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgr
 using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
 using Services.Implementations.AttachmentsModule.Helpers;
 using Services.Implementations.AttachmentsModule.Helpers.Handlers;
+using Services.Implementations.CVGenerationModule.Templates;
 using Services.Implementations.MessagingAndChattingModule;
 using Services.Implementations.TicketingModule;
 using Shared.Common;
@@ -274,6 +276,12 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IAttachmentContextHandler, PrizeAndAwardAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, ConferenceOrSeminarAttachmentHandler>();
+            services.AddScoped<ICVTemplate, ModernTemplateCV>();
+            services.AddScoped<ICVTemplate, AcademicTemplateCV>();
+            services.AddScoped<ICVTemplate, ProfessionalTemplateCV>();
+
+            services.AddScoped<CVTemplatesFactory>();
+
             
             
             

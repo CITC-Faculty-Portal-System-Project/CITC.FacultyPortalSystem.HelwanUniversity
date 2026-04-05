@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.CVGenerationModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Services.Implementations.CVGenerationModule.Factories;
 using Services.Specifications.CVGenerationModule;
 using Shared.Dtos.CVGenerationModule;
 using Shared.Dtos.CVGenerationModule.Contributions;
@@ -17,7 +18,8 @@ namespace Services.Implementations.CVGenerationModule
         IUnitOfWork _unitOfWork,
         IMapper _mapper,
         IAuthenticationService _authenticationService,
-        IEnumerable<ICVSectionVisibilityFilter> _visibilityFilters) : ICVGenerationService
+        IEnumerable<ICVSectionVisibilityFilter> _visibilityFilters,
+        CVTemplatesFactory _cVTemplatesFactory) : ICVGenerationService
     {
         #region Helper Methods
         private async Task<UserResultDto> GetCurrentUserAsync()
@@ -64,25 +66,23 @@ namespace Services.Implementations.CVGenerationModule
             return _mapper.Map<CVVisibilitySettingResponseDTO>(settings);
         }
 
-        public async Task<CVResponseDTO> GetCVAsync()
+        private async Task<CVResponseDTO> BuildCVAsync(Guid facultyMemberId, string email)
         {
-            var currentUser = await GetCurrentUserAsync();
-
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
             var personalData = await personalDataRepo.GetAsync(
-                new CVSpecifications(currentUser.Email)
-            ) ?? throw new NotFoundException($"Personal data not found for {currentUser.Email}.");
+                new CVSpecifications(email)
+            ) ?? throw new NotFoundException($"Personal data not found for {email}.");
 
             var cvVisibilityRepo = _unitOfWork.GetRepository<CVVisibilitySettings, Guid>();
 
-            var settings = await cvVisibilityRepo.GetAsync( new CVVisibilitySpecifications(currentUser.UserId));
+            var settings = await cvVisibilityRepo.GetAsync( new CVVisibilitySpecifications(facultyMemberId));
 
             if (settings == null)
             {
                 settings = new CVVisibilitySettings
                 {
-                    FacultyMemberId = currentUser.UserId,
+                    FacultyMemberId = facultyMemberId,
                     VisibilityJson = CVVisibilityHelper.Serialize(new CVVisibilityConfig())
                 };
 
@@ -215,6 +215,37 @@ namespace Services.Implementations.CVGenerationModule
             }
 
             return response;
+        }
+
+        public async Task<CVResponseDTO> GetCVAsync()
+        {
+            var currentUser = await GetCurrentUserAsync();
+
+            return await BuildCVAsync(currentUser.UserId, currentUser.Email);
+        }
+
+        public async Task<CVResponseDTO> GetPublicCVAsync(Guid id)
+        {
+            var facultyRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+
+            var faculty = await facultyRepo.GetAsync(new FacultyMemberWithIdSpecifications(id))
+                ?? throw new NotFoundException("User not found");
+
+            return await BuildCVAsync(faculty.Id, faculty.Email);
+        }
+
+        public async Task<byte[]> GenerateCVPdfAsync(string templateName)
+        {
+            var cv = await GetCVAsync();
+            var template = _cVTemplatesFactory.Resolve(templateName);
+            return template.GeneratePdf(cv);
+        }
+
+        public async Task<string> PreviewCVAsync(string templateName)
+        {
+            var cv = await GetCVAsync();
+            var template = _cVTemplatesFactory.Resolve(templateName);
+            return template.GenerateHtml(cv);
         }
     }
 }
