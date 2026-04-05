@@ -27,7 +27,7 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University))
                 .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department))
                 .ForMember(dest => dest.Authority, opt => opt.MapFrom(src => src.Authority))
-                .ForMember(dest => dest.ProfilePictureId, opt => opt.MapFrom(src => src.ProfilePictureId))
+                //.ForMember(dest => dest.ProfilePictureId, opt => opt.MapFrom(src => src.ProfilePictureId))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                 .ForMember(dest => dest.BioSummary, opt => opt.MapFrom(src => src.BioSummary))
                 .ForMember(dest => dest.Skills,

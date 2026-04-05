@@ -245,6 +245,8 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, ConferenceOrSeminarAttachmentHandler>();
             services.AddScoped<ICVTemplate, ModernTemplateCV>();
+            services.AddScoped<ICVTemplate, AcademicTemplateCV>();
+            services.AddScoped<ICVTemplate, ProfessionalTemplateCV>();
 
             services.AddScoped<CVTemplatesFactory>();
 
