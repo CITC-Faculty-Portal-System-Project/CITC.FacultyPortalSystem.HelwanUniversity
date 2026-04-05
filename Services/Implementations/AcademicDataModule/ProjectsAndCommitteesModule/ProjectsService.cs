@@ -8,45 +8,63 @@ using Shared.SpecificationParameters.AcademicDataModule.ProjectsAndCommitteesMod
 namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModule
 {
     public class ProjectsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<Projects, int>(unitOfWork, authenticationService, mapper), IProjectsService
+       IUnitOfWork unitOfWork,
+       IAuthenticationService authenticationService,
+       IMapper mapper)
+       : BaseService<Projects, int>(unitOfWork, authenticationService, mapper),
+         IProjectsService
     {
         protected override string EntityName => "Projects";
-        public async Task<PaginatedResult<ProjectsResponseDto>> GetAllProjectsAsync(ProjectsSpecifcationsParameters parameters)
+
+        public async Task<PaginatedResult<ProjectsResponseDto>> GetAllProjectsAsync(
+            ProjectsSpecifcationsParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var projects = await Repo.GetAllAsync(new ProjectsSpecifications(parameters, currentUser.Email))
+            var projects = await Repo.GetAllAsync(
+                new ProjectsSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var projectsResult = Mapper.Map<IEnumerable<ProjectsResponseDto>>(projects);
+            var mapped = Mapper.Map<IEnumerable<ProjectsResponseDto>>(projects);
 
-            var currentPageCount = projects.Count();
+            var totalCount = await Repo.CountAsync(
+                new ProjectsCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new ProjectsCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<ProjectsResponseDto>(parameters.PageIndex, currentPageCount, totalCount, projectsResult);
+            return new PaginatedResult<ProjectsResponseDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<ProjectsResponseDto> GetProjectByIdAsync(int id)
-        { 
-            var currentUser = await GetCurrentUserAsync();
+        public async Task<ProjectsResponseDto> GetProjectByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            var project = await Repo.GetAsync(
+                new ProjectsSpecifications(id))
+                ?? throw NotFound();
 
-            var project = await Repo.GetAsync(new ProjectsSpecifications(id)) ?? throw new NotFoundException("Project is Not Found.");
-
-            EnsureOwnership(project.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                project.FacultyMemberId,
+                facultyMemberEmail);
 
             return Mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task<ProjectsResponseDto> CreateProjectAsync(ProjectCreateDto projectCreateDto)
+        public async Task<ProjectsResponseDto> CreateProjectAsync(
+            ProjectCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var project = Mapper.Map<Projects>(projectCreateDto);
-            project.FacultyMemberId = currentUser.UserId;
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var project = Mapper.Map<Projects>(dto);
+            project.FacultyMemberId = facultyMember.Id;
 
             await Repo.AddAsync(project);
             await SaveChangesAsync();
@@ -54,16 +72,20 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
             return Mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task<ProjectsResponseDto> UpdateProjectAsync(int projectId, ProjectUpdateDto projectUpdateDto)
+        public async Task<ProjectsResponseDto> UpdateProjectAsync(
+            int id,
+            ProjectUpdateDto dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var project = await Repo.GetAsync(new ProjectsSpecifications(projectId))
+            var project = await Repo.GetAsync(
+                new ProjectsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(project.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                project.FacultyMemberId,
+                facultyMemberEmail);
 
-            Mapper.Map(projectUpdateDto, project);
+            Mapper.Map(dto, project);
 
             Repo.Update(project);
             await SaveChangesAsync();
@@ -71,14 +93,17 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
             return Mapper.Map<ProjectsResponseDto>(project);
         }
 
-        public async Task DeleteProjectAsync(int projectId)
+        public async Task DeleteProjectAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var project = await Repo.GetAsync(new ProjectsSpecifications(projectId))
+            var project = await Repo.GetAsync(
+                new ProjectsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(project.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                project.FacultyMemberId,
+                facultyMemberEmail);
 
             project.IsDeleted = true;
 

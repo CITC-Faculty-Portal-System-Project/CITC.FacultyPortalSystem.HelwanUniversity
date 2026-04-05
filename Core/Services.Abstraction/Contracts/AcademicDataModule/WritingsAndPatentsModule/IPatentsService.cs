@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsMo
 {
     public interface IPatentsService
     {
-        public Task<PaginatedResult<PatentsResponseDTO>> GetAllPatentsAsync(PatentsSpecificationParameters parameters);
-        public Task<PatentsResponseDTO> GetPatentByIdAsync(int id);
-        public Task<PatentsResponseDTO> CreatePatentAsync(PatentsCreateDTO patentCreateDto);
-        public Task<PatentsResponseDTO> UpdatePatentAsync(int patentId, PatentsUpdateDTO patentUpdateDto);
-        public Task DeletePatentAsync(int patentId);
+        Task<PaginatedResult<PatentsResponseDTO>> GetAllPatentsAsync(
+            PatentsSpecificationParameters parameters,
+            string? facultyMemberEmail = null);
+
+        Task<PatentsResponseDTO> GetPatentByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<PatentsResponseDTO> CreatePatentAsync(
+            PatentsCreateDTO patentCreateDto,
+            string? facultyMemberEmail = null);
+
+        Task<PatentsResponseDTO> UpdatePatentAsync(
+            int patentId,
+            PatentsUpdateDTO patentUpdateDto,
+            string? facultyMemberEmail = null);
+
+        Task DeletePatentAsync(
+            int patentId,
+            string? facultyMemberEmail = null);
     }
 }

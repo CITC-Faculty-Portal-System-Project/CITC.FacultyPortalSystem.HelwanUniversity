@@ -1,5 +1,5 @@
 ﻿using Domain.Contracts;
-using Domain.Entities.IdentityModule;
+using Domain.Entities.IdentityModule.Users;
 using FtpFileStorage.Factories;
 using FtpFileStorage.Implementation;
 using Integrations.HttpClientFactory;
@@ -9,22 +9,26 @@ using Messaging.AsyncMessaging.Consumer;
 using Messaging.AsyncMessaging.Publisher;
 using Messaging.AsyncMessaging.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Presentation.Authorization;
 using Presistence.Data;
 using Presistence.Identity;
 using Presistence.Repositories;
 using QuestPDF.Infrastructure;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
+using Services.Abstraction.Contracts.IdentityModule;
+using Services.Implementations.IdnetityModule;
 using Shared.Common;
 using StackExchange.Redis;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using UserRole = Domain.Entities.IdentityModule.Users.Role;
 using Serilog;
-using UserRole = Domain.Entities.IdentityModule.Role;
 using ICIT.FacultyPortalSystem.API.Logger;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
@@ -35,12 +39,18 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer
+                    (configuration.GetConnectionString("DefaultConnection") , 
+                        ac => ac.MigrationsAssembly(typeof(StoreDbContext).Assembly.FullName));
             });
+
             services.AddDbContext<IdentityStoreDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
+                options.UseSqlServer
+                    (configuration.GetConnectionString("IdentityConnection")
+                    , ic => ic.MigrationsAssembly(typeof(IdentityStoreDbContext).Assembly.FullName));
             });
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
            
 
@@ -132,6 +142,12 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                     }
                 };
             });
+
+            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+            services.AddHostedService<IdentitySeedHostedService>();
             services.AddAuthorization();
             return services;
         }

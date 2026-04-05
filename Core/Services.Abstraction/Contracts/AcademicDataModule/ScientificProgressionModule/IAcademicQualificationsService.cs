@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressio
 {
     public interface IAcademicQualificationsService
     {
-        public Task<PaginatedResult<AcademicQualificationResponseDto>> GetAllAcademicQualificationsAsync(AcademicQualificationsSpecificationParamters parameters);
-        public Task<AcademicQualificationResponseDto> GetAcademicQualificationByIdAsync(int id);
-        public Task<AcademicQualificationResponseDto> CreateAcademicQualificationAsync(AcademicQualificationCreateDto academicQualificationCreateDto);
-        public Task<AcademicQualificationResponseDto> UpdateAcademicQualificationAsync(int academicQualificationId, AcademicQualificationsUpdateDto academicQualificationsUpdateDto);
-        public Task DeleteAcademicQualificationAsync(int academicQualificationId);
+        Task<PaginatedResult<AcademicQualificationResponseDto>> GetAllAcademicQualificationsAsync(
+         AcademicQualificationsSpecificationParamters parameters,
+         string? facultyMemberEmail = null);
+
+        Task<AcademicQualificationResponseDto> GetAcademicQualificationByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<AcademicQualificationResponseDto> CreateAcademicQualificationAsync(
+            AcademicQualificationCreateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task<AcademicQualificationResponseDto> UpdateAcademicQualificationAsync(
+            int id,
+            AcademicQualificationsUpdateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteAcademicQualificationAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

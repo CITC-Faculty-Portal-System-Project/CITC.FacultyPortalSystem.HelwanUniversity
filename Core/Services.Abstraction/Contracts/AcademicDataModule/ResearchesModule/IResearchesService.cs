@@ -5,16 +5,42 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
 {
     public interface IResearchesService
     {
-        public Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches(ResearchSpecificationParameters parameters);
-        public Task<ResearchResponseDTO> ConfirmRecommendedResearch(int researchId);
-        public Task DeleteResearch(int researchId);
-        public Task<ResearchResponseDTO> GetResearchByTitle(string title);
-        public Task<PaginatedResult<ResearchResponseDTO>> GetAllResearches(ResearchSpecificationParameters parameters);
-        public Task<ResearchResponseDTO> GetResarchById(int researchId);
-        public Task<ResearchResponseDTO> AddResearch(ResearchDTO research);
-        public Task RejectResearch(int researchId);
-        public Task<ResearchResponseDTO> UpdateResearch(int researchId , ResearchUpdateDTO researchUpdate);
+        Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches(
+       ResearchSpecificationParameters parameters,
+       Guid? facultyMemberId = null);
 
+        Task<ResearchResponseDTO> ConfirmRecommendedResearch(
+            int researchId,
+            Guid? facultyMemberId = null);
+
+        Task DeleteResearch(
+            int researchId,
+            Guid? facultyMemberId = null);
+
+        Task<ResearchResponseDTO> GetResearchByTitle(
+            string title,
+            Guid? facultyMemberId = null);
+
+        Task<PaginatedResult<ResearchResponseDTO>> GetAllResearches(
+            ResearchSpecificationParameters parameters,
+            Guid? facultyMemberId = null);
+
+        Task<ResearchResponseDTO> GetResarchById(
+            int researchId,
+            Guid? facultyMemberId = null);
+
+        Task<ResearchResponseDTO> AddResearch(
+            ResearchDTO research,
+            Guid? facultyMemberId = null);
+
+        Task RejectResearch(
+            int researchId,
+            Guid? facultyMemberId = null);
+
+        Task<ResearchResponseDTO> UpdateResearch(
+            int researchId,
+            ResearchUpdateDTO researchUpdate,
+            Guid? facultyMemberId = null);
 
     }
 }

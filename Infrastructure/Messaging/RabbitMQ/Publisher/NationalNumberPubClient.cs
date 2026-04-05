@@ -94,7 +94,7 @@ namespace Messaging.AsyncMessaging.Publisher
 				publishMessageLog.Timestamp = DateTime.Now;
 				publishMessageLog.Level = "Information";
 				publishMessageLog.RenderedMessage = $"Published national number to RabbitMQ at {DateTime.Now}";
-				publishMessageLog.AdditionalData = $"The National Number Publisher successfully published the national number {nationalNumber} to Message Broker. This message will be consumed by the National Number Subscriber to validate the national number during user registration.";
+				publishMessageLog.AdditionalData = $"The National Number Publisher successfully published the national number {nationalNumber} to Message Broker.";
 				_logger.LogInformation("{@LogDetails}", publishMessageLog);
 				#endregion
 			}

@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsMo
 {
     public interface IScientificWritingsService
     {
-        public Task<PaginatedResult<ScientificWritingsResponseDTO>> GetAllScientificWritingsAsync(ScientificWritingsSpecificationParameters parameters);
-        public Task<ScientificWritingsResponseDTO> GetScientificWritingByIdAsync(int id);
-        public Task<ScientificWritingsResponseDTO> CreateScientificWritingAsync(ScientificWritingsCreateDTO scientificWritingCreateDto);
-        public Task<ScientificWritingsResponseDTO> UpdateScientificWritingAsync(int scientificWritingId, ScientificWritingsUpdateDTO scientificWritingUpdateDto);
-        public Task DeleteScientificWritingAsync(int scientificWritingId);
+        Task<PaginatedResult<ScientificWritingsResponseDTO>> GetAllScientificWritingsAsync(
+         ScientificWritingsSpecificationParameters parameters,
+         string? facultyMemberEmail = null);
+
+        Task<ScientificWritingsResponseDTO> GetScientificWritingByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<ScientificWritingsResponseDTO> CreateScientificWritingAsync(
+            ScientificWritingsCreateDTO scientificWritingCreateDto,
+            string? facultyMemberEmail = null);
+
+        Task<ScientificWritingsResponseDTO> UpdateScientificWritingAsync(
+            int scientificWritingId,
+            ScientificWritingsUpdateDTO scientificWritingUpdateDto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteScientificWritingAsync(
+            int scientificWritingId,
+            string? facultyMemberEmail = null);
     }
 }

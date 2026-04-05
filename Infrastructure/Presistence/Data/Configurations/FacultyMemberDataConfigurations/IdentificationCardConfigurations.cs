@@ -22,6 +22,16 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.Property(ic => ic.AcademiaEdu)
                 .HasColumnType("NVARCHAR(Max)")
                 .IsRequired(false);
+
+            builder.Property(ic => ic.GoogleScholar)
+              .HasColumnType("NVARCHAR(Max)")
+              .IsRequired(false);
+
+            builder.Property(ic => ic.Scopus)
+              .HasColumnType("NVARCHAR(Max)")
+              .IsRequired(false);
+
+
             builder.ToTable("IdentificationCards");
 
             #region Relation With FacultyMember

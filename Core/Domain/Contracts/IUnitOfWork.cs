@@ -4,6 +4,8 @@
     {
         Task<int> SaveChangesAsync();
 
-        IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : BaseEntity<TKey> where TKey : notnull;
+        IGenericRepository<TEntity, TKey> GetRepository<TEntity, TKey>()
+                where TEntity : class
+                where TKey : notnull;
     }
 }

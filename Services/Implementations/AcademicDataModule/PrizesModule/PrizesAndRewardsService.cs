@@ -8,82 +8,106 @@ using Shared.SpecificationParameters.AcademicDataModule.PrizesModule;
 namespace Services.Implementations.AcademicDataModule.PrizesModule
 {
     public class PrizesAndRewardsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<PrizesAndRewards, int>(unitOfWork, authenticationService, mapper), IPrizesAndRewardsService
+       IUnitOfWork unitOfWork,
+       IAuthenticationService authenticationService,
+       IMapper mapper)
+       : BaseService<PrizesAndRewards, int>(unitOfWork, authenticationService, mapper),
+         IPrizesAndRewardsService
     {
         protected override string EntityName => "Prizes and Rewards";
-        public async Task<PaginatedResult<PrizesAndRewardsResponseDTO>> GetAllPrizesAndRewardsAsync(PrizesAndRewardsSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<PrizesAndRewardsResponseDTO>> GetAllPrizesAndRewardsAsync(
+            PrizesAndRewardsSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var prizesAndRewards = await Repo.GetAllAsync(new PrizesAndRewardsSpecifications(parameters, currentUser.Email))
+            var prizes = await Repo.GetAllAsync(
+                new PrizesAndRewardsSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var prizesAndRewardsResult = Mapper.Map<IEnumerable<PrizesAndRewardsResponseDTO>>(prizesAndRewards);
+            var mapped = Mapper.Map<IEnumerable<PrizesAndRewardsResponseDTO>>(prizes);
 
-            var currentPageCount = prizesAndRewardsResult.Count();
+            var totalCount = await Repo.CountAsync(
+                new PrizesAndRewardsCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new PrizesAndRewardsCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<PrizesAndRewardsResponseDTO>(parameters.PageIndex, currentPageCount, totalCount, prizesAndRewardsResult);
+            return new PaginatedResult<PrizesAndRewardsResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<PrizesAndRewardsResponseDTO> GetPrizeOrRewardByIdAsync(int id)
+        public async Task<PrizesAndRewardsResponseDTO> GetPrizeOrRewardByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var prizeOrReward = await Repo.GetAsync(new PrizesAndRewardsSpecifications(id))
+            var prize = await Repo.GetAsync(
+                new PrizesAndRewardsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(prizeOrReward.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                prize.FacultyMemberId,
+                facultyMemberEmail);
 
-            return Mapper.Map<PrizesAndRewardsResponseDTO>(prizeOrReward);
+            return Mapper.Map<PrizesAndRewardsResponseDTO>(prize);
         }
 
-        public async Task<PrizesAndRewardsResponseDTO> CreatePrizeOrRewardAsync(PrizesAndRewardsCreateDTO prizesAndRewardsCreateDto)
+        public async Task<PrizesAndRewardsResponseDTO> CreatePrizeOrRewardAsync(
+            PrizesAndRewardsCreateDTO dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var prizeOrReward = Mapper.Map<PrizesAndRewards>(prizesAndRewardsCreateDto);
-            prizeOrReward.FacultyMemberId = currentUser.UserId;
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
-            await Repo.AddAsync(prizeOrReward);
+            var prize = Mapper.Map<PrizesAndRewards>(dto);
+            prize.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(prize);
             await SaveChangesAsync();
 
-            return Mapper.Map<PrizesAndRewardsResponseDTO>(prizeOrReward);
+            return Mapper.Map<PrizesAndRewardsResponseDTO>(prize);
         }
 
-        public async Task<PrizesAndRewardsResponseDTO> UpdatePrizeOrRewardAsync(int prizesOrRewardId, PrizesAndRewardsUpdateDTO prizesAndRewardsUpdateDto)
+        public async Task<PrizesAndRewardsResponseDTO> UpdatePrizeOrRewardAsync(
+            int id,
+            PrizesAndRewardsUpdateDTO dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var prizeOrReward = await Repo.GetAsync(new PrizesAndRewardsSpecifications(prizesOrRewardId))
+            var prize = await Repo.GetAsync(
+                new PrizesAndRewardsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(prizeOrReward.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                prize.FacultyMemberId,
+                facultyMemberEmail);
 
-            Mapper.Map(prizesAndRewardsUpdateDto, prizeOrReward);
+            Mapper.Map(dto, prize);
 
-            Repo.Update(prizeOrReward);
+            Repo.Update(prize);
             await SaveChangesAsync();
 
-            return Mapper.Map<PrizesAndRewardsResponseDTO>(prizeOrReward);
+            return Mapper.Map<PrizesAndRewardsResponseDTO>(prize);
         }
 
-        public async Task DeletePrizeOrRewardAsync(int prizesOrRewardId)
+        public async Task DeletePrizeOrRewardAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var prizeOrReward = await Repo.GetAsync(new PrizesAndRewardsSpecifications(prizesOrRewardId))
+            var prize = await Repo.GetAsync(
+                new PrizesAndRewardsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(prizeOrReward.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                prize.FacultyMemberId,
+                facultyMemberEmail);
 
-            prizeOrReward.IsDeleted = true;
+            prize.IsDeleted = true;
 
-            Repo.Update(prizeOrReward);
+            Repo.Update(prize);
             await SaveChangesAsync();
         }
     }

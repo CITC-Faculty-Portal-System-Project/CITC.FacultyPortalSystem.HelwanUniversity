@@ -7,5 +7,8 @@
         public string? ResearcherId { get; set; } = null;
         public string? ResearcherGate { get; set; } = null;
         public string? AcademiaEdu { get; set; } = null;
+        public string? GoogleScholar { get; set; }
+        public string? Scopus { get; set; }
+
     }
 }

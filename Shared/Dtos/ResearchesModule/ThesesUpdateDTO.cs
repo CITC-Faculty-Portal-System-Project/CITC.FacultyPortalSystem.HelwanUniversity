@@ -17,12 +17,10 @@ namespace Shared.Dtos.ResearchesModule
         public DateOnly? SupervisionConfirmationDate { get; set; }
         public List<ThesesSupervisorResponseDTO>? SupervisorsToDelete { get; set; }
         public List<ResearchResponseDTO>? ResearchesToDelete { get; set; }
-        public List<AttachmentResponseDTO>? AttachmentsToDelete { get; set; }
         public IEnumerable<Patch<int, ThesesSupervisorDTO>>? SupervisorsToUpdate { get; set; }
         public IEnumerable<Patch<int, ResearchDTO>>? ResearchesToUpdate { get; set; }
         public List<ThesesSupervisorDTO>? SupervisorsToAdd { get; set; }
         public List<ResearchDTO>? ResearchesToAdd { get; set; }
-        public List<IFormFile>? AttachmentsToAdd { get; set; }
 
     }
 }

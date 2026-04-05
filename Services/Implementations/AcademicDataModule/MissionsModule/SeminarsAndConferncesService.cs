@@ -8,47 +8,63 @@ using Shared.SpecificationParameters.AcademicDataModule.MissionsModule;
 namespace Services.Implementations.AcademicDataModule.MissionsModule
 {
     public class SeminarsAndConferncesService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ConferencesAndSeminars, int>(unitOfWork, authenticationService, mapper), ISeminarsAndConferencesService
+       IUnitOfWork unitOfWork,
+       IAuthenticationService authenticationService,
+       IMapper mapper)
+       : BaseService<ConferencesAndSeminars, int>(unitOfWork, authenticationService, mapper),
+         ISeminarsAndConferencesService
     {
         protected override string EntityName => "Seminars And Conferences";
-        public async Task<PaginatedResult<ConferencesAndSeminarsResponseDto>> GetAllSeminarsAndConferencesAsync(SeminarsAndConferncesSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<ConferencesAndSeminarsResponseDto>> GetAllSeminarsAndConferencesAsync(
+            SeminarsAndConferncesSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var conferenceOrSeminar = await Repo.GetAllAsync(new ConferncesAndSeminarsSpecification(parameters, currentUser.Email))
+            var conferencesAndSeminars = await Repo.GetAllAsync(
+                new ConferncesAndSeminarsSpecification(parameters, email))
                 ?? throw NotFound();
 
-            var conferenceOrSeminarResult = Mapper.Map<IEnumerable<ConferencesAndSeminarsResponseDto>>(conferenceOrSeminar);
+            var mapped = Mapper.Map<IEnumerable<ConferencesAndSeminarsResponseDto>>(conferencesAndSeminars);
 
-            var currentPageCount = conferenceOrSeminar.Count();
+            var totalCount = await Repo.CountAsync(
+                new ConferncesAndSeminarsCountSpecification(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new ConferncesAndSeminarsCountSpecification(parameters, currentUser.Email));
-
-            return new PaginatedResult<ConferencesAndSeminarsResponseDto>(parameters.PageIndex, currentPageCount, totalCount, conferenceOrSeminarResult);
+            return new PaginatedResult<ConferencesAndSeminarsResponseDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<ConferencesAndSeminarsResponseDto> GetSeminarOrConferenceByIdAsync(int id)
+        public async Task<ConferencesAndSeminarsResponseDto> GetSeminarOrConferenceByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-
-            var currentUser = await GetCurrentUserAsync();
-
-            var conferenceOrSeminar = await Repo.GetAsync(new ConferncesAndSeminarsSpecification(id))
+            var conferenceOrSeminar = await Repo.GetAsync(
+                new ConferncesAndSeminarsSpecification(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(conferenceOrSeminar.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                conferenceOrSeminar.FacultyMemberId,
+                facultyMemberEmail);
 
             return Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
         }
 
-        public async Task<ConferencesAndSeminarsResponseDto> CreateSeminarOrConferenceAsync(ConferencesAndSeminarsCreateDto conferencesAndSeminarsCreateDto)
+        public async Task<ConferencesAndSeminarsResponseDto> CreateSeminarOrConferenceAsync(
+            ConferencesAndSeminarsCreateDto conferencesAndSeminarsCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
+
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
             var conferenceOrSeminar = Mapper.Map<ConferencesAndSeminars>(conferencesAndSeminarsCreateDto);
-            conferenceOrSeminar.FacultyMemberId = currentUser.UserId;
+            conferenceOrSeminar.FacultyMemberId = facultyMember.Id;
 
             await Repo.AddAsync(conferenceOrSeminar);
             await SaveChangesAsync();
@@ -56,36 +72,42 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             return Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
         }
 
-        public async Task<ConferencesAndSeminarsResponseDto> UpdateSeminarOrConferenceAsync(int id, ConferencesAndSeminarsUpdateDto conferencesAndSeminarsUpdateDto)
+        public async Task<ConferencesAndSeminarsResponseDto> UpdateSeminarOrConferenceAsync(
+            int id,
+            ConferencesAndSeminarsUpdateDto conferencesAndSeminarsUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var conferenceOrSeminar = await Repo.GetAsync(new ConferncesAndSeminarsSpecification(id))
+            var conferenceOrSeminar = await Repo.GetAsync(
+                new ConferncesAndSeminarsSpecification(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(conferenceOrSeminar.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                conferenceOrSeminar.FacultyMemberId,
+                facultyMemberEmail);
 
             Mapper.Map(conferencesAndSeminarsUpdateDto, conferenceOrSeminar);
 
             Repo.Update(conferenceOrSeminar);
             await SaveChangesAsync();
 
-            var conferenceOrSeminarResult = Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
-            return conferenceOrSeminarResult;
+            return Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
         }
 
-        public async Task DeleteSeminarOrConferenceAsync(int id)
+        public async Task DeleteSeminarOrConferenceAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var conferenceOrSeminar = await Repo.GetAsync(new ConferncesAndSeminarsSpecification(id))
+            var conferenceOrSeminar = await Repo.GetAsync(
+                new ConferncesAndSeminarsSpecification(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(conferenceOrSeminar.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                conferenceOrSeminar.FacultyMemberId,
+                facultyMemberEmail);
 
             conferenceOrSeminar.IsDeleted = true;
-            Repo.Update(conferenceOrSeminar);
 
+            Repo.Update(conferenceOrSeminar);
             await SaveChangesAsync();
         }
     }

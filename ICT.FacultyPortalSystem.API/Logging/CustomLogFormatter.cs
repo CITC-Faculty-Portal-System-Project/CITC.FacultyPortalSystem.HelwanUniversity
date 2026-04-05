@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace ICIT.FacultyPortalSystem.API.Logger
 {
-	public class CustomLogFormatter(IHttpContextAccessor _httpContextAccessor/*, IServiceScopeFactory _scopeFactory*/) : ITextFormatter
+	public class CustomLogFormatter : ITextFormatter
 	{ 
 		public void Format(LogEvent logEvent, TextWriter output)
 		{
@@ -16,8 +16,8 @@ namespace ICIT.FacultyPortalSystem.API.Logger
 				RenderedMessage = GetLogDetailProperty(logEvent, "RenderedMessage") ?? string.Empty,
 				Category = GetLogDetailProperty(logEvent, "Category") ?? string.Empty,
 				CategoryAction = GetLogDetailProperty(logEvent, "CategoryAction") ?? string.Empty,
-				UserName = string.IsNullOrWhiteSpace(GetLogDetailProperty(logEvent, "UserName")) ? null : /*UserNameResolver()*/ "UserName",
-				UserIP = string.IsNullOrWhiteSpace(GetLogDetailProperty(logEvent, "UserIP")) ? null : IPResolver(),
+				UserName = GetLogDetailProperty(logEvent, "UserName"),
+				UserIP = GetLogDetailProperty(logEvent, "UserIP"),
 				Exception = GetLogDetailProperty(logEvent, "Exception"),
 				ExceptionMessage = GetLogDetailProperty(logEvent, "ExceptionMessage"),
 				ExceptionDetail = GetLogDetailProperty(logEvent, "ExceptionDetail"),
@@ -41,30 +41,5 @@ namespace ICIT.FacultyPortalSystem.API.Logger
 			}
 			return string.Empty;
 		}
-		private string? IPResolver()
-		{
-			var ip = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress;
-			if (ip != null)
-			{
-				if (ip.IsIPv4MappedToIPv6)
-					ip = ip.MapToIPv4();
-			}
-			return ip?.ToString();
-		}
-		//private string? UserNameResolver()
-		//{
-		//	using var scope = _scopeFactory.CreateScope();
-
-		//	var authService = scope.ServiceProvider
-		//		.GetRequiredService<IAuthenticationService>();
-
-		//	var email = authService.GetLoggedUserEmail();
-		//	if (string.IsNullOrWhiteSpace(email))
-		//		return null;
-
-		//	var user =  authService.GetCurrentUserAsync(email);
-		//	return user?.Result?.UserName;
-		//}
-
 	}
 }

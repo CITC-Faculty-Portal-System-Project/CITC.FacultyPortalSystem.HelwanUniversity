@@ -7,8 +7,11 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
     {
         public void Configure(EntityTypeBuilder<PersonalData> builder)
         {
-            builder.Property(pd => pd.Name)
+            builder.Property(pd => pd.NameAr)
                 .HasMaxLength(50);
+
+            builder.Property(pd => pd.NameEn)
+               .HasMaxLength(50);
 
             builder.Property(pd => pd.BirthDate)
                 .HasColumnType("Date");

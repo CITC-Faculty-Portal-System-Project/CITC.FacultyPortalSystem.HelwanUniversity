@@ -8,63 +8,82 @@ using Shared.SpecificationParameters.AcademicDataModule.ScientificProgressionMod
 namespace Services.Implementations.AcademicDataModule.ScientificProgressionModule
 {
     public class JobRanksService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<JobRanks, int>(unitOfWork, authenticationService, mapper), IJobRanksService
+     IUnitOfWork unitOfWork,
+     IAuthenticationService authenticationService,
+     IMapper mapper)
+     : BaseService<JobRanks, int>(unitOfWork, authenticationService, mapper),
+       IJobRanksService
     {
         protected override string EntityName => "Job Ranks";
-        public async Task<PaginatedResult<JobRankResponseDto>> GetAllJobRanksAsync(JobRanksSpecificationsParameters parameters)
+
+        public async Task<PaginatedResult<JobRankResponseDto>> GetAllAsync(
+            JobRanksSpecificationsParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var jobRanks = await Repo.GetAllAsync(new JobRanksSpecifications(parameters, currentUser.Email))
+            var jobRanks = await Repo.GetAllAsync(
+                new JobRanksSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var jobRanksResult = Mapper.Map<IEnumerable<JobRankResponseDto>>(jobRanks);
+            var mapped = Mapper.Map<IEnumerable<JobRankResponseDto>>(jobRanks);
 
-            var currentPageCount = jobRanksResult.Count();
+            var totalCount = await Repo.CountAsync(
+                new JobRanksCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new JobRanksCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<JobRankResponseDto>(parameters.PageIndex, currentPageCount, totalCount, jobRanksResult);
+            return new PaginatedResult<JobRankResponseDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<JobRankResponseDto> GetJobRankByIdAsync(int id)
+        public async Task<JobRankResponseDto> GetByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(id))
+                ?? throw NotFound();
 
-            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(id)) ?? throw new NotFoundException("Job Rank is Not Found.");
-
-            EnsureOwnership(jobRank.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                jobRank.FacultyMemberId,
+                facultyMemberEmail);
 
             return Mapper.Map<JobRankResponseDto>(jobRank);
         }
 
-        public async Task<JobRankResponseDto> CreateJobRankAsync(JobRankCreateDto jobRanksCreateDto)
+        public async Task<JobRankResponseDto> CreateAsync(
+            JobRankCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var jobRank = Mapper.Map<JobRanks>(jobRanksCreateDto);
-            jobRank.FacultyMemberId = currentUser.UserId;
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var jobRank = Mapper.Map<JobRanks>(dto);
+            jobRank.FacultyMemberId = facultyMember.Id;
 
             await Repo.AddAsync(jobRank);
             await SaveChangesAsync();
 
             return Mapper.Map<JobRankResponseDto>(jobRank);
-
         }
 
-        public async Task<JobRankResponseDto> UpdateJobRankAsync(int jobRankId, JobRankUpdateDto jobRanksUpdateDto)
+        public async Task<JobRankResponseDto> UpdateAsync(
+            int id,
+            JobRankUpdateDto dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(jobRankId))
+            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(jobRank.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                jobRank.FacultyMemberId,
+                facultyMemberEmail);
 
-            Mapper.Map(jobRanksUpdateDto, jobRank);
+            Mapper.Map(dto, jobRank);
 
             Repo.Update(jobRank);
             await SaveChangesAsync();
@@ -72,13 +91,16 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             return Mapper.Map<JobRankResponseDto>(jobRank);
         }
 
-        public async Task DeleteJobRankAsync(int jobRankId)
+        public async Task DeleteAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
+            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(id))
+                ?? throw NotFound();
 
-            var jobRank = await Repo.GetAsync(new JobRanksSpecifications(jobRankId)) ?? throw new NotFoundException("Job Rank is Not Found.");
-
-            EnsureOwnership(jobRank.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                jobRank.FacultyMemberId,
+                facultyMemberEmail);
 
             jobRank.IsDeleted = true;
 

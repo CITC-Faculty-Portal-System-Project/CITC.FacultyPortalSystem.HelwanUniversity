@@ -17,7 +17,7 @@ namespace Services.Implementations.CVGenerationModule.DataFilters
                 response.Authority = null;
                 response.Department = null;
                 response.BirthDate = null;
-                response.ProfilePictureId = null;
+                //response.ProfilePictureId = null;
                 return;
             }
 
@@ -25,7 +25,7 @@ namespace Services.Implementations.CVGenerationModule.DataFilters
             HideIfFalse(settings.ShowAuthority, () => response.Authority = null);
             HideIfFalse(settings.ShowDepartment, () => response.Department = null);
             HideIfFalse(settings.ShowBirthDate, () => response.BirthDate = null);
-            HideIfFalse(settings.ShowProfilePicture, () => response.ProfilePictureId = null);
+            //HideIfFalse(settings.ShowProfilePicture, () => response.ProfilePictureId = null);
         }
     }
 }

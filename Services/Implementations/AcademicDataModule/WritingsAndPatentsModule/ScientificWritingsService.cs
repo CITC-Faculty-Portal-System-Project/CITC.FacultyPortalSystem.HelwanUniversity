@@ -8,46 +8,63 @@ using Shared.SpecificationParameters.AcademicDataModule.WritingsAndPatentsModule
 namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 {
     public class ScientificWritingsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ScientificWritings, int>(unitOfWork, authenticationService, mapper), IScientificWritingsService
+       IUnitOfWork unitOfWork,
+       IAuthenticationService authenticationService,
+       IMapper mapper)
+       : BaseService<ScientificWritings, int>(unitOfWork, authenticationService, mapper),
+         IScientificWritingsService
     {
         protected override string EntityName => "Scientific Writings";
-        public async Task<PaginatedResult<ScientificWritingsResponseDTO>> GetAllScientificWritingsAsync(ScientificWritingsSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<ScientificWritingsResponseDTO>> GetAllScientificWritingsAsync(
+            ScientificWritingsSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var scientificWriting = await Repo.GetAllAsync(new ScientificWritingsSpecifications(parameters, currentUser.Email))
+            var scientificWritings = await Repo.GetAllAsync(
+                new ScientificWritingsSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var scientificWritingResult = Mapper.Map<IEnumerable<ScientificWritingsResponseDTO>>(scientificWriting);
+            var mapped = Mapper.Map<IEnumerable<ScientificWritingsResponseDTO>>(scientificWritings);
 
-            var currentPageCount = scientificWritingResult.Count();
+            var totalCount = await Repo.CountAsync(
+                new ScientificWritingsCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new ScientificWritingsCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<ScientificWritingsResponseDTO>(parameters.PageIndex, currentPageCount, totalCount, scientificWritingResult);
+            return new PaginatedResult<ScientificWritingsResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<ScientificWritingsResponseDTO> GetScientificWritingByIdAsync(int id)
+        public async Task<ScientificWritingsResponseDTO> GetScientificWritingByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var scientificWriting = await Repo.GetAsync(new ScientificWritingsSpecifications(id))
+            var scientificWriting = await Repo.GetAsync(
+                new ScientificWritingsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(scientificWriting.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                scientificWriting.FacultyMemberId,
+                facultyMemberEmail);
 
             return Mapper.Map<ScientificWritingsResponseDTO>(scientificWriting);
         }
 
-        public async Task<ScientificWritingsResponseDTO> CreateScientificWritingAsync(ScientificWritingsCreateDTO scientificWritingCreateDto)
+        public async Task<ScientificWritingsResponseDTO> CreateScientificWritingAsync(
+            ScientificWritingsCreateDTO scientificWritingCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
+
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
             var scientificWriting = Mapper.Map<ScientificWritings>(scientificWritingCreateDto);
-            scientificWriting.FacultyMemberId = currentUser.UserId;
+            scientificWriting.FacultyMemberId = facultyMember.Id;
 
             await Repo.AddAsync(scientificWriting);
             await SaveChangesAsync();
@@ -55,14 +72,18 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             return Mapper.Map<ScientificWritingsResponseDTO>(scientificWriting);
         }
 
-        public async Task<ScientificWritingsResponseDTO> UpdateScientificWritingAsync(int scientificWritingId, ScientificWritingsUpdateDTO scientificWritingUpdateDto)
+        public async Task<ScientificWritingsResponseDTO> UpdateScientificWritingAsync(
+            int scientificWritingId,
+            ScientificWritingsUpdateDTO scientificWritingUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var scientificWriting = await Repo.GetAsync(new ScientificWritingsSpecifications(scientificWritingId))
+            var scientificWriting = await Repo.GetAsync(
+                new ScientificWritingsSpecifications(scientificWritingId))
                 ?? throw NotFound();
 
-            EnsureOwnership(scientificWriting.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                scientificWriting.FacultyMemberId,
+                facultyMemberEmail);
 
             Mapper.Map(scientificWritingUpdateDto, scientificWriting);
 
@@ -72,14 +93,17 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             return Mapper.Map<ScientificWritingsResponseDTO>(scientificWriting);
         }
 
-        public async Task DeleteScientificWritingAsync(int scientificWritingId)
+        public async Task DeleteScientificWritingAsync(
+            int scientificWritingId,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var scientificWriting = await Repo.GetAsync(new ScientificWritingsSpecifications(scientificWritingId))
+            var scientificWriting = await Repo.GetAsync(
+                new ScientificWritingsSpecifications(scientificWritingId))
                 ?? throw NotFound();
 
-            EnsureOwnership(scientificWriting.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                scientificWriting.FacultyMemberId,
+                facultyMemberEmail);
 
             scientificWriting.IsDeleted = true;
 

@@ -8,46 +8,63 @@ using Shared.SpecificationParameters.AcademicDataModule.WritingsAndPatentsModule
 namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 {
     public class PatentsService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<Patents, int>(unitOfWork, authenticationService, mapper), IPatentsService
+     IUnitOfWork unitOfWork,
+     IAuthenticationService authenticationService,
+     IMapper mapper)
+     : BaseService<Patents, int>(unitOfWork, authenticationService, mapper),
+       IPatentsService
     {
         protected override string EntityName => "Patents";
-        public async Task<PaginatedResult<PatentsResponseDTO>> GetAllPatentsAsync(PatentsSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<PatentsResponseDTO>> GetAllPatentsAsync(
+            PatentsSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var patents = await Repo.GetAllAsync(new PatentsSpecifications(parameters, currentUser.Email))
+            var patents = await Repo.GetAllAsync(
+                new PatentsSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var patentsResult = Mapper.Map<IEnumerable<PatentsResponseDTO>>(patents);
+            var mapped = Mapper.Map<IEnumerable<PatentsResponseDTO>>(patents);
 
-            var currentPageCount = patentsResult.Count();
+            var totalCount = await Repo.CountAsync(
+                new PatentsCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new PatentsCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<PatentsResponseDTO>(parameters.PageIndex, currentPageCount, totalCount, patentsResult);
+            return new PaginatedResult<PatentsResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<PatentsResponseDTO> GetPatentByIdAsync(int id)
+        public async Task<PatentsResponseDTO> GetPatentByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var patent = await Repo.GetAsync(new PatentsSpecifications(id))
+            var patent = await Repo.GetAsync(
+                new PatentsSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(patent.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                patent.FacultyMemberId,
+                facultyMemberEmail);
 
             return Mapper.Map<PatentsResponseDTO>(patent);
         }
 
-        public async Task<PatentsResponseDTO> CreatePatentAsync(PatentsCreateDTO patentCreateDto)
+        public async Task<PatentsResponseDTO> CreatePatentAsync(
+            PatentsCreateDTO patentCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
+
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
             var patent = Mapper.Map<Patents>(patentCreateDto);
-            patent.FacultyMemberId = currentUser.UserId;
+            patent.FacultyMemberId = facultyMember.Id;
 
             await Repo.AddAsync(patent);
             await SaveChangesAsync();
@@ -55,14 +72,18 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             return Mapper.Map<PatentsResponseDTO>(patent);
         }
 
-        public async Task<PatentsResponseDTO> UpdatePatentAsync(int patentId, PatentsUpdateDTO patentUpdateDto)
+        public async Task<PatentsResponseDTO> UpdatePatentAsync(
+            int patentId,
+            PatentsUpdateDTO patentUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var patent = await Repo.GetAsync(new PatentsSpecifications(patentId))
+            var patent = await Repo.GetAsync(
+                new PatentsSpecifications(patentId))
                 ?? throw NotFound();
 
-            EnsureOwnership(patent.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                patent.FacultyMemberId,
+                facultyMemberEmail);
 
             Mapper.Map(patentUpdateDto, patent);
 
@@ -72,14 +93,17 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             return Mapper.Map<PatentsResponseDTO>(patent);
         }
 
-        public async Task DeletePatentAsync(int patentId)
+        public async Task DeletePatentAsync(
+            int patentId,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var patent = await Repo.GetAsync(new PatentsSpecifications(patentId))
+            var patent = await Repo.GetAsync(
+                new PatentsSpecifications(patentId))
                 ?? throw NotFound();
 
-            EnsureOwnership(patent.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                patent.FacultyMemberId,
+                facultyMemberEmail);
 
             patent.IsDeleted = true;
 

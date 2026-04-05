@@ -8,46 +8,63 @@ using Shared.SpecificationParameters.AcademicDataModule.ExperiencesModule;
 namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 {
     public class TeachingExperiencesService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<TeachingExperiences, int>(unitOfWork, authenticationService, mapper), ITeachingExperiencesService
+     IUnitOfWork unitOfWork,
+     IAuthenticationService authenticationService,
+     IMapper mapper)
+     : BaseService<TeachingExperiences, int>(unitOfWork, authenticationService, mapper),
+       ITeachingExperiencesService
     {
         protected override string EntityName => "Teaching Experiences";
-        public async Task<PaginatedResult<TeachingExperiencesResponseDTO>> GetAllTeachingExperiencesAsync(TeachingExperiencesSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<TeachingExperiencesResponseDTO>> GetAllTeachingExperiencesAsync(
+            TeachingExperiencesSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var teachingExperiences = await Repo.GetAllAsync(new TeachingExperiencesSpecifications(parameters, currentUser.Email))
+            var teachingExperiences = await Repo.GetAllAsync(
+                new TeachingExperiencesSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var teachingExperiencesResult = Mapper.Map<IEnumerable<TeachingExperiencesResponseDTO>>(teachingExperiences);
+            var mapped = Mapper.Map<IEnumerable<TeachingExperiencesResponseDTO>>(teachingExperiences);
 
-            var currentPageCount = teachingExperiencesResult.Count();
+            var totalCount = await Repo.CountAsync(
+                new TeachingExperiencesCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new TeachingExperiencesCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<TeachingExperiencesResponseDTO>(parameters.PageIndex, currentPageCount, totalCount, teachingExperiencesResult);
+            return new PaginatedResult<TeachingExperiencesResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<TeachingExperiencesResponseDTO> GetTeachingExperienceByIdAsync(int id)
+        public async Task<TeachingExperiencesResponseDTO> GetTeachingExperienceByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var teachingExperience = await Repo.GetAsync(new TeachingExperiencesSpecifications(id))
+            var teachingExperience = await Repo.GetAsync(
+                new TeachingExperiencesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(teachingExperience.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                teachingExperience.FacultyMemberId,
+                facultyMemberEmail);
 
             return Mapper.Map<TeachingExperiencesResponseDTO>(teachingExperience);
         }
 
-        public async Task<TeachingExperiencesResponseDTO> CreateTeachingExperienceAsync(TeachingExperiencesCreateDTO teachingExperienceCreateDto)
+        public async Task<TeachingExperiencesResponseDTO> CreateTeachingExperienceAsync(
+            TeachingExperiencesCreateDTO teachingExperienceCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
+
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
             var teachingExperience = Mapper.Map<TeachingExperiences>(teachingExperienceCreateDto);
-            teachingExperience.FacultyMemberId = currentUser.UserId;
+            teachingExperience.FacultyMemberId = facultyMember.Id;
 
             await Repo.AddAsync(teachingExperience);
             await SaveChangesAsync();
@@ -55,14 +72,18 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
             return Mapper.Map<TeachingExperiencesResponseDTO>(teachingExperience);
         }
 
-        public async Task<TeachingExperiencesResponseDTO> UpdateTeachingExperienceAsync(int teachingExperienceId, TeachingExperiencesUpdateDTO teachingExperienceUpdateDto)
+        public async Task<TeachingExperiencesResponseDTO> UpdateTeachingExperienceAsync(
+            int teachingExperienceId,
+            TeachingExperiencesUpdateDTO teachingExperienceUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var teachingExperience = await Repo.GetAsync(new TeachingExperiencesSpecifications(teachingExperienceId))
+            var teachingExperience = await Repo.GetAsync(
+                new TeachingExperiencesSpecifications(teachingExperienceId))
                 ?? throw NotFound();
 
-            EnsureOwnership(teachingExperience.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                teachingExperience.FacultyMemberId,
+                facultyMemberEmail);
 
             Mapper.Map(teachingExperienceUpdateDto, teachingExperience);
 
@@ -72,14 +93,17 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
             return Mapper.Map<TeachingExperiencesResponseDTO>(teachingExperience);
         }
 
-        public async Task DeleteTeachingExperienceAsync(int teachingExperienceId)
+        public async Task DeleteTeachingExperienceAsync(
+            int teachingExperienceId,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var teachingExperience = await Repo.GetAsync(new TeachingExperiencesSpecifications(teachingExperienceId))
+            var teachingExperience = await Repo.GetAsync(
+                new TeachingExperiencesSpecifications(teachingExperienceId))
                 ?? throw NotFound();
 
-            EnsureOwnership(teachingExperience.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                teachingExperience.FacultyMemberId,
+                facultyMemberEmail);
 
             teachingExperience.IsDeleted = true;
 

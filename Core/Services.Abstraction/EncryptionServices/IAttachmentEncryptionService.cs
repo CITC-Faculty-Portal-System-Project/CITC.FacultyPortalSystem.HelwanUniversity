@@ -1,11 +1,13 @@
-﻿using Shared.Dtos.AttachmentsModule;
+﻿using Shared.Common;
+using Shared.Dtos.AttachmentsModule;
 
-namespace Services.Abstraction.Contracts.AttachmentsModule
+namespace Services.Abstraction.EncryptionServices
 {
-    public interface IEncryptionService
+    public interface IAttachmentEncryptionService
     {
         Task<EncryptedResult> EncryptAsync(Stream plainFile);
         Task<byte[]> DecryptAsync(byte[] cipherData, AttachmentReferenceDTO attachment);
+
 
     }
 }

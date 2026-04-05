@@ -42,28 +42,28 @@ namespace Presentation.Controllers.AcademicDataModules
         [ProducesResponseType(typeof(PaginatedResult<JobRankResponseDto>), StatusCodes.Status200OK)]
         [HttpGet("JobRanks")]
         public async Task<ActionResult<PaginatedResult<JobRankResponseDto>>> GetAllJobRanksAsync([FromQuery] JobRanksSpecificationsParameters paramters)
-            => Ok(await _serviceManager.JobRanksService.GetAllJobRanksAsync(paramters));
+            => Ok(await _serviceManager.JobRanksService.GetAllAsync(paramters));
 
         [ProducesResponseType(typeof(JobRankResponseDto), StatusCodes.Status200OK)]
         [HttpGet("JobRank/{id:int}")]
         public async Task<ActionResult<JobRankResponseDto>> GetJobRankByIdAsync(int id)
-            => Ok(await _serviceManager.JobRanksService.GetJobRankByIdAsync(id));
+            => Ok(await _serviceManager.JobRanksService.GetByIdAsync(id));
 
         [ProducesResponseType(typeof(JobRankResponseDto), StatusCodes.Status200OK)]
         [HttpPost("CreateJobRank")]
         public async Task<ActionResult<JobRankResponseDto>> CreateJobRankAsync(JobRankCreateDto jobRankCreateDto)
-            => Ok(await _serviceManager.JobRanksService.CreateJobRankAsync(jobRankCreateDto));
+            => Ok(await _serviceManager.JobRanksService.CreateAsync(jobRankCreateDto));
 
         [ProducesResponseType(typeof(JobRankResponseDto), StatusCodes.Status200OK)]
         [HttpPut("UpdateJobRank/{jobRankId:int}")]
         public async Task<ActionResult<JobRankResponseDto>> UpdateJobRankAsync(int jobRankId, JobRankUpdateDto jobRankUpdateDto)
-            => Ok(await _serviceManager.JobRanksService.UpdateJobRankAsync(jobRankId, jobRankUpdateDto));
+            => Ok(await _serviceManager.JobRanksService.UpdateAsync(jobRankId, jobRankUpdateDto));
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("DeleteJobRank/{id:int}")]
         public async Task<ActionResult> DeleteJobRankAsync(int id)
         {
-            await _serviceManager.JobRanksService.DeleteJobRankAsync(id);
+            await _serviceManager.JobRanksService.DeleteAsync(id);
             return NoContent();
         }
         #endregion

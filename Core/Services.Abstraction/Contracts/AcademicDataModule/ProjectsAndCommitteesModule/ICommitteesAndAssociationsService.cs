@@ -5,10 +5,25 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ProjectsAndCommittee
 {
     public interface ICommitteesAndAssociationsService
     {
-        public Task<PaginatedResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync(CommitteesAndAssociationsSpecificationsParameters parameters);
-        public Task<CommitteesAndAssociationsResponseDto> GetCommitteeOrAssociationByIdAsync(int id);
-        public Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(CommitteeOrAssociationCreateDto committeeOrAssociationCreateDto);
-        public Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(int committeeOrAssociationId, CommitteeOrAssociationUpdateDto committeesAndAssociationsUpdateDto);
-        public Task DeleteCommitteeOrAssociationAsync(int committeeOrAssociationId);
+        Task<PaginatedResult<CommitteesAndAssociationsResponseDto>> GetAllCommitteesAndAssociationsAsync(
+       CommitteesAndAssociationsSpecificationsParameters parameters,
+       string? facultyMemberEmail = null);
+
+        Task<CommitteesAndAssociationsResponseDto> GetCommitteeOrAssociationByIdAsync(
+            int id,
+            string? facultyMemberEmail = null);
+
+        Task<CommitteesAndAssociationsResponseDto> CreateCommitteeOrAssociationAsync(
+            CommitteeOrAssociationCreateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task<CommitteesAndAssociationsResponseDto> UpdateCommitteeOrAssociationAsync(
+            int id,
+            CommitteeOrAssociationUpdateDto dto,
+            string? facultyMemberEmail = null);
+
+        Task DeleteCommitteeOrAssociationAsync(
+            int id,
+            string? facultyMemberEmail = null);
     }
 }

@@ -6,16 +6,28 @@ using Shared.Dtos.ResearchesModule;
 
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
-    public class ResearcherProfileService(IUnitOfWork unitOfWork , IMapper mapper , IAuthenticationService authenticationService
-        ) : BaseService<ResearcherProfile, int>(unitOfWork, authenticationService , mapper), IResearcherProfileService
+    public class ResearcherProfileService(
+       IUnitOfWork unitOfWork,
+       IMapper mapper,
+       IAuthenticationService authenticationService)
+       : BaseService<ResearcherProfile, int>(unitOfWork, authenticationService, mapper),
+         IResearcherProfileService
     {
         protected override string EntityName => "Researcher Profile";
 
-        public async Task<ResearcherProfileResponseDTO> GetResearcherProfile()
+        public async Task<ResearcherProfileResponseDTO> GetResearcherProfile(Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
 
-            var profile = await Repo.GetAsync(new ResearcherProfileSpceification(user.UserId));
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
+
+            var profile = await Repo.GetAsync(
+                new ResearcherProfileSpceification(targetFacultyMemberId))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                profile.FacultyMemberId,
+                facultyMemberId?.ToString());
 
             return Mapper.Map<ResearcherProfileResponseDTO>(profile);
         }

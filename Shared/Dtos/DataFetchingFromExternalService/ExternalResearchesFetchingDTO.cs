@@ -2,7 +2,7 @@
 {
     public record ExternalResearchesFetchingDTO
     {
-        public string DOI { get; set; } = string.Empty;
+        public string? DOI { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public int? PubYear { get; set; }
         public string? PubDate { get; set; } = string.Empty;

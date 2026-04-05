@@ -8,82 +8,106 @@ using Shared.SpecificationParameters.AcademicDataModule.ContributionsModule;
 namespace Services.Implementations.AcademicDataModule.ContributionsModule
 {
     public class ContributionsToCommunityServiceService(
-        IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ContributionsToCommunityService, int>(unitOfWork, authenticationService, mapper), IContributionsToCommunityServiceService
+      IUnitOfWork unitOfWork,
+      IAuthenticationService authenticationService,
+      IMapper mapper)
+      : BaseService<ContributionsToCommunityService, int>(unitOfWork, authenticationService, mapper),
+        IContributionsToCommunityServiceService
     {
         protected override string EntityName => "Contributions To Community Service";
-        public async Task<PaginatedResult<ContributionsToCommunityServiceResponseDTO>> GetAllContributionsToCommunityServiceAsync(ContributionsToCommunityServiceSpecificationParameters parameters)
+
+        public async Task<PaginatedResult<ContributionsToCommunityServiceResponseDTO>> GetAllContributionsToCommunityServiceAsync(
+            ContributionsToCommunityServiceSpecificationParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var contributionsToCommunityService = await Repo.GetAllAsync(new ContributionsToCommunityServiceSpecifications(parameters, currentUser.Email))
+            var contributions = await Repo.GetAllAsync(
+                new ContributionsToCommunityServiceSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var contributionsResult = Mapper.Map<IEnumerable<ContributionsToCommunityServiceResponseDTO>>(contributionsToCommunityService);
+            var mapped = Mapper.Map<IEnumerable<ContributionsToCommunityServiceResponseDTO>>(contributions);
 
-            var currentPageCount = contributionsResult.Count();
+            var totalCount = await Repo.CountAsync(
+                new ContributionsToCommunityServiceCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new ContributionsToCommunityServiceCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<ContributionsToCommunityServiceResponseDTO>(parameters.PageIndex, currentPageCount, totalCount, contributionsResult);
+            return new PaginatedResult<ContributionsToCommunityServiceResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<ContributionsToCommunityServiceResponseDTO> GetContributionToCommunityServiceByIdAsync(int id)
+        public async Task<ContributionsToCommunityServiceResponseDTO> GetContributionToCommunityServiceByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var contributionToCommunityService = await Repo.GetAsync(new ContributionsToCommunityServiceSpecifications(id))
+            var contribution = await Repo.GetAsync(
+                new ContributionsToCommunityServiceSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(contributionToCommunityService.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                contribution.FacultyMemberId,
+                facultyMemberEmail);
 
-            return Mapper.Map<ContributionsToCommunityServiceResponseDTO>(contributionToCommunityService);
+            return Mapper.Map<ContributionsToCommunityServiceResponseDTO>(contribution);
         }
 
-        public async Task<ContributionsToCommunityServiceResponseDTO> CreateContributionToCommunityServiceAsync(ContributionsToCommunityServiceCreateDTO contributionsToCommunityServiceCreateDto)
+        public async Task<ContributionsToCommunityServiceResponseDTO> CreateContributionToCommunityServiceAsync(
+            ContributionsToCommunityServiceCreateDTO contributionsToCommunityServiceCreateDto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var contributionToCommunityService = Mapper.Map<ContributionsToCommunityService>(contributionsToCommunityServiceCreateDto);
-            contributionToCommunityService.FacultyMemberId = currentUser.UserId;
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
 
-            await Repo.AddAsync(contributionToCommunityService);
+            var contribution = Mapper.Map<ContributionsToCommunityService>(contributionsToCommunityServiceCreateDto);
+            contribution.FacultyMemberId = facultyMember.Id;
+
+            await Repo.AddAsync(contribution);
             await SaveChangesAsync();
 
-            return Mapper.Map<ContributionsToCommunityServiceResponseDTO>(contributionToCommunityService);
+            return Mapper.Map<ContributionsToCommunityServiceResponseDTO>(contribution);
         }
 
-        public async Task<ContributionsToCommunityServiceResponseDTO> UpdateContributionToCommunityServiceAsync(int contributionToCommunityServiceId, ContributionsToCommunityServiceUpdateDTO contributionsToCommunityServiceUpdateDto)
+        public async Task<ContributionsToCommunityServiceResponseDTO> UpdateContributionToCommunityServiceAsync(
+            int contributionToCommunityServiceId,
+            ContributionsToCommunityServiceUpdateDTO contributionsToCommunityServiceUpdateDto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var contributionToCommunityService = await Repo.GetAsync(new ContributionsToCommunityServiceSpecifications(contributionToCommunityServiceId))
+            var contribution = await Repo.GetAsync(
+                new ContributionsToCommunityServiceSpecifications(contributionToCommunityServiceId))
                 ?? throw NotFound();
 
-            EnsureOwnership(contributionToCommunityService.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                contribution.FacultyMemberId,
+                facultyMemberEmail);
 
-            Mapper.Map(contributionsToCommunityServiceUpdateDto, contributionToCommunityService);
+            Mapper.Map(contributionsToCommunityServiceUpdateDto, contribution);
 
-            Repo.Update(contributionToCommunityService);
+            Repo.Update(contribution);
             await SaveChangesAsync();
 
-            return Mapper.Map<ContributionsToCommunityServiceResponseDTO>(contributionToCommunityService);
+            return Mapper.Map<ContributionsToCommunityServiceResponseDTO>(contribution);
         }
 
-        public async Task DeleteContributionToCommunityServiceAsync(int contributionToCommunityServiceId)
+        public async Task DeleteContributionToCommunityServiceAsync(
+            int contributionToCommunityServiceId,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var contributionToCommunityService = await Repo.GetAsync(new ContributionsToCommunityServiceSpecifications(contributionToCommunityServiceId))
+            var contribution = await Repo.GetAsync(
+                new ContributionsToCommunityServiceSpecifications(contributionToCommunityServiceId))
                 ?? throw NotFound();
 
-            EnsureOwnership(contributionToCommunityService.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                contribution.FacultyMemberId,
+                facultyMemberEmail);
 
-            contributionToCommunityService.IsDeleted = true;
+            contribution.IsDeleted = true;
 
-            Repo.Update(contributionToCommunityService);
+            Repo.Update(contribution);
             await SaveChangesAsync();
         }
     }

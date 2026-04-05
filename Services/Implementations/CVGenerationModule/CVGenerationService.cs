@@ -102,8 +102,6 @@ namespace Services.Implementations.CVGenerationModule
                 response.Instagram = sm.Instagram;
                 response.YouTube = sm.YouTube;
                 response.X = sm.X;
-                response.GoogleScholar = sm.GoogleScholar;
-                response.Scopus = sm.Scopus;
                 response.PersonalWebsite = sm.PersonalWebsite;
             }
 

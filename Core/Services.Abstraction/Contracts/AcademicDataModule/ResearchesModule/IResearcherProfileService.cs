@@ -4,7 +4,7 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
 {
     public interface IResearcherProfileService
     {
-        public Task<ResearcherProfileResponseDTO> GetResearcherProfile();
+        Task<ResearcherProfileResponseDTO> GetResearcherProfile(Guid? facultyMemberId = null);
 
     }
 }

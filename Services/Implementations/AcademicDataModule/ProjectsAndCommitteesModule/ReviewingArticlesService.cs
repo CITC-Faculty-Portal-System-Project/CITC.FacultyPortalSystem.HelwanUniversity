@@ -9,45 +9,62 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 {
     public class ReviewingArticlesService(
         IUnitOfWork unitOfWork,
-        IMapper mapper,
-        IAuthenticationService authenticationService)
-                : BaseService<ReviewingArticles, int>(unitOfWork, authenticationService, mapper), IReviewingArticlesService
+        IAuthenticationService authenticationService,
+        IMapper mapper)
+        : BaseService<ReviewingArticles, int>(unitOfWork, authenticationService, mapper),
+          IReviewingArticlesService
     {
         protected override string EntityName => "Reviewing Articles";
-        public async Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(ReviewingArticlesSpecificationsParameters parameters)
+
+        public async Task<PaginatedResult<ReviewingArticlesDto>> GetAllReviewingArticlesAsync(
+            ReviewingArticlesSpecificationsParameters parameters,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var reviewingArticles = await Repo.GetAllAsync(new ReviewingArticlesSpecifications(parameters, currentUser.Email))
+            var reviewingArticles = await Repo.GetAllAsync(
+                new ReviewingArticlesSpecifications(parameters, email))
                 ?? throw NotFound();
 
-            var reviewingArticlesResult = Mapper.Map<IEnumerable<ReviewingArticlesDto>>(reviewingArticles);
+            var mapped = Mapper.Map<IEnumerable<ReviewingArticlesDto>>(reviewingArticles);
 
-            var currentPageCount = reviewingArticles.Count();
+            var totalCount = await Repo.CountAsync(
+                new ReviewingArticlesCountSpecifications(parameters, email));
 
-            var totalCount = await Repo.CountAsync(new ReviewingArticlesCountSpecifications(parameters, currentUser.Email));
-
-            return new PaginatedResult<ReviewingArticlesDto>(parameters.PageIndex, currentPageCount, totalCount, reviewingArticlesResult);
+            return new PaginatedResult<ReviewingArticlesDto>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(int id)
+        public async Task<ReviewingArticlesDto> GetReviewingArticleByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var reviewingArticle = await Repo.GetAsync(new ReviewingArticlesSpecifications(id))
+            var reviewingArticle = await Repo.GetAsync(
+                new ReviewingArticlesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                reviewingArticle.FacultyMemberId,
+                facultyMemberEmail);
 
             return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task<ReviewingArticlesDto> CreateReviewingArticleAsync(ReviewingArticleCreateDto reviewingArticleCreateDto)
+        public async Task<ReviewingArticlesDto> CreateReviewingArticleAsync(
+            ReviewingArticleCreateDto dto,
+            string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
-            var reviewingArticle = Mapper.Map<ReviewingArticles>(reviewingArticleCreateDto);
-            reviewingArticle.FacultyMemberId = currentUser.UserId;
+            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+
+            var reviewingArticle = Mapper.Map<ReviewingArticles>(dto);
+            reviewingArticle.FacultyMemberId = facultyMember.Id;
 
             await Repo.AddAsync(reviewingArticle);
             await SaveChangesAsync();
@@ -55,16 +72,20 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
             return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(int reviewingArticleId, ReviewArticleUpdateDto reviewingArticleUpdateDto)
+        public async Task<ReviewingArticlesDto> UpdateReviewingArticleAsync(
+            int id,
+            ReviewArticleUpdateDto dto,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var reviewingArticle = await Repo.GetAsync(new ReviewingArticlesSpecifications(reviewingArticleId))
+            var reviewingArticle = await Repo.GetAsync(
+                new ReviewingArticlesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                reviewingArticle.FacultyMemberId,
+                facultyMemberEmail);
 
-            Mapper.Map(reviewingArticleUpdateDto, reviewingArticle);
+            Mapper.Map(dto, reviewingArticle);
 
             Repo.Update(reviewingArticle);
             await SaveChangesAsync();
@@ -72,14 +93,17 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
             return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
         }
 
-        public async Task DeleteReviewingArticleAsync(int reviewingArticleId)
+        public async Task DeleteReviewingArticleAsync(
+            int id,
+            string? facultyMemberEmail = null)
         {
-            var currentUser = await GetCurrentUserAsync();
-
-            var reviewingArticle = await Repo.GetAsync(new ReviewingArticlesSpecifications(reviewingArticleId))
+            var reviewingArticle = await Repo.GetAsync(
+                new ReviewingArticlesSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(reviewingArticle.FacultyMemberId, currentUser.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                reviewingArticle.FacultyMemberId,
+                facultyMemberEmail);
 
             reviewingArticle.IsDeleted = true;
 

@@ -16,12 +16,7 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.Property(sm => sm.PersonalWebsite)
                 .HasColumnType("NVARCHAR(Max)")
                 .IsRequired(false);
-            builder.Property(sm => sm.GoogleScholar)
-                .HasColumnType("NVARCHAR(Max)")
-                .IsRequired(false);
-            builder.Property(sm => sm.Scopus)
-                .HasColumnType("NVARCHAR(Max)")
-                .IsRequired(false);
+         
             builder.Property(sm => sm.Facebook)
                 .HasColumnType("NVARCHAR(Max)")
                 .IsRequired(false);

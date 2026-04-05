@@ -12,11 +12,18 @@ namespace Services.MappingProfiles
         public ResearchesModuleMappingProfile() {
             CreateMap<ResearcherDataFetchingDTO, ResearcherProfile>()
                 .ForMember(dest => dest.ResearcherCites, opt => opt.Ignore())
-                .ForMember(dest => dest.ResearcherInterests, opt => opt.Ignore());
+                .ForMember(dest => dest.ResearcherInterests, opt => opt.Ignore())
+                .ForMember(dest => dest.CoAuthors, opt => opt.Ignore());
 
 
             CreateMap<ExternalResearcherInterestsFetchingDTO, ScientificInterest>();
-            CreateMap<ResearcherCoAuthorFetchingDTO, CoAuthor>();
+            
+            CreateMap<ResearcherCoAuthorFetchingDTO, CoAuthor>()
+                .ForMember(dest => dest.Researchers, opt => opt.Ignore());
+
+            CreateMap<CoAuthor, ResearcherCoAuthorFetchingDTO>();
+
+
             CreateMap<ExternalResearchCitesFetchingDTO, ResearchCite>();
             CreateMap<ExternalResearcherCitesFetchingDTO, ResearcherCite>();
             CreateMap<ExternalResearchesFetchingDTO, Research>()
@@ -34,7 +41,11 @@ namespace Services.MappingProfiles
                   src.ResearcherInterests!.Select(ri => ri.Interest)))
            
           .ForMember(dest => dest.ResearcherCites,
-              opt => opt.MapFrom(src => src.ResearcherCites));
+              opt => opt.MapFrom(src => src.ResearcherCites))
+
+             .ForMember(dest => dest.CoAuthors,
+              opt => opt.MapFrom(src =>
+                  src.CoAuthors!.Select(ri => ri.CoAuthor)));
 
             CreateMap<ScientificInterest, ExternalResearcherInterestsFetchingDTO>();
             CreateMap<ResearcherCite, ExternalResearcherCitesFetchingDTO>();
@@ -79,6 +90,9 @@ namespace Services.MappingProfiles
             CreateMap<Research, ResearchResponseDTO>();
             CreateMap<ResearchResponseDTO, ResearchDTO>();
             CreateMap<ThesesSupervisorResponseDTO, ThesesSupervisorDTO>();
+            CreateMap<ThesesUpdateDTO, ThesesDTO>()
+                .ForMember(dest => dest.ComitteeMembers, opt => opt.MapFrom(src => src.SupervisorsToAdd));
+            
 
             CreateMap<ResearchResponseDTO, Research>()
                 .ForMember(d => d.Id, opt => opt.Ignore())

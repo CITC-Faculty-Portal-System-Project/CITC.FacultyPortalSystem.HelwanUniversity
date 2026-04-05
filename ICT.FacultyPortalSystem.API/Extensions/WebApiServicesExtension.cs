@@ -1,6 +1,7 @@
 ﻿using ICIT.FacultyPortalSystem.API.Factories;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Filters;
+using Services.EncryptionServices.Configurations;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -22,13 +23,23 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 {
                     builder.AllowAnyMethod()
                            .AllowAnyHeader()
-                           .WithOrigins("http://localhost:3000")
-                           .AllowCredentials();
+                           .WithOrigins(
+                        "http://localhost:3000",
+                        "http://localhost",
+                        "http://127.0.0.1",
+                        "http://localhost:80",
+                        "http://127.0.0.1:3000"
+                        )
+                         .AllowCredentials();
                 });
             });
 
             services.AddEndpointsApiExplorer();
             services.AddScoped<BlockMaliciousExtensionsFilter>();
+            services.AddSignalR();
+            services.Configure<MessageEncryption>(
+                configuration.GetSection("MessageEncryption"));
+
 
             services.AddSwaggerGen(options =>
             {
@@ -43,7 +54,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                     Description = "Bearer <token>"
                 });
                 
-                options.UseInlineDefinitionsForEnums();  // <-- THIS FIXES QUERY PARAM ENUMS
+                options.UseInlineDefinitionsForEnums();  
 
 
                 options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement

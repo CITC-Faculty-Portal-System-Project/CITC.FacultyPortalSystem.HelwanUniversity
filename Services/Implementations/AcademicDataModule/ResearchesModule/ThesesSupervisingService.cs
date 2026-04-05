@@ -8,162 +8,211 @@ using Shared.SpecificationParameters.ResearchesModule;
 
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
-    public class ThesesSupervisingService(IUnitOfWork unitOfWork
-        , IAuthenticationService authenticationService
-        , IMapper mapper)
-
-        : BaseService<Supervising, int>(unitOfWork, authenticationService, mapper) , IThesesSupervisingService
+    public class ThesesSupervisingService(
+      IUnitOfWork unitOfWork,
+      IAuthenticationService authenticationService,
+      IMapper mapper)
+      : BaseService<Supervising, int>(unitOfWork, authenticationService, mapper),
+        IThesesSupervisingService
     {
         protected override string EntityName => "Theses Supervising";
 
-        public async Task<SupervisingThsesResponseDTO> AcceptRecommendedThesesSupervison(int thesisId)
+        public async Task<SupervisingThsesResponseDTO> AcceptRecommendedThesesSupervison(
+            int thesisId,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var thesisSupervisingEntity = await Repo.GetAsync(new RecommendedThesesSupervisionSpecifications(thesisId, user.UserId))
+            var thesisSupervisingEntity = await Repo.GetAsync(
+                new RecommendedThesesSupervisionSpecifications(thesisId, targetFacultyMemberId))
                 ?? throw NotFound();
 
-            EnsureOwnership(thesisSupervisingEntity.FacultyMemberId, user.UserId, EntityName);
-      
-            thesisSupervisingEntity.isConfirmed = true; 
+            await EnsureOwnershipIfClientAsync(
+                thesisSupervisingEntity.FacultyMemberId,
+                facultyMemberId?.ToString());
+
+            thesisSupervisingEntity.isConfirmed = true;
 
             Repo.Update(thesisSupervisingEntity);
-
-            await unitOfWork.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return Mapper.Map<SupervisingThsesResponseDTO>(thesisSupervisingEntity);
-
         }
 
-        public async Task<SupervisingThesesAddDTO> AddThesesSupervising(SupervisingThesesAddDTO thesesDTO)
+        public async Task<SupervisingThesesAddDTO> AddThesesSupervising(
+            SupervisingThesesAddDTO thesesDTO,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            thesesDTO.FacultyMemberId = user.UserId;
-            
+            if (facultyMemberId is null)
+                EnsureOwnership(targetFacultyMemberId, currentUser.UserId, EntityName);
+
+            thesesDTO.FacultyMemberId = targetFacultyMemberId;
+
             var thesesSupervisingEntity = Mapper.Map<Supervising>(thesesDTO);
-
             thesesSupervisingEntity.isConfirmed = true;
 
             await Repo.AddAsync(thesesSupervisingEntity);
-
-            await UnitOfWork.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return thesesDTO;
         }
 
-        public async Task DeleteThesesSupervising(int id)
+        public async Task DeleteThesesSupervising(
+            int id,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var thesesEntity = await Repo.GetAsync(
+                new ThsesSupervisingSpecifications(id))
+                ?? throw NotFound();
 
-            var thesesEntity = await Repo.GetAsync(new ThsesSupervisingSpecifications(id))
-                            ?? throw NotFound();
+            await EnsureOwnershipIfClientAsync(
+                thesesEntity.FacultyMemberId,
+                facultyMemberId?.ToString());
 
-            EnsureOwnership(thesesEntity.FacultyMemberId, user.UserId, EntityName);
+            var currentUser = await GetCurrentUserAsync();
 
             thesesEntity.IsDeleted = true;
             thesesEntity.DeletedAt = DateTime.UtcNow;
-            thesesEntity.DeletedBy = user.UserName;
+            thesesEntity.DeletedBy = currentUser.UserName;
 
             Repo.Update(thesesEntity);
-            await UnitOfWork.SaveChangesAsync();
+            await SaveChangesAsync();
         }
 
-        public async Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllRecommendedThesesSupervisons(ThesesSupervisingSpecificationParameters parameters)
+        public async Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllRecommendedThesesSupervisons(
+            ThesesSupervisingSpecificationParameters parameters,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var thesesEntites = await Repo.GetAllAsync(new RecommendedThesesSupervisionSpecifications(parameters, user.UserId))
-                        ?? throw NotFound();
+            var thesesEntities = await Repo.GetAllAsync(
+                new RecommendedThesesSupervisionSpecifications(parameters, targetFacultyMemberId))
+                ?? throw NotFound();
 
-            var totalPagesCount = await Repo.CountAsync(new RecommendedThesesSupervisionCountSpecifications(parameters, user.UserId));
+            var totalCount = await Repo.CountAsync(
+                new RecommendedThesesSupervisionCountSpecifications(parameters, targetFacultyMemberId));
 
-            var currentPage = thesesEntites.Count();
+            var mapped = Mapper.Map<IEnumerable<SupervisingThsesResponseDTO>>(thesesEntities);
 
-            var thesesResponses = Mapper.Map<IEnumerable<SupervisingThsesResponseDTO>>(thesesEntites);
-
-            return new PaginatedResult<SupervisingThsesResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, thesesResponses);
+            return new PaginatedResult<SupervisingThsesResponseDTO>(
+                parameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllSupervisings(ThesesSupervisingSpecificationParameters supervisingSpecificationParameters)
+        public async Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllSupervisings(
+            ThesesSupervisingSpecificationParameters supervisingSpecificationParameters,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var thesesEntity = await Repo.GetAllAsync
-                (new ThsesSupervisingSpecifications(supervisingSpecificationParameters , user.UserId));
+            var thesesEntities = await Repo.GetAllAsync(
+                new ThsesSupervisingSpecifications(supervisingSpecificationParameters, targetFacultyMemberId))
+                ?? throw NotFound();
 
-            var totalPages = await Repo.CountAsync(new ThsesSupervisingCountSpecifications(supervisingSpecificationParameters, user.UserId));
+            var totalCount = await Repo.CountAsync(
+                new ThsesSupervisingCountSpecifications(supervisingSpecificationParameters, targetFacultyMemberId));
 
-            var currentPage = thesesEntity.Count();
+            var mapped = Mapper.Map<IEnumerable<SupervisingThsesResponseDTO>>(thesesEntities);
 
-
-            return new PaginatedResult<SupervisingThsesResponseDTO>
-                (supervisingSpecificationParameters.PageIndex
-                , currentPage, totalPages
-                , Mapper.Map<IEnumerable<SupervisingThsesResponseDTO>>(thesesEntity));
+            return new PaginatedResult<SupervisingThsesResponseDTO>(
+                supervisingSpecificationParameters.PageIndex,
+                mapped.Count(),
+                totalCount,
+                mapped);
         }
 
-        public async Task<SupervisingThsesResponseDTO> GetRecommendedThesesSupervisonById(int id)
+        public async Task<SupervisingThsesResponseDTO> GetRecommendedThesesSupervisonById(
+            int id,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var entity = await Repo.GetAsync(new RecommendedThesesSupervisionSpecifications(id, user.UserId))
-                     ?? throw NotFound();
+            var entity = await Repo.GetAsync(
+                new RecommendedThesesSupervisionSpecifications(id, targetFacultyMemberId))
+                ?? throw NotFound();
 
-            EnsureOwnership(entity.FacultyMemberId, user.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                entity.FacultyMemberId,
+                facultyMemberId?.ToString());
 
             return Mapper.Map<SupervisingThsesResponseDTO>(entity);
         }
 
-        public async Task<SupervisingThsesResponseDTO> GetThesesSupervisingById(int id)
+        public async Task<SupervisingThsesResponseDTO> GetThesesSupervisingById(
+            int id,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
-
-            var thesesEntity = await Repo.GetAsync(new ThsesSupervisingSpecifications(id))
-                            ?? throw NotFound();
-
-            EnsureOwnership(thesesEntity.FacultyMemberId, user.UserId, EntityName);
-            
-            return Mapper.Map<SupervisingThsesResponseDTO>(thesesEntity);
- 
-        }
-
-        public async Task RejectRecommendedThesesSupervison(int thesisId)
-        {
-            var user = await GetCurrentUserAsync();
-
-            var supervisingEntity = await Repo.GetAsync(new RecommendedThesesSupervisionSpecifications(thesisId, user.UserId))
+            var thesesEntity = await Repo.GetAsync(
+                new ThsesSupervisingSpecifications(id))
                 ?? throw NotFound();
 
-            EnsureOwnership(supervisingEntity.FacultyMemberId, user.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                thesesEntity.FacultyMemberId,
+                facultyMemberId?.ToString());
 
-            supervisingEntity.IsDeleted = true;
-            supervisingEntity.DeletedAt = DateTime.Now;
-            supervisingEntity.DeletedBy = user.UserName;
-            supervisingEntity!.Thesis!.ComitteeMembers!
-                .SingleOrDefault(cm => cm.MemberId == user.UserId)!
-                .IsDeleted = true;
-        
-            Repo.Update(supervisingEntity);
-            await unitOfWork.SaveChangesAsync();
+            return Mapper.Map<SupervisingThsesResponseDTO>(thesesEntity);
         }
 
-        public async Task<SupervisingThsesResponseDTO> UpdateThesesSupervising(int id, SupervisingThesesUpdateDTO supervisingThesesUpdateDTO)
+        public async Task RejectRecommendedThesesSupervison(
+            int thesisId,
+            Guid? facultyMemberId = null)
         {
-            var user = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var thesesEntity = await Repo.GetAsync(new ThsesSupervisingSpecifications(id))
-                            ?? throw NotFound();
+            var supervisingEntity = await Repo.GetAsync(
+                new RecommendedThesesSupervisionSpecifications(thesisId, targetFacultyMemberId))
+                ?? throw NotFound();
 
-            EnsureOwnership(thesesEntity.FacultyMemberId, user.UserId, EntityName);
+            await EnsureOwnershipIfClientAsync(
+                supervisingEntity.FacultyMemberId,
+                facultyMemberId?.ToString());
+
+            supervisingEntity.IsDeleted = true;
+            supervisingEntity.DeletedAt = DateTime.UtcNow;
+            supervisingEntity.DeletedBy = currentUser.UserName;
+
+            var committeeMember = supervisingEntity.Thesis?.ComitteeMembers?
+                .SingleOrDefault(cm => cm.MemberId == targetFacultyMemberId);
+
+            if (committeeMember is not null)
+                committeeMember.IsDeleted = true;
+
+            Repo.Update(supervisingEntity);
+            await SaveChangesAsync();
+        }
+
+        public async Task<SupervisingThsesResponseDTO> UpdateThesesSupervising(
+            int id,
+            SupervisingThesesUpdateDTO supervisingThesesUpdateDTO,
+            Guid? facultyMemberId = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+
+            var thesesEntity = await Repo.GetAsync(
+                new ThsesSupervisingSpecifications(id))
+                ?? throw NotFound();
+
+            await EnsureOwnershipIfClientAsync(
+                thesesEntity.FacultyMemberId,
+                facultyMemberId?.ToString());
 
             Mapper.Map(supervisingThesesUpdateDTO, thesesEntity);
-            
+
             thesesEntity.UpdatedAt = DateTime.UtcNow;
-            thesesEntity.UpdatedBy = user.UserName;
+            thesesEntity.UpdatedBy = currentUser.UserName;
 
             Repo.Update(thesesEntity);
-            await UnitOfWork.SaveChangesAsync();
+            await SaveChangesAsync();
 
             return Mapper.Map<SupervisingThsesResponseDTO>(thesesEntity);
         }
