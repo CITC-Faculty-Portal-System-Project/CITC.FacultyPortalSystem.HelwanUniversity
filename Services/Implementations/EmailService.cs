@@ -40,7 +40,7 @@ namespace Services.Implementations
                   <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
                   <style>
                     body {{
-                      margin: 0; padding: 0; background-color: #f5f7fb;
+                      margin: 0; padding: 0;
                       font-family: Tahoma, Arial; direction: rtl;
                       text-align: right; font-size: 18px;
                     }}
@@ -147,7 +147,7 @@ namespace Services.Implementations
             using var client = CreateSmtpClient();
             using var mail = new MailMessage
             {
-                From = new MailAddress(_configuration["SmtpSettings:UserName"] ?? throw new InvalidOperationException("SMTP From not configured")),
+                From = new MailAddress("no-reply@capu.edu.eg" , "Capital University Faculty Portal" ?? throw new InvalidOperationException("SMTP From not configured")),
                 Subject = subject,
                 IsBodyHtml = true
             };
