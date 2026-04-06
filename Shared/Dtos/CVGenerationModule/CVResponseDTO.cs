@@ -12,16 +12,18 @@ namespace Shared.Dtos.CVGenerationModule
 {
     public record CVResponseDTO
     {
+        public int PersonalDataId { get; set; }
         #region Personal Data
         //public ? ProfilePictureId { get; set; }
         public LookupItemDto? Title { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string NameAr { get; set; } = string.Empty;
         public LookupItemDto? University { get; set; } 
         public LookupItemDto? Authority { get; set; } 
         public LookupItemDto? Department { get; set; } 
         public DateOnly? BirthDate { get; set; }
         public string? BioSummary { get; set; }
         public List<string>? Skills { get; set; }
+        public Guid? ProfilePictureId { get; set; }
         #endregion
 
         #region SocialMedia Links

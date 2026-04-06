@@ -32,7 +32,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                     {
                         row.RelativeItem(55).Padding(30).Column(c =>
                         {
-                            c.Item().Text(_cv.Name ?? "").FontSize(22).ExtraBold().FontColor(Colors.White).FontFamily("Cairo");
+                            c.Item().Text(_cv.NameAr ?? "").FontSize(22).ExtraBold().FontColor(Colors.White).FontFamily("Cairo");
                             if (_cv.Title != null)
                                 c.Item().PaddingBottom(5).Text(_cv.Title.ValueAr ?? "").FontSize(11).Bold().FontColor(AccentColor);
 

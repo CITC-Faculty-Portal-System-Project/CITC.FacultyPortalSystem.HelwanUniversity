@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.CVGenerationModule;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Implementations.CVGenerationModule.Factories;
 using Services.Specifications.CVGenerationModule;
@@ -93,6 +94,8 @@ namespace Services.Implementations.CVGenerationModule
             var config = CVVisibilityHelper.Deserialize(settings.VisibilityJson);
 
             var response = _mapper.Map<CVResponseDTO>(personalData);
+            response.PersonalDataId = personalData.Id;
+            response.ProfilePictureId = personalData.ProfilePicture!.Id;
 
             if (personalData.FacultyMember!.SocialMediaPlatforms != null)
             {
@@ -245,7 +248,7 @@ namespace Services.Implementations.CVGenerationModule
         {
             var cv = await GetCVAsync();
             var template = _cVTemplatesFactory.Resolve(templateName);
-            return template.GenerateHtml(cv);
+            return await template.GenerateHtml(cv);
         }
     }
 }

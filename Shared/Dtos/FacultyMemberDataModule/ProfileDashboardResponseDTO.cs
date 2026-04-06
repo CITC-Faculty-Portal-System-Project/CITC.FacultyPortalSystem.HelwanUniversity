@@ -4,6 +4,7 @@
     {
         //Data from PersonalData
         public Guid? ProfilePictureId { get; set; }
+        public int PersonalDataId { get; set; }
         public string NameAr { get; set; } = string.Empty;
         public string NameEn { get; set; } = string.Empty;
         public LookupItemDto Title { get; set; } = null!;

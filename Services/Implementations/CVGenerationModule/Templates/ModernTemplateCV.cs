@@ -1,11 +1,13 @@
 ﻿using QuestPDF.Fluent;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Shared.Dtos.AttachmentsModule;
 using Shared.Dtos.CVGenerationModule;
 using System.Text;
 
 namespace Services.Implementations.CVGenerationModule.Templates
 {
-    public class ModernTemplateCV : ICVTemplate
+    public class ModernTemplateCV(IAttachmentService _attachmentService) : ICVTemplate
     {
         public string TemplateName => "modern";
 
@@ -14,8 +16,16 @@ namespace Services.Implementations.CVGenerationModule.Templates
             return new Pdf.ModernPdfDocumentCV(cv).GeneratePdf();
         }
 
-        public string GenerateHtml(CVResponseDTO cv)
+        public async Task <string> GenerateHtml(CVResponseDTO cv)
         {
+            AttachmentDownloadDTO? profilePicture = null;
+
+            if (cv.ProfilePictureId is not null)
+            {
+                profilePicture = await _attachmentService.GetAsync(Abstraction.Enums.AttachmentContext.ProfilePicture, cv.PersonalDataId, cv.ProfilePictureId.Value);
+
+            }
+
             var sb = new StringBuilder();
 
             // 1. Header & CSS
@@ -59,7 +69,7 @@ namespace Services.Implementations.CVGenerationModule.Templates
 <body>
     <div class='cv-wrap'>
         <div class='cv-header'>
-            <div class='name'>{cv.Name}</div>
+            <div class='name'>{cv.NameAr}</div>
             {(cv.Title != null ? $"<div class='job-title'>{cv.Title.ValueAr}</div>" : "")}
             <div class='meta-row'>
                 {(cv.Department != null ? $"<span>{cv.Department.ValueAr}</span>" : "")}

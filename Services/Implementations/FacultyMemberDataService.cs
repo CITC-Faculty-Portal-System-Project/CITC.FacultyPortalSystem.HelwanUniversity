@@ -134,7 +134,7 @@ namespace Services.Implementations
             updatePersonalDataLog.Level = "Information";
             updatePersonalDataLog.UserIP = GetUserIP();
             updatePersonalDataLog.UserName = currentUser.UserName;
-            updatePersonalDataLog.AdditionalData = $"User updated their personal data successfully. \nOld Data: {System.Text.Json.JsonSerializer.Serialize(personalData)} \nNew Data: {System.Text.Json.JsonSerializer.Serialize(result)}";
+            //updatePersonalDataLog.AdditionalData = $"User updated their personal data successfully. \nOld Data: {System.Text.Json.JsonSerializer.Serialize(personalData)} \nNew Data: {System.Text.Json.JsonSerializer.Serialize(result)}";
             _logger.LogInformation("{@LogDetails}", updatePersonalDataLog);
             #endregion
 

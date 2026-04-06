@@ -6,6 +6,6 @@ namespace Services.Abstraction.Contracts.CVGenerationModule
     {
         string TemplateName { get; }
         byte[] GeneratePdf(CVResponseDTO cv);
-        string GenerateHtml(CVResponseDTO cv);
+        Task <string> GenerateHtml(CVResponseDTO cv);
     }
 }

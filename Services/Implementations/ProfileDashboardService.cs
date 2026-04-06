@@ -311,6 +311,7 @@ namespace Services.Implementations
             ) ?? throw new NotFoundException($"Personal data not found for {currentUser.Email}.");
 
             var response = _mapper.Map<ProfileDashboardResponseDTO>(personalData);
+            response.PersonalDataId = personalData.Id;
 
             if (personalData.FacultyMember!.SocialMediaPlatforms != null)
             {

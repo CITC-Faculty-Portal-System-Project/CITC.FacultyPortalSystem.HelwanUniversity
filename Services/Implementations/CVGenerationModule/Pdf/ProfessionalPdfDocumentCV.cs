@@ -1,20 +1,40 @@
 ﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Shared.Dtos.CVGenerationModule;
 
 namespace Services.Implementations.CVGenerationModule.Pdf
 {
-    public class ProfessionalPdfDocumentCV(CVResponseDTO _cv) : IDocument
+    public class ProfessionalPdfDocumentCV : IDocument
     {
         private readonly TextStyle ArabicStyle = TextStyle.Default.FontFamily("Cairo").FontSize(9);
         private readonly string MainColor = "#19355a"; 
         private readonly string AccentColor = "#b38e19"; 
         private readonly string SidebarText = "#cbd5e1";
+        private CVResponseDTO _cv;
+        private byte[]? _profileImage;
         private const float SidebarWidth = 200; 
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
+        public ProfessionalPdfDocumentCV(CVResponseDTO cv, IAttachmentService attachmentService)
+        {
+            _cv = cv;
+
+            if (cv.ProfilePictureId != null)
+            {
+                var image = attachmentService
+                    .GetAsync(
+                        Abstraction.Enums.AttachmentContext.ProfilePicture,
+                        cv.PersonalDataId,
+                        cv.ProfilePictureId.Value)
+                    .GetAwaiter()
+                    .GetResult();
+
+                _profileImage = image?.AttachmentData;
+            }
+        }
         public void Compose(IDocumentContainer container)
         {
             container.Page(page =>
@@ -34,21 +54,33 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                     row.ConstantItem(SidebarWidth).PaddingVertical(40).PaddingHorizontal(20).Column(sb =>
                     {
                         sb.Item()
-                          .AlignCenter()
-                          .Width(80)
-                          .Height(80)
-                          .Background("#4d5a6d")
-                          .Border(2)
-                          .BorderColor(AccentColor)
-                          .CornerRadius(40) 
-                          .AlignCenter()
-                          .AlignMiddle()
-                          .Text(GetInitials(_cv.Name))
-                          .FontSize(24)
-                          .Bold()
-                          .FontColor(AccentColor);
-
-                        sb.Item().PaddingTop(15).AlignCenter().Text(_cv.Name ?? "").FontSize(16).ExtraBold().FontColor(Colors.White);
+                     .AlignCenter()
+                     .Width(80)
+                     .Height(80)
+                     .Background("#4d5a6d")
+                     .Border(2)
+                     .BorderColor(AccentColor)
+                     .CornerRadius(40)
+                     .AlignCenter()
+                     .AlignMiddle()
+                     .Element(container =>
+                     {
+                         if (_cv.ProfilePictureId != null) 
+                         {
+                             container
+                                     .Image(_profileImage)
+                                      .FitArea();
+                         }
+                         else
+                         {
+                             container
+                                 .Text(GetInitials(_cv.NameAr))
+                                 .FontSize(24)
+                                 .Bold()
+                                 .FontColor(AccentColor);
+                         }
+                     });
+                        sb.Item().PaddingTop(15).AlignCenter().Text(_cv.NameAr ?? "").FontSize(16).ExtraBold().FontColor(Colors.White);
 
                         if (_cv.Title != null)
                             sb.Item().AlignCenter().Text(_cv.Title.ValueAr ?? "").FontSize(9).SemiBold().FontColor(AccentColor);

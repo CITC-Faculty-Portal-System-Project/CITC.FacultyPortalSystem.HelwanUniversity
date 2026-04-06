@@ -35,7 +35,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                     // 1. Header - يظهر مرة واحدة فقط في أول صفحة
                     mainColumn.Item().Background(MainColor).Padding(35).Column(headerCol =>
                     {
-                        headerCol.Item().Text(_cv.Name).FontSize(24).Bold().FontColor(Colors.White).FontFamily("Cairo");
+                        headerCol.Item().Text(_cv.NameAr).FontSize(24).Bold().FontColor(Colors.White).FontFamily("Cairo");
                         if (_cv.Title != null) headerCol.Item().PaddingBottom(5).Text(_cv.Title.ValueAr).FontSize(13).FontColor(AccentColor).Bold();
 
                         headerCol.Item().Row(r =>

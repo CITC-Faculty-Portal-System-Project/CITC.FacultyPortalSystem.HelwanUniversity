@@ -1,25 +1,49 @@
 ﻿using QuestPDF.Fluent;
+using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Shared.Dtos.AttachmentsModule;
 using Shared.Dtos.CVGenerationModule;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Services.Implementations.CVGenerationModule.Templates
 {
-    public class ProfessionalTemplateCV : ICVTemplate
+    public class ProfessionalTemplateCV(IAttachmentService _attachmentService) : ICVTemplate
     {
         public string TemplateName => "professional";
 
         public byte[] GeneratePdf(CVResponseDTO cv)
         {
-            return new Pdf.ProfessionalPdfDocumentCV(cv).GeneratePdf();
+            return new Pdf.ProfessionalPdfDocumentCV(cv , _attachmentService).GeneratePdf();
         }
 
-        public string GenerateHtml(CVResponseDTO cv)
+        public async Task<string> GenerateHtml(CVResponseDTO cv)
         {
-            var initials = string.IsNullOrEmpty(cv.Name) ? "" : cv.Name.Substring(0, 1);
+            var initials = string.IsNullOrEmpty(cv.NameAr) ? "" : cv.NameAr.Substring(0, 1);
             var sb = new StringBuilder();
 
-            // بداية الـ HTML مع الـ Styles
+            string? imageTag = null;
+
+            if (cv.ProfilePictureId is not null)
+            {
+                var profilePicture = await _attachmentService.GetAsync(
+                    Abstraction.Enums.AttachmentContext.ProfilePicture,
+                    cv.PersonalDataId,
+                    cv.ProfilePictureId.Value
+                );
+
+                if (profilePicture?.AttachmentData != null && profilePicture.AttachmentData.Length > 0)
+                {
+                    var base64 = Convert.ToBase64String(profilePicture.AttachmentData);
+
+                    imageTag = $@"
+        <img 
+            src='data:image/png;base64,{base64}' 
+            class='avatar-img' 
+            alt='Profile Image' 
+        />";
+                }
+            }  // بداية الـ HTML مع الـ Styles
             sb.Append($@"
 <!doctype html>
 <html dir='rtl' lang='ar'>
@@ -31,6 +55,7 @@ namespace Services.Implementations.CVGenerationModule.Templates
     .cv-sidebar {{ background: #19355a; flex: 0 0 260px; padding: 36px 22px; display: flex; flex-direction: column; }}
     .avatar {{ width: 80px; height: 80px; border-radius: 50%; background: rgba(179, 142, 25, 0.3); border: 3px solid #b38e19; margin: 0 auto 18px auto; display: flex; align-items: center; justify-content: center; }}
     .avatar-initial {{ color: #b38e19; font-weight: 900; font-size: 1.8rem; }}
+    .avatar-img {{width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }}
     .sidebar-name {{ color: #fff; font-weight: 800; font-size: 1.1rem; text-align: center; margin-bottom: 4px; }}
     .sidebar-title {{ color: #b38e19; font-weight: 600; font-size: 0.82rem; text-align: center; margin-bottom: 22px; }}
     .sb-section {{ margin-bottom: 22px; }}
@@ -48,8 +73,11 @@ namespace Services.Implementations.CVGenerationModule.Templates
 <body>
     <div class='cv-wrap'>
         <div class='cv-sidebar'>
-            <div class='avatar'><span class='avatar-initial'>{initials}</span></div>
-            <div class='sidebar-name'>{cv.Name}</div>
+        <div class='avatar'>
+            {(string.IsNullOrEmpty(imageTag)
+                ? $"<span class='avatar-initial'>{cv.NameAr?.Substring(0, 1)}</span>"
+                : imageTag)}
+        </div>            <div class='sidebar-name'>{cv.NameAr}</div>
             {(cv.Title != null ? $"<div class='sidebar-title'>{cv.Title.ValueAr}</div>" : "")}
             
             <div class='sb-section'>
