@@ -202,7 +202,7 @@ namespace Services.Implementations
             credentialsEmailLog.Timestamp = DateTime.Now;
 			credentialsEmailLog.Level = "Information";
 			credentialsEmailLog.RenderedMessage = $"Credentials email sent successfully to {email} for user {userName}.";
-			credentialsEmailLog.AdditionalData = $"Sent credentials email to {email} for user ID {userId} with username : {userName} / password : {password} . This email contains the user's login credentials.";
+			credentialsEmailLog.AdditionalData = $"Sent credentials email to {email} for user Id {userId} with username : {userName} / password : {password} . This email contains the user's login credentials.";
 			_logger.LogInformation("{@LogDetails}", credentialsEmailLog);
 			#endregion
 		}
