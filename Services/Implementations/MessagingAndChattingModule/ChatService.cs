@@ -49,7 +49,13 @@ namespace Services.Implementations.MessagingAndChattingModule
 
             if (targetMessageReciever is null)
                 throw new NotFoundException("Desired Message Reciever Wasn't Found!");
-            
+
+            if (request.Content is null)
+            {
+                request.MessageType = Shared.Enums.MessagingAndChattingModule.MessageType.Attachment;
+                request.Content = "Attachment";
+            }
+
             var encrypted = _messageEncryptionService.Encrypt(request.Content);
             encrypted.ConversationId = request.ConversationId;
             encrypted.RecieverId = request.RecieverId;

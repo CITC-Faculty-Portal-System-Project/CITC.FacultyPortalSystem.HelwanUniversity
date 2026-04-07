@@ -272,6 +272,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IAttachmentContextHandler, ThesisAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, ProfilePictureAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, PatentAttachmentHandler>();
+            services.AddScoped<IAttachmentContextHandler, ConversationAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, ManifestationOfScientificAppreciationAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, PrizeAndAwardAttachmentHandler>();
             services.AddScoped<IAttachmentContextHandler, AcademicQualificationAttachmentHandler>();

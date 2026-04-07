@@ -1250,15 +1250,6 @@ namespace Presentation.Controllers.AdminModule
         .GetAllSupervisings(parameters, parameters.FacultyMemberId));
 
 
-        [ProducesResponseType(typeof(PaginatedResult<SupervisingThsesResponseDTO>), StatusCodes.Status200OK)]
-        [HttpGet("Admin/FacultyMember/HigherStudies/RecommendedThesesSupervisings")]
-        [Authorize(Policy = "Permission:FacultyMemberHigherStudiesData.Read")]
-        public async Task<ActionResult<PaginatedResult<SupervisingThsesResponseDTO>>> GetAdminFacultyMemberRecommendedThesesSupervisingsAsync(
-            [FromQuery] ThesesSupervisingSpecificationParameters parameters)
-            => Ok(await _serviceManager.ThesesSupervisingService
-                .GetAllRecommendedThesesSupervisons(parameters, parameters.FacultyMemberId));
-
-
         [ProducesResponseType(typeof(SupervisingThsesResponseDTO), StatusCodes.Status200OK)]
         [HttpGet("Admin/FacultyMember/HigherStudies/ThesesSupervisings/{id:int}")]
         [Authorize(Policy = "Permission:FacultyMemberHigherStudiesData.Read")]
@@ -1267,16 +1258,6 @@ namespace Presentation.Controllers.AdminModule
             [FromQuery] Guid facultyMemberId)
             => Ok(await _serviceManager.ThesesSupervisingService
                 .GetThesesSupervisingById(id, facultyMemberId));
-
-
-        [ProducesResponseType(typeof(SupervisingThsesResponseDTO), StatusCodes.Status200OK)]
-        [HttpGet("Admin/FacultyMember/HigherStudies/RecommendedThesesSupervisings/{id:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberHigherStudiesData.Read")]
-        public async Task<ActionResult<SupervisingThsesResponseDTO>> GetAdminFacultyMemberRecommendedThesesSupervisingByIdAsync(
-            int id,
-            [FromQuery] Guid facultyMemberId)
-            => Ok(await _serviceManager.ThesesSupervisingService
-                .GetRecommendedThesesSupervisonById(id, facultyMemberId));
 
 
         [ProducesResponseType(typeof(SupervisingThesesAddDTO), StatusCodes.Status200OK)]
@@ -1312,31 +1293,6 @@ namespace Presentation.Controllers.AdminModule
 
             return NoContent();
         }
-
-
-        [ProducesResponseType(typeof(SupervisingThsesResponseDTO), StatusCodes.Status200OK)]
-        [HttpPut("Admin/FacultyMember/HigherStudies/RecommendedThesesSupervisings/{thesisId:int}/Accept")]
-        [Authorize(Policy = "Permission:FacultyMemberHigherStudiesData.Update")]
-        public async Task<ActionResult<SupervisingThsesResponseDTO>> AcceptAdminFacultyMemberRecommendedThesesSupervisingAsync(
-            int thesisId,
-            [FromQuery] Guid facultyMemberId)
-            => Ok(await _serviceManager.ThesesSupervisingService
-                .AcceptRecommendedThesesSupervison(thesisId, facultyMemberId));
-
-
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [HttpPut("Admin/FacultyMember/HigherStudies/RecommendedThesesSupervisings/{thesisId:int}/Reject")]
-        [Authorize(Policy = "Permission:FacultyMemberHigherStudiesData.Update")]
-        public async Task<IActionResult> RejectAdminFacultyMemberRecommendedThesesSupervisingAsync(
-            int thesisId,
-            [FromQuery] Guid facultyMemberId)
-        {
-            await _serviceManager.ThesesSupervisingService
-                .RejectRecommendedThesesSupervison(thesisId, facultyMemberId);
-
-            return NoContent();
-        }
-
 
         #endregion
 

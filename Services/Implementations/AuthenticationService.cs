@@ -271,9 +271,10 @@ public class AuthenticationService(
         var token = await CreateTokenAsync(user);
         var response = new LoginClaims
         {
-            Email = user.Email,
-            Role = role.FirstOrDefault(),
-            UserName = user.UserName,
+            Email = user.Email ?? "",
+            Roles = role,
+            UserName = user.UserName ?? "",
+            NationalNumber = user.NationalNumber,
             Token = token
         };
         #region Log

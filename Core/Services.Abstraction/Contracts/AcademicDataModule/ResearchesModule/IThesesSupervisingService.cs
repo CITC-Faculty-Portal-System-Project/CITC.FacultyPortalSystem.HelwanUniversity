@@ -27,20 +27,5 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
             ThesesSupervisingSpecificationParameters supervisingSpecificationParameters,
             Guid? facultyMemberId = null);
 
-        Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllRecommendedThesesSupervisons(
-            ThesesSupervisingSpecificationParameters parameters,
-            Guid? facultyMemberId = null);
-
-        Task<SupervisingThsesResponseDTO> GetRecommendedThesesSupervisonById(
-            int id,
-            Guid? facultyMemberId = null);
-
-        Task<SupervisingThsesResponseDTO> AcceptRecommendedThesesSupervison(
-            int thesisId,
-            Guid? facultyMemberId = null);
-
-        Task RejectRecommendedThesesSupervison(
-            int thesisId,
-            Guid? facultyMemberId = null);
     }
 }

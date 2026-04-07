@@ -15,10 +15,15 @@ namespace Services.MappingProfiles
 
             CreateMap<AttachmentReferenceDTO, ThesesAttachment>()
                 .IncludeBase<AttachmentReferenceDTO, BaseAttachmentEntity>()
-                .ForMember(d => d.ThesisId, opt => opt.Ignore()); 
+                .ForMember(d => d.ThesisId, opt => opt.Ignore());
+
+            CreateMap<AttachmentReferenceDTO, ConversationAttachment>()
+              .IncludeBase<AttachmentReferenceDTO, BaseAttachmentEntity>()
+              .ForMember(d => d.ConversationId, opt => opt.Ignore());
 
 
             CreateMap<ResearchAttachment, AttachmentResponseDTO>();
+            CreateMap<ConversationAttachment, AttachmentResponseDTO>();
             CreateMap<ThesesAttachment, AttachmentResponseDTO>();
 
             CreateMap<BaseAttachmentEntity, AttachmentReferenceDTO>();

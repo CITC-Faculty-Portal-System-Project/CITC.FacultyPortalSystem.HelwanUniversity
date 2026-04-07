@@ -7,7 +7,7 @@
         public string NationalNumber { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public List<PermissionResponseDTO>? Permissions { get; set; }
-        public RoleResponseDTO? Role { get; set; }
+        public List<RoleResponseDTO>? Roles { get; set; }
 
     }
 }
