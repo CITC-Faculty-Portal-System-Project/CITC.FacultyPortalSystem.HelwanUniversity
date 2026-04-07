@@ -2,10 +2,10 @@
 {
     public enum TicketPriority
     {
-        Low = 1,
-        Medium = 2,
-        High = 3,
-        Critical = 4
-
+        Unspecified = 1,
+        Low = 2,
+        Medium = 3,
+        High = 4,
+        Critical = 5
     }
 }

@@ -10,6 +10,7 @@ using Domain.Entities.AcademicDataModule.WritingsAndPatents;
 using Domain.Entities.AdminModule;
 using Domain.Entities.CVGenerationModule;
 using Domain.Entities.EntitesAttachments;
+using Domain.Entities.Messaging;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Presistence.Identity;
 using System.Reflection;
@@ -131,7 +132,10 @@ namespace Presistence.Data
         #region AdminDbSets
 
         public DbSet<Ticket> Tickets { get; set; }
-
+        public DbSet<ConversationAttachment> ConversationAttachments { get; set; }
+        public DbSet<Message> Messages { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
+        public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
         #endregion
 
     }

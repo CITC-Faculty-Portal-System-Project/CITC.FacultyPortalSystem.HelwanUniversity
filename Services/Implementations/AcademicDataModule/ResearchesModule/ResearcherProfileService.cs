@@ -22,12 +22,15 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
             var profile = await Repo.GetAsync(
-                new ResearcherProfileSpceification(targetFacultyMemberId))
-                ?? throw NotFound();
+                new ResearcherProfileSpceification(targetFacultyMemberId));
 
-            await EnsureOwnershipIfClientAsync(
+            if(profile is not null)
+            {
+                await EnsureOwnershipIfClientAsync(
                 profile.FacultyMemberId,
                 facultyMemberId?.ToString());
+
+            }
 
             return Mapper.Map<ResearcherProfileResponseDTO>(profile);
         }

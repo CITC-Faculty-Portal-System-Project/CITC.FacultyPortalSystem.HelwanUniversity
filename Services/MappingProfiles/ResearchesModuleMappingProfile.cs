@@ -12,7 +12,8 @@ namespace Services.MappingProfiles
         public ResearchesModuleMappingProfile() {
             CreateMap<ResearcherDataFetchingDTO, ResearcherProfile>()
                 .ForMember(dest => dest.ResearcherCites, opt => opt.Ignore())
-                .ForMember(dest => dest.ResearcherInterests, opt => opt.Ignore());
+                .ForMember(dest => dest.ResearcherInterests, opt => opt.Ignore())
+                .ForMember(dest => dest.CoAuthors, opt => opt.Ignore());
 
 
             CreateMap<ExternalResearcherInterestsFetchingDTO, ScientificInterest>();
@@ -40,7 +41,11 @@ namespace Services.MappingProfiles
                   src.ResearcherInterests!.Select(ri => ri.Interest)))
            
           .ForMember(dest => dest.ResearcherCites,
-              opt => opt.MapFrom(src => src.ResearcherCites));
+              opt => opt.MapFrom(src => src.ResearcherCites))
+
+             .ForMember(dest => dest.CoAuthors,
+              opt => opt.MapFrom(src =>
+                  src.CoAuthors!.Select(ri => ri.CoAuthor)));
 
             CreateMap<ScientificInterest, ExternalResearcherInterestsFetchingDTO>();
             CreateMap<ResearcherCite, ExternalResearcherCitesFetchingDTO>();

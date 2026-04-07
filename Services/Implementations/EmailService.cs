@@ -32,60 +32,62 @@ namespace Services.Implementations
 
         private string BuildBaseLayout(string title, string bodyContent)
         {
-          return $@"
-            <!doctype html>
-            <html lang=""ar"" dir=""rtl"">
-            <head>
-              <meta charset=""utf-8"">
-              <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
-              <style>
-                body {{
-                  margin: 0; padding: 0; background-color: #f5f7fb;
-                  font-family: Tahoma, Arial; direction: rtl;
-                  text-align: right; font-size: 18px;
-                }}
-                .container {{
-                  max-width: 800px; margin: 40px auto;
-                  background: #fff; border-radius: 10px;
-                  border: 1px solid #ddd; box-shadow: 0 6px 16px rgba(0,0,0,0.15);
-                  direction: rtl; text-align: right;
-                }}
-                .header {{
-                  background-color:#19355a; color:white;
-                  text-align:center; padding:30px 20px;
-                  direction: rtl;
-                }}
-                .header img {{ max-height: 100px; margin-bottom: 15px; }}
-                .content {{
-                  padding:30px; line-height:2; color:#333;
-                  direction: rtl; text-align: right;
-                  unicode-bidi: plaintext;
-                }}
-                .footer {{
-                  text-align:center; padding:15px; background:#f2f2f2;
-                  font-size:14px; color:#666;
-                  direction: rtl;
-                }}
-              </style>
-            </head>
+               return $@"
+                <!doctype html>
+                <html lang=""ar"" dir=""rtl"">
+                <head>
+                  <meta charset=""utf-8"">
+                  <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+                  <style>
+                    body {{
+                      margin: 0; padding: 0; background-color: #f5f7fb;
+                      font-family: Tahoma, Arial; direction: rtl;
+                      text-align: right; font-size: 18px;
+                    }}
+                    .container {{
+                      max-width: 800px; margin: 40px auto;
+                      background: #fff; border-radius: 10px;
+                      border: 1px solid #ddd;
+                      direction: rtl; text-align: right;
+                    }}
+                    .header {{
+                      background-color:#19355a; color:white;
+                      text-align:center; padding:30px 20px;
+                    }}
+                    .header img {{ 
+                      max-height: 200px;   
+                      width: auto;
+                      margin-bottom: 20px;
+                    }}
+                    .content {{
+                      padding:30px; line-height:2; color:#333;
+                      direction: rtl; text-align: right;
+                      unicode-bidi: plaintext;
+                    }}
+                    .footer {{
+                      text-align:center; padding:15px; background:#f2f2f2;
+                      font-size:14px; color:#666;
+                    }}
+                  </style>
+                </head>
 
-            <body dir=""rtl"" style=""margin:0;padding:0;background-color:#f5f7fb;direction:rtl;text-align:right;font-family:Tahoma,Arial;font-size:18px;"">
-              <div class=""container"" dir=""rtl"" style=""max-width:800px;margin:40px auto;background:#fff;border-radius:10px;border:1px solid #ddd;box-shadow:0 6px 16px rgba(0,0,0,0.15);direction:rtl;text-align:right;"">
-                  <div class=""header"" style=""background-color:#19355a;color:white;text-align:center;padding:30px 20px;direction:rtl;"">
-                    <img src=""cid:helwanLogo"" alt=""Helwan University"" style=""max-height:100px;margin-bottom:15px;""/>
-                    <h2 style=""margin:0;direction:rtl;"">{title}</h2>
-                  </div>
+                <body style=""margin:0;padding:0;background-color:#f5f7fb;direction:rtl;text-align:right;font-family:Tahoma,Arial;font-size:18px;"">
+                  <div class=""container"" style=""max-width:800px;margin:40px auto;background:#fff;border-radius:10px;border:1px solid #ddd;"">
+                      <div class=""header"" style=""background-color:#19355a;color:white;text-align:center;padding:30px 20px;"">
+                        <img src=""cid:helwanLogo"" alt=""Helwan University"" style=""max-height:160px;width:auto;margin-bottom:20px;""/>
+                        <h2 style=""margin:0;"">{title}</h2>
+                      </div>
 
-                  <div class=""content"" dir=""rtl"" style=""padding:30px;line-height:2;color:#333;direction:rtl;text-align:right;unicode-bidi:plaintext;"">
-                    {bodyContent}
-                  </div>
+                      <div class=""content"" style=""padding:30px;line-height:2;color:#333;direction:rtl;text-align:right;unicode-bidi:plaintext;"">
+                        {bodyContent}
+                      </div>
 
-                  <div class=""footer"" style=""text-align:center;padding:15px;background:#f2f2f2;font-size:14px;color:#666;direction:rtl;"">
-                    جامعة العاصمة - جميع الحقوق محفوظة © {DateTime.Now.Year}
+                      <div class=""footer"" style=""text-align:center;padding:15px;background:#f2f2f2;font-size:14px;color:#666;"">
+                        جميع الحقوق محفوظة - مركز الاتصالات و تكنولوجيا المعلومات © {DateTime.Now.Year}
+                      </div>
                   </div>
-              </div>
-            </body>
-            </html>";
+                </body>
+                </html>";
         }
 
 

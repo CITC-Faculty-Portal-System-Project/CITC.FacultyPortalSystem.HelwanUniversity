@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Presistence.Data;
 
@@ -11,9 +12,11 @@ using Presistence.Data;
 namespace Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    partial class StoreDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260407171452_AddedAttachmentsFeatureToMessages")]
+    partial class AddedAttachmentsFeatureToMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2893,7 +2896,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("ConversationId");
 
-                    b.ToTable("ConversationAttachments");
+                    b.ToTable("ConversationAttachment");
                 });
 
             modelBuilder.Entity("Domain.Entities.EntitesAttachments.ManifestationsOfScientificAppreciationAttachment", b =>
@@ -6598,7 +6601,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("Type");
 
-                    b.ToTable("Conversations");
+                    b.ToTable("Conversation");
                 });
 
             modelBuilder.Entity("Domain.Entities.Messaging.ConversationParticipant", b =>
@@ -6656,7 +6659,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("UserId", "ConversationId")
                         .HasDatabaseName("IX_ConversationParticipants_UserId_ConversationId");
 
-                    b.ToTable("ConversationParticipants");
+                    b.ToTable("ConversationParticipant");
                 });
 
             modelBuilder.Entity("Domain.Entities.Messaging.Message", b =>
@@ -6750,7 +6753,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("SenderId", "CreatedAt")
                         .HasDatabaseName("IX_Messages_SenderId_CreatedAt");
 
-                    b.ToTable("Messages");
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ContributionsModule.ContributionsToCommunityService", b =>
