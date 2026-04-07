@@ -58,7 +58,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 return ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection")!);
             });
 
-			services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
+            services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
 			services.Configure<RabbitMQSettings>(
                 configuration.GetSection("RabbitMQSettings"));

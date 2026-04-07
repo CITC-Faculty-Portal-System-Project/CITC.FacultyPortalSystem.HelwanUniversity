@@ -7,6 +7,7 @@ using Shared.Hubs;
 using ICIT.FacultyPortalSystem.API.Logger;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Presistence.Data;
 
 namespace ICIT.FacultyPortalSystem.API
 {
@@ -40,6 +41,15 @@ namespace ICIT.FacultyPortalSystem.API
 			#endregion
 
 			var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var systemdb = scope.ServiceProvider.GetRequiredService<StoreDbContext>();
+                systemdb.Database.Migrate();
+
+                var identitydb = scope.ServiceProvider.GetRequiredService<IdentityStoreDbContext>();
+                identitydb.Database.Migrate();
+            }
 
 
             app.UseExceptionHandlingMiddlewares();
