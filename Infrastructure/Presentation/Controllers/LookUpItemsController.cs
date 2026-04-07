@@ -15,6 +15,12 @@
           => Ok(await _serviceManager.LookUpItemService.GetLookUpItemByType("University"));
 
 
+        [ProducesResponseType(typeof(LookupItemDto), StatusCodes.Status200OK)]
+        [RedisCache]
+        [HttpGet("Faculties")]
+        public async Task<ActionResult<IEnumerable<LookupItemDto>>> GetFaculties()
+          => Ok(await _serviceManager.LookUpItemService.GetLookUpItemByType("Faculty"));
+
 
         [ProducesResponseType(typeof(LookupItemDto), StatusCodes.Status200OK)]
         [RedisCache]
