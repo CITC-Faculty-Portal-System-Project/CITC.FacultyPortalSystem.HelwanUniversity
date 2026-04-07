@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Domain.Entities.FacultyMemberDataModule;
+using Microsoft.Extensions.Logging;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Enums.Logging;
 
@@ -43,12 +44,11 @@ namespace Services.Implementations
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
             var personalData = await personalDataRepo.GetAsync(new PersonalDataWithFacultyMemberIdSpecifications(currentUser.UserId));
-            #region Log
             if (personalData is null)
             {
                 #region Log
                 bioSummaryLog.Timestamp = DateTime.Now;
-                bioSummaryLog.RenderedMessage = $"Personal Data Not Found for User: {currentUser.UserName}";
+                bioSummaryLog.RenderedMessage = $"Personal data not found for user: {currentUser.UserName}";
                 bioSummaryLog.Level = "Warning";
                 bioSummaryLog.UserIP = _authenticationService.GetUserIP();
                 bioSummaryLog.UserName = currentUser.UserName;
@@ -57,9 +57,7 @@ namespace Services.Implementations
                 #endregion
                 throw new NotFoundException($"Personal data not found.");
             } 
-            //Old data for logging:
             var oldBioSummary = personalData.BioSummary;
-            #endregion
 
             try
             {
@@ -75,10 +73,12 @@ namespace Services.Implementations
                     Level = "Error",
                     UserIP = _authenticationService.GetUserIP(),
                     UserName = currentUser.UserName,
-                    RenderedMessage = "User does not have permission to access [profile bio summary]",
-                    AdditionalData = $"User: {currentUser.UserName} with id: {currentUser.UserId} failed to access bio summary that is registered to user with id: {personalData.FacultyMemberId}.",
+                    RenderedMessage = "User unauthorized to update profile bio summary.",
+                    AdditionalData = $"User tried to update profile bio summary that does not belong to them. profile data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
                     ExceptionMessage = ex.Message,
-                    Timestamp = DateTime.Now
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					Timestamp = DateTime.Now
                 };
                 _logger.LogError("{@LogDetails}", ensureOwnershipLog);
                 #endregion
@@ -96,8 +96,8 @@ namespace Services.Implementations
             bioSummaryLog.Level = "Information";
             bioSummaryLog.UserIP = _authenticationService.GetUserIP();
             bioSummaryLog.UserName = currentUser.UserName;
-            bioSummaryLog.RenderedMessage = "User updated thier profile bio";
-            bioSummaryLog.AdditionalData = $"User: {currentUser.UserName} updated thier bio from: {oldBioSummary} to {personalData.BioSummary} successfully";
+            bioSummaryLog.RenderedMessage = "User updated thier profile bio summary.";
+            bioSummaryLog.AdditionalData = $"User updated thier bio from: {oldBioSummary} to {personalData.BioSummary} successfully";
             _logger.LogInformation("{@LogDetails}", bioSummaryLog);
             #endregion
             return bioSummaryDTO;
@@ -119,7 +119,7 @@ namespace Services.Implementations
 			{
 				#region Log
 				skillsLog.Timestamp = DateTime.Now;
-				skillsLog.RenderedMessage = $"Personal Data Not Found for User: {currentUser.UserName}";
+				skillsLog.RenderedMessage = $"Personal data not found for user: {currentUser.UserName}";
 				skillsLog.Level = "Warning";
 				skillsLog.UserIP = _authenticationService.GetUserIP();
 				skillsLog.UserName = currentUser.UserName;
@@ -143,9 +143,11 @@ namespace Services.Implementations
 					Level = "Error",
 					UserIP = _authenticationService.GetUserIP(),
 					UserName = currentUser.UserName,
-					RenderedMessage = "User does not have permission to access [profile skills]",
-					AdditionalData = $"User: {currentUser.UserName} with id: {currentUser.UserId} failed to access skill in profile that is registered to user with id: {personalData.FacultyMemberId}.",
+					RenderedMessage = "User unauthorized to update profile skills.",
+					AdditionalData = $"User tried to update profile skill that does not belong to them. profile data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
 					ExceptionMessage = ex.Message,
+                    Exception = ex.ToString(),
+                    ExceptionDetail = ex.StackTrace,  
 					Timestamp = DateTime.Now
 				};
 				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
@@ -171,7 +173,7 @@ namespace Services.Implementations
             skillsLog.UserIP = _authenticationService.GetUserIP();
             skillsLog.UserName = currentUser.UserName;
             skillsLog.RenderedMessage = "User updated thier profile skills";
-			skillsLog.AdditionalData = $"User: {currentUser.UserName} updated thier skills to {personalData.Skills} successfully";
+			skillsLog.AdditionalData = $"User updated thier profile skills to {personalData.Skills} successfully";
             _logger.LogInformation("{@LogDetails}", skillsLog);
 			#endregion
 			return skillsDTO;
@@ -303,12 +305,27 @@ namespace Services.Implementations
             #endregion
 
             var currentUser = await GetCurrentUserAsync();
+            var profileLog = new LogEntry
+			{
+				Category = Category.FacultyMemberService.ToString(),
+				CategoryAction = CategoryAction.ProfileDashboardData.ToString()
+			};
+			var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
-            var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
-
-            var personalData = await personalDataRepo.GetAsync(
-                new ProfilePageSpecification(currentUser.Email)
-            ) ?? throw new NotFoundException($"Personal data not found for {currentUser.Email}.");
+            var personalData = await personalDataRepo.GetAsync(new ProfilePageSpecification(currentUser.Email));
+			if (personalData is null)
+			{
+				#region Log
+				profileLog.Timestamp = DateTime.Now;
+				profileLog.RenderedMessage = $"Personal data not found for user: {currentUser.UserName}";
+				profileLog.Level = "Warning";
+				profileLog.UserIP = _authenticationService.GetUserIP();
+				profileLog.UserName = currentUser.UserName;
+				profileLog.AdditionalData = $"User tried to get their personal data, but no personal data was found in the database for user with email : {currentUser.Email}";
+				_logger.LogWarning("{@LogDetails}", profileLog);
+				#endregion
+				throw new NotFoundException($"Personal data not found.");
+			}
 
             var response = _mapper.Map<ProfileDashboardResponseDTO>(personalData);
             response.PersonalDataId = personalData.Id;
@@ -370,7 +387,16 @@ namespace Services.Implementations
                 })
                 .ToList();
 
-            return response;
+            #region Log
+            profileLog.Timestamp = DateTime.Now;
+			profileLog.Level = "Information";
+			profileLog.UserIP = _authenticationService.GetUserIP();
+			profileLog.UserName = currentUser.UserName;
+			profileLog.RenderedMessage = $"Profile dashboard retrieved for user: {currentUser.UserName}.";
+			profileLog.AdditionalData = $"User retrieved their profile dashboard data successfully.";
+			_logger.LogInformation("{@LogDetails}", profileLog);
+			#endregion
+			return response;
         }
     }
 }

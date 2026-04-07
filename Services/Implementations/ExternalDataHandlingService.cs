@@ -63,7 +63,7 @@ namespace Services.Implementations
 								Category = Category.ExternalDataHandling.ToString(),
 								CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 								Level = "Information",
-								AdditionalData = $"Processing Academic Qualification record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Specialization : {item.Specialization} - Qualification : {item.Qualification} - Dispatch : {item.Dispatch} - Grade : {item.Grade} - University/Faculty : {item.UniversityFaculty}]"
+								AdditionalData = $"Processing academic qualification record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Specialization : {item.Specialization} - Qualification : {item.Qualification} - Dispatch : {item.Dispatch} - Grade : {item.Grade} - University/Faculty : {item.UniversityFaculty}]"
 							};
 							_logger.LogInformation("{@LogDetails}", academicRecordLog);
 							#endregion
@@ -133,10 +133,7 @@ namespace Services.Implementations
 						{
 							var spec = new ContactDataWithExternalServiceSpecification(item);
 							if (await contactRepo.ExistsAsync(spec))
-							{
-								_logger.LogInformation("Contact data record already exists for faculty member with national number: {NationalNumber}. Skipping record.", item.NationalNumber);
 								return null!;
-							}
 
 							var dto = _mapper.Map<ContactDataCreateDTO>(item);
 							dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
@@ -149,7 +146,7 @@ namespace Services.Implementations
 								Category = Category.ExternalDataHandling.ToString(),
 								CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 								Level = "Information",
-								AdditionalData = $"Processing contact data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Phone Number : {item.MainPhoneNumber} - Email : {item.OfficialEmail}]"
+								AdditionalData = $"Processing contact data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Phone Number : {item.MainPhoneNumber} - Email : {item.OfficialEmail}]."
 							};
 							_logger.LogInformation("{@LogDetails}", contactRecordLog);
 							#endregion
@@ -165,17 +162,17 @@ namespace Services.Implementations
 					#region Log
 					contactDataLog.Level = "Error";
 					contactDataLog.Timestamp = DateTime.Now;
-					contactDataLog.RenderedMessage = $"Failed to process contact data records";
-					contactDataLog.AdditionalData = $"Failure during the processing of contact data records for faculty member with national number : {nationalNumber}";
-					contactDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database";
+					contactDataLog.RenderedMessage = $"Failed to process contact data records.";
+					contactDataLog.AdditionalData = $"Failure during the processing of contact data records for faculty member with national number : {nationalNumber}.";
+					contactDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database.";
 					_logger.LogError("{@LogDetails}", contactDataLog);
 					#endregion
 					return false;
 				}
 				#region Log
 				contactDataLog.Timestamp = DateTime.Now;
-				contactDataLog.AdditionalData = $"Contact data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<ContactDataFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}";
-				contactDataLog.RenderedMessage = $"Completed processing contact data records for faculty member";
+				contactDataLog.AdditionalData = $"Contact data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<ContactDataFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}.";
+				contactDataLog.RenderedMessage = $"Completed processing contact data records for faculty member.";
 				contactDataLog.Level = "Information";
 				_logger.LogInformation("{@LogDetails}", contactDataLog);
 				#endregion
@@ -220,10 +217,7 @@ namespace Services.Implementations
 						{
 							var spec = new JobRanksSpecifications(item);
 							if (await jobRanksRepo.ExistsAsync(spec))
-							{
-								_logger.LogInformation("Employment data record already exists for faculty member with national number: {NationalNumber}. Skipping record.", item.NationalNumber);
 								return null!;
-							}
 
 							var dto = _mapper.Map<JobRankCreateDto>(item);
 
@@ -238,7 +232,7 @@ namespace Services.Implementations
 								Category = Category.ExternalDataHandling.ToString(),
 								CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 								Level = "Information",
-								AdditionalData = $"Processing employment data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Job Rank : {item.Name} - Promotion Date : {item.PromotionDate}]"
+								AdditionalData = $"Processing employment data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Job Rank : {item.Name} - Promotion Date : {item.PromotionDate}]."
 							};
 							_logger.LogInformation("{@LogDetails}", employmentRecordLog);
 							#endregion
@@ -325,7 +319,7 @@ namespace Services.Implementations
 								Category = Category.ExternalDataHandling.ToString(),
 								CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 								Level = "Information",
-								AdditionalData = $"Processing managerial data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Adminstrative position : {item.Name} - Promotion(start) Date : {item.StartDate}]"
+								AdditionalData = $"Processing managerial data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Adminstrative position : {item.Name} - Promotion(start) Date : {item.StartDate}]."
 							};
 							_logger.LogInformation("{@LogDetails}", managerialDataLog);
 
@@ -340,9 +334,9 @@ namespace Services.Implementations
 				{
 					#region Log
 					managerialDataLog.Timestamp = DateTime.Now;
-					managerialDataLog.RenderedMessage = $"Failed to process managerial data records";
-					managerialDataLog.AdditionalData = $"Failure during the processing of managerial data records for faculty member with national number : {nationalNumber}";
-					managerialDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database";
+					managerialDataLog.RenderedMessage = $"Failed to process managerial data records.";
+					managerialDataLog.AdditionalData = $"Failure during the processing of managerial data records for faculty member with national number : {nationalNumber}.";
+					managerialDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database.";
 					managerialDataLog.Level = "Error";
 					_logger.LogError("{@LogDetails}", managerialDataLog);
 					#endregion
@@ -383,7 +377,6 @@ namespace Services.Implementations
 			};
 			string? nationalNumber = null;
 			var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
-
 			try
 			{
 				var flag = await BulkHelper.HandleAsync<
@@ -418,7 +411,7 @@ namespace Services.Implementations
 								Category = Category.ExternalDataHandling.ToString(),
 								CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 								Level = "Information",
-								AdditionalData = $"Processing personal data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Name : {item.Name} - Gender : {item.Gender} - Social Status : {item.SocialStatus} - Faculty Name : {item.FacultyName} - Department : {item.Department} - University : {item.University}]"
+								AdditionalData = $"Processing personal data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Name : {item.Name} - Gender : {item.Gender} - Social Status : {item.SocialStatus} - Faculty Name : {item.FacultyName} - Department : {item.Department} - University : {item.University}]."
 							};
 							_logger.LogInformation("{@LogDetails}", personalDataLog);
 							#endregion
@@ -432,9 +425,9 @@ namespace Services.Implementations
 				{
 					#region Log
 					personalDataLog.Timestamp = DateTime.Now;
-					personalDataLog.RenderedMessage = $"Failed to process personal data records";
-					personalDataLog.AdditionalData = $"Failure during the processing of personal data records for faculty member with national number : {nationalNumber}";
-					personalDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database";
+					personalDataLog.RenderedMessage = $"Failed to process personal data records.";
+					personalDataLog.AdditionalData = $"Failure during the processing of personal data records for faculty member with national number : {nationalNumber}.";
+					personalDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database.";
 					personalDataLog.Level = "Error";
 					_logger.LogError("{@LogDetails}", personalDataLog);
 					#endregion
@@ -442,8 +435,8 @@ namespace Services.Implementations
 				}
 				#region Log
 				personalDataLog.Timestamp = DateTime.Now;
-				personalDataLog.AdditionalData = $"Personal data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<JobRanksFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}";
-				personalDataLog.RenderedMessage = $"Completed processing personal data records for faculty member";
+				personalDataLog.AdditionalData = $"Personal data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<JobRanksFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}.";
+				personalDataLog.RenderedMessage = $"Completed processing personal data records for faculty member.";
 				personalDataLog.Level = "Information";
 				_logger.LogInformation("{@LogDetails}", personalDataLog);
 				#endregion
@@ -454,8 +447,8 @@ namespace Services.Implementations
 			{
 				#region Log
 				personalDataLog.Timestamp = DateTime.Now;
-				personalDataLog.RenderedMessage = $"Failed to process personal data records";
-				personalDataLog.AdditionalData = $"Failure during the processing of personal data records for faculty member with national number : {nationalNumber}";
+				personalDataLog.RenderedMessage = $"Failed to process personal data records.";
+				personalDataLog.AdditionalData = $"Failure during the processing of personal data records for faculty member with national number : {nationalNumber}.";
 				personalDataLog.ExceptionMessage = ex.Message;
 				personalDataLog.ExceptionDetail = ex.StackTrace;
 				personalDataLog.Exception = ex.ToString();
@@ -502,7 +495,7 @@ namespace Services.Implementations
 							Category = Category.ExternalDataHandling.ToString(),
 							CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 							Level = "Information",
-							AdditionalData = $"Processing scientific duty data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Scientific Mission : {item.Name} - Start Date : {item.StartDate} - End Date : {item.EndDate}]"
+							AdditionalData = $"Processing scientific duty data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Scientific Mission : {item.Name} - Start Date : {item.StartDate} - End Date : {item.EndDate}]."
 						};
 						_logger.LogInformation("{@LogDetails}", scientificDutyDataLog);
 						#endregion
@@ -516,9 +509,9 @@ namespace Services.Implementations
 				{
 					#region Log
 					scientificDutyDataLog.Timestamp = DateTime.Now;
-					scientificDutyDataLog.RenderedMessage = $"Failed to process scientific duty data records";
-					scientificDutyDataLog.AdditionalData = $"Failure during the processing of scientific duty data records for faculty member with national number : {nationalNumber}";
-					scientificDutyDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database";
+					scientificDutyDataLog.RenderedMessage = $"Failed to process scientific duty data records.";
+					scientificDutyDataLog.AdditionalData = $"Failure during the processing of scientific duty data records for faculty member with national number : {nationalNumber}.";
+					scientificDutyDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database.";
 					scientificDutyDataLog.Level = "Error";
 					_logger.LogError("{@LogDetails}", scientificDutyDataLog);
 					#endregion
@@ -526,8 +519,8 @@ namespace Services.Implementations
 				}
 				#region Log
 				scientificDutyDataLog.Timestamp = DateTime.Now;
-				scientificDutyDataLog.AdditionalData = $"Scientific duty data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<SceintificMissionsFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}";
-				scientificDutyDataLog.RenderedMessage = $"Completed processing scientific duty data records for faculty member";
+				scientificDutyDataLog.AdditionalData = $"Scientific duty data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<SceintificMissionsFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}.";
+				scientificDutyDataLog.RenderedMessage = $"Completed processing scientific duty data records for faculty member.";
 				scientificDutyDataLog.Level = "Information";
 				_logger.LogInformation("{@LogDetails}", scientificDutyDataLog);
 				#endregion
@@ -538,8 +531,8 @@ namespace Services.Implementations
 			{
 				#region Log
 				scientificDutyDataLog.Timestamp = DateTime.Now;
-				scientificDutyDataLog.RenderedMessage = $"Failed to process scientific duty data records";
-				scientificDutyDataLog.AdditionalData = $"Failure during the processing of scientific duty data records for faculty member with national number : {nationalNumber}";
+				scientificDutyDataLog.RenderedMessage = $"Failed to process scientific duty data records.";
+				scientificDutyDataLog.AdditionalData = $"Failure during the processing of scientific duty data records for faculty member with national number : {nationalNumber}.";
 				scientificDutyDataLog.ExceptionMessage = ex.Message;
 				scientificDutyDataLog.ExceptionDetail = ex.StackTrace;
 				scientificDutyDataLog.Exception = ex.ToString();
@@ -602,7 +595,7 @@ namespace Services.Implementations
 								Category = Category.ExternalDataHandling.ToString(),
 								CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 								Level = "Information",
-								AdditionalData = $"Processing thesis data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Thesis Title : {item.Title} - Grade : {item.Grade} - Type : {item.Type} - Number of Supervisors : {item.Supervisors?.Count}]"
+								AdditionalData = $"Processing thesis data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Thesis Title : {item.Title} - Grade : {item.Grade} - Type : {item.Type} - Number of Supervisors : {item.Supervisors?.Count}]."
 							};
 							_logger.LogInformation("{@LogDetails}", thesisDataLog);
 							#endregion
@@ -616,9 +609,9 @@ namespace Services.Implementations
 				{
 					#region Log
 					thesisDataLog.Timestamp = DateTime.Now;
-					thesisDataLog.RenderedMessage = $"Failed to process thesis data records";
-					thesisDataLog.AdditionalData = $"Failure during the processing of thesis data records for faculty member with national number : {nationalNumber}";
-					thesisDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database";
+					thesisDataLog.RenderedMessage = $"Failed to process thesis data records.";
+					thesisDataLog.AdditionalData = $"Failure during the processing of thesis data records for faculty member with national number : {nationalNumber}.";
+					thesisDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database.";
 					thesisDataLog.Level = "Error";
 					_logger.LogError("{@LogDetails}", thesisDataLog);
 					#endregion
@@ -626,8 +619,8 @@ namespace Services.Implementations
 				}
 				#region Log
 				thesisDataLog.Timestamp = DateTime.Now;
-				thesisDataLog.AdditionalData = $"Thesis data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<ThesesFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}";
-				thesisDataLog.RenderedMessage = $"Completed processing thesis data records for faculty member";
+				thesisDataLog.AdditionalData = $"Thesis data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<ThesesFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}.";
+				thesisDataLog.RenderedMessage = $"Completed processing thesis data records for faculty member.";
 				thesisDataLog.Level = "Information";
 				_logger.LogInformation("{@LogDetails}", thesisDataLog);
 				#endregion
@@ -638,8 +631,8 @@ namespace Services.Implementations
 			{
 				#region Log
 				thesisDataLog.Timestamp = DateTime.Now;
-				thesisDataLog.RenderedMessage = $"Failed to process thesis data records";
-				thesisDataLog.AdditionalData = $"Failure during the processing of thesis data records for faculty member with national number : {nationalNumber}";
+				thesisDataLog.RenderedMessage = $"Failed to process thesis data records.";
+				thesisDataLog.AdditionalData = $"Failure during the processing of thesis data records for faculty member with national number : {nationalNumber}.";
 				thesisDataLog.ExceptionMessage = ex.Message;
 				thesisDataLog.ExceptionDetail = ex.StackTrace;
 				thesisDataLog.Exception = ex.ToString();
@@ -663,48 +656,48 @@ namespace Services.Implementations
 			try
 			{
 				var flag = await BulkHelper.HandleAsync<
-			SupervisingsFetchingDTO,
-			SupervisingCreateDTO,
-			Supervising,
-			int
-			>(
-				json,
-				async item =>
-				{
-					var spec = new SupervisingsSepcifications(item);
-					if (await supervisingRepo.ExistsAsync(spec))
-						return null!;
-
-					var dto = _mapper.Map<SupervisingCreateDTO>(item);
-
-					dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
-					dto.GradeId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Grade);
-					#region Log
-					nationalNumber = item.NationalNumber;
-					var thesisSupervisingDataLog = new LogEntry
+				SupervisingsFetchingDTO,
+				SupervisingCreateDTO,
+				Supervising,
+				int
+				>(
+					json,
+					async item =>
 					{
-						Timestamp = DateTime.Now,
-						RenderedMessage = $"Processing thesis supervising data record for faculty member with national number: {item.NationalNumber}.",
-						Category = Category.ExternalDataHandling.ToString(),
-						CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
-						Level = "Information",
-						AdditionalData = $"Processing thesis supervising data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Thesis Title : {item.ThesisTitle} - Thesis Type : {item.ThesisType} - Role : {item.Role} - Student Name : {item.StudentName}]"
-					};
-					_logger.LogInformation("{@LogDetails}", thesisSupervisingDataLog);
-					#endregion
-					return dto;
-				},
-				_mapper,
-				_unitOfWork
-			);
+						var spec = new SupervisingsSepcifications(item);
+						if (await supervisingRepo.ExistsAsync(spec))
+							return null!;
+
+						var dto = _mapper.Map<SupervisingCreateDTO>(item);
+
+						dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
+						dto.GradeId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Grade);
+						#region Log
+						nationalNumber = item.NationalNumber;
+						var thesisSupervisingDataLog = new LogEntry
+						{
+							Timestamp = DateTime.Now,
+							RenderedMessage = $"Processing thesis supervising data record for faculty member with national number: {item.NationalNumber}.",
+							Category = Category.ExternalDataHandling.ToString(),
+							CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
+							Level = "Information",
+							AdditionalData = $"Processing thesis supervising data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Thesis Title : {item.ThesisTitle} - Thesis Type : {item.ThesisType} - Role : {item.Role} - Student Name : {item.StudentName}]."
+						};
+						_logger.LogInformation("{@LogDetails}", thesisSupervisingDataLog);
+						#endregion
+						return dto;
+					},
+					_mapper,
+					_unitOfWork
+				);
 				#region Log
 				if (!flag)
 				{
 					#region Log
 					thesisSupervisingDataLog.Timestamp = DateTime.Now;
-					thesisSupervisingDataLog.RenderedMessage = $"Failed to process thesis supervising data records";
-					thesisSupervisingDataLog.AdditionalData = $"Failure during the processing of thesis supervising data records for faculty member with national number : {nationalNumber}";
-					thesisSupervisingDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database";
+					thesisSupervisingDataLog.RenderedMessage = $"Failed to process thesis supervising data records.";
+					thesisSupervisingDataLog.AdditionalData = $"Failure during the processing of thesis supervising data records for faculty member with national number : {nationalNumber}.";
+					thesisSupervisingDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database.";
 					thesisSupervisingDataLog.Level = "Error";
 					_logger.LogError("{@LogDetails}", thesisSupervisingDataLog);
 					#endregion
@@ -712,8 +705,8 @@ namespace Services.Implementations
 				}
 				#region Log
 				thesisSupervisingDataLog.Timestamp = DateTime.Now;
-				thesisSupervisingDataLog.AdditionalData = $"Thesis supervising data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<SupervisingsFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}";
-				thesisSupervisingDataLog.RenderedMessage = $"Completed processing thesis supervising data records for faculty member";
+				thesisSupervisingDataLog.AdditionalData = $"Thesis supervising data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<SupervisingsFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}.";
+				thesisSupervisingDataLog.RenderedMessage = $"Completed processing thesis supervising data records for faculty member.";
 				thesisSupervisingDataLog.Level = "Information";
 				_logger.LogInformation("{@LogDetails}", thesisSupervisingDataLog);
 				#endregion
@@ -724,8 +717,8 @@ namespace Services.Implementations
 			{
 				#region Log
 				thesisSupervisingDataLog.Timestamp = DateTime.Now;
-				thesisSupervisingDataLog.RenderedMessage = $"Failed to process thesis supervising data records";
-				thesisSupervisingDataLog.AdditionalData = $"Failure during the processing of thesis supervising data records for faculty member with national number : {nationalNumber}";
+				thesisSupervisingDataLog.RenderedMessage = $"Failed to process thesis supervising data records.";
+				thesisSupervisingDataLog.AdditionalData = $"Failure during the processing of thesis supervising data records for faculty member with national number : {nationalNumber}.";
 				thesisSupervisingDataLog.ExceptionMessage = ex.Message;
 				thesisSupervisingDataLog.ExceptionDetail = ex.StackTrace;
 				thesisSupervisingDataLog.Exception = ex.ToString();
@@ -773,7 +766,7 @@ namespace Services.Implementations
 									Category = Category.ExternalDataHandling.ToString(),
 									CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 									Level = "Information",
-									AdditionalData = $"Processing training program data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Program Name : {item.Name} - Program Type : {item.ProgramType} - Participaction Type : {item.ParticipationType} - Organizer : {item.OrganizerName}]"
+									AdditionalData = $"Processing training program data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Program Name : {item.Name} - Program Type : {item.ProgramType} - Participaction Type : {item.ParticipationType} - Organizer : {item.OrganizerName}]."
 								};
 								_logger.LogInformation("{@LogDetails}", trainingProgramDataLog);
 								#endregion
@@ -787,9 +780,9 @@ namespace Services.Implementations
 				{
 					#region Log
 					trainingProgramDataLog.Timestamp = DateTime.Now;
-					trainingProgramDataLog.RenderedMessage = $"Failed to process training program data records";
-					trainingProgramDataLog.AdditionalData = $"Failure during the processing of training program data records for faculty member with national number : {nationalNumber}";
-					trainingProgramDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database";
+					trainingProgramDataLog.RenderedMessage = $"Failed to process training program data records.";
+					trainingProgramDataLog.AdditionalData = $"Failure during the processing of training program data records for faculty member with national number : {nationalNumber}.";
+					trainingProgramDataLog.ExceptionMessage = "Failure might be caused by: failed to save updates to database since 0 changes where applied to the database.";
 					trainingProgramDataLog.Level = "Error";
 					_logger.LogError("{@LogDetails}", trainingProgramDataLog);
 					#endregion
@@ -797,8 +790,8 @@ namespace Services.Implementations
 				}
 				#region Log
 				trainingProgramDataLog.Timestamp = DateTime.Now;
-				trainingProgramDataLog.AdditionalData = $"Training program data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<TrainingProgramsFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}";
-				trainingProgramDataLog.RenderedMessage = $"Completed processing training program data records for faculty member";
+				trainingProgramDataLog.AdditionalData = $"Training program data handling process completed successfully. Processed {JsonHelper.DeserializeListOrThrow<TrainingProgramsFetchingDTO>(json!).Count} records for faculty member with national number : {nationalNumber}.";
+				trainingProgramDataLog.RenderedMessage = $"Completed processing training program data records for faculty member.";
 				trainingProgramDataLog.Level = "Information";
 				_logger.LogInformation("{@LogDetails}", trainingProgramDataLog);
 				#endregion
@@ -809,8 +802,8 @@ namespace Services.Implementations
 			{
 				#region Log
 				trainingProgramDataLog.Timestamp = DateTime.Now;
-				trainingProgramDataLog.RenderedMessage = $"Failed to process training program data records";
-				trainingProgramDataLog.AdditionalData = $"Failure during the processing of training program data records for faculty member with national number : {nationalNumber}";
+				trainingProgramDataLog.RenderedMessage = $"Failed to process training program data records.";
+				trainingProgramDataLog.AdditionalData = $"Failure during the processing of training program data records for faculty member with national number : {nationalNumber}.";
 				trainingProgramDataLog.ExceptionMessage = ex.Message;
 				trainingProgramDataLog.ExceptionDetail = ex.StackTrace;
 				trainingProgramDataLog.Exception = ex.ToString();
@@ -827,10 +820,10 @@ namespace Services.Implementations
 			var interestsRepo = _unitOfWork.GetRepository<ScientificInterest, int>();
 			var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
 			var researchRepo = _unitOfWork.GetRepository<Research, int>();
-            var coAuthorsRepo = _unitOfWork.GetRepository<CoAuthor, int>();
-            var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
+			var coAuthorsRepo = _unitOfWork.GetRepository<CoAuthor, int>();
+			var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
-            var dto = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json!)
+			var dto = JsonSerializer.Deserialize<ResearcherDataFetchingDTO>(json!)
 					  ?? throw new Exception("Invalid JSON");
 
 			var facultyMember = await facultyMemberRepo.GetAsync(
@@ -860,9 +853,9 @@ namespace Services.Implementations
 
 			researcher!.ResearcherInterests = researcher.ResearcherInterests.EnsureList();
 			researcher.ResearcherCites = researcher.ResearcherCites.EnsureList();
-            researcher!.CoAuthors = researcher.CoAuthors.EnsureList();
+			researcher!.CoAuthors = researcher.CoAuthors.EnsureList();
 
-            var incomingInterestNames = (dto.Interests ?? new List<ExternalResearcherInterestsFetchingDTO>())
+			var incomingInterestNames = (dto.Interests ?? new List<ExternalResearcherInterestsFetchingDTO>())
 				.Select(x => x.Name?.Trim())
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.Distinct(StringComparer.OrdinalIgnoreCase)
@@ -966,15 +959,15 @@ namespace Services.Implementations
 						);
 
 					var probableFacultyMemberEntity = await personalDataRepo.GetAsync(new PersonalDataWithNameSpecification(cDto.MemberAcademicName));
-					if(probableFacultyMemberEntity is not null && probableFacultyMemberEntity.FacultyMemberId != facultyMember.Id)
+					if (probableFacultyMemberEntity is not null && probableFacultyMemberEntity.FacultyMemberId != facultyMember.Id)
 					{
-                        researchEntity.Contributions.Add(new ResearchContribution
-                        {
-                            Contributor = probableFacultyMemberEntity.FacultyMember,
-                            MemberAcademicName = cDto.MemberAcademicName,
-                            ContributorType = Domain.Enums.ContributorType.FromUniverstity
-                        });
-                    }
+						researchEntity.Contributions.Add(new ResearchContribution
+						{
+							Contributor = probableFacultyMemberEntity.FacultyMember,
+							MemberAcademicName = cDto.MemberAcademicName,
+							ContributorType = Domain.Enums.ContributorType.FromUniverstity
+						});
+					}
 
 					if (exists is not null) continue;
 
@@ -1010,9 +1003,9 @@ namespace Services.Implementations
 				}
 
 
-                
 
-                var incomingCites = rDto.Cites ?? new List<ExternalResearchCitesFetchingDTO>();
+
+				var incomingCites = rDto.Cites ?? new List<ExternalResearchCitesFetchingDTO>();
 
 				researchEntity.Cites.UpsertMany(
 					dtos: incomingCites,
@@ -1031,43 +1024,43 @@ namespace Services.Implementations
 				);
 			}
 
-            var incomingCoAuthorsProfiles = (dto.CoAuthors ?? new List<ResearcherCoAuthorFetchingDTO>());
-            var coAuthorsEntities = new List<CoAuthor>();
+			var incomingCoAuthorsProfiles = (dto.CoAuthors ?? new List<ResearcherCoAuthorFetchingDTO>());
+			var coAuthorsEntities = new List<CoAuthor>();
 
-            foreach (var profile in incomingCoAuthorsProfiles)
-            {
+			foreach (var profile in incomingCoAuthorsProfiles)
+			{
 				profile.ScholarProfileLink = $"https://scholar.google.com.eg/citations?hl=ar&user={profile.ScholarProfileLink}";
 				profile.ScholarProfileImageURL = $"https://scholar.googleusercontent.com/citations?view_op=view_photo&user={profile.ScholarProfileLink}&citpid=5";
-                
+
 				var coAuthor = await UpsertHelpers.GetOrCreateAsync(
-                    getter: async () => await coAuthorsRepo.GetAsync(new CoAuthorSpecification(profile.ScholarProfileLink)),
-                    factory: () =>
-                    {
-                        var created = _mapper.Map<CoAuthor>(profile);
-                        created.Researchers = created.Researchers.EnsureList();
-                        return created;
-                    });
+					getter: async () => await coAuthorsRepo.GetAsync(new CoAuthorSpecification(profile.ScholarProfileLink)),
+					factory: () =>
+					{
+						var created = _mapper.Map<CoAuthor>(profile);
+						created.Researchers = created.Researchers.EnsureList();
+						return created;
+					});
 
-                coAuthor.Researchers = coAuthor.Researchers.EnsureList();
-                coAuthorsEntities.Add(coAuthor);
-            }
+				coAuthor.Researchers = coAuthor.Researchers.EnsureList();
+				coAuthorsEntities.Add(coAuthor);
+			}
 
-            foreach (var coAuthor in coAuthorsEntities)
-            {
-                var alreadyLinked = researcher.CoAuthors.Any(ri =>
-                    ri.CoAuthor != null &&
-                    string.Equals(ri.CoAuthor.ScholarProfileLink, coAuthor.ScholarProfileLink)
-                );
+			foreach (var coAuthor in coAuthorsEntities)
+			{
+				var alreadyLinked = researcher.CoAuthors.Any(ri =>
+					ri.CoAuthor != null &&
+					string.Equals(ri.CoAuthor.ScholarProfileLink, coAuthor.ScholarProfileLink)
+				);
 
-                if (!alreadyLinked)
-                {
-                    var link = new ResearcherCoAuthor { Researcher = researcher, CoAuthor = coAuthor };
-                    researcher.CoAuthors.Add(link);
-                    coAuthor.Researchers!.Add(link);
-                }
-            }
+				if (!alreadyLinked)
+				{
+					var link = new ResearcherCoAuthor { Researcher = researcher, CoAuthor = coAuthor };
+					researcher.CoAuthors.Add(link);
+					coAuthor.Researchers!.Add(link);
+				}
+			}
 
-            researcher.FacultyMember = facultyMember;
+			researcher.FacultyMember = facultyMember;
 
 			if (isNewResearcher) await researchersRepo.AddAsync(researcher);
 			else researchersRepo.Update(researcher);

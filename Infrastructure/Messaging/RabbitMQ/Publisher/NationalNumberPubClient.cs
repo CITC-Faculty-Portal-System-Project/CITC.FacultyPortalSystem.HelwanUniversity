@@ -36,7 +36,7 @@ namespace Messaging.AsyncMessaging.Publisher
 				publisherLog.Timestamp = DateTime.Now;
 				publisherLog.Level = "Information";
 				publisherLog.RenderedMessage = $"Successfully connected to RabbitMQ at {DateTime.Now}";
-				publisherLog.AdditionalData = $"The National Number Publisher successfully established a connection to RabbitMQ. This client will be used to publish the entered national number during user registration into the system";
+				publisherLog.AdditionalData = $"The national number publisher successfully established a connection to RabbitMQ. This client will be used to publish the entered national number during user registration into the system";
 				_logger.LogInformation("{@LogDetails}", publisherLog);
 				#endregion
 			}
@@ -46,7 +46,7 @@ namespace Messaging.AsyncMessaging.Publisher
 				publisherLog.Timestamp = DateTime.Now;
 				publisherLog.Level = "Fatal";
 				publisherLog.RenderedMessage = $"Error connecting to RabbitMQ at {DateTime.Now}";
-				publisherLog.AdditionalData = $"The National Number Publisher failed to establish a connection to RabbitMQ. This client will not be able to publish the entered national number during user registration into the system.";
+				publisherLog.AdditionalData = $"The national number publisher failed to establish a connection to RabbitMQ. This client will not be able to publish the entered national number during user registration into the system.";
 				publisherLog.Exception = ex.ToString();
 				publisherLog.ExceptionMessage = ex.Message;
 				publisherLog.ExceptionDetail = ex.StackTrace;
@@ -54,7 +54,6 @@ namespace Messaging.AsyncMessaging.Publisher
 				#endregion
 				throw new InvalidOperationException("Failed to establish RabbitMQ connection for National Number Publisher.", ex);
 			}
-
 		}
 
 		public async Task PublishUserNationalNumberAsync(string nationalNumber)
@@ -94,7 +93,7 @@ namespace Messaging.AsyncMessaging.Publisher
 				publishMessageLog.Timestamp = DateTime.Now;
 				publishMessageLog.Level = "Information";
 				publishMessageLog.RenderedMessage = $"Published national number to RabbitMQ at {DateTime.Now}";
-				publishMessageLog.AdditionalData = $"The National Number Publisher successfully published the national number {nationalNumber} to Message Broker.";
+				publishMessageLog.AdditionalData = $"The national number publisher successfully published the national number {nationalNumber} to Message Broker.";
 				_logger.LogInformation("{@LogDetails}", publishMessageLog);
 				#endregion
 			}
