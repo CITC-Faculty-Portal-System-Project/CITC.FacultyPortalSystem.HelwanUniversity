@@ -109,9 +109,9 @@ namespace Services.Implementations.MessagingAndChattingModule
                 var dto = Mapper.Map<MessageResponseDTO>(m);
 
                 dto.Content = _messageEncryptionService.Decrypt(
-                    m.Ciphertext,
-                    m.Nonce,
-                    m.Tag,
+                    m.Ciphertext!,
+                    m.Nonce!,
+                    m.Tag!,
                     m.KeyVersion);
 
                 return dto;
@@ -145,9 +145,9 @@ namespace Services.Implementations.MessagingAndChattingModule
 
             var response = Mapper.Map<MessageResponseDTO>(message);
             response.Content = _messageEncryptionService.Decrypt(
-                    message.Ciphertext,
-                    message.Nonce,
-                    message.Tag,
+                    message.Ciphertext!,
+                    message.Nonce!,
+                    message.Tag!,
                     message.KeyVersion);
 
 
@@ -170,9 +170,9 @@ namespace Services.Implementations.MessagingAndChattingModule
 
             var response = Mapper.Map<MessageResponseDTO>(message);
             response.Content = _messageEncryptionService.Decrypt(
-                    message.Ciphertext,
-                    message.Nonce,
-                    message.Tag,
+                    message.Ciphertext!,
+                    message.Nonce!,
+                    message.Tag!,
                     message.KeyVersion);
 
 
