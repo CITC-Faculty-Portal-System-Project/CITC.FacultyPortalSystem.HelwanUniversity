@@ -7,17 +7,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.Contributio
 {
     public class ContributionsToUniversityVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config, bool isPublic = false)
         {
             var settings = config.ContributionsToUniversity;
 
-            if (!settings.ShowContributionsToUniversity)
+            if (!settings.ShowContributionsToUniversity && isPublic == false)
             {
                 response.ContributionsToUniversity.Clear();
                 return;
             }
 
-            if (!settings.ShowContributionTitle && !settings.ShowTypeOfContribution && !settings.ShowDateOfContribution)
+            if (!settings.ShowContributionTitle && !settings.ShowTypeOfContribution && !settings.ShowDateOfContribution && isPublic == false)
             {
                 response.ContributionsToUniversity.Clear();
                 return;
@@ -25,6 +25,15 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.Contributio
 
             foreach (var cics in response.ContributionsToUniversity ?? [])
             {
+                
+                if(isPublic == true)
+                {
+                    HideIfFalse(settings.ShowContributionTitleForPublic, () => cics.ContributionTitle = null!);
+                    HideIfFalse(settings.ShowDateOfContributionForPublic, () => cics.DateOfContribution = null!);
+                    HideIfFalse(settings.ShowTypeOfContributionForPublic, () => cics.TypeOfContribution = null!);
+
+                }
+
                 HideIfFalse(settings.ShowContributionTitle, () => cics.ContributionTitle = null!);
                 HideIfFalse(settings.ShowDateOfContribution, () => cics.DateOfContribution = null!);
                 HideIfFalse(settings.ShowTypeOfContribution, () => cics.TypeOfContribution = null!);

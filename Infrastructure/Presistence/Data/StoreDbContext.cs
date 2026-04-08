@@ -54,6 +54,7 @@ namespace Presistence.Data
         public DbSet<SocialMediaPlatforms> SocialMediaPlatforms { get; set; }
         public DbSet<FacultyMember> FacultyMembers { get; set; }
         public DbSet<CVVisibilitySettings> CVVisibilitySettings { get; set; }
+        public DbSet<SavedCVPreferences> SavedCVPreferences { get; set; }
         public DbSet<ProfilePictures> ProfilePictures { get; set; }
 
         #endregion

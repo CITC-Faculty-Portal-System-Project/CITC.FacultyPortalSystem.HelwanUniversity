@@ -5,6 +5,6 @@ namespace Services.Abstraction.Contracts.CVGenerationModule
 {
     public interface ICVSectionVisibilityFilter
     {
-        void Apply(CVResponseDTO response, CVVisibilityConfig config);
+        void Apply(CVResponseDTO response, CVVisibilityConfig config , bool isPublic = false);
     }
 }

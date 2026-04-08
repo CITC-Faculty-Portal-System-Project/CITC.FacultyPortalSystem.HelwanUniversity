@@ -7,17 +7,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAnd
 {
     public class ProjectsVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config, bool isPublic)
         {
             var settings = config.Projects;
 
-            if (!settings.ShowProjects)
+            if (!settings.ShowProjects && isPublic == false)
             {
                 response.Projects.Clear();
                 return;
             }
 
-            if (!settings.ShowNameOfProject && !settings.ShowTypeOfProject && !settings.ShowParticipationRole && !settings.ShowFinancingAuthority && !settings.ShowProjectStartDate && !settings.ShowProjectEndDate)
+            if (!settings.ShowNameOfProject && !settings.ShowTypeOfProject && !settings.ShowParticipationRole && !settings.ShowFinancingAuthority && !settings.ShowProjectStartDate && !settings.ShowProjectEndDate && isPublic == false)
             {
                 response.Projects.Clear();
                 return;
@@ -25,6 +25,19 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAnd
 
             foreach(var p in response.Projects ?? [])
             {
+                
+                if(isPublic == true)
+                {
+                    HideIfFalse(settings.ShowNameOfProjectForPublic, () => p.NameOfProject = null!);
+                    HideIfFalse(settings.ShowTypeOfProjectForPublic, () => p.TypeOfProject = null!);
+                    HideIfFalse(settings.ShowParticipationRoleForPublic, () => p.ParticipationRole = null!);
+                    HideIfFalse(settings.ShowFinancingAuthorityForPublic, () => p.FinancingAuthority = null!);
+                    HideIfFalse(settings.ShowProjectStartDateForPublic, () => p.StartDate = null!);
+                    HideIfFalse(settings.ShowProjectEndDateForPublic, () => p.EndDate = null!);
+
+
+                }
+
                 HideIfFalse(settings.ShowNameOfProject, () => p.NameOfProject = null!);
                 HideIfFalse(settings.ShowTypeOfProject, () => p.TypeOfProject = null!);
                 HideIfFalse(settings.ShowParticipationRole, () => p.ParticipationRole = null!);

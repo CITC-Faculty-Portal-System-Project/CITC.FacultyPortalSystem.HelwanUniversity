@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.CVGenerationModule;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Implementations.CVGenerationModule.Factories;
@@ -67,7 +68,7 @@ namespace Services.Implementations.CVGenerationModule
             return _mapper.Map<CVVisibilitySettingResponseDTO>(settings);
         }
 
-        private async Task<CVResponseDTO> BuildCVAsync(Guid facultyMemberId, string email)
+        private async Task<CVResponseDTO> BuildCVAsync(Guid facultyMemberId, string email , bool isPublic = false)
         {
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
@@ -77,14 +78,15 @@ namespace Services.Implementations.CVGenerationModule
 
             var cvVisibilityRepo = _unitOfWork.GetRepository<CVVisibilitySettings, Guid>();
 
-            var settings = await cvVisibilityRepo.GetAsync( new CVVisibilitySpecifications(facultyMemberId));
-
+            var settings = await cvVisibilityRepo.GetAsync(new CVVisibilitySpecifications(facultyMemberId));
+            
             if (settings == null)
             {
                 settings = new CVVisibilitySettings
                 {
                     FacultyMemberId = facultyMemberId,
-                    VisibilityJson = CVVisibilityHelper.Serialize(new CVVisibilityConfig())
+                    VisibilityJson = CVVisibilityHelper.Serialize(new CVVisibilityConfig()),
+                    isPublic = isPublic
                 };
 
                 await cvVisibilityRepo.AddAsync(settings);
@@ -214,7 +216,7 @@ namespace Services.Implementations.CVGenerationModule
 
             foreach (var filter in _visibilityFilters.OrderBy(f => f.GetType().Name))
             {
-                filter.Apply(response, config);
+                filter.Apply(response, config , isPublic);
             }
 
             return response;
@@ -234,21 +236,66 @@ namespace Services.Implementations.CVGenerationModule
             var faculty = await facultyRepo.GetAsync(new FacultyMemberWithIdSpecifications(id))
                 ?? throw new NotFoundException("User not found");
 
-            return await BuildCVAsync(faculty.Id, faculty.Email);
+            return await BuildCVAsync(faculty.Id, faculty.Email , true);
         }
 
         public async Task<byte[]> GenerateCVPdfAsync(string templateName)
         {
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+
             var cv = await GetCVAsync();
             var template = _cVTemplatesFactory.Resolve(templateName);
+
+            var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
+
+            var selectedTemplate = new SavedCVPreferences
+            {
+                FacultyMemberId = currentUser.UserId,
+                TemplateName = templateName,
+            };
+
+            await SavedCVPreferencesRepo.AddAsync(selectedTemplate);
+
+            await _unitOfWork.SaveChangesAsync();
+            
+
             return template.GeneratePdf(cv);
         }
 
         public async Task<string> PreviewCVAsync(string templateName)
         {
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+            
             var cv = await GetCVAsync();
             var template = _cVTemplatesFactory.Resolve(templateName);
+
+            var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
+
+            var selectedTemplate = new SavedCVPreferences
+            {
+                FacultyMemberId = currentUser.UserId,
+                TemplateName = templateName,
+            };
+
+            await SavedCVPreferencesRepo.AddAsync(selectedTemplate);
+
+            await _unitOfWork.SaveChangesAsync();
             return await template.GenerateHtml(cv);
+        }
+
+        public async Task<string> GetUserPrefferedTemplate(Guid? userId)
+        {
+            var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
+            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+            var targetId = userId?? currentUser.UserId;
+
+       
+            var template = await SavedCVPreferencesRepo.GetAsync(new CVPrefferedTemplateSpecification(targetId))
+               ??  throw new NotFoundException("Not Found");
+            
+            
+            return template.TemplateName;
+
         }
     }
 }

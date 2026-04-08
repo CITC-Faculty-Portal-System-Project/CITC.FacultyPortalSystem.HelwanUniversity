@@ -17,7 +17,15 @@ namespace Presentation.Controllers
         [ProducesResponseType(typeof(CVVisibilitySettingResponseDTO), StatusCodes.Status200OK)]
         [HttpPut("Manage-CV-Visibility")]
         public async Task<ActionResult<CVVisibilitySettingResponseDTO>> ManageVisibility(CVVisibilityConfig config)
+
             => Ok(await _serviceManager.CVGenerationService.ManageCVVisibilityAsync(config));
+
+
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [HttpGet("Get-Template")]
+        public async Task<ActionResult<CVVisibilitySettingResponseDTO>> GetUserTemplate(Guid? userId)
+
+         => Ok(await _serviceManager.CVGenerationService.GetUserPrefferedTemplate(userId));
 
         [HttpGet("Download-Pdf")]
         public async Task<IActionResult> DownloadPdf(string template = "modern")

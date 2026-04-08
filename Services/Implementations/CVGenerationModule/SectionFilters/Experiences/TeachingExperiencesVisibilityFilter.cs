@@ -7,17 +7,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.Experiences
 {
     public class TeachingExperiencesVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config, bool isPublic = false)
         {
             var settings = config.TeachingExperiences;
 
-            if (!settings.ShowTeachingExperiences)
+            if (!settings.ShowTeachingExperiences && isPublic == false)
             {
                 response.TeachingExperiences.Clear();
                 return;
             }
 
-            if(!settings.ShowCourseName && !settings.ShowAcademicLevel && !settings.ShowUniversityOrFaculty && !settings.ShowTeachingExperienceStartDate && !settings.ShowTeachingExperienceEndDate)
+            if(!settings.ShowCourseName && !settings.ShowAcademicLevel && !settings.ShowUniversityOrFaculty && !settings.ShowTeachingExperienceStartDate && !settings.ShowTeachingExperienceEndDate && isPublic == false)
             {
                 response.TeachingExperiences.Clear();
                 return;
@@ -25,6 +25,16 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.Experiences
 
             foreach(var te in response.TeachingExperiences ?? [])
             {
+               
+                if(isPublic == true)
+                {
+                    HideIfFalse(settings.ShowCourseNameForPublic, () => te.CourseName = null!);
+                    HideIfFalse(settings.ShowAcademicLevelForPublic, () => te.AcademicLevel = null!);
+                    HideIfFalse(settings.ShowUniversityOrFacultyForPublic, () => te.UniversityOrFaculty = null!);
+                    HideIfFalse(settings.ShowTeachingExperienceStartDateForPublic, () => te.StartDate = null);
+                    HideIfFalse(settings.ShowTeachingExperienceEndDateForPublic, () => te.EndDate = null);
+                }
+
                 HideIfFalse(settings.ShowCourseName, () => te.CourseName = null!);
                 HideIfFalse(settings.ShowAcademicLevel, () => te.AcademicLevel = null!);
                 HideIfFalse(settings.ShowUniversityOrFaculty, () => te.UniversityOrFaculty = null!);

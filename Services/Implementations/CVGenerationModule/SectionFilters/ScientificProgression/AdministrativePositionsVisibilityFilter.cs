@@ -7,17 +7,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ScientificP
 {
     public class AdministrativePositionsVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config , bool isPublic = false)
         {
             var settings = config.AdministrativePositions;
 
-            if (!settings.ShowAdministrativePositions)
+            if (!settings.ShowAdministrativePositions && isPublic == false)
             {
                 response.AdministrativePositions.Clear();
                 return;
             }
 
-            if (!settings.ShowPosition && !settings.ShowPositionStartDate && !settings.ShowPositionEndDate)
+            if (!settings.ShowPosition && !settings.ShowPositionStartDate && !settings.ShowPositionEndDate && isPublic == false)
             {
                 response.AdministrativePositions.Clear();
                 return;
@@ -25,6 +25,15 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ScientificP
 
             foreach(var ap in response.AdministrativePositions ?? [])
             {
+               
+                if(isPublic == true)
+                {
+                    HideIfFalse(settings.ShowPositionForPublic, () => ap.Position = null!);
+                    HideIfFalse(settings.ShowPositionStartDateForPublic, () => ap.StartDate = null!);
+                    HideIfFalse(settings.ShowPositionEndDateForPublic, () => ap.EndDate = null!);
+
+                }
+
                 HideIfFalse(settings.ShowPosition, () => ap.Position = null!);
                 HideIfFalse(settings.ShowPositionStartDate, () => ap.StartDate = null!);
                 HideIfFalse(settings.ShowPositionEndDate, () => ap.EndDate = null!);

@@ -10,5 +10,6 @@ namespace Services.Abstraction.Contracts.CVGenerationModule
         public Task<CVVisibilitySettingResponseDTO> ManageCVVisibilityAsync(CVVisibilityConfig config);
         public Task<byte[]> GenerateCVPdfAsync(string templateName);
         public Task<string> PreviewCVAsync(string templateName);
+        public Task<string> GetUserPrefferedTemplate(Guid? userId);
     }
 }

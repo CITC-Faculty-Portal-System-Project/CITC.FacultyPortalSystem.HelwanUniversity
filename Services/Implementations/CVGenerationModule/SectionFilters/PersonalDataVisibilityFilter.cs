@@ -7,11 +7,11 @@ namespace Services.Implementations.CVGenerationModule.DataFilters
 {
     public class PersonalDataVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config , bool isPublic = false)
         {
             var settings = config.PersonalData;
 
-            if (!settings.ShowPersonalData)
+            if (!settings.ShowPersonalData && isPublic == false)
             {
                 response.University = null;
                 response.Authority = null;
@@ -19,6 +19,25 @@ namespace Services.Implementations.CVGenerationModule.DataFilters
                 response.BirthDate = null;
                 //response.ProfilePictureId = null;
                 return;
+            }
+
+            if (!settings.ShowProfilePictureForPublic)
+            {
+                response.University = null;
+                response.Authority = null;
+                response.Department = null;
+                response.BirthDate = null;
+                //response.ProfilePictureId = null;
+                return;
+            }
+
+            if(isPublic == true)
+            {
+                HideIfFalse(settings.ShowUniversityForPublic, () => response.University = null);
+                HideIfFalse(settings.ShowAuthorityForPublic, () => response.Authority = null);
+                HideIfFalse(settings.ShowDepartmentForPublic, () => response.Department = null);
+                HideIfFalse(settings.ShowBirthDateForPublic, () => response.BirthDate = null);
+
             }
 
             HideIfFalse(settings.ShowUniversity, () => response.University = null);

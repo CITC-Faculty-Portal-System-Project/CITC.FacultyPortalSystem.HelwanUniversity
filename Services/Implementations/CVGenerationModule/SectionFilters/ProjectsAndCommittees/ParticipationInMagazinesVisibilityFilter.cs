@@ -7,17 +7,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAnd
 {
     public class ParticipationInMagazinesVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config , bool isPublic)
         {
             var settings = config.ParticipationInMagazines;
 
-            if (!settings.ShowParticipationInMagazines)
+            if (!settings.ShowParticipationInMagazines && isPublic == false)
             {
                 response.ParticipationInMagazines.Clear();
                 return;
             }
 
-            if (!settings.ShowNameOfMagazine && !settings.ShowWebsiteOfMagazine && !settings.ShowTypeOfParticipation)
+            if (!settings.ShowNameOfMagazine && !settings.ShowWebsiteOfMagazine && !settings.ShowTypeOfParticipation && isPublic == false)
             {
                 response.ParticipationInMagazines.Clear();
                 return;
@@ -25,6 +25,14 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAnd
 
             foreach(var pm in response.ParticipationInMagazines ?? [])
             {
+                
+                if(isPublic == true)
+                {
+                    HideIfFalse(settings.ShowNameOfMagazineForPublic, () => pm.NameOfMagazine = null!);
+                    HideIfFalse(settings.ShowWebsiteOfMagazineForPublic, () => pm.WebsiteOfMagazine = null!);
+                    HideIfFalse(settings.ShowTypeOfParticipationForPublic, () => pm.TypeOfParticipation = null!);
+                }
+
                 HideIfFalse(settings.ShowNameOfMagazine, () => pm.NameOfMagazine = null!);
                 HideIfFalse(settings.ShowWebsiteOfMagazine, () => pm.WebsiteOfMagazine = null!);
                 HideIfFalse(settings.ShowTypeOfParticipation, () => pm.TypeOfParticipation = null!);
