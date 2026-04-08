@@ -50,7 +50,7 @@ namespace Services.Implementations.MessagingAndChattingModule
             if (targetMessageReciever is null)
                 throw new NotFoundException("Desired Message Reciever Wasn't Found!");
 
-            if (request.Content is null)
+            if (request.Content == "")
             {
                 request.MessageType = Shared.Enums.MessagingAndChattingModule.MessageType.Attachment;
                 request.Content = "Attachment";

@@ -222,11 +222,11 @@ namespace Services.Implementations.CVGenerationModule
             return response;
         }
 
-        public async Task<CVResponseDTO> GetCVAsync()
+        public async Task<CVResponseDTO> GetCVAsync(bool isPublic = false)
         {
             var currentUser = await GetCurrentUserAsync();
 
-            return await BuildCVAsync(currentUser.UserId, currentUser.Email);
+            return await BuildCVAsync(currentUser.UserId, currentUser.Email , isPublic);
         }
 
         public async Task<CVResponseDTO> GetPublicCVAsync(Guid id)
@@ -239,11 +239,11 @@ namespace Services.Implementations.CVGenerationModule
             return await BuildCVAsync(faculty.Id, faculty.Email , true);
         }
 
-        public async Task<byte[]> GenerateCVPdfAsync(string templateName)
+        public async Task<byte[]> GenerateCVPdfAsync(string templateName , bool isPublic = false)
         {
             var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
 
-            var cv = await GetCVAsync();
+            var cv = await GetCVAsync(isPublic);
             var template = _cVTemplatesFactory.Resolve(templateName);
 
             var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
@@ -262,11 +262,11 @@ namespace Services.Implementations.CVGenerationModule
             return template.GeneratePdf(cv);
         }
 
-        public async Task<string> PreviewCVAsync(string templateName)
+        public async Task<string> PreviewCVAsync(string templateName , bool isPublic = false)
         {
             var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
             
-            var cv = await GetCVAsync();
+            var cv = await GetCVAsync(isPublic);
             var template = _cVTemplatesFactory.Resolve(templateName);
 
             var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();

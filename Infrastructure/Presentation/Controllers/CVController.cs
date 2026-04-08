@@ -28,16 +28,16 @@ namespace Presentation.Controllers
          => Ok(await _serviceManager.CVGenerationService.GetUserPrefferedTemplate(userId));
 
         [HttpGet("Download-Pdf")]
-        public async Task<IActionResult> DownloadPdf(string template = "modern")
+        public async Task<IActionResult> DownloadPdf(string template = "modern" , bool isPublic = false)
         {
-            var pdf = await _serviceManager.CVGenerationService.GenerateCVPdfAsync(template);
+            var pdf = await _serviceManager.CVGenerationService.GenerateCVPdfAsync(template , isPublic);
             return File(pdf, "application/pdf", "CV.pdf");
         }
 
         [HttpGet("Preview")]
-        public async Task<IActionResult> Preview(string template = "modern")
+        public async Task<IActionResult> Preview(string template = "modern", bool isPublic = false)
         {
-            var html = await _serviceManager.CVGenerationService.PreviewCVAsync(template);
+            var html = await _serviceManager.CVGenerationService.PreviewCVAsync(template , isPublic);
             return Content(html, "text/html");
         }
 
