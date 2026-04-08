@@ -144,7 +144,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-            services.AddHostedService<IdentitySeedHostedService>();
+            //services.AddHostedService<IdentitySeedHostedService>();
             services.AddAuthorization();
             return services;
         }

@@ -8,12 +8,13 @@ using ICIT.FacultyPortalSystem.API.Logger;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Presistence.Data;
+using Presistence.Identity.Seeding;
 
 namespace ICIT.FacultyPortalSystem.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             #region DI Container
             var builder = WebApplication.CreateBuilder(args);
@@ -41,16 +42,26 @@ namespace ICIT.FacultyPortalSystem.API
 			#endregion
 
 			var app = builder.Build();
+            
+            
+            await app.UseIdentityDatabaseInitializerAsync();
+
 
             using (var scope = app.Services.CreateScope())
             {
                 var systemdb = scope.ServiceProvider.GetRequiredService<StoreDbContext>();
                 systemdb.Database.Migrate();
 
-                var identitydb = scope.ServiceProvider.GetRequiredService<IdentityStoreDbContext>();
-                identitydb.Database.Migrate();
-            }
+                //    var identitydb = scope.ServiceProvider.GetRequiredService<IdentityStoreDbContext>();
+                //    identitydb.Database.Migrate();
 
+                await app.Services.SeedUserPermissionsAsync(
+                Guid.Parse("A9923638-8866-4A89-A9FE-9CF329CFC8F7"),
+                new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+
+                await app.Services.SeedRolePermissionsAsync();
+
+            }
 
             app.UseExceptionHandlingMiddlewares();
 
