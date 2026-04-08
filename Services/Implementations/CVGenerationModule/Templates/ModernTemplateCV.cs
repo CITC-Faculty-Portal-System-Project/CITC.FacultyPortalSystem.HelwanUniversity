@@ -38,32 +38,230 @@ namespace Services.Implementations.CVGenerationModule.Templates
     <link href='https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap' rel='stylesheet' />
     <style>
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-        body {{ font-family: 'Cairo', sans-serif; background: #f8fafc; padding: 20px; direction: rtl; }}
-        .cv-wrap {{ background: #fff; max-width: 960px; margin: 0 auto; box-shadow: 0 4px 32px rgba(25,53,90,0.1); border-radius: 8px; overflow: hidden; }}
-        .cv-header {{ background: #19355a; padding: 40px; color: #fff; }}
-        .cv-header .name {{ font-size: 2.2rem; font-weight: 800; margin-bottom: 4px; }}
-        .cv-header .job-title {{ color: #b38e19; font-weight: 600; font-size: 1.1rem; margin-bottom: 8px; }}
-        .cv-header .meta-row {{ display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.9rem; color: #cbd5e1; }}
-        .cv-header .meta-row span {{ display: inline-block; }}
-        .cv-header .meta-row .dot {{ opacity: 0.5; }}
-        .cv-body {{ display: flex; flex-wrap: wrap; }}
-        
-        /* السايد بار يمين والمحتوى الرئيسي يسار */
-        .cv-sidebar {{ flex: 0 0 32%; background: #f0f4f8; padding: 28px; border-left: 1px solid #e2e8f0; }}
-        .cv-main {{ flex: 1 1 60%; min-width: 280px; padding: 28px; }}
 
-        .section-title {{ border-right: 4px solid #b38e19; padding-right: 10px; margin: 22px 0 10px 0; }}
-        .section-title span {{ color: #19355a; font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; }}
-        .bio-text {{ font-size: 0.88rem; color: #374151; line-height: 1.7; margin-bottom: 14px; }}
-        .entry {{ border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px; font-size: 0.88rem; color: #1e293b; line-height: 1.6; }}
-        .entry-title {{ font-weight: 700; color: #19355a; margin-bottom: 2px; }}
-        .entry-meta {{ color: #64748b; font-size: 0.8rem; }}
-        .contact-row {{ font-size: 0.83rem; margin-bottom: 5px; }}
-        .contact-label {{ color: #64748b; font-weight: bold; }}
-        .skills-wrap {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }}
-        .skill-pill {{ display: inline-block; background: #fff; color: #19355a; border-radius: 9999px; padding: 2px 12px; font-size: 0.78rem; font-weight: 600; border: 1px solid #c9d8e8; }}
-        .social-row {{ font-size: 0.78rem; margin-bottom: 5px; word-break: break-all; }}
-        .social-label {{ color: #b38e19; font-weight: 700; }}
+body {{
+    font-family: 'Cairo', sans-serif;
+    background: #f8fafc;
+    padding: 20px;
+    direction: rtl;
+}}
+
+.cv-wrap {{
+    background: #fff;
+    max-width: 960px;
+    margin: 0 auto;
+    box-shadow: 0 4px 32px rgba(25,53,90,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}}
+
+/* ================= HEADER ================= */
+.cv-header {{
+    background: #19355a;
+    padding: 40px;
+    color: #fff;
+}}
+
+.cv-header .name {{
+    font-size: 2.2rem;
+    font-weight: 800;
+}}
+
+.cv-header .job-title {{
+    color: #b38e19;
+    font-weight: 600;
+    font-size: 1.1rem;
+}}
+
+.cv-header .meta-row {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+}}
+
+/* ================= BODY ================= */
+.cv-body {{
+    display: flex;
+    flex-wrap: wrap;
+}}
+
+/* sidebar */
+.cv-sidebar {{
+    flex: 0 0 32%;
+    background: #f0f4f8;
+    padding: 28px;
+    border-left: 1px solid #e2e8f0;
+}}
+
+/* main */
+.cv-main {{
+    flex: 1 1 60%;
+    min-width: 280px;
+    padding: 28px;
+}}
+
+/* ================= COMMON ================= */
+.section-title {{
+    border-right: 4px solid #b38e19;
+    padding-right: 10px;
+    margin: 22px 0 10px 0;
+}}
+
+.section-title span {{
+    color: #19355a;
+    font-weight: 700;
+    font-size: 0.95rem;
+}}
+
+.bio-text {{
+    font-size: 0.88rem;
+    color: #374151;
+    line-height: 1.7;
+}}
+
+.entry {{
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    font-size: 0.88rem;
+}}
+
+.entry-title {{
+    font-weight: 700;
+    color: #19355a;
+}}
+
+.entry-meta {{
+    color: #64748b;
+    font-size: 0.8rem;
+}}
+
+.contact-row {{
+    font-size: 0.83rem;
+}}
+
+.skills-wrap {{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}}
+
+.skill-pill {{
+    background: #fff;
+    color: #19355a;
+    border-radius: 9999px;
+    padding: 2px 12px;
+    font-size: 0.78rem;
+    border: 1px solid #c9d8e8;
+}}
+
+.social-row {{
+    font-size: 0.78rem;
+    word-break: break-all;
+}}
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablet */
+@media (max-width: 768px) {{
+    .cv-header {{
+        padding: 24px;
+    }}
+
+    .cv-header .name {{
+        font-size: 1.6rem;
+    }}
+
+    .cv-body {{
+        flex-direction: column;
+    }}
+
+    .cv-sidebar,
+    .cv-main {{
+        flex: 1 1 100%;
+        width: 100%;
+        padding: 20px;
+        border-left: none;
+    }}
+
+    .cv-sidebar {{
+        border-bottom: 1px solid #e2e8f0;
+    }}
+}}
+
+/* Mobile */
+@media (max-width: 480px) {{
+    body {{
+        padding: 10px;
+    }}
+
+    .cv-header {{
+        padding: 18px;
+    }}
+
+    .cv-header .name {{
+        font-size: 1.3rem;
+    }}
+
+    .cv-header .job-title {{
+        font-size: 0.9rem;
+    }}
+
+    .cv-header .meta-row {{
+        font-size: 0.75rem;
+    }}
+
+    .cv-sidebar,
+    .cv-main {{
+        padding: 14px;
+    }}
+
+    .section-title span {{
+        font-size: 0.8rem;
+    }}
+
+    .bio-text,
+    .entry,
+    .contact-row {{
+        font-size: 0.75rem;
+    }}
+
+    .entry-meta {{
+        font-size: 0.7rem;
+    }}
+
+    .skill-pill {{
+        font-size: 0.65rem;
+        padding: 2px 8px;
+    }}
+}}
+
+/* Very small screens */
+@media (max-width: 360px) {{
+    .cv-header .name {{
+        font-size: 1.1rem;
+    }}
+
+    .cv-header {{
+        padding: 14px;
+    }}
+
+    .cv-sidebar,
+    .cv-main {{
+        padding: 10px;
+    }}
+
+    .section-title {{
+        margin: 16px 0 8px;
+    }}
+
+    .skill-pill {{
+        font-size: 0.6rem;
+        padding: 2px 6px;
+    }}
+}}
     </style>
 </head>
 <body>

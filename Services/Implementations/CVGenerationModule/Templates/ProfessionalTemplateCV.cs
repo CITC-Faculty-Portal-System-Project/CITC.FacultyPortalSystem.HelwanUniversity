@@ -49,26 +49,206 @@ namespace Services.Implementations.CVGenerationModule.Templates
 <html dir='rtl' lang='ar'>
 <head>
     <meta charset='UTF-8' /><style>
-    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ font-family: 'Cairo', sans-serif; background: #f8fafc; padding: 20px; direction: rtl; }}
-    .cv-wrap {{ background: #fff; max-width: 980px; margin: 0 auto; display: flex; box-shadow: 0 4px 32px rgba(25, 53, 90, 0.12); border-radius: 8px; overflow: hidden; min-height: 800px; }}
-    .cv-sidebar {{ background: #19355a; flex: 0 0 260px; padding: 36px 22px; display: flex; flex-direction: column; }}
-    .avatar {{ width: 80px; height: 80px; border-radius: 50%; background: rgba(179, 142, 25, 0.3); border: 3px solid #b38e19; margin: 0 auto 18px auto; display: flex; align-items: center; justify-content: center; }}
-    .avatar-initial {{ color: #b38e19; font-weight: 900; font-size: 1.8rem; }}
-    .avatar-img {{width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }}
-    .sidebar-name {{ color: #fff; font-weight: 800; font-size: 1.1rem; text-align: center; margin-bottom: 4px; }}
-    .sidebar-title {{ color: #b38e19; font-weight: 600; font-size: 0.82rem; text-align: center; margin-bottom: 22px; }}
-    .sb-section {{ margin-bottom: 22px; }}
-    .sb-section-title {{ color: #b38e19; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; border-bottom: 1px solid rgba(255, 255, 255, 0.15); padding-bottom: 5px; margin-bottom: 10px; }}
-    .sb-text {{ color: #cbd5e1; font-size: 0.78rem; margin-bottom: 4px; word-break: break-word; line-height: 1.5; }}
-    .sb-skill {{ display: inline-block; background: rgba(179, 142, 25, 0.18); color: #b38e19; border-radius: 99px; padding: 2px 10px; font-size: 0.68rem; font-weight: 600; border: 1px solid rgba(179, 142, 25, 0.5); margin: 2px; }}
-    .cv-main {{ flex: 1; padding: 36px; }}
-    .affiliation-box {{ background: #f0f4f8; border-radius: 6px; padding: 12px 16px; margin-bottom: 18px; font-size: 0.85rem; color: #334155; }}
-    .section-title {{ color: #19355a; font-weight: 800; font-size: 0.88rem; text-transform: uppercase; margin-top: 24px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 2px solid #19355a; }}
-    .entry-item {{ margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }}
-    .e-title {{ font-weight: 700; font-size: 0.9rem; color: #1e293b; }}
-    .e-meta {{ color: #64748b; font-size: 0.78rem; }}
-    </style>
+    ✅ النسخة Responsive
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+body {{
+    font-family: 'Cairo', sans-serif;
+    background: #f8fafc;
+    padding: 20px;
+    direction: rtl;
+}}
+
+.cv-wrap {{
+    background: #fff;
+    max-width: 980px;
+    margin: 0 auto;
+    display: flex;
+    box-shadow: 0 4px 32px rgba(25, 53, 90, 0.12);
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 800px;
+}}
+
+/* ================= SIDEBAR ================= */
+.cv-sidebar {{
+    background: #19355a;
+    flex: 0 0 260px;
+    padding: 36px 22px;
+    display: flex;
+    flex-direction: column;
+}}
+
+.avatar {{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(179, 142, 25, 0.3);
+    border: 3px solid #b38e19;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}}
+
+.avatar-img {{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}}
+
+.avatar-initial {{
+    color: #b38e19;
+    font-weight: 900;
+    font-size: 1.8rem;
+}}
+
+.sidebar-name {{
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.1rem;
+    text-align: center;
+}}
+
+.sidebar-title {{
+    color: #b38e19;
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-align: center;
+    margin-bottom: 22px;
+}}
+
+/* ================= MAIN ================= */
+.cv-main {{
+    flex: 1;
+    padding: 36px;
+}}
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablet */
+@media (max-width: 768px) {{
+    .cv-sidebar {{
+        flex: 0 0 200px; /* تصغير السايدبار */
+        padding: 24px 16px;
+    }}
+
+    .cv-main {{
+        padding: 24px;
+    }}
+
+    .avatar {{
+        width: 65px;
+        height: 65px;
+    }}
+
+    .sidebar-name {{
+        font-size: 1rem;
+    }}
+}}
+
+/* Mobile */
+@media (max-width: 480px) {{
+    body {{
+        padding: 10px;
+    }}
+
+    .cv-wrap {{
+        flex-direction: column; /* أهم حاجة */
+        min-height: auto;
+    }}
+
+    .cv-sidebar {{
+        flex: 1 1 100%;
+        width: 100%;
+        padding: 20px 14px;
+        align-items: center;
+        text-align: center;
+    }}
+
+    .cv-main {{
+        padding: 16px;
+    }}
+
+    .avatar {{
+        width: 60px;
+        height: 60px;
+    }}
+
+    .avatar-initial {{
+        font-size: 1.4rem;
+    }}
+
+    .sidebar-name {{
+        font-size: 0.95rem;
+    }}
+
+    .sidebar-title {{
+        font-size: 0.75rem;
+    }}
+
+    .sb-text {{
+        font-size: 0.72rem;
+    }}
+
+    .sb-skill {{
+        font-size: 0.6rem;
+        padding: 2px 6px;
+    }}
+
+    .section-title {{
+        font-size: 0.8rem;
+    }}
+
+    .e-title {{
+        font-size: 0.8rem;
+    }}
+
+    .e-meta {{
+        font-size: 0.7rem;
+    }}
+}}
+
+/* Very small screens */
+@media (max-width: 360px) {{
+    .cv-sidebar {{
+        padding: 14px 10px;
+    }}
+
+    .cv-main {{
+        padding: 12px;
+    }}
+
+    .avatar {{
+        width: 50px;
+        height: 50px;
+    }}
+
+    .avatar-initial {{
+        font-size: 1.2rem;
+    }}
+
+    .sidebar-name {{
+        font-size: 0.85rem;
+    }}
+
+    .sidebar-title {{
+        font-size: 0.7rem;
+    }}
+
+    .sb-text {{
+        font-size: 0.68rem;
+    }}
+
+    .sb-skill {{
+        font-size: 0.55rem;
+    }}
+
+    .section-title {{
+        font-size: 0.75rem;
+    }}
+}}    </style>
 </head>
 <body>
     <div class='cv-wrap'>

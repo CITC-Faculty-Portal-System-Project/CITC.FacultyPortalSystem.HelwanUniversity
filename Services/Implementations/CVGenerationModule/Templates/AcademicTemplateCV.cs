@@ -32,32 +32,222 @@ namespace Services.Implementations.CVGenerationModule.Templates
 <html dir='rtl' lang='ar'>
 <head>
     <meta charset='UTF-8' /><style>
-    * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ font-family: 'Cairo', sans-serif; background: #f8fafc; padding: 20px; direction: rtl; }}
-    .cv-wrap {{ background: #fff; max-width: 900px; margin: 0 auto; box-shadow: 0 4px 32px rgba(25,53,90,0.1); border-radius: 8px; overflow: hidden; }}
-    .top-bar {{ height: 10px; background: #b38e19; }}
-    .cv-header {{ display: flex; flex-wrap: wrap; background: #19355a; }}
-    .header-left {{ flex: 1 1 55%; padding: 36px; border-left: 1px solid rgba(255, 255, 255, 0.15); }}
-    .header-right {{ flex: 0 1 42%; padding: 36px; display: flex; flex-direction: column; justify-content: center; gap: 8px; }}
-    .cv-header .name {{ font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 6px; }}
-    .cv-header .job-title {{ color: #b38e19; font-weight: 600; font-size: 1.05rem; margin-bottom: 8px; }}
-    .cv-header .bio-short {{ color: #cbd5e1; font-size: 0.84rem; line-height: 1.6; }}
-    .meta-field {{ color: #e2e8f0; font-size: 0.87rem; }}
-    .meta-field .label {{ color: #b38e19; font-weight: 700; }}
-    .contact-small {{ color: #e2e8f0; font-size: 0.84rem; }}
-    .header-skills {{ display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }}
-    .header-skill-pill {{ background: rgba(179, 142, 25, 0.2); color: #b38e19; border-radius: 99px; padding: 2px 10px; font-size: 0.72rem; font-weight: 600; border: 1px solid #b38e19; }}
-    .cv-body {{ padding: 28px; background: #fdf8ec; }}
-    .section-title {{ display: flex; align-items: center; gap: 8px; margin-top: 24px; margin-bottom: 14px; }}
-    .section-title .bar {{ width: 32px; height: 3px; background: #b38e19; flex-shrink: 0; }}
-    .section-title .line {{ flex: 1; height: 1px; background: #e2e8f0; }}
-    .section-title span {{ color: #19355a; font-weight: 800; font-size: 0.9rem; }}
-    .entry-card {{ background: #f8fafc; border: 1px solid #e2e8f0; border-right: 3px solid #b38e19; border-radius: 6px; padding: 14px; margin-bottom: 10px; }}
-    .entry-title {{ font-weight: 700; color: #19355a; font-size: 0.92rem; margin-bottom: 4px; }}
-    .table-row {{ display: flex; gap: 14px; font-size: 0.84rem; padding: 4px 0; border-bottom: 1px solid #e2e8f0; }}
-    .table-row .t-label {{ color: #b38e19; font-weight: 700; min-width: 110px; flex-shrink: 0; }}
-    .table-row .t-value {{ color: #1e293b; line-height: 1.5; }}
-    .birthdate-small {{color: #e2e8f0; font-size: 0.8rem; margin-top: 4px;}}
+✅ النسخة الـ Responsive
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+body {{
+    font-family: 'Cairo', sans-serif;
+    background: #f8fafc;
+    padding: 20px;
+    direction: rtl;
+}}
+
+.cv-wrap {{
+    background: #fff;
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: 0 4px 32px rgba(25,53,90,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}}
+
+.top-bar {{ height: 10px; background: #b38e19; }}
+
+/* ================= HEADER ================= */
+.cv-header {{
+    display: flex;
+    flex-wrap: wrap;
+    background: #19355a;
+}}
+
+.header-left {{
+    flex: 1 1 55%;
+    padding: 36px;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+}}
+
+.header-right {{
+    flex: 0 1 42%;
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+}}
+
+.cv-header .name {{
+    font-size: 2rem;
+    font-weight: 900;
+    color: #fff;
+}}
+
+.cv-header .job-title {{
+    color: #b38e19;
+    font-weight: 600;
+    font-size: 1.05rem;
+}}
+
+.cv-header .bio-short {{
+    color: #cbd5e1;
+    font-size: 0.84rem;
+    line-height: 1.6;
+}}
+
+/* ================= BODY ================= */
+.cv-body {{
+    padding: 28px;
+    background: #fdf8ec;
+}}
+
+.section-title {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+    margin-bottom: 14px;
+}}
+
+.section-title .bar {{
+    width: 32px;
+    height: 3px;
+    background: #b38e19;
+}}
+
+.section-title .line {{
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}}
+
+.section-title span {{
+    color: #19355a;
+    font-weight: 800;
+    font-size: 0.9rem;
+}}
+
+.entry-card {{
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-right: 3px solid #b38e19;
+    border-radius: 6px;
+    padding: 14px;
+    margin-bottom: 10px;
+}}
+
+/* ================= TABLE ================= */
+.table-row {{
+    display: flex;
+    gap: 14px;
+    font-size: 0.84rem;
+    padding: 4px 0;
+    border-bottom: 1px solid #e2e8f0;
+}}
+
+.table-row .t-label {{
+    color: #b38e19;
+    font-weight: 700;
+    min-width: 110px;
+}}
+
+.table-row .t-value {{
+    color: #1e293b;
+    line-height: 1.5;
+}}
+
+/* ================= RESPONSIVE ================= */
+
+/* Tablets */
+@media (max-width: 768px) {{
+    .cv-header {{
+        flex-direction: column;
+    }}
+
+    .header-left,
+    .header-right {{
+        flex: 1 1 100%;
+        padding: 20px;
+        border: none;
+    }}
+
+    .cv-header .name {{
+        font-size: 1.6rem;
+    }}
+
+    .cv-body {{
+        padding: 20px;
+    }}
+}}
+
+/* Small phones */
+@media (max-width: 480px) {{
+    body {{
+        padding: 10px;
+    }}
+
+    .cv-header .name {{
+        font-size: 1.3rem;
+    }}
+
+    .cv-header .job-title {{
+        font-size: 0.9rem;
+    }}
+
+    .cv-header .bio-short {{
+        font-size: 0.75rem;
+    }}
+
+    .meta-field,
+    .contact-small {{
+        font-size: 0.75rem;
+    }}
+
+    .header-skill-pill {{
+        font-size: 0.65rem;
+        padding: 2px 6px;
+    }}
+
+    .section-title span {{
+        font-size: 0.8rem;
+    }}
+
+    .entry-title {{
+        font-size: 0.85rem;
+    }}
+
+    .table-row {{
+        flex-direction: column;
+        gap: 2px;
+    }}
+
+    .table-row .t-label {{
+        min-width: auto;
+        font-size: 0.75rem;
+    }}
+
+    .table-row .t-value {{
+        font-size: 0.75rem;
+    }}
+}}
+
+/* Very small screens (old phones) */
+@media (max-width: 360px) {{
+    .cv-header .name {{
+        font-size: 1.1rem;
+    }}
+
+    .cv-body {{
+        padding: 14px;
+    }}
+
+    .header-left,
+    .header-right {{
+        padding: 14px;
+    }}
+
+    .entry-card {{
+        padding: 10px;
+    }}
+}}
     </style>
 </head>
 <body>
