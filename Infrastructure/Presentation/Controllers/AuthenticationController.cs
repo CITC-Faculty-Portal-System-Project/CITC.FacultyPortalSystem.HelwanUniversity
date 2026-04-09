@@ -18,7 +18,7 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(UserResultDto), StatusCodes.Status200OK)]
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> LoginAsync(LoginDto loginDto)
+        public async Task<ActionResult<string>> LoginAsync([FromBody]LoginDto loginDto)
         {
             var result = await _serviceManager.AuthenticationService.LoginAsync(loginDto);
             var cookieOptions = new CookieOptions

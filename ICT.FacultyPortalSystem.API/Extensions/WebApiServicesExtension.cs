@@ -26,6 +26,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                            .WithOrigins(
                         "http://localhost:3000",
                         "http://localhost",
+                        "http://localhost/",
                         "http://127.0.0.1",
                         "http://localhost:80",
                         "http://127.0.0.1:3000"
