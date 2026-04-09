@@ -84,14 +84,16 @@ namespace Services.Implementations.TicketingModule
                 ?? throw NotFound();
 
 
-            if (!await CanAssignAdminToTicketAsync(assignment!.AssignedToId!.Value, ticketEntity.Type))
+            if (!await CanAssignAdminToTicketAsync(assignment!.AssignedToId, ticketEntity.Type))
                 throw new ForbiddenException
                     ("Can't Assign This Ticket to this Admin As he/She don't have the required permissions");
 
             assignment.AssignedById = currrentUser.UserId;
             assignment.AssignedByUsername = currrentUser.UserName;
+           
 
             ticketEntity.Status = (Domain.Enums.TicketStatus)TicketStatus.InProgress;
+            ticketEntity.Priority = (Domain.Enums.TicketPriority)assignment.Priority;
 
             Mapper.Map(assignment , ticketEntity);
             Repo.Update(ticketEntity);
@@ -108,6 +110,7 @@ namespace Services.Implementations.TicketingModule
 
             var ticketEntity = Mapper.Map<Ticket>(ticket);
             ticketEntity.Status = (Domain.Enums.TicketStatus)TicketStatus.Opened;
+            ticketEntity.Priority = (Domain.Enums.TicketPriority)TicketPriority.Unspecified;
             
             await Repo.AddAsync(ticketEntity);
             await UnitOfWork.SaveChangesAsync();

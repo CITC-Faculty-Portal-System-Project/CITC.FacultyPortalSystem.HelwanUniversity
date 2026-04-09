@@ -7,17 +7,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAnd
 {
     public class CommitteesAndAssociationsVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config, bool isPublic = false)
         {
             var settings = config.CommitteesAndAssociations;
 
-            if (!settings.ShowCommitteesAndAssociations)
+            if (!settings.ShowCommitteesAndAssociations && isPublic == false)
             {
                 response.CommitteesAndAssociations.Clear();
                 return;
             }
 
-            if (!settings.ShowNameOfCommitteeOrAssociation && !settings.ShowTypeOfCommitteeOrAssociation && !settings.ShowDegreeOfSubscription && !settings.ShowCommitteesAndAssociationsStartDate && !settings.ShowCommitteesAndAssociationsEndDate)
+            if (!settings.ShowNameOfCommitteeOrAssociation && !settings.ShowTypeOfCommitteeOrAssociation && !settings.ShowDegreeOfSubscription && !settings.ShowCommitteesAndAssociationsStartDate && !settings.ShowCommitteesAndAssociationsEndDate && isPublic == false)
             {
                 response.CommitteesAndAssociations.Clear();
                 return;
@@ -25,6 +25,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAnd
 
             foreach(var ca in response.CommitteesAndAssociations ?? [])
             {
+                
+                
+                if(isPublic == true)
+                {
+                    HideIfFalse(settings.ShowNameOfCommitteeOrAssociationForPublic, () => ca.NameOfCommitteeOrAssociation = null!);
+                    HideIfFalse(settings.ShowTypeOfCommitteeOrAssociationForPublic, () => ca.TypeOfCommitteeOrAssociation = null!);
+                    HideIfFalse(settings.ShowDegreeOfSubscriptionForPublic, () => ca.DegreeOfSubscription = null!);
+                    HideIfFalse(settings.ShowCommitteesAndAssociationsStartDateForPublic, () => ca.StartDate = null);
+                    HideIfFalse(settings.ShowCommitteesAndAssociationsEndDateForPublic, () => ca.EndDate = null);
+                }
+
                 HideIfFalse(settings.ShowNameOfCommitteeOrAssociation, () => ca.NameOfCommitteeOrAssociation = null!);
                 HideIfFalse(settings.ShowTypeOfCommitteeOrAssociation, () => ca.TypeOfCommitteeOrAssociation = null!);
                 HideIfFalse(settings.ShowDegreeOfSubscription, () => ca.DegreeOfSubscription = null!);

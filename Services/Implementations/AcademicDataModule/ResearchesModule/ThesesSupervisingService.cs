@@ -17,29 +17,6 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
     {
         protected override string EntityName => "Theses Supervising";
 
-        public async Task<SupervisingThsesResponseDTO> AcceptRecommendedThesesSupervison(
-            int thesisId,
-            Guid? facultyMemberId = null)
-        {
-            var currentUser = await GetCurrentUserAsync();
-            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
-
-            var thesisSupervisingEntity = await Repo.GetAsync(
-                new RecommendedThesesSupervisionSpecifications(thesisId, targetFacultyMemberId))
-                ?? throw NotFound();
-
-            await EnsureOwnershipIfClientAsync(
-                thesisSupervisingEntity.FacultyMemberId,
-                facultyMemberId?.ToString());
-
-            thesisSupervisingEntity.isConfirmed = true;
-
-            Repo.Update(thesisSupervisingEntity);
-            await SaveChangesAsync();
-
-            return Mapper.Map<SupervisingThsesResponseDTO>(thesisSupervisingEntity);
-        }
-
         public async Task<SupervisingThesesAddDTO> AddThesesSupervising(
             SupervisingThesesAddDTO thesesDTO,
             Guid? facultyMemberId = null)
@@ -83,29 +60,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             await SaveChangesAsync();
         }
 
-        public async Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllRecommendedThesesSupervisons(
-            ThesesSupervisingSpecificationParameters parameters,
-            Guid? facultyMemberId = null)
-        {
-            var currentUser = await GetCurrentUserAsync();
-            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
-
-            var thesesEntities = await Repo.GetAllAsync(
-                new RecommendedThesesSupervisionSpecifications(parameters, targetFacultyMemberId))
-                ?? throw NotFound();
-
-            var totalCount = await Repo.CountAsync(
-                new RecommendedThesesSupervisionCountSpecifications(parameters, targetFacultyMemberId));
-
-            var mapped = Mapper.Map<IEnumerable<SupervisingThsesResponseDTO>>(thesesEntities);
-
-            return new PaginatedResult<SupervisingThsesResponseDTO>(
-                parameters.PageIndex,
-                mapped.Count(),
-                totalCount,
-                mapped);
-        }
-
+       
         public async Task<PaginatedResult<SupervisingThsesResponseDTO>> GetAllSupervisings(
             ThesesSupervisingSpecificationParameters supervisingSpecificationParameters,
             Guid? facultyMemberId = null)
@@ -162,35 +117,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             return Mapper.Map<SupervisingThsesResponseDTO>(thesesEntity);
         }
 
-        public async Task RejectRecommendedThesesSupervison(
-            int thesisId,
-            Guid? facultyMemberId = null)
-        {
-            var currentUser = await GetCurrentUserAsync();
-            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
-
-            var supervisingEntity = await Repo.GetAsync(
-                new RecommendedThesesSupervisionSpecifications(thesisId, targetFacultyMemberId))
-                ?? throw NotFound();
-
-            await EnsureOwnershipIfClientAsync(
-                supervisingEntity.FacultyMemberId,
-                facultyMemberId?.ToString());
-
-            supervisingEntity.IsDeleted = true;
-            supervisingEntity.DeletedAt = DateTime.UtcNow;
-            supervisingEntity.DeletedBy = currentUser.UserName;
-
-            var committeeMember = supervisingEntity.Thesis?.ComitteeMembers?
-                .SingleOrDefault(cm => cm.MemberId == targetFacultyMemberId);
-
-            if (committeeMember is not null)
-                committeeMember.IsDeleted = true;
-
-            Repo.Update(supervisingEntity);
-            await SaveChangesAsync();
-        }
-
+        
         public async Task<SupervisingThsesResponseDTO> UpdateThesesSupervising(
             int id,
             SupervisingThesesUpdateDTO supervisingThesesUpdateDTO,

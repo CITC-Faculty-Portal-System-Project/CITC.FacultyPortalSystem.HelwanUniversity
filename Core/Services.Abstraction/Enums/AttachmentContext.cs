@@ -9,6 +9,7 @@
         ManifestationOfScientificAppreciation = 5,
         PrizeAndAward = 6,
         AcademicQualification = 7,
-        ConferenceOrSeminar = 8
+        ConferenceOrSeminar = 8,
+        Conversation = 9
     }
 }

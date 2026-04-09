@@ -47,8 +47,9 @@ namespace Services.MappingProfiles.AdminModule
             CreateMap<Permission, PermissionResponseDTO>();
             CreateMap<Role, RoleResponseDTO>();
             CreateMap<UserAddDTO, User>()
-                    .ForMember(dest => dest.Permissions, opt => opt.Ignore());
-
+                .ForMember(dest => dest.Permissions, opt => opt.Ignore())
+                .ForMember(dest => dest.Roles, opt => opt.Ignore());
+            
             CreateMap<PermissionResponseDTO, Permission>();
             CreateMap<UserEditDTO, UserAddDTO>();
 

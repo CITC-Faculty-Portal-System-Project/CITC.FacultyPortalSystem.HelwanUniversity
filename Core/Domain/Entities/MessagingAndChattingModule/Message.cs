@@ -1,4 +1,6 @@
-﻿namespace Domain.Entities.Messaging
+﻿using Domain.Entities.EntitesAttachments;
+
+namespace Domain.Entities.Messaging
 {
     public class Message : BaseEntity<long>
     {
@@ -7,18 +9,12 @@
         public string SenderUsername { get; set; } = string.Empty;
         public Guid RecieverId { get; set; }
         public string RecieverUsername { get; set; } = string.Empty;
-        public byte[] Ciphertext { get; set; } = [];
-        public byte[] Nonce { get; set; } = [];
-        public byte[] Tag { get; set; } = [];
+        public byte[]? Ciphertext { get; set; } = [];
+        public byte[]? Nonce { get; set; } = [];
+        public byte[]? Tag { get; set; } = [];
         public MessageType Type { get; set; }
         public DateTime? DeleiverdAt { get; set; }
         public DateTime? ReadAt { get; set; }
-
-
-        public string? AttachmentUrl { get; set; }
-        public string? AttachmentContentType { get; set; }
-        public long? AttachmentSize { get; set; }
-
 
         public int KeyVersion { get; set; }
         public string Algorithm { get; set; } = "AES-256-GCM";
@@ -27,9 +23,7 @@
 
         public Conversation? Conversation { get; set; }
 
-
         #endregion
-
 
     }
 }

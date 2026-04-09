@@ -114,9 +114,9 @@ namespace Services.Implementations.AdminModule
             throw new InvalidOperationException(errors);
         }
 
-        private async Task HandleRoleSpecificCreationAsync(User userEntity, string roleName)
+        private async Task HandleRoleSpecificCreationAsync(User userEntity, IList<string> rolesNames)
         {
-            if (!string.Equals(roleName, "Faculty Member", StringComparison.OrdinalIgnoreCase))
+            if (!rolesNames.Contains("Faculty Member"))
                 return;
 
             var facultyMemberRepo = UnitOfWork.GetRepository<FacultyMember, Guid>();
@@ -244,18 +244,20 @@ namespace Services.Implementations.AdminModule
 
             var currentUser = await GetCurrentUserAsync();
             
-            var roleEntity = await GetRoleOrThrowAsync(user!.Role!.Name);
-
             var userEntity = Mapper.Map<User>(user);
 
             var createResult = await userManager.CreateAsync(userEntity, user.Password);
             ThrowIfIdentityOperationFailed(createResult);
 
-            var addToRoleResult = await userManager.AddToRoleAsync(userEntity, user.Role.Name);
-            ThrowIfIdentityOperationFailed(addToRoleResult);
+            foreach(var role in user.Roles!)
+            {
+               var addResult = await userManager.AddToRoleAsync(userEntity, role.Name!);
+               ThrowIfIdentityOperationFailed(addResult);
+
+            }
 
             await AddDirectPermissionsIfNeeded(userEntity, user.Permissions, currentUser);
-            await HandleRoleSpecificCreationAsync(userEntity, user.Role.Name);
+            await HandleRoleSpecificCreationAsync(userEntity, user.Roles!.Select(r=> r.Name).ToList());
 
             await UnitOfWork.SaveChangesAsync();
 

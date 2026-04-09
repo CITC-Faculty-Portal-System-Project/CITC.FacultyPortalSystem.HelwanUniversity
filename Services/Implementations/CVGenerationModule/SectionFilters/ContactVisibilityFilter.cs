@@ -7,17 +7,26 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters
 {
     public class ContactVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config )
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config , bool isPublic)
         {
             var settings = config.ContactInfo;
 
-            if (!settings.ShowContactInfo)
+            if (!settings.ShowContactInfo && isPublic == false)
             {
                 response.OfficialEmail = null;
                 response.MainPhoneNumber = null;
                 response.WorkPhoneNumber = null;
                 response.FaxNumber = null;
                 return;
+            }
+
+            
+            if(isPublic == true)
+            {
+                HideIfFalse(settings.ShowMainPhoneForPublic, () => response.MainPhoneNumber = null);
+                HideIfFalse(settings.ShowWorkPhoneForPublic, () => response.WorkPhoneNumber = null);
+                HideIfFalse(settings.ShowOfficialEmailForPublic, () => response.OfficialEmail = null);
+                HideIfFalse(settings.ShowFaxForPublic, () => response.FaxNumber = null);
             }
 
             HideIfFalse(settings.ShowMainPhone, () => response.MainPhoneNumber = null);

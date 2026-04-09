@@ -50,7 +50,7 @@ namespace Presistence.Data.Configurations.HigherStuidesModuleConfigurations
                    .HasMaxLength(250);
 
             builder.Property(t => t.isConfirmed)
-                  .HasDefaultValue(false);
+                  .HasDefaultValue(true);
 
             #endregion
 

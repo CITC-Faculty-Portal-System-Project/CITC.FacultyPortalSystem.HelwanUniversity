@@ -7,17 +7,17 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.WritingsAnd
 {
     public class PatentsVisibilityFilter : ICVSectionVisibilityFilter
     {
-        public void Apply(CVResponseDTO response, CVVisibilityConfig config)
+        public void Apply(CVResponseDTO response, CVVisibilityConfig config, bool isPublic = false)
         {
             var settings = config.Patents;
 
-            if (!settings.ShowPatents)
+            if (!settings.ShowPatents && isPublic == false)
             {
                 response.Patents.Clear();
                 return;
             }
 
-            if(!settings.ShowNameOfPatent && !settings.ShowAccreditationDate && !settings.ShowAccreditingAuthorityOrCountry)
+            if(!settings.ShowNameOfPatent && !settings.ShowAccreditationDate && !settings.ShowAccreditingAuthorityOrCountry && isPublic == false)
             {
                 response.Patents.Clear();
                 return;
@@ -25,6 +25,15 @@ namespace Services.Implementations.CVGenerationModule.SectionFilters.WritingsAnd
 
             foreach(var p in response.Patents ?? [])
             {
+                
+                if(isPublic == true)
+                {
+                    HideIfFalse(settings.ShowNameOfPatentForPublic, () => p.NameOfPatent = null!);
+                    HideIfFalse(settings.ShowAccreditationDateForPublic, () => p.AccreditationDate = null!);
+                    HideIfFalse(settings.ShowAccreditingAuthorityOrCountryForPublic, () => p.AccreditingAuthorityOrCountry = null!);
+
+                }
+
                 HideIfFalse(settings.ShowNameOfPatent, () => p.NameOfPatent = null!);
                 HideIfFalse(settings.ShowAccreditationDate, () => p.AccreditationDate = null!);
                 HideIfFalse(settings.ShowAccreditingAuthorityOrCountry, () => p.AccreditingAuthorityOrCountry = null!);

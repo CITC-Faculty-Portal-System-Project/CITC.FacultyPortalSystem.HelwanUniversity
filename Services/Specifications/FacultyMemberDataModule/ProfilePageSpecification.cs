@@ -10,10 +10,12 @@ namespace Services.Specifications.FacultyMemberDataModule
             (string email) 
             :base(pd => pd.FacultyMember != null && pd.FacultyMember.Email == email)
         {
-              AddIncludeWithChain(q => q
-                .Include(pd => pd.FacultyMember!)
-                    .ThenInclude(fm => fm.SocialMediaPlatforms)
+            AddIncludeWithChain(q => q
+              .Include(pd => pd.FacultyMember!)
+                  .ThenInclude(fm => fm.SocialMediaPlatforms)
 
+
+              .Include(q => q.ProfilePicture)
                 .Include(pd => pd.University)
                 .Include(pd => pd.Authority)
                 .Include(pd => pd.Gender)
@@ -25,6 +27,7 @@ namespace Services.Specifications.FacultyMemberDataModule
                 .Include(pd => pd.FacultyMember!)
                     .ThenInclude(fm => fm.ResearchContributions!)
                         .ThenInclude(rc => rc.Research)
+
 
                 .Include(pd => pd.FacultyMember!)
                     .ThenInclude(fm => fm.PrizesAndRewards)

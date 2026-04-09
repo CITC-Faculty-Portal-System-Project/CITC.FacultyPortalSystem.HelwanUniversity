@@ -60,24 +60,7 @@ namespace Services.Global
                 );
 
             if (entityFacultyMemberId != currentUserId)
-            {
-                #region Log
-                var ownershipLog = new LogEntry
-                {
-                    Category = Category.FacultyMemberService.ToString(),
-                    CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-                    RenderedMessage = $"User does not have permission to access {(entityNameOverride ?? "resource")}.",
-                    Level = "Warning",
-                    AdditionalData = $"User with Id: {currentUserId} does not have access on {(entityNameOverride ?? "resource")} that has the faculty member Id: {entityFacultyMemberId}",
-                    Timestamp = DateTime.Now,
-                };
-                //Add ILogger here!!
-                #endregion
-
-                throw new UnauthorizedAccessException(
-                    $"You do not have permission to access this {(entityNameOverride ?? "resource")}."
-                );
-            }
+                throw new UnauthorizedAccessException($"You do not have permission to access this {(entityNameOverride ?? "resource")}.");
         }
 
 

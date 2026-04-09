@@ -497,7 +497,7 @@ namespace Presistence.Data.Migrations
                     b.Property<bool>("isConfirmed")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasDefaultValue(true);
 
                     b.HasKey("Id");
 
@@ -2595,6 +2595,12 @@ namespace Presistence.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("PublicVisableAttributesJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("{}");
+
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -2615,9 +2621,67 @@ namespace Presistence.Data.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("{}");
 
+                    b.Property<bool>("isPublic")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.HasKey("Id");
 
                     b.ToTable("CVVisibilitySettings");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CVGenerationModule.SavedCVPreferences", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("FacultyMemberId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SavedCVPreferences");
                 });
 
             modelBuilder.Entity("Domain.Entities.EntitesAttachments.AcademicQualificationAttachment", b =>
@@ -2802,6 +2866,98 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("ConferenceOrSeminarId");
 
                     b.ToTable("ConferencesAndSeminarsAttachments");
+                });
+
+            modelBuilder.Entity("Domain.Entities.EntitesAttachments.ConversationAttachment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ConversationId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HashAlg")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("KeyRef")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Nonce")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("RemotePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("StorageProvider")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Tag")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("WrappedDek")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.ToTable("ConversationAttachments");
                 });
 
             modelBuilder.Entity("Domain.Entities.EntitesAttachments.ManifestationsOfScientificAppreciationAttachment", b =>
@@ -6506,7 +6662,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("Type");
 
-                    b.ToTable("Conversation");
+                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("Domain.Entities.Messaging.ConversationParticipant", b =>
@@ -6564,7 +6720,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("UserId", "ConversationId")
                         .HasDatabaseName("IX_ConversationParticipants_UserId_ConversationId");
 
-                    b.ToTable("ConversationParticipant");
+                    b.ToTable("ConversationParticipants");
                 });
 
             modelBuilder.Entity("Domain.Entities.Messaging.Message", b =>
@@ -6579,17 +6735,7 @@ namespace Presistence.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AttachmentContentType")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("AttachmentSize")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("AttachmentUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<byte[]>("Ciphertext")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("ConversationId")
@@ -6621,7 +6767,6 @@ namespace Presistence.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<byte[]>("Nonce")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<DateTime?>("ReadAt")
@@ -6647,7 +6792,6 @@ namespace Presistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("Tag")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("Type")
@@ -6670,7 +6814,7 @@ namespace Presistence.Data.Migrations
                     b.HasIndex("SenderId", "CreatedAt")
                         .HasDatabaseName("IX_Messages_SenderId_CreatedAt");
 
-                    b.ToTable("Message");
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ContributionsModule.ContributionsToCommunityService", b =>
@@ -7177,6 +7321,17 @@ namespace Presistence.Data.Migrations
                     b.Navigation("ConferenceOrSeminar");
                 });
 
+            modelBuilder.Entity("Domain.Entities.EntitesAttachments.ConversationAttachment", b =>
+                {
+                    b.HasOne("Domain.Entities.Messaging.Conversation", "Conversation")
+                        .WithMany("Attachments")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+                });
+
             modelBuilder.Entity("Domain.Entities.EntitesAttachments.ManifestationsOfScientificAppreciationAttachment", b =>
                 {
                     b.HasOne("Domain.Entities.AcademicDataModule.PrizesModule.ManifestationsOfScientificAppreciation", "ManifestationOfScientificAppreciation")
@@ -7510,6 +7665,8 @@ namespace Presistence.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Messaging.Conversation", b =>
                 {
+                    b.Navigation("Attachments");
+
                     b.Navigation("Messages");
 
                     b.Navigation("Participants");

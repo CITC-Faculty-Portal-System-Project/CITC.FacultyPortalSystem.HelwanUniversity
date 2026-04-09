@@ -37,6 +37,11 @@ namespace Presistence.Data.Configurations.MessagingAndChattingModuleConfiguratio
                     .HasForeignKey<Conversation>(m => m.TicketId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(th => th.Attachments)
+                 .WithOne(a => a.Conversation)
+                 .HasForeignKey(a => a.ConversationId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
 
 
             #endregion

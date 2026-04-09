@@ -135,8 +135,7 @@ namespace Services.Implementations.MessagingAndChattingModule
 
             await GetValidatedTicketAsync(ticketId, currentUser.UserId);
 
-            var conversation = await Repo.GetAsync(new TicketConversationSpecifications(ticketId))
-                ?? throw NotFound();
+            var conversation = await Repo.GetAsync(new TicketConversationSpecifications(ticketId));
 
             return Mapper.Map<ConversationResponseDTO>(conversation);
         }

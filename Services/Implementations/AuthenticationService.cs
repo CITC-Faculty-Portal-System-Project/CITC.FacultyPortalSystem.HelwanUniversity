@@ -132,9 +132,9 @@ public class AuthenticationService(
             #region Log
             registrationLog.Timestamp = DateTime.Now;
             registrationLog.Level = "Warning";
-            registrationLog.RenderedMessage = $"Registration Failed [User Already Exists].";
+            registrationLog.RenderedMessage = $"Registration failed [User Already Exists].";
             registrationLog.UserIP = GetUserIP();
-            registrationLog.AdditionalData = $"User with National Number {registerDto.NationalNumber} and Email {email} already exists in the database";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} already exists in the database.";
             _logger.LogWarning("{@LogDetails}", registrationLog);
             #endregion
             throw new UserAlreadyExistsException();
@@ -160,9 +160,9 @@ public class AuthenticationService(
             #region Log
             registrationLog.Timestamp = DateTime.Now;
             registrationLog.Level = "Warning";
-            registrationLog.RenderedMessage = $"Registration Failed [User Already Exists].";
+            registrationLog.RenderedMessage = $"Registration failed [User Already Exists].";
             registrationLog.UserIP = GetUserIP();
-            registrationLog.AdditionalData = $"User with National Number {registerDto.NationalNumber} and Email {email} already exists in the database";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} already exists in the database.";
             _logger.LogWarning("{@LogDetails}", registrationLog);
             #endregion
             throw new UserAlreadyExistsException("This Member is Already Registered");
@@ -175,11 +175,11 @@ public class AuthenticationService(
             #region Log
             registrationLog.Timestamp = DateTime.Now;
             registrationLog.Level = "Error";
-            registrationLog.RenderedMessage = "Failed to Register User into the database";
+            registrationLog.RenderedMessage = "Failed to register user into the database.";
             registrationLog.UserIP = GetUserIP();
-            registrationLog.AdditionalData = $"User with National Number {registerDto.NationalNumber} and Email {email} failed to be Added to the database";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} failed to be added to the database.";
             registrationLog.Exception = string.Join("- ", result.Errors.Select(e => e.Description));
-            registrationLog.ExceptionMessage = "Failed to Register User into the database";
+            registrationLog.ExceptionMessage = "Failed to register user into the database.";
             _logger.LogError("{@LogDetails}", registrationLog);
             #endregion
             var errors = result.Errors.Select(e => e.Description).ToList();
@@ -204,9 +204,9 @@ public class AuthenticationService(
             #region Log
             registrationLog.Timestamp = DateTime.Now;
             registrationLog.Level = "Information";
-            registrationLog.RenderedMessage = "User Registered Successfully.";
+            registrationLog.RenderedMessage = "User registered successfully.";
             registrationLog.UserIP = GetUserIP();
-            registrationLog.AdditionalData = $"User with National Number {registerDto.NationalNumber} and Email {email} was registered successfully.";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and rmail {email} registered successfully.";
             _logger.LogInformation("{@LogDetails}", registrationLog);
             #endregion
             await _emailService.SendCredentialsAsync(newUser.Id, username, password);
@@ -244,7 +244,7 @@ public class AuthenticationService(
             #region Log
             LoginLog.Timestamp = DateTime.Now;
             LoginLog.Level = "Warning";
-            LoginLog.RenderedMessage = "Login Failed [User Not Found].";
+            LoginLog.RenderedMessage = "Login failed [User Not Found].";
             LoginLog.UserIP = GetUserIP();
             LoginLog.AdditionalData = $"Login attempt with Username {loginDto.Username} and Password {loginDto.Password} failed because the user was not found in the database.";
             _logger.LogWarning("{@LogDetails}", LoginLog);
@@ -259,7 +259,7 @@ public class AuthenticationService(
             #region Log
             LoginLog.Timestamp = DateTime.Now;
             LoginLog.Level = "Warning";
-            LoginLog.RenderedMessage = "Login Failed [User Not Found].";
+            LoginLog.RenderedMessage = "Login failed [User Not Found].";
             LoginLog.UserIP = GetUserIP();
             LoginLog.AdditionalData = $"Login attempt with Username {loginDto.Username} and Password {loginDto.Password} failed because the password is incorrect.";
             _logger.LogWarning("{@LogDetails}", LoginLog);
@@ -267,19 +267,19 @@ public class AuthenticationService(
             throw new UnauthorizedException();
         }
 
-
         var token = await CreateTokenAsync(user);
         var response = new LoginClaims
         {
-            Email = user.Email,
-            Role = role.FirstOrDefault(),
-            UserName = user.UserName,
+            Email = user.Email ?? "",
+            Roles = role,
+            UserName = user.UserName ?? "",
+            NationalNumber = user.NationalNumber,
             Token = token
         };
         #region Log
         LoginLog.Timestamp = DateTime.Now;
         LoginLog.Level = "Information";
-        LoginLog.RenderedMessage = "Login Successful";
+        LoginLog.RenderedMessage = "Login successful";
         LoginLog.UserIP = GetUserIP();
         LoginLog.UserName = loginDto.Username;
         LoginLog.AdditionalData = $"User with Username {loginDto.Username} and Role {role.FirstOrDefault()} logged in successfully.";
@@ -310,7 +310,7 @@ public class AuthenticationService(
             #region Log
             checkEmailLog.Timestamp = DateTime.Now;
             checkEmailLog.Level = "Warning";
-            checkEmailLog.RenderedMessage = "OTP Send Failed [User Not Found].";
+            checkEmailLog.RenderedMessage = "OTP send failed [User Not Found].";
             checkEmailLog.UserIP = GetUserIP();
             checkEmailLog.AdditionalData = $"Attempt to send OTP to {userEmail} failed because the email was not found in the database.";
             _logger.LogWarning("{@LogDetails}", checkEmailLog);
@@ -353,9 +353,9 @@ public class AuthenticationService(
             #region Log
             resetPasswordLog.Timestamp = DateTime.Now;
             resetPasswordLog.Level = "Information";
-            resetPasswordLog.RenderedMessage = "Password Reset Successfully";
+            resetPasswordLog.RenderedMessage = "Password reset successfully";
             resetPasswordLog.UserIP = GetUserIP();
-            resetPasswordLog.AdditionalData = $"Password for user with Email {passwordDto.Email} was reset successfully to {passwordDto.NewPassword}.";
+            resetPasswordLog.AdditionalData = $"Password for user with email {passwordDto.Email} was reset successfully to {passwordDto.NewPassword}.";
             _logger.LogInformation("{@LogDetails}", resetPasswordLog);
             #endregion
             return true;
@@ -377,7 +377,7 @@ public class AuthenticationService(
             #region Log
             clientLog.Timestamp = DateTime.Now;
             clientLog.Level = "Warning";
-            clientLog.RenderedMessage = $"User with National Number {nationalNumber} not Found.";
+            clientLog.RenderedMessage = $"User with national number {nationalNumber} not found.";
             clientLog.AdditionalData = $"The external system did not return valid data for national number: {nationalNumber}. This may indicate that the national number is invalid or not registered.";
             clientLog.UserIP = GetUserIP();
             _logger.LogWarning("{@LogDetails}", clientLog);

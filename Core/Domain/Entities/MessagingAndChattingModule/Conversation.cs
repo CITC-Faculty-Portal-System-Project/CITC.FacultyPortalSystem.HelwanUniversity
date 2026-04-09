@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.AdminModule;
+using Domain.Entities.EntitesAttachments;
 
 namespace Domain.Entities.Messaging
 {
@@ -13,8 +14,8 @@ namespace Domain.Entities.Messaging
         public Ticket? Ticket { get; set; }
 
         public ICollection<ConversationParticipant> Participants { get; set; } = new List<ConversationParticipant>();
-        public ICollection<Message> Messages { get; set; } = new List<Message>();
-
+        public ICollection<Message>? Messages { get; set; } = new List<Message>();
+        public ICollection<ConversationAttachment>? Attachments { get; set; } = new List<ConversationAttachment>();
 
         #endregion
 

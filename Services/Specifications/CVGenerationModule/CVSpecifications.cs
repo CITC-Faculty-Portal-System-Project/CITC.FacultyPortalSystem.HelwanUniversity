@@ -31,6 +31,7 @@ namespace Services.Specifications.CVGenerationModule
             IncludeContributionsToCommunityServices();
             IncludeContributionsToUniversity();
 
+
             EnableSplitQuery();
         }
 
@@ -41,7 +42,8 @@ namespace Services.Specifications.CVGenerationModule
                 .Include(cv => cv.University)
                 .Include(cv => cv.Title)
                 .Include(cv => cv.Authority)
-                .Include(cv => cv.Department));
+                .Include(cv => cv.Department)
+                .Include(cv => cv.ProfilePicture));
         }
         #endregion
 
@@ -244,5 +246,8 @@ namespace Services.Specifications.CVGenerationModule
             );
         }
         #endregion
+
+        
+
     }
 }
