@@ -5,8 +5,8 @@ namespace Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule
 {
     public interface IResearchesService
     {
-        Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches(
-       ResearchSpecificationParameters parameters,
+        Task<CursorPaginatedResult<ResearchResponseDTO, int>> GetAllRecommendedResearches(
+       ResearchCursoredPaginationSpecificationParameters parameters,
        Guid? facultyMemberId = null);
 
         Task<ResearchResponseDTO> ConfirmRecommendedResearch(

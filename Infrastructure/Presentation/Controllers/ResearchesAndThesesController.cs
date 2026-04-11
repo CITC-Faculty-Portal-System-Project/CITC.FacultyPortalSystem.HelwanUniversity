@@ -21,8 +21,8 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(PaginatedResult<ResearchResponseDTO>), StatusCodes.Status200OK)]
         [HttpGet("RecommendedResearches")]
-        public async Task<ActionResult<PaginatedResult<ResearchResponseDTO>>> GetAllRecommendedResearches
-                     ([FromQuery] ResearchSpecificationParameters parameters)
+        public async Task<ActionResult<CursorPaginatedResult<ResearchResponseDTO , int>>> GetAllRecommendedResearches
+                     ([FromQuery] ResearchCursoredPaginationSpecificationParameters parameters)
                => Ok(await _serviceManager.ResearchesService.GetAllRecommendedResearches(parameters));
 
         [ProducesResponseType(typeof(ResearcherProfileResponseDTO), StatusCodes.Status200OK)]

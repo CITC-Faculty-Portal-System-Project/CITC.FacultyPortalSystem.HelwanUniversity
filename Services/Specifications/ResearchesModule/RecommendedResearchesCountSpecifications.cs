@@ -6,13 +6,13 @@ namespace Services.Specifications.ResearchesModule
 {
     internal class RecommendedResearchesCountSpecifications : BaseSpecifications<Research, int>
     {
-        public RecommendedResearchesCountSpecifications(ResearchSpecificationParameters parameters, Guid facultyMemberId)
+        public RecommendedResearchesCountSpecifications(ResearchCursoredPaginationSpecificationParameters parameters, Guid facultyMemberId)
             : base(BuildCriteria(parameters , facultyMemberId))
                 
         { }
 
       private static Expression<Func<Research, bool>> BuildCriteria(
-      ResearchSpecificationParameters parameters,
+      ResearchCursoredPaginationSpecificationParameters parameters,
       Guid facultyMemberId)
         {
             Domain.Enums.PublisherType? mappedPublisherType = null;
@@ -55,6 +55,9 @@ namespace Services.Specifications.ResearchesModule
                     c.ContributorId == facultyMemberId &&
                     !c.IsConfirmed)
 
+
+                && (!parameters.BeforeResearchId.HasValue || r.Id < parameters.BeforeResearchId.Value)
+
                 && (!mappedPublisherType.HasValue || r.PublisherType == mappedPublisherType.Value)
 
                 && (!mappedPublicationType.HasValue || r.PublicationType == mappedPublicationType.Value)
@@ -62,7 +65,7 @@ namespace Services.Specifications.ResearchesModule
                 && (!mappedSource.HasValue || r.Source == mappedSource.Value)
 
                 && (!mappedDrivedFrom.HasValue || r.ResearchDerivedFrom == mappedDrivedFrom.Value)
-
+                
                 &&
                 (
                     string.IsNullOrEmpty(parameters.Search)

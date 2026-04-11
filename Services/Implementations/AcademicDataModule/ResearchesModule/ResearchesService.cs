@@ -1,9 +1,13 @@
 ﻿using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.Messaging;
+using Org.BouncyCastle.Utilities;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Global;
 using Services.Helpers.CollectionSyncingHelpers;
+using Services.Helpers.PaginationHelpers;
 using Services.Specifications.ResearchesModule;
+using Shared.Dtos.MessagingAndChattingModule;
 using Shared.Dtos.ResearchesModule;
 using Shared.SpecificationParameters.ResearchesModule;
 using System.Threading;
@@ -160,8 +164,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             await SaveChangesAsync();
         }
 
-        public async Task<PaginatedResult<ResearchResponseDTO>> GetAllRecommendedResearches(
-            ResearchSpecificationParameters parameters,
+        public async Task<CursorPaginatedResult<ResearchResponseDTO , int>> GetAllRecommendedResearches(
+            ResearchCursoredPaginationSpecificationParameters parameters,
             Guid? facultyMemberId = null)
         {
             var currentUser = await GetCurrentUserAsync();
@@ -174,13 +178,23 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var totalCount = await Repo.CountAsync(
                 new RecommendedResearchesCountSpecifications(parameters, targetFacultyMemberId));
 
+            var (orderedResearches, hasMore, nextCursor) =
+                CursorPaginationHelper.ProcessCursorPagination(
+                    recommendedResearchesEntities.ToList(),
+                    parameters.Take,
+                    m => m.Id,
+                    m => m.CreatedAt
+                );
+
             var mapped = Mapper.Map<IEnumerable<ResearchResponseDTO>>(recommendedResearchesEntities);
 
-            return new PaginatedResult<ResearchResponseDTO>(
-                parameters.PageIndex,
-                mapped.Count(),
-                totalCount,
-                mapped);
+            return new CursorPaginatedResult<ResearchResponseDTO, int>
+            {
+                Items = mapped,
+                HasMore = hasMore,
+                NextCursor = nextCursor,
+                Count = totalCount
+            };
         }
 
         public async Task<PaginatedResult<ResearchResponseDTO>> GetAllResearches(
