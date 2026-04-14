@@ -36,7 +36,7 @@ namespace Services.Implementations
             var bioSummaryLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.ProfileDashboardData.ToString()
+                CategoryAction = CategoryAction.ProfileDashboardDataActions.ToString()
             };
 
             var currentUser = await GetCurrentUserAsync();
@@ -108,7 +108,7 @@ namespace Services.Implementations
             var skillsLog = new LogEntry
             {
                 Category  = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.ProfileDashboardData.ToString()
+                CategoryAction = CategoryAction.ProfileDashboardDataActions.ToString()
             };
             var currentUser = await GetCurrentUserAsync();
 
@@ -308,7 +308,7 @@ namespace Services.Implementations
             var profileLog = new LogEntry
 			{
 				Category = Category.FacultyMemberService.ToString(),
-				CategoryAction = CategoryAction.ProfileDashboardData.ToString()
+				CategoryAction = CategoryAction.ProfileDashboardDataActions.ToString()
 			};
 			var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
 
