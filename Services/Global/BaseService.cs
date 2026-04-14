@@ -58,9 +58,6 @@ namespace Services.Global
                 throw new UnauthorizedAccessException(
                     $"You do not have permission to access this {(entityNameOverride ?? "resource")}."
                 );
-
-            if (entityFacultyMemberId != currentUserId)
-                throw new UnauthorizedAccessException($"You do not have permission to access this {(entityNameOverride ?? "resource")}.");
         }
 
 

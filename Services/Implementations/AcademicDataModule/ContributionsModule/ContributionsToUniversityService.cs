@@ -1,16 +1,21 @@
 ﻿using Domain.Entities.AcademicDataModule.ContributionsModule;
+using Microsoft.Extensions.Logging;
 using Services.Abstraction.Contracts.AcademicDataModule.ContributionsModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ContributionsModule;
 using Shared.Dtos.AcademicDataModule.ContributionsModule;
+using Shared.Enums.Logging;
 using Shared.SpecificationParameters.AcademicDataModule.ContributionsModule;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace Services.Implementations.AcademicDataModule.ContributionsModule
 {
     public class ContributionsToUniversityService(
        IUnitOfWork unitOfWork,
        IAuthenticationService authenticationService,
-       IMapper mapper)
+       IMapper mapper,
+       ILogger<ContributionsToUniversityService> _logger)
        : BaseService<ContributionsToUniversity, int>(unitOfWork, authenticationService, mapper),
          IContributionsToUniversityService
     {
@@ -23,16 +28,45 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
+            #region Log
+            var contributionsLog = new LogEntry
+            {
+                Category = Category.FacultyMemberAcademicData.ToString(),
+                CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+			};
+            #endregion
+
             var contributions = await Repo.GetAllAsync(
-                new ContributionsToUniversitySpecifications(parameters, email))
-                ?? throw NotFound();
+                new ContributionsToUniversitySpecifications(parameters, email));
+
+            if(contributions is null)
+            {
+				#region Log
+                contributionsLog.RenderedMessage = $"Contributions to university not found for user: {currentUser.UserName}.";
+				contributionsLog.Level = "Warning";
+				contributionsLog.Timestamp = DateTime.Now;
+                contributionsLog.AdditionalData = $"User tried to get their contributions to university data, but no contributions to university data was found in the database for user with email : {email}.";
+                _logger.LogWarning("{@LogDetails}", contributionsLog);
+				#endregion
+				throw NotFound();
+			}
 
             var mapped = Mapper.Map<IEnumerable<ContributionsToUniversityResponseDTO>>(contributions);
 
             var totalCount = await Repo.CountAsync(
                 new ContributionsToUniversityCountSpecifications(parameters, email));
 
-            return new PaginatedResult<ContributionsToUniversityResponseDTO>(
+			#region Log
+			contributionsLog.RenderedMessage = $"Contributions to university data retrieved for user: {currentUser.UserName}.";
+			contributionsLog.Level = "Information";
+			contributionsLog.Timestamp = DateTime.Now;
+			contributionsLog.AdditionalData = $"User retrieved their contributions to university data successfully, total count of contributions to university data retrieved: {totalCount}.";
+			_logger.LogInformation("{@LogDetails}", contributionsLog);
+			#endregion
+
+			return new PaginatedResult<ContributionsToUniversityResponseDTO>(
                 parameters.PageIndex,
                 mapped.Count(),
                 totalCount,
@@ -43,15 +77,58 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
             int id,
             string? facultyMemberEmail = null)
         {
-            var contribution = await Repo.GetAsync(
-                new ContributionsToUniversitySpecifications(id))
-                ?? throw NotFound();
+            #region Log
+            var currentUser = await GetCurrentUserAsync();
+            var contributionsLog = new LogEntry
+            {
+                Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
+			#endregion
 
-            await EnsureOwnershipIfClientAsync(
-                contribution.FacultyMemberId,
-                facultyMemberEmail);
+			var contribution = await Repo.GetAsync(
+                new ContributionsToUniversitySpecifications(id));
 
-            return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
+            if (contribution is null)
+            {
+				#region Log
+				contributionsLog.Timestamp = DateTime.Now;
+				contributionsLog.Level = "Warning";
+				contributionsLog.RenderedMessage = $"Contribution to university not found for user: {currentUser.UserName}.";
+				contributionsLog.AdditionalData = $"User tried to get their contribution to university data with id: {id}, but no contribution to university data was found in the database.";
+				_logger.LogWarning("{@LogDetails}", contributionsLog);
+				#endregion
+				throw NotFound();
+			}
+
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        contribution.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				contributionsLog.Timestamp = DateTime.Now;
+				contributionsLog.Level = "Warning";
+				contributionsLog.RenderedMessage = $"User unauthorized to access contribution to university data.";
+				contributionsLog.AdditionalData = $"User tried to get contribution to university data with id: {id} that does not belong to them, contribution to university data faculty member id: {contribution.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", contributionsLog);
+				#endregion
+				throw;
+            }
+
+            #region Log
+            contributionsLog.Timestamp = DateTime.Now;
+			contributionsLog.Level = "Information";
+			contributionsLog.RenderedMessage = $"Contribution to university data retrieved for user: {currentUser.UserName}.";
+			contributionsLog.AdditionalData = $"User retrieved their contribution to university data with id: {id} successfully.";
+			_logger.LogInformation("{@LogDetails}", contributionsLog);
+			#endregion
+			return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
         }
 
         public async Task<ContributionsToUniversityResponseDTO> CreateContributionToUniversityAsync(
@@ -61,7 +138,32 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+            #region Log
+            var contributionLog = new LogEntry
+            {
+                Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName,
+			};
+            #endregion
+
+            FacultyMember facultyMember = null!;
+			try
+            {
+                facultyMember = await GetFacultyMemberByEmailAsync(email);
+            }
+            catch (NotFoundException)
+            {
+                #region Log
+                contributionLog.Timestamp = DateTime.Now;
+				contributionLog.Level = "Warning";
+				contributionLog.RenderedMessage = $"Faculty Member not found.";
+				contributionLog.AdditionalData = $"User tried to create contribution to university for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				_logger.LogWarning("{@LogDetails}", contributionLog);
+				#endregion
+				throw;
+            }
 
             var contribution = Mapper.Map<ContributionsToUniversity>(contributionsToUniversityCreateDto);
             contribution.FacultyMemberId = facultyMember.Id;
@@ -69,46 +171,143 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
             await Repo.AddAsync(contribution);
             await SaveChangesAsync();
 
-            return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
-        }
+            var response = Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
+			#region Log
+			contributionLog.Timestamp = DateTime.Now;
+			contributionLog.Level = "Information";
+			contributionLog.RenderedMessage = $"User: {currentUser.UserName} created a contribution to university.";
+			contributionLog.AdditionalData = $"User created a contribution to university with id: {response.Id} and title: {response.ContributionTitle} successfully.";
+			_logger.LogInformation("{@LogDetails}", contributionLog);
+			#endregion
+			return response;
+		}
 
         public async Task<ContributionsToUniversityResponseDTO> UpdateContributionToUniversityAsync(
             int contributionToUniversityId,
             ContributionsToUniversityUpdateDTO contributionsToUniversityUpdateDto,
             string? facultyMemberEmail = null)
         {
-            var contribution = await Repo.GetAsync(
-                new ContributionsToUniversitySpecifications(contributionToUniversityId))
-                ?? throw NotFound();
+			#region Log
+			var currentUser = await GetCurrentUserAsync();
+			var contributionLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName,
+			};
+			#endregion
+			var jsonOptions = new JsonSerializerOptions
+			{
+				WriteIndented = true,
+				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+			};
+			var contribution = await Repo.GetAsync(
+                new ContributionsToUniversitySpecifications(contributionToUniversityId)); 
+            if(contribution is null)
+            {
+				#region Log
+				contributionLog.Timestamp = DateTime.Now;
+				contributionLog.Level = "Warning";
+				contributionLog.RenderedMessage = $"Contribution to university not found for user: {currentUser.UserName}.";
+				contributionLog.AdditionalData = $"User tried to update their contribution to university data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", contributionLog);
+				#endregion
+				throw NotFound();
+			}
 
-            await EnsureOwnershipIfClientAsync(
-                contribution.FacultyMemberId,
-                facultyMemberEmail);
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        contribution.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				contributionLog.Timestamp = DateTime.Now;
+				contributionLog.Level = "Warning";
+				contributionLog.RenderedMessage = $"User unauthorized to update contribution to university data.";
+				contributionLog.AdditionalData = $"User tried to update contribution to university data with id: {contributionToUniversityId} that does not belong to them, contribution to university data faculty member id: {contribution.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", contributionLog);
+				#endregion
+				throw;
+            }
 
-            Mapper.Map(contributionsToUniversityUpdateDto, contribution);
+            var oldData = Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
+			Mapper.Map(contributionsToUniversityUpdateDto, contribution);
 
             Repo.Update(contribution);
             await SaveChangesAsync();
 
-            return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
+            var newData = Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
+			#region Log
+			contributionLog.Timestamp = DateTime.Now;
+			contributionLog.Level = "Information";
+			contributionLog.RenderedMessage = $"Contribution to university data updated for user: {currentUser.UserName}.";
+			contributionLog.AdditionalData = $"User updated their contribution to university data with id: {contributionToUniversityId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			_logger.LogInformation("{@LogDetails}", contributionLog);
+			#endregion
+			return newData;
         }
 
         public async Task DeleteContributionToUniversityAsync(
             int contributionToUniversityId,
             string? facultyMemberEmail = null)
         {
+			#region Log
+			var currentUser = await GetCurrentUserAsync();
+			var contributionLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
+				UserName = currentUser.UserName,
+				UserIP = GetUserIP()
+			};
+            #endregion
             var contribution = await Repo.GetAsync(
-                new ContributionsToUniversitySpecifications(contributionToUniversityId))
-                ?? throw NotFound();
+                new ContributionsToUniversitySpecifications(contributionToUniversityId));
+            if(contribution is null)
+            {
+				#region Log
+				contributionLog.Timestamp = DateTime.Now;
+				contributionLog.Level = "Warning";
+				contributionLog.RenderedMessage = $"Contribution to university not found for user: {currentUser.UserName}.";
+				contributionLog.AdditionalData = $"User tried to delete their contribution touniversity data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", contributionLog);
+				#endregion
+				throw NotFound();
+			}
 
-            await EnsureOwnershipIfClientAsync(
-                contribution.FacultyMemberId,
-                facultyMemberEmail);
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        contribution.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				contributionLog.Timestamp = DateTime.Now;
+				contributionLog.Level = "Warning";
+				contributionLog.RenderedMessage = $"User unauthorized to delete contribution to university data.";
+				contributionLog.AdditionalData = $"User tried to delete contribution to university data with id: {contributionToUniversityId} that does not belong to them, contribution to university data faculty member id: {contribution.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", contributionLog);
+				#endregion
+				throw;
+            }
 
             contribution.IsDeleted = true;
 
             Repo.Update(contribution);
             await SaveChangesAsync();
-        }
+			#region Log
+			contributionLog.Timestamp = DateTime.Now;
+			contributionLog.Level = "Information";
+			contributionLog.RenderedMessage = $"Contribution to university data deleted for user: {currentUser.UserName}.";
+			contributionLog.AdditionalData = $"User deleted their contribution to university data with id: {contributionToUniversityId} successfully.";
+			_logger.LogInformation("{@LogDetails}", contributionLog);
+			#endregion
+		}
     }
 }
