@@ -12,7 +12,7 @@ namespace Services.Specifications.ResearchesModule
 {
     internal class RecommendedResearchesSpecifications : BaseSpecifications<Research, int>
     {
-        public RecommendedResearchesSpecifications(ResearchSpecificationParameters parameters, Guid facultyMemberId)
+        public RecommendedResearchesSpecifications(ResearchCursoredPaginationSpecificationParameters parameters, Guid facultyMemberId)
                 : base(BuildCriteria(parameters , facultyMemberId))
         {
 
@@ -51,7 +51,8 @@ namespace Services.Specifications.ResearchesModule
                 default:
                     break;
             }
-            applyPagination(parameters.PageSize, parameters.PageIndex);
+            ApplyCursorTake(parameters.Take);
+            AddOrderBy(m => m.Id);
             AddIncludes(r => r.Cites!);
 
         }
@@ -78,7 +79,7 @@ namespace Services.Specifications.ResearchesModule
 
 
         private static Expression<Func<Research, bool>> BuildCriteria(
-      ResearchSpecificationParameters parameters,
+      ResearchCursoredPaginationSpecificationParameters parameters,
       Guid facultyMemberId)
         {
             Domain.Enums.PublisherType? mappedPublisherType = null;
@@ -119,8 +120,10 @@ namespace Services.Specifications.ResearchesModule
                 r.Contributions!.Any(c =>
                     !c.IsDeleted &&
                     c.ContributorId == facultyMemberId &&
-                    !c.IsConfirmed) 
+                    !c.IsConfirmed) &&
                 
+                (!parameters.BeforeResearchId.HasValue || r.Id < parameters.BeforeResearchId.Value)
+
                 && (!mappedPublisherType.HasValue || r.PublisherType == mappedPublisherType.Value)
 
                 && (!mappedPublicationType.HasValue || r.PublicationType == mappedPublicationType.Value)

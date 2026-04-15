@@ -41,7 +41,7 @@ namespace Services.Implementations
             var personalDateLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.PersonalData.ToString(),
+                CategoryAction = CategoryAction.PersonalDataActions.ToString(),
             };
 
             var email = facultyMemberEmail ?? currentUser.Email;
@@ -121,7 +121,7 @@ namespace Services.Implementations
             var updatePersonalDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.PersonalData.ToString(),
+                CategoryAction = CategoryAction.PersonalDataActions.ToString(),
             };
 
             var email = facultyMemberEmail ?? currentUser.Email;
@@ -204,7 +204,7 @@ namespace Services.Implementations
             var contactDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.ContactData.ToString(),
+                CategoryAction = CategoryAction.ContactDataActions.ToString(),
             };
 
             var email = facultyMemberEmail ?? currentUser.Email;
@@ -280,7 +280,7 @@ namespace Services.Implementations
 			var updateContactDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.ContactData.ToString(),
+                CategoryAction = CategoryAction.ContactDataActions.ToString(),
             };
 
             var email = facultyMemberEmail ?? currentUser.Email;
@@ -364,7 +364,7 @@ namespace Services.Implementations
             var identificationCardDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.IdentificationCardData.ToString()
+                CategoryAction = CategoryAction.IdentificationCardDataActions.ToString()
             };
 
             var email = facultyMemberEmail ?? currentUser.Email;
@@ -414,28 +414,28 @@ namespace Services.Implementations
                 return Mapper.Map<IdentificationCardDto>(identificationCard);
             }
 
-            var facultyMember = await GetFacultyMemberByEmailAsync(email);
-            if (facultyMember is null)
+			FacultyMember facultyMember = null!;
+			try
             {
-                #region Log
-                identificationCardDataLog.Timestamp = DateTime.Now;
-                identificationCardDataLog.Level = "Warning";
-                identificationCardDataLog.UserIP = GetUserIP();
-                identificationCardDataLog.UserName = currentUser.UserName;
-                identificationCardDataLog.RenderedMessage = $"Faculty Member Not Found.";
-                identificationCardDataLog.AdditionalData = $"User tried to get identification card data for a faculty member that does not exist in database, No faculty member found with email : {currentUser.Email}.";
-                _logger.LogWarning("{@LogDetails}", identificationCardDataLog);
-                #endregion
-                throw new NotFoundException("Faculty Member is Not Found.");
-            }
-
-            try
-            {
-                await EnsureOwnershipIfClientAsync(
+				facultyMember = await GetFacultyMemberByEmailAsync(email);
+				await EnsureOwnershipIfClientAsync(
                        facultyMember.Id,
                        facultyMemberEmail);
             }
-            catch (Exception ex)
+            catch (NotFoundException)
+            {
+				#region Log
+				identificationCardDataLog.Timestamp = DateTime.Now;
+				identificationCardDataLog.Level = "Warning";
+				identificationCardDataLog.UserIP = GetUserIP();
+				identificationCardDataLog.UserName = currentUser.UserName;
+				identificationCardDataLog.RenderedMessage = $"Faculty Member Not Found.";
+				identificationCardDataLog.AdditionalData = $"User tried to get identification card data for a faculty member that does not exist in database, No faculty member found with email : {currentUser.Email}.";
+				_logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+                #endregion
+                throw;
+			}
+			catch (Exception ex)
             {
 				#region Log
 				var ensureOwnershipLog = new LogEntry
@@ -499,7 +499,7 @@ namespace Services.Implementations
 			var identificationCardDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.IdentificationCardData.ToString()
+                CategoryAction = CategoryAction.IdentificationCardDataActions.ToString()
             };
 
             var email = facultyMemberEmail ?? currentUser.Email;
@@ -582,7 +582,7 @@ namespace Services.Implementations
             var socialMediaLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.SocialMediaData.ToString(),
+                CategoryAction = CategoryAction.SocialMediaDataActions.ToString(),
             };
 
             var email = facultyMemberEmail ?? (currentUser.Email);
@@ -632,29 +632,28 @@ namespace Services.Implementations
                 return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
             }
 
-            var facultyMember = await GetFacultyMemberByEmailAsync(email);
-
-            if (facultyMember is null)
-            {
-                #region Log
-                socialMediaLog.Timestamp = DateTime.Now;
-                socialMediaLog.Level = "Warning";
-                socialMediaLog.UserIP = GetUserIP();
-                socialMediaLog.UserName = currentUser.UserName;
-                socialMediaLog.RenderedMessage = $"Faculty member not found.";
-                socialMediaLog.AdditionalData = $"User tried to get social media platforms data for a faculty member that does not exist in database, no faculty member found with email : {currentUser.Email}.";
-                _logger.LogWarning("{@LogDetails}", socialMediaLog);
-                #endregion
-                throw new NotFoundException("Faculty Member is Not Found.");
-            }
-
+            FacultyMember facultyMember = null!;
             try
             {
-                await EnsureOwnershipIfClientAsync(
+				facultyMember = await GetFacultyMemberByEmailAsync(email);
+				await EnsureOwnershipIfClientAsync(
                         facultyMember.Id,
                         facultyMemberEmail);
             }
-            catch (Exception ex)
+            catch (NotFoundException)
+            {
+				#region Log
+				socialMediaLog.Timestamp = DateTime.Now;
+				socialMediaLog.Level = "Warning";
+				socialMediaLog.UserIP = GetUserIP();
+				socialMediaLog.UserName = currentUser.UserName;
+				socialMediaLog.RenderedMessage = $"Faculty member not found.";
+				socialMediaLog.AdditionalData = $"User tried to get social media platforms data for a faculty member that does not exist in database, no faculty member found with email : {currentUser.Email}.";
+				_logger.LogWarning("{@LogDetails}", socialMediaLog);
+                #endregion
+                throw;
+			}
+			catch (Exception ex)
             {
 				#region Log
 				var ensureOwnershipLog = new LogEntry
@@ -719,7 +718,7 @@ namespace Services.Implementations
 			var updateSocialMediaLog = new LogEntry
             {
                 Category = Category.FacultyMemberService.ToString(),
-                CategoryAction = CategoryAction.SocialMediaData.ToString()
+                CategoryAction = CategoryAction.SocialMediaDataActions.ToString()
             };
 
             var email = facultyMemberEmail ?? currentUser.Email;

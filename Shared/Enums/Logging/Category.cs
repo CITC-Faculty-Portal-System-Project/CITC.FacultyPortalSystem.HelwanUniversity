@@ -9,5 +9,6 @@
 		ResearchDataConsumer = 5,
 		ExternalDataHandling = 6,
 		FacultyMemberService = 7,
+		FacultyMemberAcademicData = 8,
 	}
 }

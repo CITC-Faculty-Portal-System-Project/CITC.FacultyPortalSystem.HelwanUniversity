@@ -1164,7 +1164,7 @@ namespace Presentation.Controllers.AdminModule
         [HttpGet("Admin/FacultyMember/Researches/Recommended")]
         [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
         public async Task<ActionResult<PaginatedResult<ResearchResponseDTO>>> GetAdminFacultyMemberRecommendedResearchesAsync(
-            [FromQuery] ResearchSpecificationParameters parameters)
+            [FromQuery] ResearchCursoredPaginationSpecificationParameters parameters)
             => Ok(await _serviceManager.ResearchesService
                 .GetAllRecommendedResearches(parameters, parameters.FacultyMemberId));
 

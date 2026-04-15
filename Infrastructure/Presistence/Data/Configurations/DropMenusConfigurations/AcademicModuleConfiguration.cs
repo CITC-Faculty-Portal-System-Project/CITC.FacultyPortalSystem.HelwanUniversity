@@ -376,7 +376,7 @@
                     Type = LookupTypes.EmploymentDegrees.ToString(),
                     Key = "EMPLOYEMENT",
                     ValueAr = "معيد",
-                    ValueEn = "Demonstrator",
+                    ValueEn = "Teaching Assistant",
                     SortOrder = 1,
                     CreatedBy = "Helwan Faculty Portal System",
                     CreatedAt = new DateTime(2025, 11, 22)
