@@ -2,7 +2,8 @@
 {
     public record PersonalDataFetchingDTO
     {
-        public string Name { get; set; } = string.Empty;
+        public string NameAr { get; set; } = string.Empty;
+        public string? NameEn { get; set; } = string.Empty;
         public string? Title { get; set; }
         public string Gender { get; set; } = string.Empty;
         public string SocialStatus { get; set; } = string.Empty;

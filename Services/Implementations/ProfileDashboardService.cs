@@ -1,5 +1,8 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿using Domain.Contracts;
+using Domain.Entities.CVGenerationModule;
+using Domain.Entities.FacultyMemberDataModule;
 using Microsoft.Extensions.Logging;
+using Services.Specifications.CVGenerationModule;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Enums.Logging;
 
@@ -181,6 +184,7 @@ namespace Services.Implementations
 
         public async Task<ProfileDashboardResponseDTO> GetProfileDashboardAsync()
         {
+            var cvRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
 
             #region Old Code
             //var currentUser = await GetCurrentUserAsync();
@@ -340,6 +344,11 @@ namespace Services.Implementations
                 response.X = sm.X;
                 response.PersonalWebsite = sm.PersonalWebsite;
             }
+
+            var cv = await cvRepo.GetAsync(new CVPrefferedTemplateSpecification(currentUser.UserId));
+            if (cv is not null)
+                response.PrefferdCVTempate = cv.TemplateName;
+
 
             response.ResearchCount = personalData.FacultyMember!.ResearchContributions?.Count ?? 0;
             response.PrizesAndRewardsCount = personalData.FacultyMember!.PrizesAndRewards.Count;

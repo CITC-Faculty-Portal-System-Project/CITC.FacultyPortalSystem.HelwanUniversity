@@ -1,6 +1,8 @@
-﻿using Domain.Entities.FacultyMemberDataModule;
+﻿using Domain.Entities.CVGenerationModule;
+using Domain.Entities.FacultyMemberDataModule;
 using Microsoft.Extensions.Logging;
 using Services.Global;
+using Services.Specifications.CVGenerationModule;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Enums.Logging;
 using System.Text.Encodings.Web;
@@ -35,7 +37,7 @@ namespace Services.Implementations
         #region PersonalData
 
         public async Task<PersonalDataResponseDto?> GetPersonalDataAsync(string? facultyMemberEmail = null)
-        {
+        {            
             var currentUser = await GetCurrentUserAsync();
 
             var personalDateLog = new LogEntry
@@ -93,7 +95,7 @@ namespace Services.Implementations
 
             var result = Mapper.Map<PersonalDataResponseDto>(personalData);
             result.NationalNumber = personalData.FacultyMember?.NationalNumber ?? string.Empty;
-
+          
             #region Log
             personalDateLog.Timestamp = DateTime.Now;
             personalDateLog.RenderedMessage = $"Personal data retrieved for user: {currentUser.UserName}.";

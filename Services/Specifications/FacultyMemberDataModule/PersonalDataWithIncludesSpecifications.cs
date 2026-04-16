@@ -28,7 +28,7 @@ namespace Services.Specifications.FacultyMemberDataModule
             && pd.NameInComposition == dTO.NameInCompositions && pd.CompositionTopics == dTO.CompositionTopics &&
             pd.Authority.ValueAr == dTO.FacultyName && pd.Field.ValueAr == dTO.FieldOfStudy && pd.Department.ValueAr == dTO.Department
             && pd.GeneralSpecialization == dTO.GeneralSpecialization && pd.AccurateSpecialization == dTO.AccurateSpecialization
-            && pd.NameAr == dTO.Name && pd.NameEn == dTO.Name && pd.FacultyMember!.NationalNumber == dTO.NationalNumber)
+            && pd.NameAr == dTO.NameAr && pd.NameEn == dTO.NameEn && pd.FacultyMember!.NationalNumber == dTO.NationalNumber)
         {
             AddIncludes(pd => pd.Gender);
             AddIncludes(pd => pd.Title);

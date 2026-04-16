@@ -10,5 +10,11 @@ namespace Services.Specifications.CVGenerationModule
           : base(cv => cv.FacultyMemberId == facultyMemberId)
         {
         }
+
+        public CVPrefferedTemplateSpecification
+            (string templateName  , Guid facultyMemberId)
+          : base(cv => cv.FacultyMemberId == facultyMemberId && string.Equals(cv.TemplateName , templateName))
+        {
+        }
     }
 }
