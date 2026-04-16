@@ -12,6 +12,8 @@
         public LookupItemDto Department { get; set; } = null!;
         public string? BioSummary { get; set; }
         public List <string>? Skills { get; set; }
+        public string? PrefferdCVTempate { get; set; } = string.Empty;
+
 
 
         //Data from SocialMediaLinks

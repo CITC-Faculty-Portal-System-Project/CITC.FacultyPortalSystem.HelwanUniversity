@@ -411,7 +411,7 @@ namespace Services.Implementations
 								Category = Category.ExternalDataHandling.ToString(),
 								CategoryAction = CategoryAction.ExternalDataProcessing.ToString(),
 								Level = "Information",
-								AdditionalData = $"Processing personal data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Name : {item.Name} - Gender : {item.Gender} - Social Status : {item.SocialStatus} - Faculty Name : {item.FacultyName} - Department : {item.Department} - University : {item.University}]."
+								AdditionalData = $"Processing personal data record from external data source for faculty member with national number : {item.NationalNumber} -> Data [Name : {item.NameAr} - Gender : {item.Gender} - Social Status : {item.SocialStatus} - Faculty Name : {item.FacultyName} - Department : {item.Department} - University : {item.University}]."
 							};
 							_logger.LogInformation("{@LogDetails}", personalDataLog);
 							#endregion

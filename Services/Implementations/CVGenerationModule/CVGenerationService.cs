@@ -97,7 +97,9 @@ namespace Services.Implementations.CVGenerationModule
 
             var response = _mapper.Map<CVResponseDTO>(personalData);
             response.PersonalDataId = personalData.Id;
-            response.ProfilePictureId = personalData.ProfilePicture!.Id;
+            
+
+            response.ProfilePictureId = personalData.ProfilePicture?.Id?? null;
 
             if (personalData.FacultyMember!.SocialMediaPlatforms != null)
             {
@@ -254,6 +256,17 @@ namespace Services.Implementations.CVGenerationModule
                 TemplateName = templateName,
             };
 
+            var existingPrefernces = await SavedCVPreferencesRepo.GetAsync(new CVPrefferedTemplateSpecification(currentUser.UserId));
+            if (existingPrefernces is not null)
+            {
+                existingPrefernces.TemplateName = templateName;
+                SavedCVPreferencesRepo.Update(existingPrefernces);
+                await _unitOfWork.SaveChangesAsync();
+                return template.GeneratePdf(cv);
+
+
+            }
+
             await SavedCVPreferencesRepo.AddAsync(selectedTemplate);
 
             await _unitOfWork.SaveChangesAsync();
@@ -276,6 +289,17 @@ namespace Services.Implementations.CVGenerationModule
                 FacultyMemberId = currentUser.UserId,
                 TemplateName = templateName,
             };
+
+            var existingPrefernces = await SavedCVPreferencesRepo.GetAsync(new CVPrefferedTemplateSpecification(currentUser.UserId));
+            if(existingPrefernces is not null)
+            {
+              
+                existingPrefernces.TemplateName = templateName;
+                SavedCVPreferencesRepo.Update(existingPrefernces);
+                await _unitOfWork.SaveChangesAsync();
+                return await template.GenerateHtml(cv);
+            }
+
 
             await SavedCVPreferencesRepo.AddAsync(selectedTemplate);
 
