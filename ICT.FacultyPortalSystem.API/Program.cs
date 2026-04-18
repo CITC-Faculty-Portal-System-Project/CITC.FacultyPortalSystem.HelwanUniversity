@@ -69,6 +69,8 @@ namespace ICIT.FacultyPortalSystem.API
 
             app.MapHub<ChatHub>("/hubs/chatHub");
 
+            app.MapHub<NotificationHub>("/hubs/notificationHub");
+
             app.Run();
         }
     }
