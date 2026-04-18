@@ -46,9 +46,10 @@ namespace Presistence.Data
 
         
         public DbSet<Lookup> Lookups { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
-        #region FacultyMemberData DbSets
-        public DbSet<ContactData> ContactData { get; set; }
+		#region FacultyMemberData DbSets
+		public DbSet<ContactData> ContactData { get; set; }
         public DbSet<PersonalData> PersonalData { get; set; }
         public DbSet<IdentificationCard> IdentificationCard { get; set; }
         public DbSet<SocialMediaPlatforms> SocialMediaPlatforms { get; set; }
