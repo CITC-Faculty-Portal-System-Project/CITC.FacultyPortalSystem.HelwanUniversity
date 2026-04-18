@@ -1,7 +1,11 @@
 ﻿
 using Microsoft.AspNetCore.SignalR;
 using Services.Global;
+using Services.Specifications.AcademicDataModule.ContributionsModule;
+using Shared.Dtos.AcademicDataModule.ContributionsModule;
+using Shared.Enums.Logging;
 using Shared.Hubs;
+using Shared.SpecificationParameters.AcademicDataModule.ContributionsModule;
 
 namespace Services.Implementations.Notification
 {
@@ -14,7 +18,7 @@ namespace Services.Implementations.Notification
 	{
 		protected override string EntityName => "Notification";
 
-		public Task MarkAsViewedAsync(Guid notificationId)
+        public Task MarkAsViewedAsync(Guid notificationId)
 		{
 			//1.Using Specification Design Pattern get a notification with notificationId
 			//--> If exists

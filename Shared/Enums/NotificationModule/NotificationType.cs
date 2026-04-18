@@ -1,4 +1,4 @@
-﻿namespace Shared.Enums
+﻿namespace Shared.Enums.NotificationModule
 {
 	public enum NotificationType
 	{
