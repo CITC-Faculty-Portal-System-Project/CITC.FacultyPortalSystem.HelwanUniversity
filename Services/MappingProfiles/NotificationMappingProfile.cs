@@ -4,7 +4,7 @@
 	{
 		public NotificationMappingProfile()
 		{
-			CreateMap<Notification, NotificationDto>().ReverseMap();
+			CreateMap<Notification, NotificationDTO>().ReverseMap();
 		}
 	}
 }

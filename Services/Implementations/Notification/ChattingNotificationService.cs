@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ContributionsModule;
+using Services.Specifications.NotificationModule;
 using Shared.Dtos.AcademicDataModule.ContributionsModule;
 using Shared.Enums.Logging;
 using Shared.Hubs;
@@ -18,32 +19,51 @@ namespace Services.Implementations.Notification
 	{
 		protected override string EntityName => "Notification";
 
-        public Task MarkAsViewedAsync(Guid notificationId)
+        public async Task MarkAsViewedAsync(Guid notificationId)
 		{
-			//1.Using Specification Design Pattern get a notification with notificationId
-			//--> If exists
-			//----> Update the notification with IsViewed = true and  IsRemoved = true and IsDeleted = true then save it to database.
-			throw new NotImplementedException();
+			var notification = await Repo.GetAsync(new NotificationSpecifications(notificationId)) 
+				?? throw NotFound();
+
+			notification.IsViewed = true;
+			notification.IsRemoved = true;
+			notification.IsDeleted = true;
+
+			Repo.Update(notification);
+			await unitOfWork.SaveChangesAsync();
 		}
 
-		public Task RemoveNotificationAsync(Guid notificationId)
+		public async Task RemoveNotificationAsync(Guid notificationId)
 		{
-			//1.Using Specification Design Pattern get a notification with notificationId
-			//--> If exists
-			//----> Update the notification with IsRemoved = true and save it to database
-			throw new NotImplementedException();
+			var notification = await Repo.GetAsync(new NotificationSpecifications(notificationId))
+				?? throw NotFound();
+
+			notification.IsRemoved = true;
+
+			Repo.Update(notification);
+			await unitOfWork.SaveChangesAsync();
 		}
 
-		public Task SendNotificationAsync(NotificationDto notification)
+		public async Task SendNotificationAsync(NotificationDTO notification)
 		{
-			//1.Using Specification Design Pattern get a notification with notification.ReceiverId and notification.Sender
-			//--> If exists {even if IsDeleted is true}
-			//----> Calculate the number of un-read messages between the sender and receiver using CountUnReadMessages() method
-			//----> Update the notification with the new count using UpdateNotification() method
-			//--> If not exists [null]
-			//----> Create a new notification and save it to database
-			//----> Send the notification to the receiver using SignalR
-			throw new NotImplementedException();
+			var notificationDb = await Repo.GetAsync(new NotificationSpecifications(notification.Source, notification.ReceiverId));
+
+			if(notificationDb is not null) //If exists { even if IsDeleted is true}
+			{
+				//----> Calculate the number of un-read messages between the sender and receiver using CountUnReadMessages() method
+				//----> Update the notification with the new count using UpdateNotification() method
+			}
+			else //If not exists [null]
+			{
+				//Modify Dto body here
+				var newNotification = mapper.Map<Domain.Entities.Notification>(notification);
+				await Repo.AddAsync(newNotification);
+			}
+			await unitOfWork.SaveChangesAsync();
+
+			await _hubContext
+			.Clients
+			.User(notification.ReceiverId.ToString())
+			.SendAsync("ReceiveNotification", notification);
 		}
 
 		#region Helper Methods
@@ -52,10 +72,10 @@ namespace Services.Implementations.Notification
 			//Check the number of messages unread by the receiver from the sender and return it
 			return 0;
 		}
-		private NotificationDto UpdateNotification()
+		private NotificationDTO UpdateNotification()
 		{
 			//Update the Message body of the Notification with the new count of un-read messages and return the updated notification
-			return new NotificationDto();
+			return new NotificationDTO();
 		}
 		#endregion
 	}

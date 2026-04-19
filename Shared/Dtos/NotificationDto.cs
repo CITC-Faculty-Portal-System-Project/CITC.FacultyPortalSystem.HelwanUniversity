@@ -2,7 +2,7 @@
 
 namespace Shared.Dtos
 {
-	public record NotificationDto
+	public record NotificationDTO
 	{
 		public string Source { get; set; } = string.Empty;
 		public NotificationType Type { get; set; }
