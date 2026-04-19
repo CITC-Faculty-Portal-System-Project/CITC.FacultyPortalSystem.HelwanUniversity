@@ -71,7 +71,7 @@ namespace ICIT.FacultyPortalSystem.API
             }
             app.UseCookiePolicy(new CookiePolicyOptions
             {
-                MinimumSameSitePolicy = SameSiteMode.Lax,
+                MinimumSameSitePolicy = SameSiteMode.None,
                 Secure = CookieSecurePolicy.None
             });
             //     app.UseHttpsRedirection();
