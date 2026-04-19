@@ -11,6 +11,7 @@ using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Services.Implementations
 {
@@ -49,6 +50,7 @@ namespace Services.Implementations
         , Func<IConversationService> _conversationService
         , Func<ITicketingService> _ticketingService
         , Func<ICVGenerationService> _cvGenerationServiceFactory
+        , Func<INotificationService> _notificationService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -65,11 +67,12 @@ namespace Services.Implementations
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
 
         public ICVGenerationService CVGenerationService => _cvGenerationServiceFactory.Invoke();
+        public INotificationService NotificationService => _notificationService.Invoke();
 
-        #region Academic Data Module
+		#region Academic Data Module
 
-        #region Missions Module
-        public IScientificMissionsService ScientificMissionsService => _scientificMissionsServiceFactory.Invoke();
+		#region Missions Module
+		public IScientificMissionsService ScientificMissionsService => _scientificMissionsServiceFactory.Invoke();
         public ISeminarsAndConferencesService SeminarsAndConferencesService => _seminarsAndConferencesServiceFactory.Invoke();
         public ITrainingProgramsService TrainingProgramsService => _trainingProgramsServiceFactory.Invoke();
 
