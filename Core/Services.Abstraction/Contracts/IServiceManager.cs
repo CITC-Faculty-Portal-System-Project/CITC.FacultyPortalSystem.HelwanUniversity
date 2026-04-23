@@ -12,6 +12,7 @@ using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Services.Abstraction.Contracts.Notification;
 
 
 namespace Services.Abstraction.Contracts
@@ -28,6 +29,10 @@ namespace Services.Abstraction.Contracts
         //public IExternalDataHandlingService ExternalDataHandlingService { get; }
 
         public ICVGenerationService CVGenerationService { get; }
+
+        #region Notification
+        public INotificationService NotificationService { get; } 
+        #endregion
 
         #region Academic Data Module
 

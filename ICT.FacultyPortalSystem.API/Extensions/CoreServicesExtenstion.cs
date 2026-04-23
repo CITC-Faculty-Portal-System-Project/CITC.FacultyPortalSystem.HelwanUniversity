@@ -43,6 +43,8 @@ using Services.Implementations.CVGenerationModule.Templates;
 using Services.Implementations.MessagingAndChattingModule;
 using Services.Implementations.TicketingModule;
 using Shared.Common;
+using Services.Abstraction.Contracts.Notification;
+using Services.Implementations.Notification;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -237,7 +239,14 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<ICVGenerationService>()
             );
 
-            services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
+
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<Func<INotificationService>>(provider =>
+			() => provider.GetRequiredService<INotificationService>()
+			);
+
+
+			services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
             services.AddScoped<IExternalDataHandlingService, ExternalDataHandlingService>();
@@ -283,8 +292,10 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
             services.AddScoped<CVTemplatesFactory>();
 
-            
-            
+
+            services.AddScoped<INotificationSender, MessagingNotification>();
+            services.AddScoped<INotificationSender, SystemAlertNotification>();
+            services.AddScoped<INotificationSender, SystemNotification>();
             
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
