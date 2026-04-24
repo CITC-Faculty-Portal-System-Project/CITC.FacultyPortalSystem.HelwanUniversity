@@ -4,5 +4,6 @@
 	{
 		ChatMessage = 1,
 		SystemAlert = 2,
+		SyetemNotification = 3,
 	}
 }

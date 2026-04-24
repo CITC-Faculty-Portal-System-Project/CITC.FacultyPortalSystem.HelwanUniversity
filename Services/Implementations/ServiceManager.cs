@@ -12,6 +12,7 @@ using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Services.Abstraction.Contracts.Notification;
 
 namespace Services.Implementations
 {
@@ -67,12 +68,15 @@ namespace Services.Implementations
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
 
         public ICVGenerationService CVGenerationService => _cvGenerationServiceFactory.Invoke();
-        public INotificationService NotificationService => _notificationService.Invoke();
 
-		#region Academic Data Module
+        #region Notification
+        public INotificationService NotificationService => _notificationService.Invoke(); 
+        #endregion
 
-		#region Missions Module
-		public IScientificMissionsService ScientificMissionsService => _scientificMissionsServiceFactory.Invoke();
+        #region Academic Data Module
+
+        #region Missions Module
+        public IScientificMissionsService ScientificMissionsService => _scientificMissionsServiceFactory.Invoke();
         public ISeminarsAndConferencesService SeminarsAndConferencesService => _seminarsAndConferencesServiceFactory.Invoke();
         public ITrainingProgramsService TrainingProgramsService => _trainingProgramsServiceFactory.Invoke();
 
