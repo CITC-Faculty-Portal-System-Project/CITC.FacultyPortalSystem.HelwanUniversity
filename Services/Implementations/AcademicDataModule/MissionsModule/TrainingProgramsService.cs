@@ -6,6 +6,8 @@ using Services.Specifications.AcademicDataModule.MissionsModule;
 using Shared.Dtos.AcademicDataModule.MissionsModule;
 using Shared.Enums.Logging;
 using Shared.SpecificationParameters.AcademicDataModule.MissionsModule;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace Services.Implementations.AcademicDataModule.MissionsModule
 {
@@ -18,7 +20,6 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
          ITrainingProgramsService
     {
         protected override string EntityName => "Training Programs";
-        private string deleteLater = "training program";
 
         public async Task<PaginatedResult<TrainingProgramsResponseDto>> GetAllTrainingProgramsAsync(
             TrainingProgramsSpecificationParameters parameters,
@@ -152,10 +153,14 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             }
             catch (NotFoundException)
             {
-                #region Log
-
-                #endregion
-                throw;
+				#region Log
+				trainingProgramLog.Timestamp = DateTime.Now;
+				trainingProgramLog.Level = "Warning";
+				trainingProgramLog.RenderedMessage = $"Faculty Member not found.";
+				trainingProgramLog.AdditionalData = $"User tried to create a training program for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
+				#endregion
+				throw;
             }
 
             var trainingProgram = Mapper.Map<TrainingPrograms>(trainingProgramsCreateDto);
@@ -166,9 +171,13 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 
             var response = Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
             #region Log
-
-            #endregion
-            return response;
+            trainingProgramLog.Timestamp = DateTime.Now;
+			trainingProgramLog.Level = "Information";
+            trainingProgramLog.RenderedMessage = $"User: {currentUser.UserName} created a training program.";
+            trainingProgramLog.AdditionalData = $"User created a training program with id: {response.Id} and Name: {response.TrainingProgramName} successfully.";
+			_logger.LogInformation("{@LogDetails}", trainingProgramLog);
+			#endregion
+			return response;
         }
 
         public async Task<TrainingProgramsResponseDto> UpdateTrainingProgramAsync(
@@ -176,38 +185,127 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             TrainingProgramsUpdateDto trainingProgramsUpdateDto,
             string? facultyMemberEmail = null)
         {
+			#region Log
+            var currentUser = await GetCurrentUserAsync();
+			var trainingProgramLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.TrainingProgramsActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName,
+			};
+			#endregion
+			var jsonOptions = new JsonSerializerOptions
+			{
+				WriteIndented = true,
+				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+			};
             var trainingProgram = await Repo.GetAsync(
-                new TrainingProgramsSpecifications(id))
-                ?? throw NotFound();
+                new TrainingProgramsSpecifications(id));
+            if(trainingProgram is null)
+            {
+                #region Log
+                trainingProgramLog.Timestamp = DateTime.Now;
+				trainingProgramLog.Level = "Warning";
+				trainingProgramLog.RenderedMessage = $"Training program not found for user: {currentUser.UserName}.";
+				trainingProgramLog.AdditionalData = $"User tried to update their training program data with id: {id}, but no training program data with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
+				#endregion
+				throw NotFound();
+			}
 
-            await EnsureOwnershipIfClientAsync(
-                trainingProgram.FacultyMemberId,
-                facultyMemberEmail);
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        trainingProgram.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                #region Log
+                trainingProgramLog.Timestamp = DateTime.Now;
+				trainingProgramLog.Level = "Warning";
+				trainingProgramLog.RenderedMessage = $"User unauthorized to update training program data.";
+				trainingProgramLog.AdditionalData = $"User tried to update training program data with id: {id} that does not belong to them, training program data faculty member id: {trainingProgram.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
+				#endregion
+				throw;
+            }
 
-            Mapper.Map(trainingProgramsUpdateDto, trainingProgram);
+            var oldData = Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
+			Mapper.Map(trainingProgramsUpdateDto, trainingProgram);
 
             Repo.Update(trainingProgram);
             await SaveChangesAsync();
 
-            return Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
+            var newData = Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
+            #region Log
+            trainingProgramLog.Timestamp = DateTime.Now;
+			trainingProgramLog.Level = "Information";
+			trainingProgramLog.RenderedMessage = $"Training program data updated for user: {currentUser.UserName}.";
+			trainingProgramLog.AdditionalData = $"User updated their training program data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			_logger.LogInformation("{@LogDetails}", trainingProgramLog);
+			#endregion
+			return Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
         }
 
         public async Task DeleteTrainingProgramAsync(
             int id,
             string? facultyMemberEmail = null)
         {
-            var trainingProgram = await Repo.GetAsync(
-                new TrainingProgramsSpecifications(id))
-                ?? throw NotFound();
-
-            await EnsureOwnershipIfClientAsync(
-                trainingProgram.FacultyMemberId,
-                facultyMemberEmail);
+			#region Log
+			var currentUser = await GetCurrentUserAsync();
+			var trainingProgramLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.TrainingProgramsActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName,
+			};
+			#endregion
+			var trainingProgram = await Repo.GetAsync(
+                new TrainingProgramsSpecifications(id));
+			if (trainingProgram is null)
+            {
+				#region Log
+				trainingProgramLog.Timestamp = DateTime.Now;
+				trainingProgramLog.Level = "Warning";
+				trainingProgramLog.RenderedMessage = $"Training program not found for user: {currentUser.UserName}.";
+				trainingProgramLog.AdditionalData = $"User tried to delete their training program data with id: {id}, but no training program data with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
+				#endregion
+				throw NotFound();
+			}
+				
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        trainingProgram.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				trainingProgramLog.Timestamp = DateTime.Now;
+				trainingProgramLog.Level = "Warning";
+				trainingProgramLog.RenderedMessage = $"User unauthorized to delete training program data.";
+				trainingProgramLog.AdditionalData = $"User tried to delete training program data with id: {id} that does not belong to them, training program data faculty member id: {trainingProgram.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
+				#endregion
+				throw;
+            }
 
             trainingProgram.IsDeleted = true;
 
             Repo.Update(trainingProgram);
             await SaveChangesAsync();
-        }
+			#region Log
+			trainingProgramLog.Timestamp = DateTime.Now;
+			trainingProgramLog.Level = "Information";
+			trainingProgramLog.RenderedMessage = $"Training program data deleted for user: {currentUser.UserName}.";
+			trainingProgramLog.AdditionalData = $"User deleted their training program data with id: {id} successfully.";
+			_logger.LogInformation("{@LogDetails}", trainingProgramLog);
+			#endregion
+		}
     }
 }

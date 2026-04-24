@@ -33,5 +33,6 @@
 		ScientificMissionsActions = 29,
 		ConferencesAndSeminarsActions = 30,
 		TrainingProgramsActions = 31,
+		ManifestationsOfScientificAppreciationActions = 32,
 	}
 }
