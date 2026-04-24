@@ -31,6 +31,7 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.Property(pd => pd.AccurateSpecialization)
                 .HasMaxLength(250);
 
+
             #region Dropdown Relationships
             builder.HasOne(pd => pd.Title)
                    .WithMany()
@@ -50,11 +51,6 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.HasOne(pd => pd.University)
                    .WithMany()
                    .HasForeignKey(pd => pd.UniversityId)
-                   .OnDelete(DeleteBehavior.Restrict);
-
-            builder.HasOne(pd => pd.Department)
-                   .WithMany()
-                   .HasForeignKey(pd => pd.DepartmentId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(pd => pd.Authority)
@@ -81,7 +77,7 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
                    .WithOne(a => a.PersonalData)
                    .HasForeignKey<ProfilePictures>(pd => pd.PersonalDataId)
                    .OnDelete(DeleteBehavior.Cascade);
-            
+
             #endregion
 
         }

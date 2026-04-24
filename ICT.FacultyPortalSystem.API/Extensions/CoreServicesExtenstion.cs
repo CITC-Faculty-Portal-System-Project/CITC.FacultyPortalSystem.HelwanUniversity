@@ -9,8 +9,8 @@ using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionMod
 using Services.Abstraction.Contracts.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
-using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
+using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.EncryptionServices;
@@ -26,6 +26,8 @@ using Services.Implementations.AcademicDataModule.ScientificProgressionModule;
 using Services.Implementations.AcademicDataModule.WritingsAndPatentsModule;
 using Services.Implementations.AdminModule;
 using Services.Implementations.AttachmentsModule;
+using Services.Implementations.AttachmentsModule.Helpers;
+using Services.Implementations.AttachmentsModule.Helpers.Handlers;
 using Services.Implementations.CVGenerationModule;
 using Services.Implementations.CVGenerationModule.DataFilters;
 using Services.Implementations.CVGenerationModule.Factories;
@@ -37,10 +39,9 @@ using Services.Implementations.CVGenerationModule.SectionFilters.Prizes;
 using Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAndCommittees;
 using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgression;
 using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
-using Services.Implementations.AttachmentsModule.Helpers;
-using Services.Implementations.AttachmentsModule.Helpers.Handlers;
 using Services.Implementations.CVGenerationModule.Templates;
 using Services.Implementations.MessagingAndChattingModule;
+using Services.Implementations.Notification;
 using Services.Implementations.TicketingModule;
 using Shared.Common;
 
@@ -237,6 +238,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<ICVGenerationService>()
             );
 
+            services.AddScoped<INotificationService, ChattingNotificationService>();
+            services.AddScoped<Func<INotificationService>>(provider =>
+            () => provider.GetRequiredService<INotificationService>()
+            );
+
             services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
 
@@ -283,9 +289,9 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 
             services.AddScoped<CVTemplatesFactory>();
 
-            
-            
-            
+
+
+
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
 
@@ -296,12 +302,12 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                       configuration.GetSection("FileStorage:Ftps")
                     );
 
-           services
-            .AddOptions<FtpsOptions>()
-            .Bind(configuration.GetSection("FileStorage:Ftps"))
-            .ValidateDataAnnotations()
-            .Validate(o => !string.IsNullOrWhiteSpace(o.Host), "Host is required")
-            .ValidateOnStart();
+            services
+             .AddOptions<FtpsOptions>()
+             .Bind(configuration.GetSection("FileStorage:Ftps"))
+             .ValidateDataAnnotations()
+             .Validate(o => !string.IsNullOrWhiteSpace(o.Host), "Host is required")
+             .ValidateOnStart();
 
 
             return services;

@@ -11,6 +11,7 @@ using Domain.Entities.AdminModule;
 using Domain.Entities.CVGenerationModule;
 using Domain.Entities.EntitesAttachments;
 using Domain.Entities.Messaging;
+using Domain.Entities.UniversityFacultiesAndDepartments;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Presistence.Identity;
 using System.Reflection;
@@ -138,6 +139,13 @@ namespace Presistence.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<ConversationParticipant> ConversationParticipants { get; set; }
+        #endregion
+
+        #region FacultiesAndDepartmentsDbSets
+
+        public DbSet<Faculty> Faculties { get; set; }
+        public DbSet<Department> Departments { get; set; }
+
         #endregion
 
     }
