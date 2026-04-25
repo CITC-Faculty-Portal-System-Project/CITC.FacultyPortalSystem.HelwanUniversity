@@ -24,7 +24,7 @@ namespace Presentation.Controllers
 
         [ProducesResponseType(typeof(CursorPaginatedResult<NotificationDTO  , Guid>), StatusCodes.Status200OK)]
         [HttpGet("UserNotifications")]
-        public async Task<ActionResult<CursorPaginatedResult<NotificationDTO , Guid>>> GetAllUserNotifications(NotificationSpecificationsParameters parameters)
+        public async Task<ActionResult<CursorPaginatedResult<NotificationDTO , Guid>>> GetAllUserNotifications([FromQuery]NotificationSpecificationsParameters parameters)
         {
             return Ok(await _serviceManager.NotificationService.GetUserNotificationsAsync(parameters));
         }
