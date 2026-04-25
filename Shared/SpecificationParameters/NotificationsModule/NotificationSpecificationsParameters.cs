@@ -1,19 +1,21 @@
 ﻿using Shared.Enums.AcademicDataModule.ContributionsModule;
+using Shared.Enums.ResearchesModule;
 
 namespace Shared.SpecificationParameters.NotificationsModule
 {
     public class NotificationSpecificationsParameters
     {
-        private const int defaultPageSize = 10;
-        private const int maxPageSize = 10;
-        public Guid ReceiverId { get; set; } 
+        public Guid? BeforeNotificationId;
+        public Guid? ReceiverId { get; set; }
         public string? Search { get; set; }
-        public int PageIndex { get; set; } = 1;
-        private int _pageSize = defaultPageSize;
-        public int PageSize
+        private const int MaxTake = 50;
+        private int take = 20;
+
+        public int Take
         {
-            get { return _pageSize; }
-            set { _pageSize = value > maxPageSize ? maxPageSize : value; }
+            get => take;
+            set => take = value > MaxTake ? MaxTake : value;
         }
+
     }
 }

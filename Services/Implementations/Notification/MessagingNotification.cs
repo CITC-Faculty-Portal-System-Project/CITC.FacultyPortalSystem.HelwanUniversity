@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Services.Abstraction.Contracts.Notification;
+using Services.Specifications.MessagingAndChattingModule;
 using Services.Specifications.NotificationModule;
 using Shared.Dtos.Notification;
 using Shared.Enums.NotificationModule;
@@ -24,7 +25,7 @@ namespace Services.Implementations.Notification
 			}
 			else
 			{
-				int unreadMessagesCount = await CountUnReadMessages(notification.Source, notification.ReceiverId);
+				int unreadMessagesCount = await CountUnReadMessages(Convert.ToInt32(notification.Source), notification.ReceiverId);
 				_mapper.Map(notification, notificationDB);
 				notificationDB = UpdateNotification(notificationDB, unreadMessagesCount);
 				Repo.Update(notificationDB);
@@ -37,11 +38,12 @@ namespace Services.Implementations.Notification
 		}
 
 		#region HELPER
-		//This method takes the Conversation Id and the Notification Receiver Id -> Get the Count of UnRead Messages for the [Receiver] in [Conversation]
-		private async Task<int> CountUnReadMessages(string conversationId, Guid receiverId)
+		private async Task<int> CountUnReadMessages(int conversationId , Guid receiverId)
 		{
-			//---> Implement the logic to count un-read messages for the receiver in the conversation
-			return 0; // Return the count of un-read messages
+			var messagesRepo = _unitOfWork.GetRepository<Domain.Entities.Messaging.Message, long>();
+			var unReeadMessages = await messagesRepo.GetAllAsync(new MessageSpecifications(conversationId, receiverId));
+
+            return unReeadMessages.Count(); 
 		}
 		private Domain.Entities.Notification UpdateNotification(Domain.Entities.Notification notification, int countUnreadMessages)
 		{

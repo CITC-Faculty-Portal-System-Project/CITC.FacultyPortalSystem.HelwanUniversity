@@ -7,13 +7,13 @@ namespace Services.Specifications.NotificationModule
     {
         public NotificationSpecifications(NotificationSpecificationsParameters parameters) 
             : base(n => !n.IsDeleted && 
-                   !n.IsRemoved &&
+                   !n.IsRemoved && !n.IsViewed &&
                    n.ReceiverId == parameters.ReceiverId &&
                    (string.IsNullOrEmpty(parameters.Search) ||
                    n.Title.Contains(parameters.Search))
             )
         {
-            applyPagination(parameters.PageSize, parameters.PageIndex);
+            ApplyCursorTake(parameters.Take);
         }
 
         public NotificationSpecifications(Guid notificationId) : base(n => !n.IsDeleted && n.Id == notificationId)

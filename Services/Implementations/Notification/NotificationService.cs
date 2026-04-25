@@ -1,8 +1,13 @@
-﻿using Services.Abstraction.Contracts.Notification;
+﻿using Domain.Entities.Messaging;
+using Services.Abstraction.Contracts.Notification;
 using Services.Global;
+using Services.Helpers.PaginationHelpers;
+using Services.Specifications.MessagingAndChattingModule;
 using Services.Specifications.NotificationModule;
+using Shared.Dtos.MessagingAndChattingModule;
 using Shared.Dtos.Notification;
 using Shared.Enums.NotificationModule;
+using Shared.SpecificationParameters.NotificationsModule;
 
 namespace Services.Implementations.Notification
 {
@@ -22,10 +27,34 @@ namespace Services.Implementations.Notification
 			return null;
 		}
 
-		public Task<IEnumerable<NotificationDTO>> GetUserNotificationsAsync(Guid userId)
+		public async Task<CursorPaginatedResult<NotificationDTO , Guid>> GetUserNotificationsAsync(NotificationSpecificationsParameters parameters)
 		{
-			throw new NotImplementedException();
-		}
+            var currentUser = await GetCurrentUserAsync();
+			parameters.ReceiverId = currentUser.UserId;
+            var notificationsRepo = UnitOfWork.GetRepository<Domain.Entities.Notification, Guid>();
+
+            var notifications = await Repo.GetAllAsync(new NotificationSpecifications(parameters));
+            var notificationsCount = await Repo.CountAsync(new NotificationCountSpecifications(parameters));
+
+          
+            var (orderedNotifications, hasMore, nextCursor) =
+                CursorPaginationHelper.ProcessCursorPagination(
+                    notifications.ToList(),
+                    parameters.Take,
+                    n => n.Id,
+                    n => n.CreatedAt
+                );
+
+			var items  = _mapper.Map<IEnumerable<NotificationDTO>>(orderedNotifications);	
+
+            return new CursorPaginatedResult<NotificationDTO, Guid>
+            {
+                Items = items,
+                HasMore = hasMore,
+                NextCursor = nextCursor,
+                Count = notificationsCount
+            };
+        }
 
 		public async Task MarkAsViewedAsync(Guid notificationId)
 		{

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Shared;
 using Shared.Dtos.MessagingAndChattingModule;
 using Shared.Dtos.Notification;
+using Shared.SpecificationParameters.NotificationsModule;
 
 namespace Presentation.Controllers
 {
@@ -19,5 +21,12 @@ namespace Presentation.Controllers
 			await _serviceManager.NotificationService.MarkAsViewedAsync(notificationId);
 			return Ok();
 		}
-	}
+
+        [ProducesResponseType(typeof(CursorPaginatedResult<NotificationDTO  , Guid>), StatusCodes.Status200OK)]
+        [HttpGet("UserNotifications")]
+        public async Task<ActionResult<CursorPaginatedResult<NotificationDTO , Guid>>> GetAllUserNotifications(NotificationSpecificationsParameters parameters)
+        {
+            return Ok(await _serviceManager.NotificationService.GetUserNotificationsAsync(parameters));
+        }
+    }
 }
