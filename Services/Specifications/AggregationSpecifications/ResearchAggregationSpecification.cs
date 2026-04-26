@@ -25,12 +25,21 @@ namespace Services.Specifications.AggregationSpecifications
                 .Where(c => c.IsConfirmed)
                 .Select(c => c.Contributor!.PersonalData!);
 
-            var researchCounts = validData
-                .GroupBy(pd => pd.FacultyId)
+            var researchCounts = query
+                .Where(Criteria!)
+                .SelectMany(r => r.Contributions!
+                    .Where(c => c.IsConfirmed)
+                    .Select(c => new
+                    {
+                        ResearchId = r.Id,
+                        FacultyId = c.Contributor!.PersonalData!.FacultyId
+                    }))
+                .Distinct()
+                .GroupBy(x => x.FacultyId)
                 .Select(g => new
                 {
                     FacultyId = g.Key,
-                    Count = g.Select(pd => pd.Id).Distinct().Count()
+                    Count = g.Select(x => x.ResearchId).Distinct().Count()
                 })
                 .ToList();
 

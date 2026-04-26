@@ -30,7 +30,7 @@ namespace Services.Implementations.ReportsAndDashboards
             var facultyMembersCount = facultyMemberRoleUsers.Count;
             var managementUsersCount = managementAdminRoleUsers.Count + supportAdminRoleUsers.Count;
 
-            var faculties = await facultiesRepo.GetAllAsync();
+            var faculties = await facultiesRepo.GetAllAsync(new FacultySpecification());
             var usersPerFaculty = await personalDataRepo.ExecuteAggregationAsync(new PersonalDataAggregationSpecification(faculties.AsQueryable()));
             var researchesPerFaculty = await researchesRepo.ExecuteAggregationAsync(new ResearchAggregationSpecification(faculties.AsQueryable()));
             var totalResearches = await researchesRepo.GetAllAsync(new TotalResearchesSpecification());
