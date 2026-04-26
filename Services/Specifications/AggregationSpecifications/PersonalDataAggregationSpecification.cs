@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Shared.ReportsAndDashboard;
-using System.Linq;
 
 namespace Services.Specifications.AggregationSpecifications
 {
@@ -17,21 +16,32 @@ namespace Services.Specifications.AggregationSpecifications
             if (Criteria != null)
                 query = query.Where(Criteria);
 
+            // جيب كل الكليات من DB
             var faculties = query
-                .Select(x => x.Faculty!)
-                .Distinct();
+                .Where(pd => pd.Faculty != null)
+                .Select(pd => new { pd.Faculty!.Id, pd.Faculty.NameAR, pd.Faculty.NameEN })
+                .Distinct()
+                .ToList();
 
-            return faculties
+            var userCounts = query
+                .GroupBy(pd => pd.FacultyId)
+                .Select(g => new { FacultyId = g.Key, Count = g.Count() })
+                .ToList();
+
+            var result = faculties
                 .GroupJoin(
-                    query,
+                    userCounts,
                     f => f.Id,
-                    pd => pd.FacultyId,
-                    (f, pdGroup) => new FacultyUsersStatisticsDTO
+                    uc => uc.FacultyId,
+                    (f, uc) => new FacultyUsersStatisticsDTO
                     {
                         FacultyNameAR = f.NameAR,
                         FacultyNameEN = f.NameEN,
-                        TotalNumberOfUsers = pdGroup.Count()
-                    });
+                        TotalNumberOfUsers = uc.FirstOrDefault()?.Count ?? 0
+                    })
+                .ToList();
+
+            return result.AsQueryable();
         }
     }
 }

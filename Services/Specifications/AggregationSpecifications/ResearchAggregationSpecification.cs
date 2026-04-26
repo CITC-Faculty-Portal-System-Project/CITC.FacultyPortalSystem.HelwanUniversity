@@ -22,23 +22,35 @@ namespace Services.Specifications.AggregationSpecifications
                 .Select(c => c.Contributor!.PersonalData!);
 
             var faculties = validData
-                .Select(pd => pd.Faculty!)
-                .Distinct();
+                .Where(pd => pd.Faculty != null)
+                .Select(pd => new { pd.Faculty!.Id, pd.Faculty.NameAR, pd.Faculty.NameEN })
+                .Distinct()
+                .ToList();
 
-            return faculties
+            var researchCounts = validData
+                .GroupBy(pd => pd.FacultyId)
+                .Select(g => new
+                {
+                    FacultyId = g.Key,
+                    Count = g.Select(pd => pd.Id).Distinct().Count()
+                })
+                .ToList();
+
+            // left join في الميموري عشان الكليات اللي ملهاش أبحاث ترجع بـ 0
+            var result = faculties
                 .GroupJoin(
-                    validData,
+                    researchCounts,
                     f => f.Id,
-                    pd => pd.FacultyId,
-                    (f, pdGroup) => new ResearchesPerFacultyDTO
+                    rc => rc.FacultyId,
+                    (f, rc) => new ResearchesPerFacultyDTO
                     {
                         FacultyNameAR = f.NameAR,
                         FacultyNameEN = f.NameEN,
-                        TotalNumberOfResearches = pdGroup
-                            .Select(x => x.Id)
-                            .Distinct()
-                            .Count()
-                    });
+                        TotalNumberOfResearches = rc.FirstOrDefault()?.Count ?? 0
+                    })
+                .ToList();
+
+            return result.AsQueryable();
         }
     }
 }
