@@ -21,7 +21,6 @@ namespace Services.Specifications.AggregationSpecifications
             if (Criteria != null)
                 query = query.Where(Criteria);
 
-            // جيب البيانات من DB (الشهر والعدد بس)
             var monthlyData = query
                 .Where(r => r.CreatedAt.Year == currentYear)
                 .GroupBy(r => r.CreatedAt.Month)
