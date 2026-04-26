@@ -1,37 +1,29 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.UniversityFacultiesAndDepartments;
 using Shared.ReportsAndDashboard;
 
-namespace Services.Specifications.AggregationSpecifications
+public class ResearchAggregationSpecification
 {
-    public class ResearchAggregationSpecification
-        : AggregationSpecification<Research, ResearchesPerFacultyDTO>
+    public IQueryable<ResearchesPerFacultyDTO> Apply(
+        IQueryable<Faculty> faculties,
+        IQueryable<Research> researches)
     {
-        public ResearchAggregationSpecification()
-        {
-            SetCriteria(r =>
-                !r.IsDeleted &&
-                r.Contributions!.Any(c => c.IsConfirmed));
-        }
+        var validPersonalData = researches
+            .Where(r => !r.IsDeleted && r.Contributions!.Any(c => c.IsConfirmed))
+            .SelectMany(r => r.Contributions!)
+            .Where(c => c.IsConfirmed)
+            .Select(c => c.Contributor!.PersonalData!);
 
-        public override IQueryable<ResearchesPerFacultyDTO> Apply(IQueryable<Research> query)
-        {
-            return query
-                .Where(Criteria!)
-                .SelectMany(r => r.Contributions!)
-                .Where(c => c.IsConfirmed)
-                .Select(c => c.Contributor!.PersonalData!)
-                .GroupBy(pd => new
+        return faculties
+            .GroupJoin(
+                validPersonalData,
+                f => f.Id,
+                pd => pd.FacultyId,
+                (f, pdGroup) => new ResearchesPerFacultyDTO
                 {
-                    pd.FacultyId,
-                    pd.Faculty!.NameAR,
-                    pd.Faculty!.NameEN
-                })
-                .Select(g => new ResearchesPerFacultyDTO
-                {
-                    FacultyNameAR = g.Key.NameAR,
-                    FacultyNameEN = g.Key.NameEN,
-                    TotalNumberOfResearches = g.Count()
+                    FacultyNameAR = f.NameAR,
+                    FacultyNameEN = f.NameEN,
+                    TotalNumberOfResearches = pdGroup.Count()
                 });
-        }
     }
 }

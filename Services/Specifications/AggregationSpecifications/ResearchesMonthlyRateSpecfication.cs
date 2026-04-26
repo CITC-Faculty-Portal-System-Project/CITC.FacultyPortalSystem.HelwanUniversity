@@ -20,15 +20,32 @@ namespace Services.Specifications.AggregationSpecifications
             if (Criteria != null)
                 query = query.Where(Criteria);
 
-            return query
+            var monthlyData = query
                 .Where(r => r.CreatedAt.Year == currentYear)
                 .GroupBy(r => r.CreatedAt.Month)
-                .Select(g => new ResearchesMonthlyRateDTO
+                .Select(g => new
                 {
-                    MonthEN = GetMonthNameEN(g.Key),
-                    MonthAR = GetMonthNameAR(g.Key),
-                    TotalNumberOfResearches = g.Count()
+                    Month = g.Key,
+                    Count = g.Count()
                 });
+
+            var months = Enumerable.Range(1, 12).Select(m => new
+            {
+                Month = m
+            });
+
+            var result = from m in months
+                         join d in monthlyData
+                         on m.Month equals d.Month into gj
+                         from sub in gj.DefaultIfEmpty()
+                         select new ResearchesMonthlyRateDTO
+                         {
+                             MonthEN = GetMonthNameEN(m.Month),
+                             MonthAR = GetMonthNameAR(m.Month),
+                             TotalNumberOfResearches = sub != null ? sub.Count : 0
+                         };
+
+            return result.AsQueryable();
         }
 
         private static string GetMonthNameEN(int month) => month switch

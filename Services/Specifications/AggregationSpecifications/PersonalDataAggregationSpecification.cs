@@ -1,35 +1,24 @@
-﻿using Domain.Entities;
+﻿using Domain.Entities.UniversityFacultiesAndDepartments;
 using Shared.ReportsAndDashboard;
-using System.Linq;
 
-namespace Services.Specifications.AggregationSpecifications
+public class PersonalDataAggregationSpecification
 {
-    public class PersonalDataAggregationSpecification
-        : AggregationSpecification<PersonalData, FacultyUsersStatisticsDTO>
+    public IQueryable<FacultyUsersStatisticsDTO> Apply(
+        IQueryable<Faculty> faculties,
+        IQueryable<PersonalData> personalDataQuery)
     {
-        public PersonalDataAggregationSpecification()
-        {
-            SetCriteria(pd => !pd.IsDeleted);
-        }
+        var query = personalDataQuery.Where(pd => !pd.IsDeleted);
 
-        public override IQueryable<FacultyUsersStatisticsDTO> Apply(IQueryable<PersonalData> query)
-        {
-            if (Criteria != null)
-                query = query.Where(Criteria);
-
-            return query
-                .GroupBy(x => new
+        return faculties
+            .GroupJoin(
+                query,
+                f => f.Id,
+                pd => pd.FacultyId,
+                (f, pdGroup) => new FacultyUsersStatisticsDTO
                 {
-                    x.FacultyId,
-                    x.Faculty!.NameAR,
-                    x.Faculty!.NameEN
-                })
-                .Select(g => new FacultyUsersStatisticsDTO
-                {
-                    FacultyNameAR = g.Key.NameAR,
-                    FacultyNameEN = g.Key.NameEN,
-                    TotalNumberOfUsers = g.Count()
+                    FacultyNameAR = f.NameAR,
+                    FacultyNameEN = f.NameEN,
+                    TotalNumberOfUsers = pdGroup.Count()
                 });
-        }
     }
 }
