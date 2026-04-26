@@ -1,29 +1,44 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
-using Domain.Entities.UniversityFacultiesAndDepartments;
 using Shared.ReportsAndDashboard;
 
-public class ResearchAggregationSpecification
+namespace Services.Specifications.AggregationSpecifications
 {
-    public IQueryable<ResearchesPerFacultyDTO> Apply(
-        IQueryable<Faculty> faculties,
-        IQueryable<Research> researches)
+    public class ResearchAggregationSpecification
+        : AggregationSpecification<Research, ResearchesPerFacultyDTO>
     {
-        var validPersonalData = researches
-            .Where(r => !r.IsDeleted && r.Contributions!.Any(c => c.IsConfirmed))
-            .SelectMany(r => r.Contributions!)
-            .Where(c => c.IsConfirmed)
-            .Select(c => c.Contributor!.PersonalData!);
+        public ResearchAggregationSpecification()
+        {
+            SetCriteria(r =>
+                !r.IsDeleted &&
+                r.Contributions!.Any(c => c.IsConfirmed));
+        }
 
-        return faculties
-            .GroupJoin(
-                validPersonalData,
-                f => f.Id,
-                pd => pd.FacultyId,
-                (f, pdGroup) => new ResearchesPerFacultyDTO
-                {
-                    FacultyNameAR = f.NameAR,
-                    FacultyNameEN = f.NameEN,
-                    TotalNumberOfResearches = pdGroup.Count()
-                });
+        public override IQueryable<ResearchesPerFacultyDTO> Apply(IQueryable<Research> query)
+        {
+            var validData = query
+                .Where(Criteria!)
+                .SelectMany(r => r.Contributions!)
+                .Where(c => c.IsConfirmed)
+                .Select(c => c.Contributor!.PersonalData!);
+
+            var faculties = validData
+                .Select(pd => pd.Faculty!)
+                .Distinct();
+
+            return faculties
+                .GroupJoin(
+                    validData,
+                    f => f.Id,
+                    pd => pd.FacultyId,
+                    (f, pdGroup) => new ResearchesPerFacultyDTO
+                    {
+                        FacultyNameAR = f.NameAR,
+                        FacultyNameEN = f.NameEN,
+                        TotalNumberOfResearches = pdGroup
+                            .Select(x => x.Id)
+                            .Distinct()
+                            .Count()
+                    });
+        }
     }
 }

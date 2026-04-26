@@ -1,24 +1,37 @@
-﻿using Domain.Entities.UniversityFacultiesAndDepartments;
+﻿using Domain.Entities;
 using Shared.ReportsAndDashboard;
+using System.Linq;
 
-public class PersonalDataAggregationSpecification
+namespace Services.Specifications.AggregationSpecifications
 {
-    public IQueryable<FacultyUsersStatisticsDTO> Apply(
-        IQueryable<Faculty> faculties,
-        IQueryable<PersonalData> personalDataQuery)
+    public class PersonalDataAggregationSpecification
+        : AggregationSpecification<PersonalData, FacultyUsersStatisticsDTO>
     {
-        var query = personalDataQuery.Where(pd => !pd.IsDeleted);
+        public PersonalDataAggregationSpecification()
+        {
+            SetCriteria(pd => !pd.IsDeleted);
+        }
 
-        return faculties
-            .GroupJoin(
-                query,
-                f => f.Id,
-                pd => pd.FacultyId,
-                (f, pdGroup) => new FacultyUsersStatisticsDTO
-                {
-                    FacultyNameAR = f.NameAR,
-                    FacultyNameEN = f.NameEN,
-                    TotalNumberOfUsers = pdGroup.Count()
-                });
+        public override IQueryable<FacultyUsersStatisticsDTO> Apply(IQueryable<PersonalData> query)
+        {
+            if (Criteria != null)
+                query = query.Where(Criteria);
+
+            var faculties = query
+                .Select(x => x.Faculty!)
+                .Distinct();
+
+            return faculties
+                .GroupJoin(
+                    query,
+                    f => f.Id,
+                    pd => pd.FacultyId,
+                    (f, pdGroup) => new FacultyUsersStatisticsDTO
+                    {
+                        FacultyNameAR = f.NameAR,
+                        FacultyNameEN = f.NameEN,
+                        TotalNumberOfUsers = pdGroup.Count()
+                    });
+        }
     }
 }
