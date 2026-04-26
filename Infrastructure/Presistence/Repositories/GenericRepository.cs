@@ -50,8 +50,12 @@ namespace Presistence.Repositories
             IAggregationSpecification<TEntity, TResult> spec)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
+            var result = spec.Apply(query);
 
-            return await spec.Apply(query).ToListAsync();
+            if (result is IAsyncEnumerable<TResult>)
+                return await result.ToListAsync();
+            else
+                return result.ToList();
         }
         #endregion
     }

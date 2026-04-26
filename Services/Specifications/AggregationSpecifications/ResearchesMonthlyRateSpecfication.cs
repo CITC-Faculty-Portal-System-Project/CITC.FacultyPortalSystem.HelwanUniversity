@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Shared.ReportsAndDashboard;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services.Specifications.AggregationSpecifications
 {
@@ -20,6 +21,7 @@ namespace Services.Specifications.AggregationSpecifications
             if (Criteria != null)
                 query = query.Where(Criteria);
 
+            // جيب البيانات من DB (الشهر والعدد بس)
             var monthlyData = query
                 .Where(r => r.CreatedAt.Year == currentYear)
                 .GroupBy(r => r.CreatedAt.Month)
@@ -27,25 +29,23 @@ namespace Services.Specifications.AggregationSpecifications
                 {
                     Month = g.Key,
                     Count = g.Count()
-                });
+                })
+                .ToList(); 
 
-            var months = Enumerable.Range(1, 12).Select(m => new
-            {
-                Month = m
-            });
+            var result = Enumerable.Range(1, 12)
+                .GroupJoin(
+                    monthlyData,
+                    month => month,
+                    data => data.Month,
+                    (month, data) => new ResearchesMonthlyRateDTO
+                    {
+                        MonthEN = GetMonthNameEN(month),
+                        MonthAR = GetMonthNameAR(month),
+                        TotalNumberOfResearches = data.FirstOrDefault()?.Count ?? 0
+                    })
+                .ToList();
 
-            var result = from m in months
-                         join d in monthlyData
-                         on m.Month equals d.Month into gj
-                         from sub in gj.DefaultIfEmpty()
-                         select new ResearchesMonthlyRateDTO
-                         {
-                             MonthEN = GetMonthNameEN(m.Month),
-                             MonthAR = GetMonthNameAR(m.Month),
-                             TotalNumberOfResearches = sub != null ? sub.Count : 0
-                         };
-
-            return result.AsQueryable();
+            return result.AsQueryable();        
         }
 
         private static string GetMonthNameEN(int month) => month switch
