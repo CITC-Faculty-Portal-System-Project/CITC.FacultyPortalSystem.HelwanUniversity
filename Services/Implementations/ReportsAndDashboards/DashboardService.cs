@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.IdentityModule.Users;
+using Domain.Entities.UniversityFacultiesAndDepartments;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
 using Services.Specifications.AggregationSpecifications;
@@ -15,6 +16,7 @@ namespace Services.Implementations.ReportsAndDashboards
         {
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData , int>();
             var researchesRepo = _unitOfWork.GetRepository<Research , int>();
+            var facultiesRepo = _unitOfWork.GetRepository<Faculty , int>();
 
             var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
             var currentUserEntity = await _userManager.FindByEmailAsync(currentUser.Email);
@@ -28,8 +30,9 @@ namespace Services.Implementations.ReportsAndDashboards
             var facultyMembersCount = facultyMemberRoleUsers.Count;
             var managementUsersCount = managementAdminRoleUsers.Count + supportAdminRoleUsers.Count;
 
-            var usersPerFaculty = await personalDataRepo.ExecuteAggregationAsync(new PersonalDataAggregationSpecification());
-            var researchesPerFaculty = await researchesRepo.ExecuteAggregationAsync(new ResearchAggregationSpecification());
+            var faculties = await facultiesRepo.GetAllAsync();
+            var usersPerFaculty = await personalDataRepo.ExecuteAggregationAsync(new PersonalDataAggregationSpecification(faculties.AsQueryable()));
+            var researchesPerFaculty = await researchesRepo.ExecuteAggregationAsync(new ResearchAggregationSpecification(faculties.AsQueryable()));
             var totalResearches = await researchesRepo.GetAllAsync(new TotalResearchesSpecification());
             var totalResearchesCount = totalResearches.Count();
 

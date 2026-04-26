@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.UniversityFacultiesAndDepartments;
 using Shared.ReportsAndDashboard;
 
 namespace Services.Specifications.AggregationSpecifications
@@ -6,8 +7,11 @@ namespace Services.Specifications.AggregationSpecifications
     public class ResearchAggregationSpecification
         : AggregationSpecification<Research, ResearchesPerFacultyDTO>
     {
-        public ResearchAggregationSpecification()
+        private readonly IQueryable<Faculty> _faculties;
+
+        public ResearchAggregationSpecification(IQueryable<Faculty> faculties)
         {
+            _faculties = faculties;
             SetCriteria(r =>
                 !r.IsDeleted &&
                 r.Contributions!.Any(c => c.IsConfirmed));
@@ -21,12 +25,6 @@ namespace Services.Specifications.AggregationSpecifications
                 .Where(c => c.IsConfirmed)
                 .Select(c => c.Contributor!.PersonalData!);
 
-            var faculties = validData
-                .Where(pd => pd.Faculty != null)
-                .Select(pd => new { pd.Faculty!.Id, pd.Faculty.NameAR, pd.Faculty.NameEN })
-                .Distinct()
-                .ToList();
-
             var researchCounts = validData
                 .GroupBy(pd => pd.FacultyId)
                 .Select(g => new
@@ -36,8 +34,12 @@ namespace Services.Specifications.AggregationSpecifications
                 })
                 .ToList();
 
-            // left join في الميموري عشان الكليات اللي ملهاش أبحاث ترجع بـ 0
-            var result = faculties
+            var allFaculties = _faculties
+                .Where(f => !f.IsDeleted)
+                .Select(f => new { f.Id, f.NameAR, f.NameEN })
+                .ToList();
+
+            var result = allFaculties
                 .GroupJoin(
                     researchCounts,
                     f => f.Id,
