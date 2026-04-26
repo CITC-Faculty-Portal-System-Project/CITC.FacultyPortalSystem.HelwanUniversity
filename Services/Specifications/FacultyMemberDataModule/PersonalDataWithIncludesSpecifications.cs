@@ -1,4 +1,5 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
+using Domain.Entities.UniversityFacultiesAndDepartments;
 using Microsoft.EntityFrameworkCore;
 using Shared.Dtos.DataFetchingFromExternalService;
 
@@ -14,6 +15,7 @@ namespace Services.Specifications.FacultyMemberDataModule
             AddIncludes(pd => pd.MaritalStatus);
             AddIncludes(pd => pd.University);
             AddIncludes(pd => pd.Department);
+            AddIncludes(pd => pd.Faculty);
             AddIncludes(pd => pd.Authority);
             AddIncludes(pd => pd.Field);
             AddIncludes(pd => pd.ProfilePicture!);
@@ -39,8 +41,21 @@ namespace Services.Specifications.FacultyMemberDataModule
             AddIncludes(aq => aq.FacultyMember!);
             AddIncludes(pd => pd.ProfilePicture!);
 
+        }
 
+        public PersonalDataWithIncludesSpecifications()
+            :base(pd => !pd.IsDeleted)
 
+        {
+            ApplySelector(q => q
+                .GroupBy(x => new { x.FacultyId, x.Faculty.NameAR, x.Faculty.NameEN })
+                .Select(g => new
+                {
+                    FacultyNameAR = g.Key.NameAR,
+                    FacultyNameEN = g.Key.NameEN,
+                    TotalNumberOfUsers = g.Count()
+                })
+            );
         }
     }
 }

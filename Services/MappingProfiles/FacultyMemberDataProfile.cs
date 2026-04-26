@@ -15,7 +15,8 @@ namespace Services.MappingProfiles
                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender))
                .ForMember(dest => dest.MaritalStatus, opt => opt.MapFrom(src => src.MaritalStatus))
                .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University))
-               .ForMember(dest => dest.Department, opt => opt.MapFrom(src => src.Department))
+               .ForMember(dest => dest.Department, opt => opt.Ignore())
+               .ForMember(dest => dest.Faculty, opt => opt.Ignore())
                .ForMember(dest => dest.Authority, opt => opt.MapFrom(src => src.Authority))
                .ForMember(dest => dest.Field, opt => opt.MapFrom(src => src.Field));
 

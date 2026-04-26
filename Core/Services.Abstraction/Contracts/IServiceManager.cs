@@ -13,6 +13,7 @@ using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Abstraction.Contracts.Notification;
+using Services.Abstraction.Contracts.ReportsAndDashboard;
 
 
 namespace Services.Abstraction.Contracts
@@ -106,6 +107,12 @@ namespace Services.Abstraction.Contracts
 
         #region TicketingModule
         public ITicketingService TicketingService { get; }
+
+        #endregion
+
+        #region ReportsAndDashboardModule
+
+        public IDashboardService DashboardService { get; }
 
         #endregion
     }

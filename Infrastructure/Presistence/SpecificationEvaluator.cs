@@ -31,6 +31,8 @@
                 query = query.Skip(specifications.Skip).Take(specifications.Take);
             }
 
+
+
             if (specifications.IsSplitQuery)
                 query = query.AsSplitQuery();
 

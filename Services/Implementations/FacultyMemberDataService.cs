@@ -94,6 +94,14 @@ namespace Services.Implementations
             }
 
             var result = Mapper.Map<PersonalDataResponseDto>(personalData);
+            result.Faculty = new LookupItemDto();
+            result.Department = new LookupItemDto();
+            
+            result.Faculty.ValueAr = personalData.Faculty?.NameAR ?? string.Empty;
+            result.Faculty.ValueEn = personalData.Faculty?.NameEN ?? string.Empty;
+            result.Department.ValueAr = personalData.Department?.NameAR ?? string.Empty;
+            result.Department.ValueEn = personalData.Department?.NameEN ?? string.Empty;
+
             result.NationalNumber = personalData.FacultyMember?.NationalNumber ?? string.Empty;
           
             #region Log

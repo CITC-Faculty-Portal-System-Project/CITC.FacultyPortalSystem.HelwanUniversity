@@ -21,5 +21,8 @@
         Task<TEntity?> GetAsync(ISpecifications<TEntity, TKey> specifications);
 
         Task<int> CountAsync(ISpecifications<TEntity, TKey> specifications);
+        Task<IReadOnlyList<TResult>> ExecuteAggregationAsync<TResult>(
+       IAggregationSpecification<TEntity, TResult> spec);  
+            
     }
 }

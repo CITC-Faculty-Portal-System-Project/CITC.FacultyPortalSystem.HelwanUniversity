@@ -46,6 +46,8 @@ using Services.Implementations.TicketingModule;
 using Shared.Common;
 using Services.Abstraction.Contracts.Notification;
 using Services.Implementations.Notification;
+using Services.Abstraction.Contracts.ReportsAndDashboard;
+using Services.Implementations.ReportsAndDashboards;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -114,6 +116,12 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IReviewingArticlesService, ReviewingArticlesService>();
             services.AddScoped<Func<IReviewingArticlesService>>(provider =>
             () => provider.GetRequiredService<IReviewingArticlesService>()
+            );
+
+
+            services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<Func<IDashboardService>>(provider =>
+            () => provider.GetRequiredService<IDashboardService>()
             );
 
 
