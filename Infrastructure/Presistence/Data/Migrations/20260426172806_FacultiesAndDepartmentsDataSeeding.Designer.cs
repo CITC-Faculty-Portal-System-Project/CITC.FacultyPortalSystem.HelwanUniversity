@@ -12,7 +12,7 @@ using Presistence.Data;
 namespace Presistence.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20260424213954_FacultiesAndDepartmentsDataSeeding")]
+    [Migration("20260426172806_FacultiesAndDepartmentsDataSeeding")]
     partial class FacultiesAndDepartmentsDataSeeding
     {
         /// <inheritdoc />
@@ -3781,10 +3781,14 @@ namespace Presistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DeptId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(53);
 
                     b.Property<int?>("FacultyId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(5);
 
                     b.Property<Guid>("FacultyMemberId")
                         .HasColumnType("uniqueidentifier");

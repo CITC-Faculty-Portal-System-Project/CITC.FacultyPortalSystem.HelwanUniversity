@@ -30,13 +30,14 @@ namespace Presistence.Data.Migrations
                 table: "PersonalData",
                 type: "int",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 53);
 
             migrationBuilder.AddColumn<int>(
                 name: "FacultyId",
                 table: "PersonalData",
                 type: "int",
-                nullable: true);
+                nullable: true,
+                defaultValue: 5);
 
             migrationBuilder.CreateTable(
                 name: "Faculties",

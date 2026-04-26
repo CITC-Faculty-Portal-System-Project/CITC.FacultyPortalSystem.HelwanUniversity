@@ -28,6 +28,12 @@ namespace Presistence.Data.Configurations.FacultyMemberDataConfigurations
             builder.Property(pd => pd.GeneralSpecialization)
                 .HasMaxLength(250);
 
+            builder.Property(pd => pd.DeptId)
+                .HasDefaultValue(53);
+
+            builder.Property(pd => pd.FacultyId)
+                    .HasDefaultValue(5);
+
             builder.Property(pd => pd.AccurateSpecialization)
                 .HasMaxLength(250);
 

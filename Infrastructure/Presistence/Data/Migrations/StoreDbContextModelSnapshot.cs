@@ -3778,10 +3778,14 @@ namespace Presistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DeptId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(53);
 
                     b.Property<int?>("FacultyId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(5);
 
                     b.Property<Guid>("FacultyMemberId")
                         .HasColumnType("uniqueidentifier");
