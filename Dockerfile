@@ -71,6 +71,6 @@ WORKDIR /app
 
 COPY --from=publish /app/publish .
 
-COPY ICIT.FacultyPortalSystem.API/fonts ./fonts
+COPY ICIT.FacultyPortalSystem.API/Fonts ./fonts
 
 ENTRYPOINT ["dotnet", "ICIT.FacultyPortalSystem.API.dll"]
