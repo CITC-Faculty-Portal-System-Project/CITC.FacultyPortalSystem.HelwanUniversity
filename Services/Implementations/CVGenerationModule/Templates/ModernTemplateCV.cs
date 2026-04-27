@@ -270,7 +270,7 @@ body {{
             <div class='name'>{cv.NameAr}</div>
             {(cv.Title != null ? $"<div class='job-title'>{cv.Title.ValueAr}</div>" : "")}
             <div class='meta-row'>
-                {(cv.Department != null ? $"<span>{cv.Department.ValueAr}</span>" : "")}
+                {(cv.Department != null ? $"<span>{cv.Department}</span>" : "")}
                 {(cv.Department != null && cv.University != null ? "<span class='dot'>·</span>" : "")}
                 {(cv.University != null ? $"<span>{cv.University.ValueAr}</span>" : "")}
                 {(cv.Authority != null ? $"<span class='dot'>·</span><span>{cv.Authority.ValueAr}</span>" : "")}

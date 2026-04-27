@@ -28,4 +28,8 @@
     <PackageReference Include="QuestPDF" Version="2026.2.4" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Implementations\CVGenerationModule\Pdf\Fonts\" />
+  </ItemGroup>
+
 </Project>

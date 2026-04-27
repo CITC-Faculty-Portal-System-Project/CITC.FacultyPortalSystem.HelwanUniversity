@@ -1,4 +1,5 @@
-﻿using QuestPDF.Fluent;
+﻿using QuestPDF.Drawing;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Services.Abstraction.Contracts.AttachmentsModule;
@@ -37,6 +38,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
         }
         public void Compose(IDocumentContainer container)
         {
+            FontManager.RegisterFont(File.OpenRead("./fonts/Cairo-Regular.ttf"));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
@@ -125,7 +127,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                             mainCol.Item().PaddingBottom(20).Background("#f0f4f8").Padding(12).Text(t =>
                             {
                                 var parts = new List<string>();
-                                if (_cv.Department != null) parts.Add(_cv.Department.ValueAr ?? "");
+                                if (_cv.Department != null) parts.Add(_cv.Department ?? "");
                                 if (_cv.Authority != null) parts.Add(_cv.Authority.ValueAr ?? "");
                                 if (_cv.University != null) parts.Add(_cv.University.ValueAr ?? "");
 

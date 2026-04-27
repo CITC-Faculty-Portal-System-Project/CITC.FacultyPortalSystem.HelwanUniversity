@@ -1,4 +1,5 @@
-﻿using QuestPDF.Fluent;
+﻿using QuestPDF.Drawing;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Shared.Dtos.CVGenerationModule;
@@ -16,6 +17,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         public void Compose(IDocumentContainer container)
         {
+            FontManager.RegisterFont(File.OpenRead("./fonts/Cairo-Regular.ttf"));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
@@ -42,7 +44,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                         {
                             r.Spacing(8);
                             var st = TextStyle.Default.FontColor("#cbd5e1").FontSize(8).FontFamily("Cairo");
-                            if (_cv.Department != null) r.AutoItem().Text(_cv.Department.ValueAr).Style(st);
+                            if (_cv.Department != null) r.AutoItem().Text(_cv.Department).Style(st);
                             if (_cv.Authority != null) { r.AutoItem().Text("·").Style(st); r.AutoItem().Text(_cv.Authority.ValueAr).Style(st); }
                             if (_cv.University != null) { r.AutoItem().Text("·").Style(st); r.AutoItem().Text(_cv.University.ValueAr).Style(st); }
                             if (_cv.BirthDate.HasValue) { r.AutoItem().Text("·").Style(st); r.AutoItem().Text($"تاريخ الميلاد: {_cv.BirthDate.Value:yyyy/MM/dd}").Style(st); }

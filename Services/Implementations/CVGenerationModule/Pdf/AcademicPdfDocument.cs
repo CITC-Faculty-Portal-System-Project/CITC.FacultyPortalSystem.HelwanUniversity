@@ -1,4 +1,5 @@
-﻿using QuestPDF.Fluent;
+﻿using QuestPDF.Drawing;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Shared.Dtos.CVGenerationModule;
@@ -17,6 +18,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         public void Compose(IDocumentContainer container)
         {
+            FontManager.RegisterFont(File.OpenRead("./fonts/Cairo-Regular.ttf"));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
@@ -45,7 +47,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
                         row.RelativeItem(42).Padding(30).Column(c =>
                         {
-                            if (_cv.Department != null) DrawHeaderMeta(c, "القسم: ", _cv.Department.ValueAr ?? "");
+                            if (_cv.Department != null) DrawHeaderMeta(c, "القسم: ", _cv.Department ?? "");
                             if (_cv.Authority != null) DrawHeaderMeta(c, "الجهة: ", _cv.Authority.ValueAr ?? "");
                             if (_cv.University != null) DrawHeaderMeta(c, "الجامعة: ", _cv.University.ValueAr ?? "");
 
