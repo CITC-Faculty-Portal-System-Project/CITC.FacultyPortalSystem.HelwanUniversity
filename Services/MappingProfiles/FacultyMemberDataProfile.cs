@@ -44,6 +44,7 @@ namespace Services.MappingProfiles
             CreateMap<PersonalData, ProfileDashboardResponseDTO>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University))
+                .ForMember(dest => dest.Department, opt => opt.Ignore())
                 .ForMember(dest => dest.NameAr, opt => opt.MapFrom(src => src.NameAr))
                 .ForMember(dest => dest.NameEn, opt => opt.MapFrom(src => src.NameAr))
                 .ForMember(dest => dest.BioSummary, opt => opt.MapFrom(src => src.BioSummary))
