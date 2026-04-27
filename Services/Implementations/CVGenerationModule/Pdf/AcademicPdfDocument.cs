@@ -1,4 +1,5 @@
-﻿using QuestPDF.Drawing;
+﻿using Microsoft.AspNetCore.Hosting;
+using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -6,7 +7,7 @@ using Shared.Dtos.CVGenerationModule;
 
 namespace Services.Implementations.CVGenerationModule.Pdf
 {
-    public class AcademicPdfDocumentCV(CVResponseDTO _cv) : IDocument
+    public class AcademicPdfDocumentCV(CVResponseDTO _cv , IWebHostEnvironment _env) : IDocument
     {
         private readonly TextStyle ArabicStyle = TextStyle.Default.FontFamily("Cairo").FontSize(9);
         private readonly string MainColor = "#19355a";
@@ -18,7 +19,8 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         public void Compose(IDocumentContainer container)
         {
-            FontManager.RegisterFont(File.OpenRead("./fonts/Cairo-Regular.ttf"));
+            var fontPath = Path.Combine(_env.ContentRootPath, "fonts", "Cairo-Regular.ttf");
+            FontManager.RegisterFont(File.OpenRead(fontPath));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);

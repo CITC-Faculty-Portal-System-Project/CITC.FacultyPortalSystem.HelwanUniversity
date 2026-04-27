@@ -1,4 +1,5 @@
-﻿using QuestPDF.Drawing;
+﻿using Microsoft.AspNetCore.Hosting;
+using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -14,14 +15,16 @@ namespace Services.Implementations.CVGenerationModule.Pdf
         private readonly string AccentColor = "#b38e19"; 
         private readonly string SidebarText = "#cbd5e1";
         private CVResponseDTO _cv;
+        private IWebHostEnvironment _env;
         private byte[]? _profileImage;
         private const float SidebarWidth = 200; 
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
-        public ProfessionalPdfDocumentCV(CVResponseDTO cv, IAttachmentService attachmentService)
+        public ProfessionalPdfDocumentCV(CVResponseDTO cv, IAttachmentService attachmentService , IWebHostEnvironment env)
         {
             _cv = cv;
+            _env = env;
 
             if (cv.ProfilePictureId != null)
             {
@@ -38,7 +41,8 @@ namespace Services.Implementations.CVGenerationModule.Pdf
         }
         public void Compose(IDocumentContainer container)
         {
-            FontManager.RegisterFont(File.OpenRead("./fonts/Cairo-Regular.ttf"));
+            var fontPath = Path.Combine(_env.ContentRootPath, "fonts", "Cairo-Regular.ttf");
+            FontManager.RegisterFont(File.OpenRead(fontPath));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
