@@ -291,7 +291,7 @@ body {{
             sb.Append($@"
         <div class='cv-main'>
             <div class='affiliation-box'>
-                {(cv.Department != null ? cv.Department.ValueAr : "")} · {(cv.Authority != null ? cv.Authority.ValueAr : "")} · {(cv.University != null ? cv.University.ValueAr : "")}
+                {(cv.Department != null ? cv.Department : "")} · {(cv.Authority != null ? cv.Authority.ValueAr : "")} · {(cv.University != null ? cv.University.ValueAr : "")}
             </div>
             {(string.IsNullOrEmpty(cv.BioSummary) ? "" : $"<div class='section-title'>نبذة تعريفية</div><p style='font-size:0.88rem; color:#374151; line-height:1.75;'>{cv.BioSummary}</p>")}
             

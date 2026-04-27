@@ -14,6 +14,7 @@ namespace Shared.Dtos.FacultyMemberDataModule
         public LookupItemDto MaritalStatus { get; set; } = null!;
         public LookupItemDto University { get; set; } = null!;
         public LookupItemDto Department { get; set; } = null!;
+        public LookupItemDto Faculty { get; set; } = null!;
         public LookupItemDto Authority { get; set; } = null!;
         public LookupItemDto Field { get; set; } = null!;
 

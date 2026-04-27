@@ -11,6 +11,9 @@ using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Services.Abstraction.Contracts.Notification;
+using Services.Abstraction.Contracts.ReportsAndDashboard;
 
 namespace Services.Implementations
 {
@@ -49,6 +52,8 @@ namespace Services.Implementations
         , Func<IConversationService> _conversationService
         , Func<ITicketingService> _ticketingService
         , Func<ICVGenerationService> _cvGenerationServiceFactory
+        , Func<INotificationService> _notificationService
+        , Func<IDashboardService> _dashboardService
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -65,6 +70,10 @@ namespace Services.Implementations
         //public IExternalDataHandlingService ExternalDataHandlingService => _externalDataHandlingService.Invoke();
 
         public ICVGenerationService CVGenerationService => _cvGenerationServiceFactory.Invoke();
+
+        #region Notification
+        public INotificationService NotificationService => _notificationService.Invoke(); 
+        #endregion
 
         #region Academic Data Module
 
@@ -140,6 +149,12 @@ namespace Services.Implementations
 
         public ITicketingService TicketingService => _ticketingService.Invoke();
 
+
+        #endregion
+
+        #region DashboardAndReports
+
+        public IDashboardService DashboardService => _dashboardService.Invoke();
 
         #endregion
 

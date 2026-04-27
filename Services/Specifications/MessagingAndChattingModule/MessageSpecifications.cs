@@ -30,5 +30,11 @@ namespace Services.Specifications.MessagingAndChattingModule
               .ThenInclude(c => c!.Participants));
 
         }
+
+        public MessageSpecifications(int conversationId, Guid receiverId)
+            : base(m => !m.IsDeleted && m.ConversationId == conversationId
+            && m.RecieverId == receiverId && m.ReadAt == null)
+        {
+        }
     }
 }

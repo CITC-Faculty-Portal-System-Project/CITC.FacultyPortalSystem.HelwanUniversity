@@ -15,6 +15,8 @@ using Shared.Dtos.FacultyMemberDataModule;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Shared.Enums.Logging;
+using Domain.Entities.UniversityFacultiesAndDepartments;
+using Services.Specifications.LookUpItems;
 
 namespace Services.Implementations
 {
@@ -377,6 +379,8 @@ namespace Services.Implementations
 			};
 			string? nationalNumber = null;
 			var personalDataRepo = _unitOfWork.GetRepository<PersonalData, int>();
+			var departmentsRepo = _unitOfWork.GetRepository<Department, int>();
+			var facultiesRepo = _unitOfWork.GetRepository<Faculty, int>();
 			try
 			{
 				var flag = await BulkHelper.HandleAsync<
@@ -393,13 +397,16 @@ namespace Services.Implementations
 								return null!;
 
 							var dto = _mapper.Map<PersonalDataCreateDTO>(item);
+							var faculty = await facultiesRepo.GetAsync(new FacultySpecifications(item.FacultyName));
+							var department = await departmentsRepo.GetAsync(new DepartmentSpecifications(item.Department));
 
 							dto.FacultyMemberId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetFacultyIdByNationalNumberAsync(item.NationalNumber);
 							dto.TitleId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Title);
 							dto.GenderId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Gender);
 							dto.MaritalStatusId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.SocialStatus);
 							dto.AuthorityId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.FacultyName);
-							dto.DepartmentId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.Department);
+							dto.DeptId = department!.Id;
+							dto.FacultyId = faculty!.Id;
 							dto.FieldId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.FieldOfStudy);
 							dto.UniversityId = await _getDataFromExternalServiceGetFacultyMembersAndLookupsHelper.GetLookupIdByNameAsync(item.University);
 							#region Log

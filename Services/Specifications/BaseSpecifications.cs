@@ -10,6 +10,8 @@ namespace Services.Specifications
     {
         #region Criteria [Where]
 
+        public Expression<Func<IQueryable<TEntity>, object>>? Selector { get; private set; }
+
         protected BaseSpecifications(Expression<Func<TEntity, bool>>? criteria)
         {
             Criteria = criteria;
@@ -34,6 +36,11 @@ namespace Services.Specifications
             Func<IQueryable<TEntity>, IQueryable<TEntity>> includeChain)
         {
             IncludeChains.Add(includeChain);
+        }
+
+        protected void ApplySelector(Expression<Func<IQueryable<TEntity>, object>> selector)
+        {
+            Selector = selector;
         }
 
         public bool IsSplitQuery { get; private set; }
@@ -65,6 +72,8 @@ namespace Services.Specifications
         public int Take { get; private set; }
 
         public bool isPaginated { get; private set; }
+
+        Expression? ISpecifications<TEntity, TKey>.Selector => Selector;
 
         protected void applyPagination(int pageSize, int pageIndex)
         {

@@ -2,6 +2,7 @@
 using Domain.Entities.Messaging;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
+using Services.Abstraction.Contracts.Notification;
 using Services.Abstraction.EncryptionServices;
 using Services.Global;
 using Services.Helpers.PaginationHelpers;
@@ -14,7 +15,8 @@ namespace Services.Implementations.MessagingAndChattingModule
     public class ChatService(IUnitOfWork unitOfWork,
     IMapper mapper,
     IAuthenticationService authenticationService , IMessageEncryptionService _messageEncryptionService
-        , UserManager<User> userManager)
+        , UserManager<User> userManager,
+    INotificationService _notification)
             : BaseService<Message, long>(unitOfWork, authenticationService, mapper),
             IChatService
     {
@@ -69,7 +71,16 @@ namespace Services.Implementations.MessagingAndChattingModule
             await Repo.AddAsync(entity);
             await UnitOfWork.SaveChangesAsync();
 
-            var response = Mapper.Map<MessageResponseDTO>(entity);
+            await _notification.SendNotificationAsync(new Shared.Dtos.Notification.NotificationDTO
+			{
+				Title = $"NEW MESSAGE(S) FROM {currentUser.UserName}",
+				Type = Shared.Enums.NotificationModule.NotificationType.ChatMessage,
+				Message = "1 NEW UNREAD MESSAGE",
+				Source = request.ConversationId.ToString(),
+				ReceiverId = request.RecieverId
+			});
+
+			var response = Mapper.Map<MessageResponseDTO>(entity);
             response.Content = request.Content;
 
             return response;

@@ -9,7 +9,8 @@
         public Guid GenderId { get; set; }
         public Guid MaritalStatusId { get; set; }
         public Guid UniversityId { get; set; }
-        public Guid DepartmentId { get; set; }
+        public int DeptId { get; set; }
+        public int FacultyId { get; set; }
         public Guid AuthorityId { get; set; }
         public Guid FieldId { get; set; }
 

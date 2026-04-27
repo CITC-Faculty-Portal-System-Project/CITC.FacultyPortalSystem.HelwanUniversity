@@ -260,7 +260,7 @@ body {{
                 <div class='bio-short'>{cv.BioSummary}</div>
             </div>
             <div class='header-right'>
-                {(cv.Department != null ? $"<div class='meta-field'><span class='label'>القسم: </span>{cv.Department.ValueAr}</div>" : "")}
+                {(cv.Department != null ? $"<div class='meta-field'><span class='label'>القسم: </span>{cv.Department}</div>" : "")}
                 {(cv.Authority != null ? $"<div class='meta-field'><span class='label'>الكلية: </span>{cv.Authority.ValueAr}</div>" : "")}
                 {(cv.University != null ? $"<div class='meta-field'><span class='label'>الجامعة: </span>{cv.University.ValueAr}</div>" : "")}
                 {(cv.OfficialEmail != null ? $"<div class='contact-small'>{cv.OfficialEmail}</div>" : "")}

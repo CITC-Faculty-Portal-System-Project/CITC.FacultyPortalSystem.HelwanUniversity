@@ -46,6 +46,17 @@ namespace Presistence.Repositories
                 .CreateQuery(_dbContext.Set<TEntity>(), specifications)
                 .CountAsync();
 
+        public async Task<IReadOnlyList<TResult>> ExecuteAggregationAsync<TResult>(
+            IAggregationSpecification<TEntity, TResult> spec)
+        {
+            var query = _dbContext.Set<TEntity>().AsQueryable();
+            var result = spec.Apply(query);
+
+            if (result is IAsyncEnumerable<TResult>)
+                return await result.ToListAsync();
+            else
+                return result.ToList();
+        }
         #endregion
     }
 }

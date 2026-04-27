@@ -19,6 +19,7 @@ namespace Domain.Enums
         FacultyMemberResearchesData = 9,
         FacultyMemberScientificProgressionData = 10,
         FacultyMemberWritingsData = 11,
-        Tickets = 12
+        Tickets = 12,
+        Reports = 13
     }
 }

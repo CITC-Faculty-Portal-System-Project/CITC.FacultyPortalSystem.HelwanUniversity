@@ -19,7 +19,7 @@ namespace Shared.Dtos.CVGenerationModule
         public string NameAr { get; set; } = string.Empty;
         public LookupItemDto? University { get; set; } 
         public LookupItemDto? Authority { get; set; } 
-        public LookupItemDto? Department { get; set; } 
+        public string? Department { get; set; } 
         public DateOnly? BirthDate { get; set; }
         public string? BioSummary { get; set; }
         public List<string>? Skills { get; set; }

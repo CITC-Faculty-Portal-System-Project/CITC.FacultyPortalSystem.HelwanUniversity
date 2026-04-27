@@ -3777,8 +3777,15 @@ namespace Presistence.Data.Migrations
                     b.Property<string>("DeletionReason")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("DepartmentId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("DeptId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(53);
+
+                    b.Property<int?>("FacultyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(5);
 
                     b.Property<Guid>("FacultyMemberId")
                         .HasColumnType("uniqueidentifier");
@@ -3840,7 +3847,9 @@ namespace Presistence.Data.Migrations
 
                     b.HasIndex("AuthorityId");
 
-                    b.HasIndex("DepartmentId");
+                    b.HasIndex("DeptId");
+
+                    b.HasIndex("FacultyId");
 
                     b.HasIndex("FacultyMemberId")
                         .IsUnique();
@@ -6817,6 +6826,3470 @@ namespace Presistence.Data.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRemoved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsViewed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ReceiverId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.ToTable("Notifications", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.UniversityFacultiesAndDepartments.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FacultyId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NameEN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacultyId");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("NameAR");
+
+                    b.HasIndex("NameEN");
+
+                    b.ToTable("Departments");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم المناهج وطرق التدريس",
+                            NameEN = "Department of Curriculum and Instruction",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم تكنولوجيا التعليم",
+                            NameEN = "Department of Educational Technology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم التعليم الصناعي",
+                            NameEN = "Department of Industrial Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم علم النفس التربوي",
+                            NameEN = "Department of Educational Psychology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم رياض الاطفال",
+                            NameEN = "Early Childhood Education Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم الصحة النفسية",
+                            NameEN = "Department of Mental Health",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم التربية الخاصة",
+                            NameEN = "Department of Special Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم أصول التربية",
+                            NameEN = "Department of Fundamentals of Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 1,
+                            IsDeleted = false,
+                            NameAR = "قسم التربية المقارنة والادارة التربوية",
+                            NameEN = "Comparative Education and Educational Administration",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 2,
+                            IsDeleted = false,
+                            NameAR = "قسم التغذية وعلوم الأطعمة",
+                            NameEN = "Department of Nutrition and Food Sciences",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 2,
+                            IsDeleted = false,
+                            NameAR = "قسم ادارة مؤسسات الأسرة والطفولة",
+                            NameEN = "Department of Family and Child Management",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 2,
+                            IsDeleted = false,
+                            NameAR = "قسم الملابس والنسيج",
+                            NameEN = "Department of Clothing and Textiles",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 2,
+                            IsDeleted = false,
+                            NameAR = "قسم الصناعات الجلدية",
+                            NameEN = "Department of Leather Industries",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 2,
+                            IsDeleted = false,
+                            NameAR = "برنامج التدريس لذوي الاحتياجات الخاصة",
+                            NameEN = "Special Education Teaching Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 2,
+                            IsDeleted = false,
+                            NameAR = "برنامج التغذية العلاجية",
+                            NameEN = "Therapeutic Nutrition Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 2,
+                            IsDeleted = false,
+                            NameAR = "برنامج تكنولوجيا تصنيع الملابس",
+                            NameEN = "Garment Manufacturing Technology Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم الجغرافيا ونظم المعلومات الجغرافية",
+                            NameEN = "Department of Geography and Geographic Information Systems",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة العربية",
+                            NameEN = "Department of Arabic Language",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم التاريخ",
+                            NameEN = "Department of History",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم المسرح",
+                            NameEN = "Department of Theatre Arts",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم علم الاجتماع",
+                            NameEN = "Department of Sociology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة الصينية وادابها",
+                            NameEN = "Department of Chinese Language and Literature",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم المكتبات والمعلومات",
+                            NameEN = "Department of Library and Information Science",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة العبرية وادابها",
+                            NameEN = "Department of Hebrew Language and Literature",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة الألمانية وادابها",
+                            NameEN = "Department of German Language and Literature",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة الفرنسية وادابها",
+                            NameEN = "Department of French Language and Literature",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة الانجليزية وادابها",
+                            NameEN = "Department of English Language and Literature",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة الايطالية وادابها",
+                            NameEN = "Department of Italian Language and Literature",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم علم النفس",
+                            NameEN = "Department of Psychology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة الاسبانية وادابها",
+                            NameEN = "Department of Spanish Language and Literature",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغات الشرقية",
+                            NameEN = "Department of Eastern Languages",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 32,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم اللغة الاعلام",
+                            NameEN = "Department of Media",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 33,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم الفلسفة",
+                            NameEN = "Department of Philosophy",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 34,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "قسم الاثار والحضارة",
+                            NameEN = "Department of Archaeology and Civilization",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 35,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "برنامج النقوش والمخطوطات",
+                            NameEN = "Program of Inscriptions and Manuscripts",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "برنامج الدبلوم المهاري والتطبيقي لنظم المعلومات الجغرافية",
+                            NameEN = "Applied GIS Professional Diploma Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 37,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "برنامج الجيوماتكس ونظم المعلومات الجغرافية",
+                            NameEN = "Geomatics and GIS Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 38,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "برنامج الترجمة الفورية والتحريرية",
+                            NameEN = "Interpreting and Translation Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 39,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 3,
+                            IsDeleted = false,
+                            NameAR = "برنامج اللغة الفرنسية",
+                            NameEN = "French Language and Translation Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 40,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "قسم العمل مع الأفراد والأسر",
+                            NameEN = "Department of Individual and Family Work",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 41,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "قسم العمل مع الجماعات",
+                            NameEN = "Department of Group Work",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 42,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "قسم العمل مع المنظمات والمجتمعات",
+                            NameEN = "Department of Community and Organizational Work",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 43,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "قسم التخطيط الاجتماعي",
+                            NameEN = "Department of Social Planning",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 44,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "قسم مجالات الخدمة الاجتماعية",
+                            NameEN = "Department of Social Work Fields",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 45,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "برنامج بكالوريوس الخدمة الاجتماعية",
+                            NameEN = "Bachelor's Program in Social Work",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 46,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "برنامج الماجستير المهني في الاستثمار الاجتماعي",
+                            NameEN = "Professional Master's Program in Social Investment",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 47,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "الماجستير المهني في تخطيط وتقويم البرامج والمشروعات الاجتماعية",
+                            NameEN = "Professional Master's Program in Planning and Evaluation of Social Programs and Projects",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 48,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 4,
+                            IsDeleted = false,
+                            NameAR = "الماجستير المهني في تصميم وممارسة العلاج الجماعي",
+                            NameEN = "Professional Master's Program in Group Therapy Design and Practice",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 49,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "تكنولوجيا المعلومات",
+                            NameEN = "Information Technology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 50,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "علوم الحاسب",
+                            NameEN = "Computer Science",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 51,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "نظم المعلومات",
+                            NameEN = "Information Systems",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 52,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "الذكاء الاصطناعي",
+                            NameEN = "Artificial Intelligence",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 53,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "هندسة البرمجيات",
+                            NameEN = "Software Engieering",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 54,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "المعلوماتية الطبية",
+                            NameEN = "Bio Informatics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 55,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "مرحلة الدبلوم",
+                            NameEN = "Diploma",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 56,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "مرحلة الماجستير",
+                            NameEN = "Master",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 57,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 5,
+                            IsDeleted = false,
+                            NameAR = "مرحلة الدكتوراه",
+                            NameEN = "PhD",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 58,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "قسم تمريض صحة البالغين",
+                            NameEN = "Adult Health Nursing Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 59,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "قسم تمريض صحة الطفل",
+                            NameEN = "Pediatric health Nursing Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 60,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "قسم تمريض صحة الام وحديثي الولادة",
+                            NameEN = "Maternal and Newborn Health Nursing Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 61,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "قسم تمريض الصحة النفسية والعقلية",
+                            NameEN = "Department of Mental Health Nursing",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 62,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "قسم تمريض صحة المجتمع",
+                            NameEN = "Department of Community Health Nursing",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 63,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "قسم ادارة التمريض",
+                            NameEN = "Department of Nursing Administration",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 64,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "المعهد الفني للتمريض",
+                            NameEN = "Technical Institute of Nursing",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 65,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "برنامج البكالوريوس في علوم التمريض",
+                            NameEN = "Bachelor's Program in Nursing",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 66,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 6,
+                            IsDeleted = false,
+                            NameAR = "(برنامج البكالوريوس في علوم التمريض (المكثف",
+                            NameEN = "Intensive Bachelor's Program in Nursing",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 67,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الرياضيات",
+                            NameEN = "Mathematics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 68,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الفيزياء",
+                            NameEN = "Physics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 69,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الكيمياء",
+                            NameEN = "Chemistry",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 70,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "علم الحيوان والحشرات",
+                            NameEN = "Zoology and Entomology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 71,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "النبات والميكروبيولوجي",
+                            NameEN = "Botany and Microbiology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 72,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الجيولوجيا",
+                            NameEN = "Geology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 73,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الكيمياء الغير عضوية",
+                            NameEN = "Inorganic Chemistry Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 74,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الكيمياء العضوية",
+                            NameEN = "Organic Chemistry Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 75,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الكيمياء التحليلية",
+                            NameEN = "Analytical Chemistry Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 76,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الكيمياء الفيزيائية",
+                            NameEN = "Physical Chemistry Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 77,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الكيمياء الحيوية",
+                            NameEN = "Biochemistry Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 78,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الكيمياء التطبيقية",
+                            NameEN = "Applied Chemistry Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 79,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج التكنولوجيا الحيوية والبيولوجيا الجزئية",
+                            NameEN = "Biotechnology and Molecular Biology Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 80,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج علم الحيوان",
+                            NameEN = "Zoology Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 81,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج علم الحيوان والكيمياء",
+                            NameEN = "Zoology and Chemistry Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 82,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الفيزياء",
+                            NameEN = "Physics Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 83,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الفيزياء الحيوية الطبية",
+                            NameEN = "Medical Biophysics Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 84,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج علوم الفضاء",
+                            NameEN = "Space Science Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 85,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الرياضيات",
+                            NameEN = "Mathematics Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 86,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الرياضيات والحاسب",
+                            NameEN = "Mathematics and Computer Science Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 87,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الاحصاء والحاسب",
+                            NameEN = "Statistics and Computer Science Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 88,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج التكنولوجيا الحيوية الجزئية",
+                            NameEN = "Statistics Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 89,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج الوراثة والمناعة التطبيقية",
+                            NameEN = "Applied Genetics and Immunology Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 90,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "برنامج البترول والمعادن",
+                            NameEN = "Petroleum and Minerals Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 91,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "دبلومة الفسيولوجي والتحاليل الطبية",
+                            NameEN = "Diploma in Physiology and Medical Analysis",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 92,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "شعبة الفسيولوجي والبيئة",
+                            NameEN = "Physiology and Environment",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 93,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "شعبة اللافقاريات والطفيليات والمناعة",
+                            NameEN = "Invertebrates, Parasitology, and Immunology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 94,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "شعبة الخلية والأنسجة والوراثة",
+                            NameEN = "Cell, Tissue, and Genetics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 95,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "شعبة التشريح المقارن والأجنة",
+                            NameEN = "Comparative Anatomy and Embryology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 96,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "شعبة الحشرات",
+                            NameEN = "Entomology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 97,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "فيزياء الجوامد التطبيقية",
+                            NameEN = "Applied Solid State Physics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 98,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "فيزياء الالكترونيات",
+                            NameEN = "Electronics Physics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 99,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "البصريات والليزر والأطياف الذرية",
+                            NameEN = "Optics, Laser, and Atomic Spectroscopy",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 100,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الفيزياء النووية التطبيقية",
+                            NameEN = "Applied Nuclear Physics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 101,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الفيزياء الاشعاعية التطبيقية",
+                            NameEN = "Applied Radiation Physics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 102,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الفيزياء الحيوية الطبية",
+                            NameEN = "Medical Biophysics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 103,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "فيزياء الفلك وعلوم الفضاء",
+                            NameEN = "Astronomy and Space Sciences",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 104,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الفيزياء النظرية",
+                            NameEN = "Theoretical Physics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 105,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الرياضيات البحتة",
+                            NameEN = "Pure Mathematics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 106,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الرياضيات التطبيقية",
+                            NameEN = "Applied Mathematics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 107,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الاحصاء",
+                            NameEN = "Statistics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 108,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "علوم الحاسب",
+                            NameEN = "Computer Science",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 109,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "دكتوراه التكنولوجيا الحيوية الجزئية",
+                            NameEN = "PhD in Molecular Biotechnology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 110,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "ماجستير التكنولوجيا الحيوية الجزئية",
+                            NameEN = "Master in Molecular Biotechnology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 111,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "ماجستير الفيزياء الطبية التطبيقية",
+                            NameEN = "Master in Applied Medical Physics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 112,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الدبلوم المهني في تحاليل الكيمياء الحيوية",
+                            NameEN = "Professional Diploma in Biochemical Analysis",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 113,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الدبلوم المهني في الميكروبيولوجيا التطبيقية",
+                            NameEN = "Professional Diploma in Applied Microbiology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 114,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 7,
+                            IsDeleted = false,
+                            NameAR = "الدبلوم المهني في الفسيولوجي والتحاليل المعملية",
+                            NameEN = "Professional Diploma in Physiology and Laboratory Analysis",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 115,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 8,
+                            IsDeleted = false,
+                            NameAR = "قسم النحت",
+                            NameEN = "Sculpture Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 116,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 8,
+                            IsDeleted = false,
+                            NameAR = "قسم العمارة",
+                            NameEN = "Architecture Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 117,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 8,
+                            IsDeleted = false,
+                            NameAR = "قسم الجرافيك",
+                            NameEN = "Graphic Design Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 118,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 8,
+                            IsDeleted = false,
+                            NameAR = "قسم التصوير",
+                            NameEN = "Photography Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 119,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 8,
+                            IsDeleted = false,
+                            NameAR = "قسم الديكور",
+                            NameEN = "Department of Decoration",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 120,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 8,
+                            IsDeleted = false,
+                            NameAR = "قسم تاريخ الفن",
+                            NameEN = "Art History Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 121,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "الفوتوغرافيا والسينما والتليفزيون",
+                            NameEN = "Photography, Cinema, and Television Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 122,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الملابس الجاهزة",
+                            NameEN = "Ready-made Clothing Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 123,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم طباعة المسنوجات والصباغة والتجهيز",
+                            NameEN = "Textile Printing, Dyeing, and Finishing Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 124,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الطباعة والنشر والتغليف",
+                            NameEN = "Printing, Publishing, and Packaging Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 125,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الاعلان",
+                            NameEN = "Advertising Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 126,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم التصميم الداخلي والاثاث",
+                            NameEN = "Interior Design and Furniture Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 127,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم التصميم الصناعي",
+                            NameEN = "Industrial Design Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 128,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الاثاث والانشاءات المعدنية",
+                            NameEN = "Furniture and Metal Constructions Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 129,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم المنتجات المعدنية والحلي",
+                            NameEN = "Department of Metal Products and Jewelry",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 130,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الخزف",
+                            NameEN = "Ceramics Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 131,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الزجاج",
+                            NameEN = "Glass Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 132,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الزخرفة",
+                            NameEN = "Decoration Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 133,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم النحت والتشكيل المعماري",
+                            NameEN = "Sculpture and Architectural Formation Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 134,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم طباعة المنسوجات والصباغة والتجهيز",
+                            NameEN = "Textile Printing, Dyeing, and Finishing Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 135,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم الوسائط المطبوعة",
+                            NameEN = "Print Media Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 136,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم التغليف",
+                            NameEN = "Packaging Science Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 137,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم تصميم الاثاث",
+                            NameEN = "Furniture Design Science Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 138,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 9,
+                            IsDeleted = false,
+                            NameAR = "قسم تصميم وتشكيل الزجاج في العمارة",
+                            NameEN = "Glass Design and Formation in Architecture Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 139,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم المحاسبة",
+                            NameEN = "Accounting Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 140,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم الاقتصاد والتجارة الخارجية",
+                            NameEN = "Department of Economics and Foreign Trade",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 141,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم ادارة الاعمال",
+                            NameEN = "Business Administration Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 142,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم الرياضة والتأمين والاحصاء",
+                            NameEN = "Department of Mathematics, Insurance, and Statistics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 143,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم العلوم السياسية",
+                            NameEN = "Department of Political Science",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 144,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم نظم المعلومات",
+                            NameEN = "Department of Information Systems",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 145,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "شعبة اللغات",
+                            NameEN = "Language Division",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 146,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم نظم معلومات الاعمال",
+                            NameEN = "Business Information Systems Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 147,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "قسم الاسواق والمنشأت المالية",
+                            NameEN = "Financial Markets and Institutions Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 148,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "الدراسات العليا الاكاديمية",
+                            NameEN = "Academic Graduate Studies",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 149,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 10,
+                            IsDeleted = false,
+                            NameAR = "ادارة المستشفيات واقتصاديات الصحة",
+                            NameEN = "Hospital Management and Health Economics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 150,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "قسم هندسة الالكترونيات والاتصالات",
+                            NameEN = "Department of Electronics and Communications Engineering",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 151,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "قسم هندسة الحاسبات والنظم",
+                            NameEN = "Computer Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 152,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "قسم هندسة القوى الكهربائية والآلات",
+                            NameEN = "Department of Electrical Power and Machines Engineering",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 153,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "قسم الهندسة الميكانيكية",
+                            NameEN = "Mechanical Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 154,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "قسم الهندسة الحيوية الطبية",
+                            NameEN = "Biomedical and Medical Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 155,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "برنامج هندسة الانتاج",
+                            NameEN = "Production Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 156,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "برنامج الهندسة الصناعية",
+                            NameEN = "Industrial Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 157,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "برنامج هندسة الميكاترونيك",
+                            NameEN = "Mechatronics Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 158,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "برنامج هندسة الاتصالات والمعلومات",
+                            NameEN = "Telecommunications and Information Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 159,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 11,
+                            IsDeleted = false,
+                            NameAR = "برنامج هندسة القوى والوقاية الكهربية",
+                            NameEN = "Electrical Power and Protection Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 160,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "قسم الهندسة المدنية",
+                            NameEN = "Civil Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 161,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "قسم هندسة القوى الميكانيكية",
+                            NameEN = "Mechanical Power Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 162,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "قسم السيارات والجرارات",
+                            NameEN = "Architectural Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 163,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "قسم الهندسة المعمارية",
+                            NameEN = "Architectural Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 164,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "قسم التصميم الميكانيكي",
+                            NameEN = "Mechanical Design Engineering Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 165,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "قسم الفيزيقيا والرياضيات",
+                            NameEN = "Physics and Mathematics Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 166,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "برنامج هندسة الطاقة",
+                            NameEN = "Energy Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 167,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "برنامج الهندسة الانشائية",
+                            NameEN = "Construction Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 168,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "برنامج العمارة بالتكنولوجيا الرقمية",
+                            NameEN = "Digital Architecture Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 169,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "برنامج هندسة الميكاترونيات بالسيارات",
+                            NameEN = "Automotive Mechatronics Engineering Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 170,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 12,
+                            IsDeleted = false,
+                            NameAR = "برنامج ادارة المشروعات والتشييد",
+                            NameEN = "Project Management and Construction Program",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 171,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 13,
+                            IsDeleted = false,
+                            NameAR = "قسم الملكية الصناعية",
+                            NameEN = "Industrial Property Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 172,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 13,
+                            IsDeleted = false,
+                            NameAR = "قسم الملكية الادبية والفنية",
+                            NameEN = "Project Management and Construction Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 173,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 14,
+                            IsDeleted = false,
+                            NameAR = "قسم التصميمات الزخرفية",
+                            NameEN = "Decorative Designs Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 174,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 14,
+                            IsDeleted = false,
+                            NameAR = "قسم الرسم والتصوير",
+                            NameEN = "Drawing and Painting Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 175,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 14,
+                            IsDeleted = false,
+                            NameAR = "قسم النقد والتذوق الفني",
+                            NameEN = "Art Criticism and Appreciation Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 176,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 14,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم التربية الفنية",
+                            NameEN = "Art Education Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 177,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 14,
+                            IsDeleted = false,
+                            NameAR = "قسم التعبير المجسم",
+                            NameEN = "Sculptural Expression Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 178,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 14,
+                            IsDeleted = false,
+                            NameAR = "قسم الاشغال الفنية والتراث الشعبي",
+                            NameEN = "Art and Folk Heritage Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 179,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم العلوم التربوية والنفسية والاجتماعية الرياضية",
+                            NameEN = "Educational, Psychological, and Social Sciences Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 180,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم العلوم الحيوية والصحة الرياضية",
+                            NameEN = "Biological and Sports Health Sciences Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 181,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم المناهج وطرق تدريس التربية البدنية",
+                            NameEN = "Curriculum and Methods of Physical Education Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 182,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم الادارة الرياضية والترويح",
+                            NameEN = "Sports Management and Recreation Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 183,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم نظريات وتطبيقات المنازلات والرياضات الفردية",
+                            NameEN = "Theories and Applications of Individual Sports Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 184,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم نظريات وتطبيقات الرياضات المائية",
+                            NameEN = "Theories and Applications of Aquatic Sports Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 185,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم نظريات وتطبيقات الرياضات الجماعية وألعاب المضرب",
+                            NameEN = "Theories and Applications of Team Sports and Racket Games Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 186,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم نظريات وتطبيقات العاب القوى",
+                            NameEN = "Theories and Applications of Athletics Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 187,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم نظريات وتطبيقات التعبير الحركي والايقاع الحركي",
+                            NameEN = "Theories and Applications of Motor Expression and Rhythmic Movement Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 188,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 15,
+                            IsDeleted = false,
+                            NameAR = "قسم نظريات وتطبيقات التمرينات والجمباز",
+                            NameEN = "Theories and Applications of Gymnastics and Exercises Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 189,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم الادارة الرياضية",
+                            NameEN = "Sports Management Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 190,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم الترويح الرياضي",
+                            NameEN = "Sports Recreation Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 191,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم المناهج وطرق التدريس",
+                            NameEN = "Curriculum and Teaching Methods Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 192,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم الحركة الرياضية",
+                            NameEN = "Sports Movement Sciences Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 193,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم الصحة الرياضية",
+                            NameEN = "Sports Health Sciences Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 194,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم النفس الرياضي",
+                            NameEN = "Sports Psychology Sciences Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 195,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم تدريب الرياضات الاساسية",
+                            NameEN = "Basic Sports Training Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 196,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم تدريب الرياضات الفردية",
+                            NameEN = "Individual Sports Training Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 197,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم تدريب الرياضات الجماعية",
+                            NameEN = "Team Sports Training Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 198,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم رياضة كبار السن",
+                            NameEN = "Elderly Sports Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 199,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 16,
+                            IsDeleted = false,
+                            NameAR = "قسم التربية الرياضية المعدلة",
+                            NameEN = "Department of Adapted Physical Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 200,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 17,
+                            IsDeleted = false,
+                            NameAR = "قسم النظريات والتأليف",
+                            NameEN = "Theories and Composition Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 201,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 17,
+                            IsDeleted = false,
+                            NameAR = "قسم الموسيقى العربية",
+                            NameEN = "Arabic Music Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 202,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 17,
+                            IsDeleted = false,
+                            NameAR = "قسم البيانو والمصاحبة",
+                            NameEN = "Piano and Accompaniment Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 203,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 17,
+                            IsDeleted = false,
+                            NameAR = "قسم الاداء",
+                            NameEN = "Performance Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 204,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 17,
+                            IsDeleted = false,
+                            NameAR = "قسم العلوم الموسيقية التربوية",
+                            NameEN = "Department of Music Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 205,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 18,
+                            IsDeleted = false,
+                            NameAR = "قسم الدراسات السياحية",
+                            NameEN = "Tourism Studies Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 206,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 18,
+                            IsDeleted = false,
+                            NameAR = "قسم الدراسات الفندقية",
+                            NameEN = "Hotel Studies Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 207,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 18,
+                            IsDeleted = false,
+                            NameAR = "قسم الارشاد السياحي",
+                            NameEN = "Tourism Guidance Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 208,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 18,
+                            IsDeleted = false,
+                            NameAR = "قسم ادارة المطاعم",
+                            NameEN = "Restaurant Management Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 209,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 24,
+                            IsDeleted = false,
+                            NameAR = "قسم علوم الأغذية",
+                            NameEN = "Food Science Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 210,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 24,
+                            IsDeleted = false,
+                            NameAR = "قسم التغذية العلاجية",
+                            NameEN = "Therapeutic Nutrition Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 211,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 24,
+                            IsDeleted = false,
+                            NameAR = "قسم تغذية المجتمع",
+                            NameEN = "Community Nutrition Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 212,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 22,
+                            IsDeleted = false,
+                            NameAR = "قسم تكنولوجيا الميكانيكا",
+                            NameEN = "Mechanical Technology Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 213,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 22,
+                            IsDeleted = false,
+                            NameAR = "قسم تكنولوجيا الالكترونيات والاتصالات",
+                            NameEN = "Electronics and Communications Technology Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 214,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 22,
+                            IsDeleted = false,
+                            NameAR = "قسم تكنولوجيا التشييد والبناء",
+                            NameEN = "Construction Technology Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 215,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 22,
+                            IsDeleted = false,
+                            NameAR = " قسم تكنولوجيا السيارات",
+                            NameEN = "Automotive Technology Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 216,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 22,
+                            IsDeleted = false,
+                            NameAR = "قسم العلوم التربوية والنفسية",
+                            NameEN = "Educational and Psychological Sciences Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 217,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 22,
+                            IsDeleted = false,
+                            NameAR = "قسم المناهج وطرق التدريس",
+                            NameEN = "Curriculum and Instruction Department",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 218,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "القانون الجنائي",
+                            NameEN = "Criminal Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 219,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "القانون التجاري",
+                            NameEN = "Commercial Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 220,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "قانون العمل والتشريعات الاجتماعية",
+                            NameEN = "Labor and Social Legislation Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 221,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "الشريعة الإسلامية",
+                            NameEN = "Islamic Sharia",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 222,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "القانون المدني",
+                            NameEN = "Civil Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 223,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "القانون الدولي العام",
+                            NameEN = "Public International Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 224,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "فلسفة القانون وتاريخه",
+                            NameEN = "Philosophy and History of Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 225,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "الاقتصاد",
+                            NameEN = "Economics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 226,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "القانون العام",
+                            NameEN = "Public Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 227,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "قانون المرافعات",
+                            NameEN = "Procedural Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 228,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "القانون الدولي الخاص",
+                            NameEN = "Private International Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 278,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "برنامج الدراسات القانونية باللغة الانجليزية",
+                            NameEN = "Legal Studies Program in English",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 229,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 21,
+                            IsDeleted = false,
+                            NameAR = "برنامج الدراسات القانونية باللغة الفرنسية",
+                            NameEN = "Legal Studies Program in French",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 230,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم التشريح وعلم الأجنة",
+                            NameEN = "Department of Anatomy and Embryology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 231,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الفسيولوجيا الطبية",
+                            NameEN = "Department of Medical Physiology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 232,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الكيمياء الحيوية الطبية والبيولوجيا الجزئية",
+                            NameEN = "Department of Medical Biochemistry and Molecular Biology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 233,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الهستولوجي",
+                            NameEN = "Department of Histology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 234,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الباثولوجيا",
+                            NameEN = "Department of Pathology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 235,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الباثولوجيا الإكلينيكية والكيميائية",
+                            NameEN = "Department of Clinical and Chemical Pathology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 236,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم جراحة المسالك البولية",
+                            NameEN = "Department of Urology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 237,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم جراحة التجميل",
+                            NameEN = "Department of Plastic Surgery",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 238,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم طب الحالات الحرجة والطوارئ",
+                            NameEN = "Department of Critical Care and Emergency Medicine",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 239,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الفارماكولوجيا الطبية",
+                            NameEN = "Department of Medical Pharmacology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 240,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الميكروبيولوجيا الطبية والمناعة",
+                            NameEN = "Department of Medical Microbiology and Immunology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 241,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الطفيليات الطبية",
+                            NameEN = "Department of Medical Parasitology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 242,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم طب الأسرة",
+                            NameEN = "Department of Family Medicine",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 243,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم طب المجتمع والبيئة وطب الصناعات",
+                            NameEN = "Department of Community, Environmental and Occupational Medicine",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 244,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم التخدير والعناية المركزة وعلاج الألم",
+                            NameEN = "Department of Anesthesia, Intensive Care and Pain Management",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 245,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم التوليد وأمراض النساء",
+                            NameEN = "Department of Obstetrics and Gynecology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 246,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم جراحة العظام",
+                            NameEN = "Department of Orthopedic Surgery",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 247,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم جراحة الأوعية الدموية",
+                            NameEN = "Department of Vascular Surgery",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 248,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الطب الشرعي والسموم الإكلينيكية",
+                            NameEN = "Department of Forensic Medicine and Clinical Toxicology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 249,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم أمراض الباطنة العامة",
+                            NameEN = "Department of General Internal Medicine",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 250,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الأطفال",
+                            NameEN = "Department of Pediatrics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 251,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الجراحة العامة",
+                            NameEN = "Department of General Surgery",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 252,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الأمراض الصدرية",
+                            NameEN = "Department of Chest Diseases",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 253,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الأشعة التشخيصية والعلاجية",
+                            NameEN = "Department of Diagnostic and Therapeutic Radiology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 254,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم طب وجراحة العيون",
+                            NameEN = "Department of Ophthalmology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 255,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم طب المخ والأعصاب والطب النفسي",
+                            NameEN = "Department of Neurology and Psychiatry",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 256,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم طب وصحة المسنين",
+                            NameEN = "Department of Geriatric Medicine",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 257,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الأمراض الجلدية والتناسلية والذكورة",
+                            NameEN = "Department of Dermatology, Venereology and Andrology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 258,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم جراحة المخ والأعصاب",
+                            NameEN = "Department of Neurosurgery",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 259,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الأمراض المتوطنة",
+                            NameEN = "Department of Endemic Diseases",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 260,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم أمراض القلب والأوعية الدموية",
+                            NameEN = "Department of Cardiovascular Diseases",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 261,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الطب الطبيعي والروماتيزم والتأهيل",
+                            NameEN = "Department of Physical Medicine, Rheumatology and Rehabilitation",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 262,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم علاج الأورام والطب النووي",
+                            NameEN = "Department of Oncology and Nuclear Medicine",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 263,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم الأنف والأذن والحنجرة",
+                            NameEN = "Department of Ear, Nose and Throat",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 264,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم جراحة القلب والصدر",
+                            NameEN = "Department of Cardiothoracic Surgery",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 265,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 20,
+                            IsDeleted = false,
+                            NameAR = "قسم جراحة الأطفال",
+                            NameEN = "Department of Pediatric Surgery",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 266,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم العقاقير",
+                            NameEN = "Department of Pharmacognosy",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 267,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم الصيدلانيات والصيدلة الصناعية",
+                            NameEN = "Department of Pharmaceutics and Industrial Pharmacy",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 268,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم ممارسة الصيدلة",
+                            NameEN = "Department of Pharmacy Practice",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 269,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم الأدوية والسموم",
+                            NameEN = "Department of Pharmacology and Toxicology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 270,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم الكيمياء الصيدلية",
+                            NameEN = "Department of Pharmaceutical Chemistry",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 271,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم الكيمياء التحليلية الصيدلية",
+                            NameEN = "Department of Pharmaceutical Analytical Chemistry",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 272,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم الكيمياء العضوية الصيدلية",
+                            NameEN = "Department of Pharmaceutical Organic Chemistry",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 273,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم الكيمياء الحيوية والبيولوجيا الجزيئية",
+                            NameEN = "Department of Biochemistry and Molecular Biology",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 274,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            FacultyId = 19,
+                            IsDeleted = false,
+                            NameAR = "قسم الميكروبيولوجيا والمناعة",
+                            NameEN = "Department of Microbiology and Immunology",
+                            VersionNo = 0
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.UniversityFacultiesAndDepartments.Faculty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DeletedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DeletionReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("NameAR")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("NameEN")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id");
+
+                    b.HasIndex("NameAR");
+
+                    b.HasIndex("NameEN");
+
+                    b.ToTable("Faculties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية التربية",
+                            NameEN = "Faculty of Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الاقتصاد المنزلي",
+                            NameEN = "Faculty of Home Economics",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الاداب",
+                            NameEN = "Faculty of Arts",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الخدمة الاجتماعية",
+                            NameEN = "Faculty of Social Work",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الحاسبات والذكاء الاصطناعي",
+                            NameEN = "Faculty of Computer Science and Artificial Intelligence",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية التمريض",
+                            NameEN = "Faculty of Nursing",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية العلوم",
+                            NameEN = "Faculty of Science",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الفنون الجميلة",
+                            NameEN = "Faculty of Fine Arts",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الفنون التطبيقية",
+                            NameEN = "Faculty of Applied Arts",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية التجارة وادارة الاعمال",
+                            NameEN = "Faculty of Commerce and Business Administration",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "(كلية الهندسة (حلوان",
+                            NameEN = "Faculty of Engineering (Helwan)",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "(كلية الهندسة (المطرية",
+                            NameEN = "Faculty of Engineering (Mataria)",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "المعهد القومي للملكية الفكرية",
+                            NameEN = "National Institute of Intellectual Property",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية التربية الفنية",
+                            NameEN = "Faculty of Art Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "(كلية علوم الرياضة (بنات",
+                            NameEN = "Faculty of Sports Science (Girls)",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "(كلية علوم الرياضة (بنين",
+                            NameEN = "Faculty of Sports Science (Boys)",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية التربية الموسيقية",
+                            NameEN = "Faculty of Music Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية السياحة والفنادق",
+                            NameEN = "Faculty of Tourism and Hotels",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الطب",
+                            NameEN = "Faculty of Medicine",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الصيدلة",
+                            NameEN = "Faculty of Pharmacy",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية الحقوق",
+                            NameEN = "Faculty of Law",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية التكنولوجيا والتعليم",
+                            NameEN = "Faculty of Technology and Education",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "معهد التمريض",
+                            NameEN = "Technical Institute of Nursing",
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            IsDeleted = false,
+                            NameAR = "كلية علوم التغذية",
+                            NameEN = "Faculty of Nutrition Sciences",
+                            VersionNo = 0
+                        });
+                });
+
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.ContributionsModule.ContributionsToCommunityService", b =>
                 {
                     b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
@@ -7428,11 +10901,16 @@ namespace Presistence.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Lookup", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("Domain.Entities.UniversityFacultiesAndDepartments.Department", "Department")
+                        .WithMany("FacultyMembers")
+                        .HasForeignKey("DeptId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Domain.Entities.UniversityFacultiesAndDepartments.Faculty", "Faculty")
+                        .WithMany("FacultyMembersPersonalData")
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
                         .WithOne("PersonalData")
@@ -7473,6 +10951,8 @@ namespace Presistence.Data.Migrations
                     b.Navigation("Authority");
 
                     b.Navigation("Department");
+
+                    b.Navigation("Faculty");
 
                     b.Navigation("FacultyMember");
 
@@ -7528,6 +11008,26 @@ namespace Presistence.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Conversation");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Notification", b =>
+                {
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", null)
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.UniversityFacultiesAndDepartments.Department", b =>
+                {
+                    b.HasOne("Domain.Entities.UniversityFacultiesAndDepartments.Faculty", "Faculty")
+                        .WithMany("Departments")
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Faculty");
                 });
 
             modelBuilder.Entity("Domain.Entities.AcademicDataModule.HigherStuidesModule.Thesis", b =>
@@ -7670,6 +11170,18 @@ namespace Presistence.Data.Migrations
                     b.Navigation("Messages");
 
                     b.Navigation("Participants");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UniversityFacultiesAndDepartments.Department", b =>
+                {
+                    b.Navigation("FacultyMembers");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UniversityFacultiesAndDepartments.Faculty", b =>
+                {
+                    b.Navigation("Departments");
+
+                    b.Navigation("FacultyMembersPersonalData");
                 });
 #pragma warning restore 612, 618
         }
