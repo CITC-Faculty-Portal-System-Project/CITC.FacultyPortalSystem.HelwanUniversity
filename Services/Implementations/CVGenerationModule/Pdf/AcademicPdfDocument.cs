@@ -9,7 +9,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 {
     public class AcademicPdfDocumentCV(CVResponseDTO _cv , IWebHostEnvironment _env) : IDocument
     {
-        private TextStyle ArabicStyle => TextStyle.Default.FontFamily("Cairo").FontSize(9);
+        private TextStyle ArabicStyle => TextStyle.Default.FontFamily("Cairo", "Noto Sans Arabic");
         private readonly string MainColor = "#19355a";
         private readonly string AccentColor = "#b38e19";
         private readonly string CardBg = "#f8fafc";
