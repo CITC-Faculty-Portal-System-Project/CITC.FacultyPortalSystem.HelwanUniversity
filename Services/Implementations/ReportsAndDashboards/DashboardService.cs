@@ -1,11 +1,12 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.AdminModule;
 using Domain.Entities.IdentityModule.Users;
 using Domain.Entities.UniversityFacultiesAndDepartments;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
 using Services.Specifications.AggregationSpecifications;
 using Services.Specifications.ResearchesModule;
-using Shared.ReportsAndDashboard;
+using Shared.Dtos.ReportsAndDashboard;
 
 namespace Services.Implementations.ReportsAndDashboards
 {
@@ -17,6 +18,7 @@ namespace Services.Implementations.ReportsAndDashboards
             var personalDataRepo = _unitOfWork.GetRepository<PersonalData , int>();
             var researchesRepo = _unitOfWork.GetRepository<Research , int>();
             var facultiesRepo = _unitOfWork.GetRepository<Faculty , int>();
+            var ticketsRepo = _unitOfWork.GetRepository<Ticket , int>();
 
             var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
             var currentUserEntity = await _userManager.FindByEmailAsync(currentUser.Email);
@@ -33,10 +35,10 @@ namespace Services.Implementations.ReportsAndDashboards
             var faculties = await facultiesRepo.GetAllAsync(new FacultySpecification());
             var usersPerFaculty = await personalDataRepo.ExecuteAggregationAsync(new PersonalDataAggregationSpecification(faculties.AsQueryable()));
             var researchesPerFaculty = await researchesRepo.ExecuteAggregationAsync(new ResearchAggregationSpecification(faculties.AsQueryable()));
-            var totalResearches = await researchesRepo.GetAllAsync(new TotalResearchesSpecification());
-            var totalResearchesCount = totalResearches.Count();
+            var totalResearches = await researchesRepo.ExecuteAggregationAsync(new ResearchesStatsAggregationSpecification());
 
             var researchesMonthlyRate = await researchesRepo.ExecuteAggregationAsync(new ResearchesMonthlyRateSpecification());
+            var ticketsStats = await ticketsRepo.ExecuteAggregationAsync(new TicketingAggregationSpecification());
             return new AdminDashboardResponseDTO
             {
                 TotalUsersNumber = allUsersCount,
@@ -44,10 +46,11 @@ namespace Services.Implementations.ReportsAndDashboards
                 TotalSystemManagersNumber = managementUsersCount,
                 UsersPerFaculty = usersPerFaculty,
                 ResearchesPerFaculty = researchesPerFaculty,
-                TotalResearchesNumber = totalResearchesCount,
+                ResearchesStats = totalResearches,
                 ResearchesMonthlyRate = researchesMonthlyRate,
                 CurrentUserName = currentUser.UserName,
-                CurrentUserRoles = currentUserRoles.ToList()
+                CurrentUserRoles = currentUserRoles.ToList(),
+                TicketsStats = ticketsStats
             };
 
         }

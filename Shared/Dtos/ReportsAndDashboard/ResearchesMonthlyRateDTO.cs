@@ -1,4 +1,4 @@
-﻿namespace Shared.ReportsAndDashboard
+﻿namespace Shared.Dtos.ReportsAndDashboard
 {
     public record ResearchesMonthlyRateDTO
     {

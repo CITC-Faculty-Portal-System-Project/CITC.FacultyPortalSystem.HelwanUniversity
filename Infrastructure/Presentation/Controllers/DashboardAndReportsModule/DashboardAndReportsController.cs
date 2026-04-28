@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Shared.ReportsAndDashboard;
+using Shared.Dtos.ReportsAndDashboard;
 
 namespace Presentation.Controllers.DashboardAndReportsModule
 {

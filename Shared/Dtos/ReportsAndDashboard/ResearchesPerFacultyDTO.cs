@@ -1,9 +1,10 @@
-﻿namespace Shared.ReportsAndDashboard
+﻿namespace Shared.Dtos.ReportsAndDashboard
 {
-    public record FacultyUsersStatisticsDTO
+    public record ResearchesPerFacultyDTO
     {
         public string FacultyNameAR { get; set; } = string.Empty;
         public string FacultyNameEN { get; set; } = string.Empty;
-        public int TotalNumberOfUsers { get; set; }
+        public int TotalNumberOfResearches { get; set; }
+
     }
 }
