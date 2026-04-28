@@ -1,11 +1,8 @@
-using Domain.Entities.IdentityModule.Users;
 using ICIT.FacultyPortalSystem.API.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Presistence.Identity;
 using Shared.Hubs;
 using ICIT.FacultyPortalSystem.API.Logger;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 using Presistence.Data;
 using Presistence.Identity.Seeding;
@@ -61,8 +58,6 @@ namespace ICIT.FacultyPortalSystem.API
             var app = builder.Build();
 
             app.UseSentryTracing();
-
-			var app = builder.Build();
             
             
             await app.UseIdentityDatabaseInitializerAsync();
