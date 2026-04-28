@@ -1,6 +1,6 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.UniversityFacultiesAndDepartments;
-using Shared.ReportsAndDashboard;
+using Shared.Dtos.ReportsAndDashboard;
 
 namespace Services.Specifications.AggregationSpecifications
 {

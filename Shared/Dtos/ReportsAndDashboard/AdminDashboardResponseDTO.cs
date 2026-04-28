@@ -1,4 +1,4 @@
-﻿namespace Shared.ReportsAndDashboard
+﻿namespace Shared.Dtos.ReportsAndDashboard
 {
     public record AdminDashboardResponseDTO
     {
@@ -7,9 +7,10 @@
         public int TotalUsersNumber { get; set; }
         public int TotalFacultyMembersNumber { get; set; }
         public int TotalSystemManagersNumber { get; set; }
-        public int TotalResearchesNumber { get; set; }
         public IReadOnlyList<FacultyUsersStatisticsDTO> UsersPerFaculty { get; set; } = new List<FacultyUsersStatisticsDTO>();
         public IReadOnlyList<ResearchesPerFacultyDTO> ResearchesPerFaculty { get; set; } = new List<ResearchesPerFacultyDTO>();
+        public ResearchesStatsDTO ResearchesStats { get; set; } = new ResearchesStatsDTO();
         public IReadOnlyList<ResearchesMonthlyRateDTO> ResearchesMonthlyRate { get; set; } = new List<ResearchesMonthlyRateDTO>();
+        public TicketsStatsDTO TicketsStats { get; set; } = new TicketsStatsDTO();
     }
 }

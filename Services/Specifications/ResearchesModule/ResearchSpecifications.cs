@@ -4,7 +4,7 @@ using Domain.Entities.IdentityModule;
 using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Shared.Enums.ResearchesModule;
-using Shared.ReportsAndDashboard;
+using Shared.Dtos.ReportsAndDashboard;
 using Shared.SpecificationParameters.ResearchesModule;
 using System.Linq.Expressions;
 

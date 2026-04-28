@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Shared.ReportsAndDashboard;
+using Shared.Dtos.ReportsAndDashboard;
 
 namespace Presentation.Controllers.DashboardAndReportsModule
 {
@@ -10,5 +10,11 @@ namespace Presentation.Controllers.DashboardAndReportsModule
             [HttpGet("Dashboard")]
             public async Task<ActionResult<AdminDashboardResponseDTO>> GetDashboardData()
                 => Ok(await _serviceManager.DashboardService.GetAdminDashboardDataAsync());
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [ProducesResponseType(typeof(ResearchesDashboardDTO), StatusCodes.Status200OK)]
+        [HttpGet("ResearchesDashboard")]
+        public async Task<ActionResult<ResearchesDashboardDTO>> GetResearchesDashboardData()
+        => Ok(await _serviceManager.DashboardService.GetResearchDashboardDataAsync());
     }
 }
