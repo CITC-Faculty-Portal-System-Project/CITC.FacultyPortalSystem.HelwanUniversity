@@ -18,8 +18,10 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         public void Compose(IDocumentContainer container)
         {
-            var fontPath = Path.Combine(_env.ContentRootPath, "fonts", "Cairo-Regular.ttf");
-            FontManager.RegisterFont(File.OpenRead(fontPath));
+            var regularFontPath = Path.Combine(_env.ContentRootPath, "fonts", "Cairo-Regular.ttf");
+            var boldFontPath = Path.Combine(_env.ContentRootPath, "fonts", "Cairo-Bold.ttf");
+            FontManager.RegisterFont(File.OpenRead(regularFontPath));
+            FontManager.RegisterFont(File.OpenRead(boldFontPath));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
