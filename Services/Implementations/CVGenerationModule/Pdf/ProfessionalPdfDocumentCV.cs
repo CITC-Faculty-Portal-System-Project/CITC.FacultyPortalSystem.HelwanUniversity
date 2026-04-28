@@ -11,17 +11,17 @@ namespace Services.Implementations.CVGenerationModule.Pdf
     public class ProfessionalPdfDocumentCV : IDocument
     {
         private TextStyle ArabicStyle => TextStyle.Default.FontFamily("Cairo", "Noto Sans Arabic");
-        private readonly string MainColor = "#19355a"; 
-        private readonly string AccentColor = "#b38e19"; 
+        private readonly string MainColor = "#19355a";
+        private readonly string AccentColor = "#b38e19";
         private readonly string SidebarText = "#cbd5e1";
         private CVResponseDTO _cv;
         private IWebHostEnvironment _env;
         private byte[]? _profileImage;
-        private const float SidebarWidth = 200; 
+        private const float SidebarWidth = 200;
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
 
-        public ProfessionalPdfDocumentCV(CVResponseDTO cv, IAttachmentService attachmentService , IWebHostEnvironment env)
+        public ProfessionalPdfDocumentCV(CVResponseDTO cv, IAttachmentService attachmentService, IWebHostEnvironment env)
         {
             _cv = cv;
             _env = env;
@@ -39,12 +39,13 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                 _profileImage = image?.AttachmentData;
             }
         }
+
         public void Compose(IDocumentContainer container)
         {
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
-                page.Margin(0); 
+                page.Margin(0);
                 page.ContentFromRightToLeft();
 
                 page.Background().Row(row =>
@@ -58,36 +59,32 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                     row.ConstantItem(SidebarWidth).PaddingVertical(40).PaddingHorizontal(20).Column(sb =>
                     {
                         sb.Item()
-                     .AlignCenter()
-                     .Width(80)
-                     .Height(80)
-                     .Background("#4d5a6d")
-                     .Border(2)
-                     .BorderColor(AccentColor)
-                     .CornerRadius(40)
-                     .AlignCenter()
-                     .AlignMiddle()
-                     .Element(container =>
-                     {
-                         if (_cv.ProfilePictureId != null) 
-                         {
-                             container
-                                     .Image(_profileImage)
-                                      .FitArea();
-                         }
-                         else
-                         {
-                             container
-                                 .Text(GetInitials(_cv.NameAr))
-                                 .FontSize(24)
-                                 .Bold()
-                                 .FontColor(AccentColor);
-                         }
-                     });
-                        sb.Item().PaddingTop(15).AlignCenter().Text(_cv.NameAr ?? "").FontSize(16).ExtraBold().FontColor(Colors.White);
+                            .AlignCenter()
+                            .Width(80).Height(80)
+                            .Background("#4d5a6d")
+                            .Border(2).BorderColor(AccentColor)
+                            .CornerRadius(40)
+                            .AlignCenter().AlignMiddle()
+                            .Element(container =>
+                            {
+                                if (_cv.ProfilePictureId != null)
+                                    container.Image(_profileImage).FitArea();
+                                else
+                                    container.Text(GetInitials(_cv.NameAr))
+                                        .FontSize(24).Bold().FontColor(AccentColor)
+                                        .Style(ArabicStyle);
+                            });
+
+                        sb.Item().PaddingTop(15).AlignCenter()
+                            .Text(_cv.NameAr ?? "")
+                            .FontSize(16).ExtraBold().FontColor(Colors.White)
+                            .Style(ArabicStyle);
 
                         if (_cv.Title != null)
-                            sb.Item().AlignCenter().Text(_cv.Title.ValueAr ?? "").FontSize(9).SemiBold().FontColor(AccentColor);
+                            sb.Item().AlignCenter()
+                                .Text(_cv.Title.ValueAr ?? "")
+                                .FontSize(9).SemiBold().FontColor(AccentColor)
+                                .Style(ArabicStyle);
 
                         DrawSidebarSection(sb, "بيانات الاتصال");
                         if (!string.IsNullOrEmpty(_cv.OfficialEmail)) DrawSidebarText(sb, _cv.OfficialEmail);
@@ -103,14 +100,17 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                             {
                                 r.Spacing(4);
                                 foreach (var s in _cv.Skills)
-                                    r.AutoItem().PaddingHorizontal(6).PaddingVertical(2).Background("#33b38e19").Border(0.5f).BorderColor(AccentColor).Text(s ?? "").FontSize(7).FontColor(AccentColor);
+                                    r.AutoItem()
+                                        .PaddingHorizontal(6).PaddingVertical(2)
+                                        .Background("#33b38e19").Border(0.5f).BorderColor(AccentColor)
+                                        .Text(s ?? "").FontSize(7).FontColor(AccentColor)
+                                        .Style(ArabicStyle);
                             });
                         }
 
                         if (HasSocialMedia())
                         {
                             DrawSidebarSection(sb, "التواصل الاجتماعي");
-
                             if (!string.IsNullOrEmpty(_cv.PersonalWebsite)) DrawSidebarText(sb, _cv.PersonalWebsite);
                             if (!string.IsNullOrEmpty(_cv.LinkedIn)) DrawSidebarText(sb, $"LinkedIn: {_cv.LinkedIn}");
                             if (!string.IsNullOrEmpty(_cv.GoogleScholar)) DrawSidebarText(sb, $"Scholar: {_cv.GoogleScholar}");
@@ -133,14 +133,18 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                                 if (_cv.Authority != null) parts.Add(_cv.Authority.ValueAr ?? "");
                                 if (_cv.University != null) parts.Add(_cv.University.ValueAr ?? "");
 
-                                t.Span(string.Join(" · ", parts)).FontSize(9).FontColor("#334155").SemiBold();
+                                t.Span(string.Join(" · ", parts))
+                                    .FontSize(9).FontColor("#334155").SemiBold()
+                                    .Style(ArabicStyle);
                             });
                         }
 
                         if (!string.IsNullOrEmpty(_cv.BioSummary))
                         {
                             DrawMainTitle(mainCol, "نبذة تعريفية");
-                            mainCol.Item().Text(_cv.BioSummary).FontSize(9).LineHeight(1.6f).FontColor("#374151");
+                            mainCol.Item().Text(_cv.BioSummary)
+                                .FontSize(9).LineHeight(1.6f).FontColor("#374151")
+                                .Style(ArabicStyle);
                         }
 
                         RenderMainList(mainCol, "الخبرات العامة", _cv.GeneralExperiences, ge =>
@@ -231,17 +235,25 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         private void DrawSidebarSection(ColumnDescriptor sb, string title)
         {
-            sb.Item().PaddingTop(20).PaddingBottom(10).BorderBottom(1).BorderColor("#26FFFFFF").PaddingBottom(5).Text(title).FontSize(8).Bold().FontColor(AccentColor);
+            sb.Item().PaddingTop(20).PaddingBottom(10)
+                .BorderBottom(1).BorderColor("#26FFFFFF").PaddingBottom(5)
+                .Text(title).FontSize(8).Bold().FontColor(AccentColor)
+                .Style(ArabicStyle);
         }
 
         private void DrawSidebarText(ColumnDescriptor sb, string text)
         {
-            sb.Item().PaddingTop(2).Text(text).FontSize(8).FontColor(SidebarText);
+            sb.Item().PaddingTop(2)
+                .Text(text).FontSize(8).FontColor(SidebarText)
+                .Style(ArabicStyle);
         }
 
         private void DrawMainTitle(ColumnDescriptor col, string title)
         {
-            col.Item().PaddingTop(22).BorderBottom(1.5f).BorderColor(MainColor).PaddingBottom(5).Text(title).FontSize(10).ExtraBold().FontColor(MainColor);
+            col.Item().PaddingTop(22)
+                .BorderBottom(1.5f).BorderColor(MainColor).PaddingBottom(5)
+                .Text(title).FontSize(10).ExtraBold().FontColor(MainColor)
+                .Style(ArabicStyle);
         }
 
         private void RenderMainList<T>(ColumnDescriptor col, string title, IEnumerable<T>? list, Func<T, (string head, string sub)> mapper)
@@ -253,22 +265,23 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                 var (h, s) = mapper(item);
                 col.Item().PaddingTop(8).Column(c =>
                 {
-                    c.Item().Text(h).FontSize(9).Bold().FontColor("#1e293b");
-                    c.Item().PaddingTop(2).Text(s).FontSize(8).FontColor("#64748b").LineHeight(1.3f);
+                    c.Item().Text(h).FontSize(9).Bold().FontColor("#1e293b").Style(ArabicStyle);
+                    c.Item().PaddingTop(2).Text(s).FontSize(8).FontColor("#64748b").LineHeight(1.3f).Style(ArabicStyle);
                 });
             }
         }
 
-        private string GetInitials(string? name) => string.IsNullOrWhiteSpace(name) ? "" : name.Substring(0, 1).ToUpper();
+        private string GetInitials(string? name) =>
+            string.IsNullOrWhiteSpace(name) ? "" : name.Substring(0, 1).ToUpper();
 
         private bool HasSocialMedia() =>
-        !string.IsNullOrEmpty(_cv.PersonalWebsite) ||
-        !string.IsNullOrEmpty(_cv.LinkedIn) ||
-        !string.IsNullOrEmpty(_cv.GoogleScholar) ||
-        !string.IsNullOrEmpty(_cv.Scopus) ||
-        !string.IsNullOrEmpty(_cv.YouTube) ||
-        !string.IsNullOrEmpty(_cv.Facebook) ||
-        !string.IsNullOrEmpty(_cv.Instagram) ||
-        !string.IsNullOrEmpty(_cv.X);
+            !string.IsNullOrEmpty(_cv.PersonalWebsite) ||
+            !string.IsNullOrEmpty(_cv.LinkedIn) ||
+            !string.IsNullOrEmpty(_cv.GoogleScholar) ||
+            !string.IsNullOrEmpty(_cv.Scopus) ||
+            !string.IsNullOrEmpty(_cv.YouTube) ||
+            !string.IsNullOrEmpty(_cv.Facebook) ||
+            !string.IsNullOrEmpty(_cv.Instagram) ||
+            !string.IsNullOrEmpty(_cv.X);
     }
 }
