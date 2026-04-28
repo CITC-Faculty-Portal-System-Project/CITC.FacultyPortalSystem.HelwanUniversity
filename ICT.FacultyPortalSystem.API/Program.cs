@@ -19,6 +19,12 @@ namespace ICIT.FacultyPortalSystem.API
             #region DI Container
             var builder = WebApplication.CreateBuilder(args);
 
+            var fontsPath = Path.Combine(builder.Environment.ContentRootPath, "fonts");
+            foreach (var font in Directory.GetFiles(fontsPath, "*.ttf"))
+            {
+                QuestPDF.Drawing.FontManager.RegisterFont(File.OpenRead(font));
+            }
+
             //WebApi Services
             builder.Services.AddWebApiServices(builder.Configuration);
 
