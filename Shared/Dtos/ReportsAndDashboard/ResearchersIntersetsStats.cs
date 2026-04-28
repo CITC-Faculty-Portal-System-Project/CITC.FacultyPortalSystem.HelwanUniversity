@@ -2,6 +2,7 @@
 {
     public record ResearchersInterestsStats
     {
-        public int TotalInter { get; set; }
+        public int TotalInterestsNo { get; set; }
+        public IReadOnlyList<InterestDetailedStats> DetailedStats { get; set; } = new List<InterestDetailedStats>();    
     }
 }

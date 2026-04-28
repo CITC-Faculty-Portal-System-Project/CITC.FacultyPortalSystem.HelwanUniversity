@@ -46,13 +46,31 @@ namespace Services.Implementations.ReportsAndDashboards
                 TotalSystemManagersNumber = managementUsersCount,
                 UsersPerFaculty = usersPerFaculty,
                 ResearchesPerFaculty = researchesPerFaculty,
-                ResearchesStats = totalResearches,
+                ResearchesStats = totalResearches.FirstOrDefault() ?? new ResearchesStatsDTO(),
                 ResearchesMonthlyRate = researchesMonthlyRate,
                 CurrentUserName = currentUser.UserName,
                 CurrentUserRoles = currentUserRoles.ToList(),
-                TicketsStats = ticketsStats
+                TicketsStats = ticketsStats.FirstOrDefault()?? new TicketsStatsDTO() 
             };
 
+        }
+
+        public async Task<ResearchesDashboardDTO> GetResearchDashboardDataAsync()
+        {
+            var researchesRepo = _unitOfWork.GetRepository<Research , int>();
+            
+            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchDashboardAggregationSpecification());
+
+            return new ResearchesDashboardDTO
+            {
+                DepartmentStats = researchesStats.FirstOrDefault()?.DepartmentStats!,
+                FacultyStats = researchesStats.FirstOrDefault()?.FacultyStats!,
+                InternationalResearchesNo = researchesStats.FirstOrDefault()?.InternationalResearchesNo ?? 0,
+                LocalResearchesNo = researchesStats.FirstOrDefault()?.LocalResearchesNo ?? 0,
+                ResearchersStats = researchesStats.FirstOrDefault()?.ResearchersStats!,
+                InterestsStats = researchesStats.FirstOrDefault()?.InterestsStats!,
+                CitationsStats = researchesStats.FirstOrDefault()?.CitationsStats!
+            };
         }
     }
 }

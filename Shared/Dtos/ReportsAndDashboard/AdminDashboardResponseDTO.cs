@@ -9,8 +9,8 @@
         public int TotalSystemManagersNumber { get; set; }
         public IReadOnlyList<FacultyUsersStatisticsDTO> UsersPerFaculty { get; set; } = new List<FacultyUsersStatisticsDTO>();
         public IReadOnlyList<ResearchesPerFacultyDTO> ResearchesPerFaculty { get; set; } = new List<ResearchesPerFacultyDTO>();
-        public IReadOnlyList<ResearchesStatsDTO> ResearchesStats { get; set; } = new List<ResearchesStatsDTO>();
+        public ResearchesStatsDTO ResearchesStats { get; set; } = new ResearchesStatsDTO();
         public IReadOnlyList<ResearchesMonthlyRateDTO> ResearchesMonthlyRate { get; set; } = new List<ResearchesMonthlyRateDTO>();
-        public IReadOnlyList<TicketsStatsDTO> TicketsStats { get; set; } = new List<TicketsStatsDTO>();
+        public TicketsStatsDTO TicketsStats { get; set; } = new TicketsStatsDTO();
     }
 }
