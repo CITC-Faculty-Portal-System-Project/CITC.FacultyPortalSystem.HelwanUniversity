@@ -5,7 +5,6 @@ using Domain.Entities.UniversityFacultiesAndDepartments;
 using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
 using Services.Specifications.AggregationSpecifications;
-using Services.Specifications.ResearchesModule;
 using Shared.Dtos.ReportsAndDashboard;
 
 namespace Services.Implementations.ReportsAndDashboards

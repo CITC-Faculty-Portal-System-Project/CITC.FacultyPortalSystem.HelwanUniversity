@@ -29,18 +29,30 @@ namespace ICIT.FacultyPortalSystem.API
 			//Serilog Configuration
 			builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 			{
-				loggerConfiguration
-					.ReadFrom.Configuration(context.Configuration)
+                loggerConfiguration
+                    .ReadFrom.Configuration(context.Configuration)
                     .WriteTo.Sink(new KafkaLogSink());
+                    
 			});
-			#endregion
 
-			#region Pipelines - Middlewares
+            builder.WebHost.UseSentry(options =>
+            {
+                options.Dsn = "https://bdb6297d52d2d6af53037ef6ca79734a@o4511298747629568.ingest.de.sentry.io/4511299390996560";
 
-			#endregion
+                options.Debug = true;
+                options.TracesSampleRate = 1.0;
+                options.MaxQueueItems = 100;
+            });
 
-			var app = builder.Build();
+            #endregion
 
+            #region Pipelines - Middlewares
+
+            #endregion
+
+            var app = builder.Build();
+
+            app.UseSentryTracing();
 
             app.UseExceptionHandlingMiddlewares();
 
