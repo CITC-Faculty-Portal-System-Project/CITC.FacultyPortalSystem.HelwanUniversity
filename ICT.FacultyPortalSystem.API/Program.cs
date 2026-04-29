@@ -35,15 +35,7 @@ namespace ICIT.FacultyPortalSystem.API
                     
 			});
 
-            builder.WebHost.UseSentry(options =>
-            {
-                options.Dsn = "https://bdb6297d52d2d6af53037ef6ca79734a@o4511298747629568.ingest.de.sentry.io/4511299390996560";
-
-                options.Debug = true;
-                options.TracesSampleRate = 1.0;
-                options.MaxQueueItems = 100;
-            });
-
+       
             #endregion
 
             #region Pipelines - Middlewares
@@ -51,8 +43,6 @@ namespace ICIT.FacultyPortalSystem.API
             #endregion
 
             var app = builder.Build();
-
-            app.UseSentryTracing();
 
             app.UseExceptionHandlingMiddlewares();
 

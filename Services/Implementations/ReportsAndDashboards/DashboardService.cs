@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
 using Services.Specifications.AggregationSpecifications;
 using Shared.Dtos.ReportsAndDashboard;
+using Shared.SpecificationParameters.ReportsAndDashboard;
 
 namespace Services.Implementations.ReportsAndDashboards
 {
@@ -54,21 +55,24 @@ namespace Services.Implementations.ReportsAndDashboards
 
         }
 
-        public async Task<ResearchesDashboardDTO> GetResearchDashboardDataAsync()
+        public async Task<ResearchesDashboardDTO> GetResearchDashboardDataAsync(ResearchesDashboardSpecificationParameters parameters)
         {
             var researchesRepo = _unitOfWork.GetRepository<Research , int>();
             
-            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchDashboardAggregationSpecification());
+            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchDashboardAggregationSpecification(parameters));
 
             return new ResearchesDashboardDTO
             {
-                DepartmentStats = researchesStats.FirstOrDefault()?.DepartmentStats!,
-                FacultyStats = researchesStats.FirstOrDefault()?.FacultyStats!,
                 InternationalResearchesNo = researchesStats.FirstOrDefault()?.InternationalResearchesNo ?? 0,
                 LocalResearchesNo = researchesStats.FirstOrDefault()?.LocalResearchesNo ?? 0,
-                ResearchersStats = researchesStats.FirstOrDefault()?.ResearchersStats!,
-                InterestsStats = researchesStats.FirstOrDefault()?.InterestsStats!,
-                CitationsStats = researchesStats.FirstOrDefault()?.CitationsStats!
+                TotalDepartments = researchesStats.FirstOrDefault()?.TotalDepartments ?? 0,
+                TotalNumberOfInterests = researchesStats.FirstOrDefault()?.TotalNumberOfInterests ?? 0,
+                UniversityTopFiveResearchers = researchesStats.FirstOrDefault()?.UniversityTopFiveResearchers ?? new List<TopFiveResearchersStatsDTO>(),
+                FacultyTopFiveResearchers = researchesStats.FirstOrDefault()?.FacultyTopFiveResearchers ?? new List<TopFiveResearchersStatsDTO>(),
+                DepartmentResearchesStats = researchesStats.FirstOrDefault()?.DepartmentResearchesStats ?? new List<ResearchDepartmentStatsDTO>(),
+                DepartmentResearchersStats = researchesStats.FirstOrDefault()?.DepartmentResearchersStats ?? new List<DepartmentResearchersStatsDTO>(),
+                TopFiveResearchersInterestsStats = researchesStats.FirstOrDefault()?.TopFiveResearchersInterestsStats ?? new List<TopFiveResearchersIntersetsStats>(),
+                CitationsStats = researchesStats.FirstOrDefault()?.CitationsStats ?? new List<ResearchCitationsStatsDTO>()
             };
         }
     }
