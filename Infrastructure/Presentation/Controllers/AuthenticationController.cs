@@ -35,7 +35,7 @@ namespace Presentation.Controllers
                 Email = result.Email,
                 UserName = result.UserName,
                 Roles = result.Roles,
-                NationalNumber = result.NationalNumber,
+                //NationalNumber = result.NationalNumber,
             };
             return Ok(frontendResponse);
         }
