@@ -32,10 +32,8 @@ namespace Presentation.Controllers
             Response.Cookies.Append("jwtToken", result.Token, cookieOptions);
             var frontendResponse = new LoginClaimsResponseDto
             {
-                Email = result.Email,
                 UserName = result.UserName,
                 Roles = result.Roles,
-                NationalNumber = result.NationalNumber,
             };
             return Ok(frontendResponse);
         }
