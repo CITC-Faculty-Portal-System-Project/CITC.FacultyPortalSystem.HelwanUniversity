@@ -55,11 +55,39 @@ namespace Services.Implementations.ReportsAndDashboards
 
         }
 
-        public async Task<ResearchesDashboardDTO> GetResearchDashboardDataAsync(ResearchesDashboardSpecificationParameters parameters)
+        public async Task<IReadOnlyList<DepartmentResearchersStatsDTO>> GetDepartmentResearchersDashboardDataAsync(ResearchersPerDepartmentSpecificationParameters parameters)
+        {
+            var researchesRepo = _unitOfWork.GetRepository<Research, int>();
+
+            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchersPerDepartmantSpecification(parameters));
+
+            return researchesStats;
+            
+        }
+
+        public async Task<IReadOnlyList<ResearchDepartmentStatsDTO>> GetDepartmentResearchesDashboardDataAsync(ResearchesPerDepartmentSpecificationParameters parameters)
+        {
+            var researchesRepo = _unitOfWork.GetRepository<Research, int>();
+
+            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchesPerDepartmentSpecification(parameters));
+
+            return researchesStats;
+        }
+
+        public async Task<IReadOnlyList<TopFiveResearchersStatsDTO>> GetFacultyTopResearchersDashboardDataAsync(ResearchersPerFacultySpecificationParameters parameters)
+        {
+            var researchesRepo = _unitOfWork.GetRepository<Research, int>();
+
+            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchersPerFacultyAggregationSpecification(parameters));
+
+            return researchesStats;
+        }
+
+        public async Task<ResearchesDashboardDTO> GetResearchDashboardDataAsync()
         {
             var researchesRepo = _unitOfWork.GetRepository<Research , int>();
             
-            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchDashboardAggregationSpecification(parameters));
+            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchDashboardAggregationSpecification());
 
             return new ResearchesDashboardDTO
             {
@@ -68,9 +96,6 @@ namespace Services.Implementations.ReportsAndDashboards
                 TotalDepartments = researchesStats.FirstOrDefault()?.TotalDepartments ?? 0,
                 TotalNumberOfInterests = researchesStats.FirstOrDefault()?.TotalNumberOfInterests ?? 0,
                 UniversityTopFiveResearchers = researchesStats.FirstOrDefault()?.UniversityTopFiveResearchers ?? new List<TopFiveResearchersStatsDTO>(),
-                FacultyTopFiveResearchers = researchesStats.FirstOrDefault()?.FacultyTopFiveResearchers ?? new List<TopFiveResearchersStatsDTO>(),
-                DepartmentResearchesStats = researchesStats.FirstOrDefault()?.DepartmentResearchesStats ?? new List<ResearchDepartmentStatsDTO>(),
-                DepartmentResearchersStats = researchesStats.FirstOrDefault()?.DepartmentResearchersStats ?? new List<DepartmentResearchersStatsDTO>(),
                 TopFiveResearchersInterestsStats = researchesStats.FirstOrDefault()?.TopFiveResearchersInterestsStats ?? new List<TopFiveResearchersIntersetsStats>(),
                 CitationsStats = researchesStats.FirstOrDefault()?.CitationsStats ?? new List<ResearchCitationsStatsDTO>()
             };

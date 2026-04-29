@@ -8,14 +8,11 @@ namespace Services.Specifications.AggregationSpecifications
     public class ResearchDashboardAggregationSpecification
         : AggregationSpecification<Research, ResearchesDashboardDTO>
     {
-        private readonly ResearchesDashboardSpecificationParameters _parameters;
 
-        public ResearchDashboardAggregationSpecification(
-            ResearchesDashboardSpecificationParameters parameters)
+        public ResearchDashboardAggregationSpecification()
         {
-            _parameters = parameters;
 
-            SetCriteria(r => !r.IsDeleted);
+            SetCriteria(r => !r.IsDeleted && r.Contributions!.Any(c => c.IsConfirmed));
         }
 
         public override IQueryable<ResearchesDashboardDTO> Apply(IQueryable<Research> query)
@@ -84,71 +81,7 @@ namespace Services.Specifications.AggregationSpecifications
                 .ToList();
 
             #endregion
-
-            #region Faculty Top 5
-
-            var facultyTop5 = researchersList
-                .Where(x => x.FacultyId == _parameters.FacultyIdTopFiveResearchers)
-                .Select(x => new TopFiveResearchersStatsDTO
-                {
-                    ResearcherName = x.Name,
-                    TotalResearchesNo = x.TotalPapers,
-                    Score =
-                        (0.5 * (maxH == 0 ? 0 : (double)x.HIndex / maxH)) +
-                        (0.3 * (maxC == 0 ? 0 : (double)x.TotalCitations / maxC)) +
-                        (0.2 * (maxP == 0 ? 0 : (double)x.TotalPapers / maxP))
-                })
-                .OrderByDescending(x => x.Score)
-                .Take(5)
-                .ToList();
-
-            #endregion
-
-            #region Department Researches Stats
-
-            var departmentResearchesStats = filtered
-                .SelectMany(r => r.Contributions!.Where(c => c.IsConfirmed)
-                    .Select(c => new
-                    {
-                        Dept = c.Contributor!.PersonalData!.Department,
-                        r.Id,
-                        FacultyId = c.Contributor.PersonalData.Faculty.Id
-                    }))
-                .Where(x => x.FacultyId == _parameters.FacultyIdDepartmentResearches)
-                .Distinct()
-                .GroupBy(x => new { x.Dept.Id, x.Dept.NameAR, x.Dept.NameEN })
-                .Select(g => new ResearchDepartmentStatsDTO
-                {
-                    DepartmentNameAR = g.Key.NameAR,
-                    DepartmentNameEN = g.Key.NameEN,
-                    ResearchesNo = g.Select(x => x.Id).Distinct().Count()
-                })
-                .ToList();
-
-            #endregion
-
-            #region Department Researchers Stats
-
-            var departmentResearchersStats = filtered
-                .SelectMany(r => r.Contributions!.Where(c => c.IsConfirmed))
-                .Where(c => c.Contributor!.PersonalData!.Faculty.Id ==
-                            _parameters.FacultyIdDepartmentResearchers)
-                .GroupBy(c => new
-                {
-                    DeptId = c.Contributor!.PersonalData!.Department.Id,
-                    DeptNameAR = c.Contributor.PersonalData.Department.NameAR,
-                    DeptNameEN = c.Contributor.PersonalData.Department.NameEN
-                })
-                .Select(g => new DepartmentResearchersStatsDTO
-                {
-                    DepartmentNameAR = g.Key.DeptNameAR,
-                    DepartmentNameEN = g.Key.DeptNameEN,
-                    ResearchesNo = g.Select(x => x.ContributorId).Distinct().Count()
-                })
-                .ToList();
-
-            #endregion
-
+        
             #region Interests
 
             var interestsQuery = filtered
@@ -198,12 +131,6 @@ namespace Services.Specifications.AggregationSpecifications
 
             #endregion
 
-            #region Totals
-
-            var totalDepartments = departmentResearchesStats.Count;
-
-            #endregion
-
             #region Final Result
 
             var result = new ResearchesDashboardDTO
@@ -212,13 +139,8 @@ namespace Services.Specifications.AggregationSpecifications
                 InternationalResearchesNo = publicationStats?.International ?? 0,
 
                 TotalNumberOfInterests = totalInterests,
-                TotalDepartments = totalDepartments,
 
                 UniversityTopFiveResearchers = universityTop5,
-                FacultyTopFiveResearchers = facultyTop5,
-
-                DepartmentResearchesStats = departmentResearchesStats,
-                DepartmentResearchersStats = departmentResearchersStats,
 
                 TopFiveResearchersInterestsStats = top5Interests,
 
