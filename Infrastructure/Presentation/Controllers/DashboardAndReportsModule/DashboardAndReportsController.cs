@@ -6,7 +6,6 @@ namespace Presentation.Controllers.DashboardAndReportsModule
 {
     public class DashboardAndReportsController(IServiceManager _serviceManager) : ApiController
     {
-        [ResponseCache]
         [Authorize(Policy = "Permission:Reports.Read")]
         [ProducesResponseType(typeof(AdminDashboardResponseDTO), StatusCodes.Status200OK)]
         [HttpGet("Dashboard")]
