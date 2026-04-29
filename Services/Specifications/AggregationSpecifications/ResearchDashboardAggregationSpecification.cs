@@ -1,102 +1,112 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Enums;
 using Shared.Dtos.ReportsAndDashboard;
+using Shared.SpecificationParameters.ReportsAndDashboard;
 
 namespace Services.Specifications.AggregationSpecifications
 {
     public class ResearchDashboardAggregationSpecification
         : AggregationSpecification<Research, ResearchesDashboardDTO>
     {
+
         public ResearchDashboardAggregationSpecification()
         {
-            SetCriteria(r =>
-                !r.IsDeleted);
+
+            SetCriteria(r => !r.IsDeleted && r.Contributions!.Any(c => c.IsConfirmed));
         }
 
         public override IQueryable<ResearchesDashboardDTO> Apply(IQueryable<Research> query)
         {
             var filtered = query.Where(Criteria!);
 
-            var publicationStats = filtered
-                .GroupBy(r => 1)
-                .Select(g => new
-                {
-                    Local = g.Count(r => r.PublicationType == PublicationType.Local),
-                    International = g.Count(r => r.PublicationType == PublicationType.International)
-                })
-                .FirstOrDefault();
+            #region Publication Stats
 
-            var facultyStats = filtered
+            var publicationStats = new
+            {
+                Local = filtered.Count(r => r.PublicationType == PublicationType.Local),
+                International = filtered.Count(r => r.PublicationType == PublicationType.International)
+            };
+
+            #endregion
+
+            #region Researchers Base Query
+
+            var researchersQuery = filtered
                 .SelectMany(r => r.Contributions!.Where(c => c.IsConfirmed))
                 .GroupBy(c => new
                 {
-                    c.Contributor!.PersonalData!.Faculty!.Id,
-                    c.Contributor.PersonalData.Faculty.NameAR,
-                    c.Contributor.PersonalData.Faculty.NameEN
-                })
-                .Select(g => new FacultyResearchesStatsDTO
-                {
-                    FacultyNameAR = g.Key.NameAR,
-                    FacultyNameEN = g.Key.NameEN,
-                    TotalNumberOfResearchers = g
-                        .Select(x => x.ContributorId)
-                        .Distinct()
-                        .Count()
-                })
-                .ToList();
-
-            var deptStats = filtered
-                .SelectMany(r => r.Contributions!.Where(c => c.IsConfirmed)
-                    .Select(c => new
-                    {
-                        Dept = c.Contributor!.PersonalData!.Department,
-                        r.Id
-                    }))
-                .Distinct()
-                .GroupBy(x => new { x.Dept.Id, x.Dept.NameAR, x.Dept.NameEN })
-                .Select(g => new ResearchDepartmentStatsDTO
-                {
-                    DepartmentNameAR = g.Key.NameAR,
-                    DepartmentNameEN = g.Key.NameEN,
-                    ResearchesNo = g.Select(x => x.Id).Distinct().Count()
-                })
-                .ToList();
-
-            var researchersStats = filtered
-                .SelectMany(r => r.Contributions!)
-                .GroupBy(c => new
-                {
                     c.ContributorId,
-                    Name = c.Contributor!.PersonalData!.NameEn
+                    Name = c.Contributor!.PersonalData!.NameEn,
+                    FacultyId = c.Contributor.PersonalData.Faculty.Id,
+                    HIndex = c.Contributor.Researcher!.Hindex
                 })
-                .Select(g => new ResearchersStatsDTO
+                .Select(g => new
                 {
-                    ResearcherName = g.Key.Name,
-                    TotalResearchesNo = g.Count(),
-                    ConfirmedResearchesNo = g.Count(x => x.IsConfirmed),
-                    UnConfirmedResearchesNo = g.Count(x => !x.IsConfirmed)
+                    g.Key.ContributorId,
+                    g.Key.Name,
+                    g.Key.FacultyId,
+                    HIndex = g.Key.HIndex,
+                    TotalPapers = g.Count(),
+                    TotalCitations = g
+                        .SelectMany(x => x.Research!.Cites!)
+                        .Sum(c => (int?)c.NumberOfCites) ?? 0
+                });
+
+            #endregion
+
+            #region Max Values (Normalization)
+
+            var researchersList = researchersQuery.ToList();
+
+            var maxH = researchersList.Any() ? researchersList.Max(x => x.HIndex) : 0;
+            var maxP = researchersList.Any() ? researchersList.Max(x => x.TotalPapers) : 0;
+            var maxC = researchersList.Any() ? researchersList.Max(x => x.TotalCitations) : 0;
+
+            #endregion
+
+            #region University Top 5
+
+            var universityTop5 = researchersList
+                .Select(x => new TopFiveResearchersStatsDTO
+                {
+                    ResearcherName = x.Name,
+                    TotalResearchesNo = x.TotalPapers,
+                    Score =
+                        (0.5 * (maxH == 0 ? 0 : (double)x.HIndex / maxH)) +
+                        (0.3 * (maxC == 0 ? 0 : (double)x.TotalCitations / maxC)) +
+                        (0.2 * (maxP == 0 ? 0 : (double)x.TotalPapers / maxP))
                 })
-                .OrderByDescending(x => x.TotalResearchesNo)
-                .Take(10)
+                .OrderByDescending(x => x.Score)
+                .Take(5)
                 .ToList();
 
-            var interests = filtered
+            #endregion
+        
+            #region Interests
+
+            var interestsQuery = filtered
                 .SelectMany(r => r.Contributions!)
                 .SelectMany(c => c.Contributor!.Researcher!.ResearcherInterests!)
-                .Where(i => !i.IsDeleted)
+                .Where(i => !i.IsDeleted);
+
+            var interestsStatsQuery = interestsQuery
                 .GroupBy(i => i.Interest!.Name)
-                .Select(g => new InterestDetailedStats
+                .Select(g => new TopFiveResearchersIntersetsStats
                 {
                     InterestName = g.Key,
-                    ResearchersNo = g.Select(x => x.ResearcherId).Distinct().Count()
-                })
+                    ResearchersNumber = g.Select(x => x.ResearcherId).Distinct().Count()
+                });
+
+            var top5Interests = interestsStatsQuery
+                .OrderByDescending(x => x.ResearchersNumber)
+                .Take(5)
                 .ToList();
 
-            var interestsStats = new ResearchersInterestsStats
-            {
-                TotalInterestsNo = interests.Count,
-                DetailedStats = interests
-            };
+            var totalInterests = interestsStatsQuery.Count();
+
+            #endregion
+
+            #region Citations
 
             var citationsDetails = filtered
                 .SelectMany(r => r.Cites!)
@@ -119,16 +129,25 @@ namespace Services.Specifications.AggregationSpecifications
                 DetailedCitesStats = citationsDetails
             };
 
+            #endregion
+
+            #region Final Result
+
             var result = new ResearchesDashboardDTO
             {
                 LocalResearchesNo = publicationStats?.Local ?? 0,
                 InternationalResearchesNo = publicationStats?.International ?? 0,
-                FacultyStats = facultyStats,
-                DepartmentStats = deptStats,
-                ResearchersStats = researchersStats,
-                InterestsStats = new List<ResearchersInterestsStats> { interestsStats },
+
+                TotalNumberOfInterests = totalInterests,
+
+                UniversityTopFiveResearchers = universityTop5,
+
+                TopFiveResearchersInterestsStats = top5Interests,
+
                 CitationsStats = new List<ResearchCitationsStatsDTO> { citationsStats }
             };
+
+            #endregion
 
             return new List<ResearchesDashboardDTO> { result }.AsQueryable();
         }

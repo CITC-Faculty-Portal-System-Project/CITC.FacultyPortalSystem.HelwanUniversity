@@ -1,9 +1,18 @@
-﻿using Services.Specifications.LookUpItems;
+﻿using Domain.Entities.UniversityFacultiesAndDepartments;
+using Services.Specifications.LookUpItems;
 
 namespace Services.Implementations
 {
     public class LookUpItemService(IUnitOfWork _unitOfWork, IMapper _mapper) : ILookUpItemService
     {
+        public async Task<IEnumerable<FacultyResponseDTO>> GetAllFacultiesAsync()
+        {
+            var facultiesRepo = _unitOfWork.GetRepository<Faculty, int>();
+            var faculties = await facultiesRepo.GetAllAsync();
+
+            return _mapper.Map<IEnumerable<FacultyResponseDTO>>(faculties); 
+        }
+
         public async Task<IEnumerable<LookupItemDto>> GetLookUpItemByType(string type)
         {
             var repo = _unitOfWork.GetRepository<Lookup, Guid>();
@@ -13,5 +22,7 @@ namespace Services.Implementations
             var returnedData = _mapper.Map<IEnumerable<LookupItemDto>>(entity);
             return returnedData;
         }
+
+
     }
 }

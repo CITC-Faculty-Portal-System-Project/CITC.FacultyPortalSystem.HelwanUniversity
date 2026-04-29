@@ -2,6 +2,13 @@
 {
     public class LookUpItemsController(IServiceManager _serviceManager) : ApiController
     {
+        [ProducesResponseType(typeof(FacultyResponseDTO), StatusCodes.Status200OK)]
+        [RedisCache]
+        [HttpGet("UniversityFaculties")]
+        public async Task<ActionResult<IEnumerable<FacultyResponseDTO>>>GetAllFaculties()
+            => Ok(await _serviceManager.LookUpItemService.GetAllFacultiesAsync());
+
+
         [ProducesResponseType(typeof(LookupItemDto), StatusCodes.Status200OK)]
         [RedisCache]
         [HttpGet("AcademicQualifications")]

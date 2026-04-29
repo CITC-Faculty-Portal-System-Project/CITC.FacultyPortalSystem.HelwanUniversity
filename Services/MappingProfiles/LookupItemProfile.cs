@@ -1,4 +1,5 @@
-﻿using Shared.Dtos;
+﻿using Domain.Entities.UniversityFacultiesAndDepartments;
+using Shared.Dtos;
 using System.Text.RegularExpressions;
 
 namespace Services.MappingProfiles
@@ -11,7 +12,10 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ValueAr, opt => opt.MapFrom(src => src.ValueAr))
                 .ForMember(dest => dest.ValueEn, opt => opt.MapFrom(src => src.ValueEn));
-         
+
+            CreateMap<Faculty, FacultyResponseDTO>();
+    
+
         }
     }
 }
