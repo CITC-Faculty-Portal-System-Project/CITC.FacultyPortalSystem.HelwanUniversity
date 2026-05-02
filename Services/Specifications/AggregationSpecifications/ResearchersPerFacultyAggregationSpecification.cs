@@ -26,14 +26,24 @@ namespace Services.Specifications.AggregationSpecifications
                 .GroupBy(c => new
                 {
                     c.ContributorId,
-                    Name = c.Contributor!.PersonalData!.NameEn,
-                    FacultyId = c.Contributor.PersonalData.Faculty.Id,
+                    NameAR = c.Contributor!.PersonalData!.NameAr,
+                    NameEN = c.Contributor!.PersonalData!.NameEn,
+                    JobTitleAR = c.Contributor!.PersonalData!.Title.ValueAr,
+                    JobTitleEN = c.Contributor!.PersonalData!.Title.ValueEn,
+                    FacultyId = c.Contributor!.PersonalData!.FacultyId,
+                    FacultyAR = c.Contributor.PersonalData.Faculty.NameAR,
+                    FacultyEN = c.Contributor.PersonalData.Faculty.NameEN,
                     HIndex = c.Contributor.Researcher!.Hindex
                 })
                 .Select(g => new
                 {
                     g.Key.ContributorId,
-                    g.Key.Name,
+                    g.Key.NameAR,
+                    g.Key.NameEN,
+                    g.Key.JobTitleAR,
+                    g.Key.JobTitleEN,
+                    g.Key.FacultyAR,
+                    g.Key.FacultyEN,
                     g.Key.FacultyId,
                     HIndex = g.Key.HIndex,
                     TotalPapers = g.Count(),
@@ -52,7 +62,12 @@ namespace Services.Specifications.AggregationSpecifications
             var facultyTop5 = researchersList
                 .Select(x => new TopFiveResearchersStatsDTO
                 {
-                    ResearcherName = x.Name,
+                    ResearcherNameAR = x.NameAR,
+                    ResearcherNameEN = x.NameEN,
+                    ResearcherJobTitleAR = x.JobTitleAR,
+                    ResearcherJobTitleEN = x.JobTitleEN,
+                    ResearcherFacultyAR = x.FacultyAR,
+                    ResearcherFacultyEN = x.FacultyEN,
                     TotalResearchesNo = x.TotalPapers,
                     Score =
                         (0.5 * (maxH == 0 ? 0 : (double)x.HIndex / maxH)) +

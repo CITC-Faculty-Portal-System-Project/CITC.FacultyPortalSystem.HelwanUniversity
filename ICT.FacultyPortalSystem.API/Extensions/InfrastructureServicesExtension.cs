@@ -73,6 +73,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<IFTPClientFactory, FTPClientFactory>();
             services.AddScoped<IFTPFileStorageService, FTPFileStorageService>();
 			services.AddHostedService<ExternalDataConsumerClient>();
+            services.AddHostedService<RedisSubscriberService>();
 
             services.AddHostedService<ResearchDataConsumerClient>();
             services.AddHttpClient("Generic", client =>

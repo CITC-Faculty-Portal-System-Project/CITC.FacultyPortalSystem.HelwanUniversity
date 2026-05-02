@@ -109,6 +109,8 @@ namespace ICIT.FacultyPortalSystem.API
 
             app.MapHub<NotificationHub>("/hubs/notificationHub");
 
+            app.MapHub<ResearchFetchingProgressTrackingHub>("/hubs/researchProgressHub");
+
             app.Run();
         }
     }

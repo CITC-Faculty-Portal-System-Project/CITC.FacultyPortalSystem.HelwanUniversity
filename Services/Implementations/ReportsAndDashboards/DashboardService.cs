@@ -57,9 +57,9 @@ namespace Services.Implementations.ReportsAndDashboards
 
         public async Task<IReadOnlyList<DepartmentResearchersStatsDTO>> GetDepartmentResearchersDashboardDataAsync(ResearchersPerDepartmentSpecificationParameters parameters)
         {
-            var researchesRepo = _unitOfWork.GetRepository<Research, int>();
+            var departmentsRepo = _unitOfWork.GetRepository<Department, int>();
 
-            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchersPerDepartmantSpecification(parameters));
+            var researchesStats = await departmentsRepo.ExecuteAggregationAsync(new ResearchersPerDepartmentSpecification(parameters));
 
             return researchesStats;
             
@@ -67,9 +67,9 @@ namespace Services.Implementations.ReportsAndDashboards
 
         public async Task<IReadOnlyList<ResearchDepartmentStatsDTO>> GetDepartmentResearchesDashboardDataAsync(ResearchesPerDepartmentSpecificationParameters parameters)
         {
-            var researchesRepo = _unitOfWork.GetRepository<Research, int>();
+            var departmentsRepo = _unitOfWork.GetRepository<Department, int>();
 
-            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchesPerDepartmentSpecification(parameters));
+            var researchesStats = await departmentsRepo.ExecuteAggregationAsync(new ResearchesPerDepartmentSpecification(parameters));
 
             return researchesStats;
         }
