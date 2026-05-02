@@ -1,11 +1,12 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Domain.Entities.UniversityFacultiesAndDepartments;
 using Shared.Dtos.ReportsAndDashboard;
 using Shared.SpecificationParameters.ReportsAndDashboard;
 
 namespace Services.Specifications.AggregationSpecifications
 {
     internal class ResearchesPerDepartmentSpecification
-        : AggregationSpecification<Research, ResearchDepartmentStatsDTO>
+        : AggregationSpecification<Department, ResearchDepartmentStatsDTO>
     {
         private readonly ResearchesPerDepartmentSpecificationParameters _parameters;
 
@@ -13,33 +14,25 @@ namespace Services.Specifications.AggregationSpecifications
             ResearchesPerDepartmentSpecificationParameters parameters)
         {
             _parameters = parameters;
-
-            SetCriteria(r => !r.IsDeleted && r.Contributions!.Any(c => c.IsConfirmed));
+            SetCriteria(d => d.FacultyId == _parameters.FacultyIdDepartmentResearches);
         }
 
-        public override IQueryable<ResearchDepartmentStatsDTO> Apply(IQueryable<Research> query)
+        public override IQueryable<ResearchDepartmentStatsDTO> Apply(IQueryable<Department> query)
         {
-            var filtered = query.Where(Criteria!);
-
-            var departmentResearchesStats = filtered
-                .SelectMany(r => r.Contributions!.Where(c => c.IsConfirmed)
-                    .Select(c => new
-                    {
-                        Dept = c.Contributor!.PersonalData!.Department,
-                        r.Id,
-                        FacultyId = c.Contributor.PersonalData.Faculty.Id
-                    }))
-                .Where(x => x.FacultyId == _parameters.FacultyIdDepartmentResearches)
-                .Distinct()
-                .GroupBy(x => new { x.Dept.Id, x.Dept.NameAR, x.Dept.NameEN })
-                .Select(g => new ResearchDepartmentStatsDTO
+            return query
+                .Where(Criteria!)
+                .Select(d => new ResearchDepartmentStatsDTO
                 {
-                    DepartmentNameAR = g.Key.NameAR,
-                    DepartmentNameEN = g.Key.NameEN,
-                    ResearchesNo = g.Select(x => x.Id).Distinct().Count()
-                });
-
-            return departmentResearchesStats;
+                    DepartmentNameAR = d.NameAR,
+                    DepartmentNameEN = d.NameEN,
+                    ResearchesNo = d.FacultyMembers!
+                        .SelectMany(f => f.FacultyMember!.ResearchContributions!
+                            .Where(c => c.IsConfirmed && !c.Research!.IsDeleted))
+                        .Select(c => c.ResearchId)
+                        .Distinct()
+                        .Count()
+                })
+                .OrderByDescending(x => x.ResearchesNo);
         }
     }
 }

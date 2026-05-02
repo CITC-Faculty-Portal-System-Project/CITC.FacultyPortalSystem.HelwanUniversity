@@ -10,7 +10,7 @@
         public int FacultyId { get; set; }
         public Faculty? Faculty { get; set; }
 
-        public ICollection<PersonalData>? FacultyMembers { get; set; } = new List<PersonalData>();
+        public IEnumerable<PersonalData>? FacultyMembers { get; set; } = new List<PersonalData>();
 
         #endregion
     }

@@ -36,15 +36,23 @@ namespace Services.Specifications.AggregationSpecifications
                 .GroupBy(c => new
                 {
                     c.ContributorId,
-                    Name = c.Contributor!.PersonalData!.NameEn,
-                    FacultyId = c.Contributor.PersonalData.Faculty.Id,
+                    NameAR = c.Contributor!.PersonalData!.NameAr,
+                    NameEN = c.Contributor!.PersonalData!.NameEn,
+                    JobTitleAR = c.Contributor!.PersonalData!.Title.ValueAr,
+                    JobTitleEN = c.Contributor!.PersonalData!.Title.ValueEn,
+                    FacultyNameAR = c.Contributor.PersonalData.Faculty.NameAR,
+                    FacultyNameEN = c.Contributor.PersonalData.Faculty.NameEN,
                     HIndex = c.Contributor.Researcher!.Hindex
                 })
                 .Select(g => new
                 {
                     g.Key.ContributorId,
-                    g.Key.Name,
-                    g.Key.FacultyId,
+                    g.Key.NameAR,
+                    g.Key.NameEN,
+                    g.Key.JobTitleAR,
+                    g.Key.JobTitleEN,
+                    g.Key.FacultyNameAR,
+                    g.Key.FacultyNameEN,
                     HIndex = g.Key.HIndex,
                     TotalPapers = g.Count(),
                     TotalCitations = g
@@ -69,12 +77,17 @@ namespace Services.Specifications.AggregationSpecifications
             var universityTop5 = researchersList
                 .Select(x => new TopFiveResearchersStatsDTO
                 {
-                    ResearcherName = x.Name,
+                    ResearcherNameAR = x.NameAR,
+                    ResearcherNameEN = x.NameEN,
+                    ResearcherJobTitleAR = x.JobTitleAR,
+                    ResearcherJobTitleEN = x.JobTitleEN,
+                    ResearcherFacultyAR = x.FacultyNameAR,
+                    ResearcherFacultyEN = x.FacultyNameEN,
                     TotalResearchesNo = x.TotalPapers,
                     Score =
-                        (0.5 * (maxH == 0 ? 0 : (double)x.HIndex / maxH)) +
+                        ((0.5 * (maxH == 0 ? 0 : (double)x.HIndex / maxH)) +
                         (0.3 * (maxC == 0 ? 0 : (double)x.TotalCitations / maxC)) +
-                        (0.2 * (maxP == 0 ? 0 : (double)x.TotalPapers / maxP))
+                        (0.2 * (maxP == 0 ? 0 : (double)x.TotalPapers / maxP))) * 100
                 })
                 .OrderByDescending(x => x.Score)
                 .Take(5)
