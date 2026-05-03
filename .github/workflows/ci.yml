@@ -19,10 +19,10 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build & Push
         run: |
           TAG=${GITHUB_SHA}
-          docker build -t ghcr.io/${{ github.repository_owner }}/core-service:$TAG .
-          docker push ghcr.io/${{ github.repository_owner }}/core-service:$TAG
+          docker build -t ghcr.io/${{ github.actor }}/core-service:$TAG .
+          docker push ghcr.io/${{ github.actor }}/core-service:$TAG
