@@ -24,5 +24,5 @@ jobs:
       - name: Build & Push
         run: |
           TAG=${GITHUB_SHA}
-          docker build -t ghcr.io/${{ github.actor }}/core-service:$TAG .
-          docker push ghcr.io/${{ github.actor }}/core-service:$TAG
+          docker build -t ghcr.io/ahmedehab5006/core-service:$TAG .
+          docker push ghcr.io/ahmedehab5006/core-service:$TAG
