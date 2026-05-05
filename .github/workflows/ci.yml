@@ -24,5 +24,6 @@ jobs:
       - name: Build & Push
         run: |
           TAG=${GITHUB_SHA}
-          docker build -t ghcr.io/${{ github.repository_owner }}/core-service:$TAG .
-          docker push ghcr.io/${{ github.repository_owner }}/core-service:$TAG
+          IMAGE=ghcr.io/${{ github.repository }}/core-service:$TAG
+          docker build -t $IMAGE .
+          docker push $IMAGE
