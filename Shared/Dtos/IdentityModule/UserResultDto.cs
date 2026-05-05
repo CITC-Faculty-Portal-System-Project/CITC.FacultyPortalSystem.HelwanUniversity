@@ -5,6 +5,7 @@
         string Email,
         Guid UserId = default,
         string? Token = default,
-        string? nationalNumber = default
+        string? nationalNumber = default,
+        string ? CredintialsToken = default
     );
 }

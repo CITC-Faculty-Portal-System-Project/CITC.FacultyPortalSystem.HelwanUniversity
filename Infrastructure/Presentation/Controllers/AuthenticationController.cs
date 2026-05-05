@@ -16,9 +16,9 @@ namespace Presentation.Controllers
         public async Task<ActionResult<UserResultDto>> RegisterAsync([FromBody]RegisterDto registerDto)
             => Ok(await _serviceManager.AuthenticationService.RegisterAsync(registerDto));
 
-        [ProducesResponseType(typeof(UserResultDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TokenResponseDTO), StatusCodes.Status200OK)]
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> LoginAsync(LoginDto loginDto)
+        public async Task<ActionResult<TokenResponseDTO>> LoginAsync(LoginDto loginDto)
         {
             var result = await _serviceManager.AuthenticationService.LoginAsync(loginDto);
             var cookieOptions = new CookieOptions
@@ -30,14 +30,7 @@ namespace Presentation.Controllers
             };
 
             Response.Cookies.Append("jwtToken", result.Token, cookieOptions);
-            var frontendResponse = new LoginClaimsResponseDto
-            {
-                Email = result.Email,
-                UserName = result.UserName,
-                Roles = result.Roles,
-                NationalNumber = result.NationalNumber,
-            };
-            return Ok(frontendResponse);
+            return Ok(new TokenResponseDTO { Token = result.CredintialsToken ?? string.Empty });
         }
 
 
