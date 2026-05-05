@@ -24,6 +24,7 @@ jobs:
       - name: Build & Push
         run: |
           TAG=${GITHUB_SHA}
-          IMAGE=ghcr.io/${{ github.repository }}/core-service:$TAG
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          IMAGE=ghcr.io/citc-faculty-portal-system-project/core-service
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
