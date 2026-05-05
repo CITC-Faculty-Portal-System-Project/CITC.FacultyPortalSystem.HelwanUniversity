@@ -25,6 +25,7 @@ jobs:
         run: |
           TAG=${GITHUB_SHA}
           REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          IMAGE=ghcr.io/${REPO}/core-service:${TAG}
-          docker build -t $IMAGE .
-          docker push $IMAGE
+          IMAGE=ghcr.io/${REPO}/core-service
+          docker build -t $IMAGE:$TAG -t $IMAGE:latest .
+          docker push $IMAGE:$TAG
+          docker push $IMAGE:latest
