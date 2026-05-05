@@ -761,6 +761,54 @@ namespace Presistence.Migrations
                             IsDeleted = false,
                             Type = 12,
                             VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Code = "Reports.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which Reports includes",
+                            DisplayName = "Reports - Create",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Code = "Reports.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which Reports includes",
+                            DisplayName = "Reports - Read",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Code = "Reports.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which Reports includes",
+                            DisplayName = "Reports - Update",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Code = "Reports.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which Reports includes",
+                            DisplayName = "Reports - Delete",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
                         });
                 });
 
