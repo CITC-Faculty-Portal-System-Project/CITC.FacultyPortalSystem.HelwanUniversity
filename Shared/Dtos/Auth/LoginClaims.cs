@@ -13,6 +13,7 @@ namespace Shared.Dtos.Auth
         public IList<string> Roles { get; set; } = new List<string>();
         public string Token { get; set; } = string.Empty;
         public string NationalNumber { get; set; } = string.Empty;
+        public string CredintialsToken { get; set; } = string.Empty;
 
     }
 }

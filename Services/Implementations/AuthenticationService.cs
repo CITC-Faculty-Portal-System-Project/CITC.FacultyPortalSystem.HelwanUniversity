@@ -109,6 +109,41 @@ public class AuthenticationService(
         return new JwtSecurityTokenHandler().WriteToken(token);
 
     }
+
+
+    private async Task<string> CreateCredentialToken(User user)
+    {
+        var jwtOptions = _options.Value;
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        var claims = new List<Claim>
+    {
+        new Claim("Email", user.Email ?? string.Empty),
+        new Claim("UserName", user.UserName ?? string.Empty),
+        new Claim("NationalNumber", user.NationalNumber ?? string.Empty),
+
+        new Claim("TokenType", "Credential")
+    };
+
+        foreach (var role in roles)
+        {
+            claims.Add(new Claim("Roles", role));
+        }
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: jwtOptions.Issuer,
+            audience: jwtOptions.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddMinutes(10),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
     #endregion
 
     #region Core Methods
@@ -268,13 +303,16 @@ public class AuthenticationService(
         }
 
         var token = await CreateTokenAsync(user);
+        var CredintialsToken = await CreateCredentialToken(user);
+
         var response = new LoginClaims
         {
             Email = user.Email ?? "",
             Roles = role,
             UserName = user.UserName ?? "",
             NationalNumber = user.NationalNumber,
-            Token = token
+            Token = token,
+            CredintialsToken = CredintialsToken
         };
         #region Log
         LoginLog.Timestamp = DateTime.Now;
@@ -285,7 +323,11 @@ public class AuthenticationService(
         LoginLog.AdditionalData = $"User with Username {loginDto.Username} and Role {role.FirstOrDefault()} logged in successfully.";
         _logger.LogInformation("{@LogDetails}", LoginLog);
         #endregion
-        return (response);
+        
+
+
+
+        return response;
     }
 
     //CheckEmail
