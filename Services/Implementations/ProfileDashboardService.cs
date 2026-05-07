@@ -185,7 +185,6 @@ namespace Services.Implementations
         public async Task<ProfileDashboardResponseDTO> GetProfileDashboardAsync()
         {
             var cvRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
-
             var currentUser = await GetCurrentUserAsync();
             var profileLog = new LogEntry
             {
@@ -211,6 +210,10 @@ namespace Services.Implementations
 
             var response = _mapper.Map<ProfileDashboardResponseDTO>(personalData);
             response.PersonalDataId = personalData.Id;
+            response.Department = new LookupItemDto();
+            response.Department.ValueAr = personalData.Department?.NameAR ?? string.Empty;
+            response.Department.ValueEn = personalData.Department?.NameEN ?? string.Empty;
+
 
             if (personalData.FacultyMember!.SocialMediaPlatforms != null)
             {
