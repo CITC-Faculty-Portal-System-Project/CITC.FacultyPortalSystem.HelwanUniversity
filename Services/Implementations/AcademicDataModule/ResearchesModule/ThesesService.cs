@@ -1,18 +1,21 @@
 ﻿using AutoMapper.Execution;
 using Domain.Entities.AcademicDataModule.HigherStuidesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
+using Microsoft.Extensions.Logging;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Global;
 using Services.Helpers.CollectionSyncingHelpers;
 using Services.Specifications.ResearchesModule;
 using Shared.Dtos.ResearchesModule;
+using Shared.Enums.Logging;
 using Shared.SpecificationParameters.ResearchesModule;
 namespace Services.Implementations.AcademicDataModule.ResearchesModule
 {
     public class ThesesService(
         IUnitOfWork unitOfWork,
         IMapper mapper,
-        IAuthenticationService authenticationService)
+        IAuthenticationService authenticationService,
+        ILogger<ThesesService> _logger)
         : BaseService<Thesis, int>(unitOfWork, authenticationService, mapper),
           IThesesService
     {
@@ -90,8 +93,34 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var currentUser = await GetCurrentUserAsync();
             var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
+            #region Log
+            var thesesLog = new LogEntry
+            {
+                Category = Category.FacultyMemberAcademicData.ToString(),
+                CategoryAction = CategoryAction.ThesesActions.ToString(),
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+			};
+            #endregion
+
             if (facultyMemberId is null)
-                EnsureOwnership(targetFacultyMemberId, currentUser.UserId, EntityName);
+            {
+                try
+                {
+                    EnsureOwnership(targetFacultyMemberId, currentUser.UserId, EntityName);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    #region Log
+                    thesesLog.Timestamp = DateTime.Now;
+					thesesLog.Level = "Warning";
+					thesesLog.RenderedMessage = $"User unauthorized to add a thesis.";
+                    thesesLog.AdditionalData = $"User tried to add a thesis for faculty member with id: {targetFacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+					_logger.LogWarning("{@LogDetails}", thesesLog);
+					#endregion
+					throw;
+                }
+			}
 
             var currentStudent = await personalRepo.GetAsync(
                 new PersonalDataWithFacultyMemberIdSpecifications(targetFacultyMemberId));
@@ -120,7 +149,15 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             await Repo.AddAsync(entity);
             await SaveChangesAsync();
 
-            return Mapper.Map<ThesesResponseDTO>(entity);
+            var response = Mapper.Map<ThesesResponseDTO>(entity);
+			#region Log
+			thesesLog.Timestamp = DateTime.Now;
+			thesesLog.Level = "Information";
+			thesesLog.RenderedMessage = $"User: {currentUser.UserName} added a thesis.";
+            thesesLog.AdditionalData = $"User added a thesis with id: {response.Id} and title: {response.Title} successfully.";
+			_logger.LogInformation("{@LogDetails}", thesesLog);
+			#endregion
+			return response;
         }
 
         public async Task DeleteTheses(
@@ -130,13 +167,47 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var currentUser = await GetCurrentUserAsync();
             var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var thesesEntity = await Repo.GetAsync(
-                new ThesesSpecifications(id, targetFacultyMemberId))
-                ?? throw NotFound();
+			#region Log
+			var thesesLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.ThesesActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
+			#endregion
 
-            await EnsureOwnershipIfClientAsync(
-                thesesEntity.FacultyMemberId,
-                facultyMemberId?.ToString());
+			var thesesEntity = await Repo.GetAsync(
+                new ThesesSpecifications(id, targetFacultyMemberId));
+            if(thesesEntity is null)
+            {
+				#region Log
+				thesesLog.Timestamp = DateTime.Now;
+				thesesLog.Level = "Warning";
+				thesesLog.RenderedMessage = $"Thesis not found for user: {currentUser.UserName}.";
+				thesesLog.AdditionalData = $"User tried to delete their thesis with id: {id}, but no thesis with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", thesesLog);
+				#endregion
+				throw NotFound();
+			}
+
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        thesesEntity.FacultyMemberId,
+                        facultyMemberId?.ToString());
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				thesesLog.Timestamp = DateTime.Now;
+				thesesLog.Level = "Warning";
+				thesesLog.RenderedMessage = $"User unauthorized to delete a thesis.";
+				thesesLog.AdditionalData = $"User tried to delete a thesis with id: {id} for faculty member with id: {targetFacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", thesesLog);
+				#endregion
+				throw;
+            }
 
             thesesEntity.IsDeleted = true;
             thesesEntity.DeletedAt = DateTime.Now;
@@ -144,7 +215,14 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 
             Repo.Update(thesesEntity);
             await SaveChangesAsync();
-        }
+            #region Log
+            thesesLog.Timestamp = DateTime.Now;
+			thesesLog.Level = "Information";
+			thesesLog.RenderedMessage = $"Thesis data deleted for user: {currentUser.UserName}.";
+			thesesLog.AdditionalData = $"User deleted a thesis with id: {id} successfully.";
+			_logger.LogInformation("{@LogDetails}", thesesLog);
+			#endregion
+		}
 
         public async Task<PaginatedResult<ThesesResponseDTO>> GetAllTheses(
             ThesesSpecificationParameters parameters,
@@ -153,16 +231,42 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var currentUser = await GetCurrentUserAsync();
             var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
-            var thesesEntities = await Repo.GetAllAsync(
-                new ThesesSpecifications(parameters, targetFacultyMemberId))
-                ?? throw NotFound();
+			#region Log
+			var thesesLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.ThesesActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
+			#endregion
+
+			var thesesEntities = await Repo.GetAllAsync(
+                new ThesesSpecifications(parameters, targetFacultyMemberId));
+            if(thesesEntities is null)
+            {
+				#region Log
+				thesesLog.RenderedMessage = $"Theses not found for user: {currentUser.UserName}.";
+				thesesLog.Level = "Warning";
+				thesesLog.Timestamp = DateTime.Now;
+				thesesLog.AdditionalData = $"User tried to get their theses, but no theses was found in the database for user with id : {targetFacultyMemberId}.";
+				_logger.LogWarning("{@LogDetails}", thesesLog);
+				#endregion
+				throw NotFound();
+			}
 
             var totalCount = await Repo.CountAsync(
                 new ThesesCountSpecifications(parameters, targetFacultyMemberId));
 
             var mapped = Mapper.Map<IEnumerable<ThesesResponseDTO>>(thesesEntities);
-
-            return new PaginatedResult<ThesesResponseDTO>(
+			#region Log
+			thesesLog.RenderedMessage = $"Theses retrieved for user: {currentUser.UserName}.";
+			thesesLog.Level = "Information";
+			thesesLog.Timestamp = DateTime.Now;
+			thesesLog.AdditionalData = $"User retrieved their theses successfully, total count of theses retrieved: {totalCount}.";
+			_logger.LogInformation("{@LogDetails}", thesesLog);
+			#endregion
+			return new PaginatedResult<ThesesResponseDTO>(
                 parameters.PageIndex,
                 mapped.Count(),
                 totalCount,
@@ -176,14 +280,37 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
             var currentUser = await GetCurrentUserAsync();
             var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
+            #region Log
+
+            #endregion
+
             var entity = await Repo.GetAsync(
-                new ThesesSpecifications(id, targetFacultyMemberId))
-                ?? throw NotFound();
+                new ThesesSpecifications(id, targetFacultyMemberId));
+            if(entity is null)
+            {
+                #region Log
 
-            await EnsureOwnershipIfClientAsync(
-                entity.FacultyMemberId,
-                facultyMemberId?.ToString());
+                #endregion
+                throw NotFound();
+			}
 
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        entity.FacultyMemberId,
+                        facultyMemberId?.ToString());
+            }
+            catch (UnauthorizedAccessException)
+            {
+                #region Log
+
+                #endregion
+                throw;
+            }
+
+            #region Log
+
+            #endregion
             return Mapper.Map<ThesesResponseDTO>(entity);
         }
 
