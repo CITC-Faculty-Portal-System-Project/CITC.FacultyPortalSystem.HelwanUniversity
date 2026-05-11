@@ -8,13 +8,12 @@ namespace Services.Specifications.AggregationSpecifications
     internal class ResearchersPerDepartmentSpecification
      : AggregationSpecification<Department, DepartmentResearchersStatsDTO>
     {
-        private readonly ResearchersPerDepartmentSpecificationParameters _parameters;
 
         public ResearchersPerDepartmentSpecification(
-            ResearchersPerDepartmentSpecificationParameters parameters)
+            int facultyId)
         {
-            _parameters = parameters;
-            SetCriteria(d => d.FacultyId == _parameters.FacultyIdDepartmentResearchers);
+
+            SetCriteria(d => d.FacultyId == facultyId);
         }
 
         public override IQueryable<DepartmentResearchersStatsDTO> Apply(IQueryable<Department> query)

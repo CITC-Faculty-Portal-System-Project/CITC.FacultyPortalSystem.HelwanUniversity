@@ -11,7 +11,6 @@ using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Services.Abstraction.Contracts.Notification;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
 
@@ -53,7 +52,10 @@ namespace Services.Implementations
         , Func<ITicketingService> _ticketingService
         , Func<ICVGenerationService> _cvGenerationServiceFactory
         , Func<INotificationService> _notificationService
+        , Func<IReportsPreviewingService> _reportsPreviewingService
         , Func<IDashboardService> _dashboardService
+        , Func<IReportsPDFGenerationService> _reportsPDFGenerationService
+        
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
         public IAuthenticationService AuthenticationService => _authFactory.Invoke();
@@ -155,6 +157,9 @@ namespace Services.Implementations
         #region DashboardAndReports
 
         public IDashboardService DashboardService => _dashboardService.Invoke();
+        public IReportsPreviewingService ReportsPreviewingService => _reportsPreviewingService.Invoke();
+        public IReportsPDFGenerationService ReportsPDFGenerationService => _reportsPDFGenerationService.Invoke();
+
 
         #endregion
 

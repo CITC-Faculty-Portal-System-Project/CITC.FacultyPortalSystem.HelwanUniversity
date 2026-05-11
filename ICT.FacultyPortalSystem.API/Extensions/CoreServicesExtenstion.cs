@@ -45,7 +45,6 @@ using Services.Implementations.Notification;
 using Services.Implementations.TicketingModule;
 using Shared.Common;
 using Services.Abstraction.Contracts.Notification;
-using Services.Implementations.Notification;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
 using Services.Implementations.ReportsAndDashboards;
 
@@ -249,6 +248,17 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             );
 
 
+            services.AddScoped<IReportsPreviewingService, ReportsPreviewingService>();
+            services.AddScoped<Func<IReportsPreviewingService>>(provider =>
+            () => provider.GetRequiredService<IReportsPreviewingService>()
+            );
+
+
+            services.AddScoped<IReportsPDFGenerationService, ReportsPDFGenerationService>();
+            services.AddScoped<Func<IReportsPDFGenerationService>>(provider =>
+            () => provider.GetRequiredService<IReportsPDFGenerationService>()
+            );
+
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<Func<INotificationService>>(provider =>
 			() => provider.GetRequiredService<INotificationService>()
@@ -298,12 +308,11 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<ICVTemplate, ModernTemplateCV>();
             services.AddScoped<ICVTemplate, AcademicTemplateCV>();
             services.AddScoped<ICVTemplate, ProfessionalTemplateCV>();
-
             services.AddScoped<CVTemplatesFactory>();
 
-            
-            
-            
+
+
+
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
 

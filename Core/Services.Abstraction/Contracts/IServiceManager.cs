@@ -113,6 +113,8 @@ namespace Services.Abstraction.Contracts
         #region ReportsAndDashboardModule
 
         public IDashboardService DashboardService { get; }
+        public IReportsPreviewingService ReportsPreviewingService { get; }
+        public IReportsPDFGenerationService ReportsPDFGenerationService { get; }
 
         #endregion
     }
