@@ -1,11 +1,13 @@
 ﻿using Domain.Entities.AdminModule;
 using Domain.Entities.IdentityModule.Users;
+using Microsoft.Extensions.Logging;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Global;
 using Services.Helpers.TicketingModuleHelpers;
 using Services.Specifications.IdnetityModuleSpecifications;
 using Services.Specifications.TicketingSpecifications;
 using Shared.Dtos.TicketingModule;
+using Shared.Enums.Logging;
 using Shared.Enums.TicketingModule;
 using Shared.SpecificationParameters.TicketingModule;
 
@@ -13,7 +15,8 @@ namespace Services.Implementations.TicketingModule
 {
     public class TicketingService(IUnitOfWork unitOfWork,
     IMapper mapper,
-    IAuthenticationService authenticationService)
+    IAuthenticationService authenticationService,
+    ILogger<TicketingService> _logger)
             : BaseService<Ticket, int>(unitOfWork, authenticationService, mapper),
             ITicketingService
     {
@@ -77,21 +80,46 @@ namespace Services.Implementations.TicketingModule
 
         public async Task<TicketResponseDTO> AssignTicketToSupportAdminAsync(int ticketId, TicketUpdateDTO assignment)
         {
-            
-            var currrentUser = await GetCurrentUserAsync();
-            
-            var ticketEntity = await Repo.GetAsync(new TicketSpecifications(ticketId)) 
-                ?? throw NotFound();
+            var currentUser = await GetCurrentUserAsync();
+            #region Log
+            var ticketingLog = new LogEntry
+            {
+                Category = Category.TicketingSupport.ToString(),
+                CategoryAction = CategoryAction.TicketingActions.ToString(),
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName,
+			};
+            #endregion
 
-
+            var ticketEntity = await Repo.GetAsync(new TicketSpecifications(ticketId));
+            if(ticketEntity is null)
+            {
+                #region Log
+                ticketingLog.RenderedMessage = $"Failed to assign ticket.";
+                ticketingLog.Level = "Warning";
+                ticketingLog.Timestamp = DateTime.Now;
+                ticketingLog.AdditionalData = $"Failed to assign ticket with Id {ticketId} because the ticket was not found.";
+				_logger.LogWarning("{@LogDetails}", ticketingLog);
+				#endregion
+				throw NotFound();
+			}
+                
             if (!await CanAssignAdminToTicketAsync(assignment!.AssignedToId, ticketEntity.Type))
-                throw new ForbiddenException
-                    ("Can't Assign This Ticket to this Admin As he/She don't have the required permissions");
+            {
+				#region Log
+                ticketingLog.RenderedMessage = $"Failed to assign ticket.";
+				ticketingLog.Level = "Warning";
+                ticketingLog.Timestamp = DateTime.Now;
+				ticketingLog.AdditionalData = $"Failed to assign ticket with Id {ticketId} to admin with id {assignment.AssignedToId} because the admin doesn't have the required permissions.";
+				_logger.LogWarning("{@LogDetails}", ticketingLog);
+				#endregion
+				throw new ForbiddenException
+					("Can't Assign This Ticket to this Admin As he/She don't have the required permissions");
+			}
 
-            assignment.AssignedById = currrentUser.UserId;
-            assignment.AssignedByUsername = currrentUser.UserName;
+            assignment.AssignedById = currentUser.UserId;
+            assignment.AssignedByUsername = currentUser.UserName;
            
-
             ticketEntity.Status = (Domain.Enums.TicketStatus)TicketStatus.InProgress;
             ticketEntity.Priority = (Domain.Enums.TicketPriority)assignment.Priority;
 
@@ -99,12 +127,29 @@ namespace Services.Implementations.TicketingModule
             Repo.Update(ticketEntity);
             await UnitOfWork.SaveChangesAsync();
 
-            return Mapper.Map<TicketResponseDTO>(ticketEntity);
+            var result = Mapper.Map<TicketResponseDTO>(ticketEntity);
+            #region Log
+            ticketingLog.RenderedMessage = $"Ticket assigned successfully.";
+			ticketingLog.Level = "Information";
+			ticketingLog.Timestamp = DateTime.Now;
+			ticketingLog.AdditionalData = $"Ticket with id {ticketId} and title {result.Title} was assigned to admin with id {assignment.AssignedToId} and username {result.AssigneeUsername} with priority {result.Priority.ToString()} successfully.";
+			_logger.LogInformation("{@LogDetails}", ticketingLog);
+			#endregion
+			return result;
         }
 
         public async Task<TicketResponseDTO> CreateTicketAsync(TicketCreateDTO ticket)
         {
             var currentUser = await GetCurrentUserAsync();
+            #region Log
+            var ticketingLog = new LogEntry
+            {
+				Category = Category.TicketingSupport.ToString(),
+				CategoryAction = CategoryAction.TicketingActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName,
+			};
+            #endregion
             ticket.SenderId = currentUser.UserId;
             ticket.SenderUsername = currentUser.UserName;
 
@@ -114,15 +159,34 @@ namespace Services.Implementations.TicketingModule
             
             await Repo.AddAsync(ticketEntity);
             await UnitOfWork.SaveChangesAsync();
-
-            return Mapper.Map<TicketResponseDTO>(ticketEntity);
+            #region Log
+            ticketingLog.RenderedMessage = $"Ticket created successfully.";
+			ticketingLog.Level = "Information";
+			ticketingLog.Timestamp = DateTime.Now;
+            ticketingLog.AdditionalData = $"Ticket with id {ticketEntity.Id} and title {ticketEntity.Title} was created by user with id {currentUser.UserId} and username {currentUser.UserName} successfully.";
+			_logger.LogInformation("{@LogDetails}", ticketingLog);
+			#endregion
+			return Mapper.Map<TicketResponseDTO>(ticketEntity);
         }
 
         public async Task<PaginatedResult<TicketResponseDTO>> GetAllMemberTicketsAsync(TicketSepcificationParameters parameters)
         {
             var currentUser = await GetCurrentUserAsync();
-
-            return await GetTicketsByScopeAsync(
+            #region Log
+            var ticketingLog = new LogEntry
+            {
+                Category = Category.TicketingSupport.ToString(),
+                CategoryAction = CategoryAction.TicketingActions.ToString(),
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName,
+                RenderedMessage = $"User tickets retrieved successfully.",
+				Level = "Information",
+				Timestamp = DateTime.Now,
+				AdditionalData = $"Tickets for user with id {currentUser.UserId} where retrieved successfully."
+			};
+			_logger.LogInformation("{@LogDetails}", ticketingLog);
+			#endregion
+			return await GetTicketsByScopeAsync(
                 parameters,
                 currentUser.UserId,
                 TicketViewScope.Sender);

@@ -10,5 +10,7 @@
 		ExternalDataHandling = 6,
 		FacultyMemberService = 7,
 		FacultyMemberAcademicData = 8,
+		UserManagement = 9,
+		TicketingSupport = 10,
 	}
 }

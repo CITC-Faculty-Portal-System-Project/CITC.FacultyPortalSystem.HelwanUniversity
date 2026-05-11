@@ -1,16 +1,21 @@
 ﻿using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
+using Microsoft.Extensions.Logging;
 using Services.Abstraction.Contracts.AcademicDataModule.ScientificProgressionModule;
 using Services.Global;
 using Services.Specifications.AcademicDataModule.ScientificProgressionModule;
 using Shared.Dtos.AcademicDataModule.ScientificProgressionModule;
+using Shared.Enums.Logging;
 using Shared.SpecificationParameters.AcademicDataModule.ScientificProgressionModule;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 
 namespace Services.Implementations.AcademicDataModule.ScientificProgressionModule
 {
-    public class AcademicQualificationsService(
+	public class AcademicQualificationsService(
      IUnitOfWork unitOfWork,
      IAuthenticationService authenticationService,
-     IMapper mapper)
+     IMapper mapper,
+     ILogger<AcademicQualificationsService> _logger)
      : BaseService<AcademicQualifications, int>(unitOfWork, authenticationService, mapper),
        IAcademicQualificationsService
     {
@@ -23,16 +28,44 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
+            #region Log
+            var qualificationLog = new LogEntry
+            {
+                Category = Category.FacultyMemberAcademicData.ToString(),
+                CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+			};
+            #endregion
+
             var qualifications = await Repo.GetAllAsync(
-                new AcademicQualificationsSpecifications(parameters, email))
-                ?? throw NotFound();
+                new AcademicQualificationsSpecifications(parameters, email));
+            if(qualifications is null)
+            {
+				#region Log
+				qualificationLog.RenderedMessage = $"Academic qualifications not found for user: {currentUser.UserName}.";
+				qualificationLog.Level = "Warning";
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.AdditionalData = $"User tried to get their academic qualifications data, but no academic qualifications data was found in the database for user with email : {email}.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw NotFound();
+			}
 
             var mapped = Mapper.Map<IEnumerable<AcademicQualificationResponseDto>>(qualifications);
 
             var totalCount = await Repo.CountAsync(
                 new AcademicQualificationsCountSpecifications(parameters, email));
 
-            return new PaginatedResult<AcademicQualificationResponseDto>(
+			#region Log
+			qualificationLog.RenderedMessage = $"Academic qualifications data retrieved for user: {currentUser.UserName}.";
+			qualificationLog.Level = "Information";
+			qualificationLog.Timestamp = DateTime.Now;
+			qualificationLog.AdditionalData = $"User retrieved their academic qualifications data successfully, total count of academic qualifications data retrieved: {totalCount}.";
+			_logger.LogInformation("{@LogDetails}", qualificationLog);
+			#endregion
+
+			return new PaginatedResult<AcademicQualificationResponseDto>(
                 parameters.PageIndex,
                 mapped.Count(),
                 totalCount,
@@ -43,15 +76,57 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             int id,
             string? facultyMemberEmail = null)
         {
-            var qualification = await Repo.GetAsync(
-                new AcademicQualificationsSpecifications(id))
-                ?? throw NotFound();
+            #region Log
+            var currentUser = await GetCurrentUserAsync();
+            var qualificationLog = new LogEntry
+            {
+                Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
+			#endregion
 
-            await EnsureOwnershipIfClientAsync(
-                qualification.FacultyMemberId,
-                facultyMemberEmail);
+			var qualification = await Repo.GetAsync(
+                new AcademicQualificationsSpecifications(id));
+            if (qualification is null)
+            {
+				#region Log
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.Level = "Warning";
+				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {currentUser.UserName}.";
+				qualificationLog.AdditionalData = $"User tried to get their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw NotFound();
+			}
 
-            return Mapper.Map<AcademicQualificationResponseDto>(qualification);
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        qualification.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.Level = "Warning";
+				qualificationLog.RenderedMessage = $"User unauthorized to access academic qualification data.";
+				qualificationLog.AdditionalData = $"User tried to get academic qualification data with id: {id} that does not belong to them, academic qualification data faculty member id: {qualification.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw;
+            }
+
+			#region Log
+			qualificationLog.Timestamp = DateTime.Now;
+			qualificationLog.Level = "Information";
+			qualificationLog.RenderedMessage = $"Academic qualification data retrieved for user: {currentUser.UserName}.";
+			qualificationLog.AdditionalData = $"User retrieved their academic qualification data with id: {id} successfully.";
+			_logger.LogInformation("{@LogDetails}", qualificationLog);
+			#endregion
+			return Mapper.Map<AcademicQualificationResponseDto>(qualification);
         }
 
         public async Task<AcademicQualificationResponseDto> CreateAcademicQualificationAsync(
@@ -61,7 +136,32 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-            var facultyMember = await GetFacultyMemberByEmailAsync(email);
+            #region Log
+            var qualificationLog = new LogEntry
+            {
+                Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
+            #endregion
+
+            FacultyMember facultyMember = null!;
+            try
+            {
+                facultyMember = await GetFacultyMemberByEmailAsync(email);
+            }
+            catch (NotFoundException)
+            {
+				#region Log
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.Level = "Warning";
+				qualificationLog.RenderedMessage = $"Faculty Member not found.";
+				qualificationLog.AdditionalData = $"User tried to create an academic qualification for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw;
+            }
 
             var qualification = Mapper.Map<AcademicQualifications>(dto);
             qualification.FacultyMemberId = facultyMember.Id;
@@ -69,7 +169,15 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             await Repo.AddAsync(qualification);
             await SaveChangesAsync();
 
-            return Mapper.Map<AcademicQualificationResponseDto>(qualification);
+            var response = Mapper.Map<AcademicQualificationResponseDto>(qualification);
+			#region Log
+			qualificationLog.Timestamp = DateTime.Now;
+			qualificationLog.Level = "Information";
+			qualificationLog.RenderedMessage = $"User: {currentUser.UserName} created an academic qualification.";
+			qualificationLog.AdditionalData = $"User created an academic qualification with id: {response.Id} successfully.";
+			_logger.LogInformation("{@LogDetails}", qualificationLog);
+			#endregion
+			return Mapper.Map<AcademicQualificationResponseDto>(qualification);
         }
 
         public async Task<AcademicQualificationResponseDto> UpdateAcademicQualificationAsync(
@@ -77,38 +185,127 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             AcademicQualificationsUpdateDto dto,
             string? facultyMemberEmail = null)
         {
+			#region Log
+            var currentUser = await GetCurrentUserAsync();
+			var qualificationLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
+			#endregion
+			var jsonOptions = new JsonSerializerOptions
+			{
+				WriteIndented = true,
+				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+			};
             var qualification = await Repo.GetAsync(
-                new AcademicQualificationsSpecifications(id))
-                ?? throw NotFound();
+                new AcademicQualificationsSpecifications(id));
+            if (qualification is null)
+            {
+				#region Log
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.Level = "Warning";
+				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {currentUser.UserName}.";
+				qualificationLog.AdditionalData = $"User tried to update their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw NotFound();
+            }
 
-            await EnsureOwnershipIfClientAsync(
-                qualification.FacultyMemberId,
-                facultyMemberEmail);
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        qualification.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.Level = "Warning";
+				qualificationLog.RenderedMessage = $"User unauthorized to update academic qualification data.";
+				qualificationLog.AdditionalData = $"User tried to update academic qualification data with id: {id} that does not belong to them, academic qualification data faculty member id: {qualification.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw;
+            }
 
-            Mapper.Map(dto, qualification);
+            var oldData = Mapper.Map<AcademicQualificationResponseDto>(qualification);
+			Mapper.Map(dto, qualification);
 
             Repo.Update(qualification);
             await SaveChangesAsync();
 
-            return Mapper.Map<AcademicQualificationResponseDto>(qualification);
+            var newData = Mapper.Map<AcademicQualificationResponseDto>(qualification);
+			#region Log
+			qualificationLog.Timestamp = DateTime.Now;
+			qualificationLog.Level = "Information";
+			qualificationLog.RenderedMessage = $"Academic qualification data updated for user: {currentUser.UserName}.";
+			qualificationLog.AdditionalData = $"User updated their academic qualification data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			_logger.LogInformation("{@LogDetails}", qualificationLog);
+			#endregion
+			return Mapper.Map<AcademicQualificationResponseDto>(qualification);
         }
 
         public async Task DeleteAcademicQualificationAsync(
             int id,
             string? facultyMemberEmail = null)
         {
-            var qualification = await Repo.GetAsync(
-                new AcademicQualificationsSpecifications(id))
-                ?? throw NotFound();
+			#region Log
+			var currentUser = await GetCurrentUserAsync();
+            var qualificationLog = new LogEntry
+			{
+				Category = Category.FacultyMemberAcademicData.ToString(),
+				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
+			#endregion
+			var qualification = await Repo.GetAsync(
+                new AcademicQualificationsSpecifications(id));
+            if(qualification is null)
+            {
+				#region Log
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.Level = "Warning";
+				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {currentUser.UserName}.";
+				qualificationLog.AdditionalData = $"User tried to delete their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw NotFound();
+			}
 
-            await EnsureOwnershipIfClientAsync(
-                qualification.FacultyMemberId,
-                facultyMemberEmail);
+            try
+            {
+                await EnsureOwnershipIfClientAsync(
+                        qualification.FacultyMemberId,
+                        facultyMemberEmail);
+            }
+            catch (UnauthorizedAccessException)
+            {
+				#region Log
+				qualificationLog.Timestamp = DateTime.Now;
+				qualificationLog.Level = "Warning";
+				qualificationLog.RenderedMessage = $"User unauthorized to delete academic qualification data.";
+				qualificationLog.AdditionalData = $"User tried to delete academic qualification data with id: {id} that does not belong to them, academic qualification data faculty member id: {qualification.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", qualificationLog);
+				#endregion
+				throw;
+            }
 
             qualification.IsDeleted = true;
 
             Repo.Update(qualification);
             await SaveChangesAsync();
-        }
+			#region Log
+			qualificationLog.Timestamp = DateTime.Now;
+			qualificationLog.Level = "Information";
+			qualificationLog.RenderedMessage = $"Academic qualification data deleted for user: {currentUser.UserName}.";
+			qualificationLog.AdditionalData = $"User deleted their academic qualification data with id: {id} successfully.";
+			_logger.LogInformation("{@LogDetails}", qualificationLog);
+			#endregion
+		}
     }
 }
