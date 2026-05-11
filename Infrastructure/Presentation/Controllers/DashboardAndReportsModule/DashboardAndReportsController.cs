@@ -78,7 +78,7 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         public async Task<IActionResult> DownloadResearchesReportPdf([FromBody] ReportGenerationDTO notes)
         {
             var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateResearchDashboardReportAsync(notes.Notes);
-            return File(pdf, "application/pdf", "FacultyResearchesReport.pdf");
+            return File(pdf, "application/pdf", "GenerateResearchesReport.pdf");
         }
     }
 }
