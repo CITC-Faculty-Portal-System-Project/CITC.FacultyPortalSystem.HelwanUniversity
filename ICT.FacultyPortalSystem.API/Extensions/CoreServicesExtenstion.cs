@@ -77,6 +77,13 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             () => provider.GetRequiredService<IFacultyMemberDataService>()
             );
 
+
+            services.AddScoped<IReportsDataService, ReportsDataService>();
+            services.AddScoped<Func<IReportsDataService>>(provider =>
+            () => provider.GetRequiredService<IReportsDataService>()
+            );
+
+
             services.AddScoped<ILookUpItemService, LookUpItemService>();
             services.AddScoped<Func<ILookUpItemService>>(provider =>
             () => provider.GetRequiredService<ILookUpItemService>()

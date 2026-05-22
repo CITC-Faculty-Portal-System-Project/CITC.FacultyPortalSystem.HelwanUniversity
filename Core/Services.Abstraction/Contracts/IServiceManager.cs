@@ -115,6 +115,7 @@ namespace Services.Abstraction.Contracts
         public IDashboardService DashboardService { get; }
         public IReportsPreviewingService ReportsPreviewingService { get; }
         public IReportsPDFGenerationService ReportsPDFGenerationService { get; }
+        public IReportsDataService ReportsDataService { get; }
 
         #endregion
     }

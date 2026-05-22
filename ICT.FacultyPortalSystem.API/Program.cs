@@ -1,11 +1,6 @@
-using Domain.Entities.IdentityModule.Users;
 using ICIT.FacultyPortalSystem.API.Extensions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Presistence.Identity;
 using Shared.Hubs;
 using ICIT.FacultyPortalSystem.API.Logger;
-using Microsoft.Extensions.Configuration;
 using Serilog;
 
 namespace ICIT.FacultyPortalSystem.API

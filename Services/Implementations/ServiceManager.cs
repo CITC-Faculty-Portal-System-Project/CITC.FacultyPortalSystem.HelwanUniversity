@@ -55,6 +55,7 @@ namespace Services.Implementations
         , Func<IReportsPreviewingService> _reportsPreviewingService
         , Func<IDashboardService> _dashboardService
         , Func<IReportsPDFGenerationService> _reportsPDFGenerationService
+        , Func<IReportsDataService> _reportsDataService
         
         /*, Func<IExternalDataHandlingService> _externalDataHandlingService*/) : IServiceManager
     {
@@ -159,6 +160,7 @@ namespace Services.Implementations
         public IDashboardService DashboardService => _dashboardService.Invoke();
         public IReportsPreviewingService ReportsPreviewingService => _reportsPreviewingService.Invoke();
         public IReportsPDFGenerationService ReportsPDFGenerationService => _reportsPDFGenerationService.Invoke();
+        public IReportsDataService ReportsDataService => _reportsDataService.Invoke();
 
 
         #endregion

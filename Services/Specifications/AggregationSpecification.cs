@@ -3,14 +3,14 @@
 namespace Services.Specifications
 {
     public abstract class AggregationSpecification<TEntity, TResult>
-        : IAggregationSpecification<TEntity, TResult>
+      : BaseSpecifications<TEntity, object>,
+        IAggregationSpecification<TEntity, TResult>
+      where TEntity : class
     {
-        protected Expression<Func<TEntity, bool>>? Criteria;
+        protected AggregationSpecification() : base(null) { }
 
-        public void SetCriteria(Expression<Func<TEntity, bool>> criteria)
-        {
-            Criteria = criteria;
-        }
+        protected void SetCriteria(Expression<Func<TEntity, bool>> criteria)
+            => Criteria = criteria;
 
         public abstract IQueryable<TResult> Apply(IQueryable<TEntity> query);
     }

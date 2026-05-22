@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Shared;
 using Shared.Dtos.ReportsAndDashboard;
-using Shared.SpecificationParameters.ReportsAndDashboard;
+using Shared.Dtos.ReportsAndDashboard.FacultyMemberDataModule;
+using Shared.Dtos.ReportsAndDashboard.ResearchesModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.FacultyMembersDataModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.ResearchesModule;
 
 namespace Presentation.Controllers.DashboardAndReportsModule
 {
@@ -80,5 +84,39 @@ namespace Presentation.Controllers.DashboardAndReportsModule
             var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateResearchDashboardReportAsync(notes.Notes);
             return File(pdf, "application/pdf", "GenerateResearchesReport.pdf");
         }
+
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberPrizesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberWritingsData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
+        [HttpGet("FacultyMembersDataReportTable")]
+        [ProducesResponseType(typeof(PaginatedResult<FacultyMembersDataReportResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResult<FacultyMembersDataReportResponseDTO>>> GetFacultyMembersReportTable([FromQuery] FacultyMembersDataReportSpecificatonParameters parameters)
+        {
+            return Ok(await _serviceManager.ReportsDataService.GetFacultyMembersDataReportAsync(parameters));
+        }
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberData.Read")]
+        [HttpGet("FacultyMembersResearchesReportTable")]
+        [ProducesResponseType(typeof(PaginatedResult<FacultyMembersResearchesReportResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResult<FacultyMembersResearchesReportResponseDTO>>> GetFacultyMembersResearchesReportTable([FromQuery] FacultyMembersResearchesSpecificationParameters parameters)
+        {
+            return Ok(await _serviceManager.ReportsDataService.GetFacultyMembersResearchesReportAsync(parameters));
+        }
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
+        [HttpGet("ResearchesPerYearReportTable")]
+        [ProducesResponseType(typeof(PaginatedResult<ResearchesPerYearReportResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResult<ResearchesPerYearReportResponseDTO>>> GetResearchesPerYearReportTable([FromQuery] ResearchesPerYearReportSpecificationParameters parameters)
+        {
+            return Ok(await _serviceManager.ReportsDataService.GetResearchesPeryearReportAsync(parameters));
+        }
+
+
     }
 }
