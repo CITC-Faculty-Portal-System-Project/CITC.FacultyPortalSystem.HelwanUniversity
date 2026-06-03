@@ -46,7 +46,7 @@ namespace Presentation.Controllers.DashboardAndReportsModule
 
         [Authorize(Policy = "Permission:Reports.Read")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        [HttpPost("FacultyResearchesAndResearchersReportPreview")]
+        [HttpGet("FacultyResearchesAndResearchersReportPreview")]
         public async Task<ActionResult<string>> GetFacultyResearchesAndResearchersReportPreview([FromQuery] int FacultyIdFacultyResearchesReportPreview , [FromQuery] string? notes)
            => Ok(await _serviceManager.ReportsPreviewingService.PreviewFacultyResearchesAndResearchersReportAsync(FacultyIdFacultyResearchesReportPreview , notes));
 
