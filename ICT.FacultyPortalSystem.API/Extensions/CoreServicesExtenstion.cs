@@ -274,6 +274,9 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
 			() => provider.GetRequiredService<INotificationService>()
 			);
 
+            services.AddScoped<INotificationSender, MessagingNotification>();
+            services.AddScoped<INotificationSender, SystemNotification>();
+            services.AddScoped<INotificationSender, SystemAlertNotification>();
 
 			services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));

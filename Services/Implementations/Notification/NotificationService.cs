@@ -85,7 +85,8 @@ namespace Services.Implementations.Notification
 
 		public async Task SendNotificationAsync(NotificationDTO notification)
 		{
-			var sender = _senders.FirstOrDefault(x => x.Type == notification.Type)
+			
+            var sender = _senders.FirstOrDefault(x => x.Type == notification.Type)
 				?? throw NotFound();
 
 			await sender.SendAsync(notification);

@@ -39,7 +39,7 @@ namespace ICIT.FacultyPortalSystem.API
 
             var app = builder.Build();
 
-            app.UseExceptionHandlingMiddlewares();
+//            app.UseExceptionHandlingMiddlewares();
 
             if (app.Environment.IsDevelopment())
             {
