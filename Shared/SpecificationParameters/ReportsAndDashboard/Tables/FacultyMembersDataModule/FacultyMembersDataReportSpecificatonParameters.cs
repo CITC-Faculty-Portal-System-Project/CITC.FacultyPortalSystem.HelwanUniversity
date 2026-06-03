@@ -1,6 +1,6 @@
 ﻿using Shared.Enums.ReportsModule;
 
-namespace Shared.SpecificationParameters.ReportsAndDashboard.FacultyMembersDataModule
+namespace Shared.SpecificationParameters.ReportsAndDashboard.Tables.FacultyMembersDataModule
 {
     public class FacultyMembersDataReportSpecificatonParameters : BaseReportsSpecificationParameters
     {

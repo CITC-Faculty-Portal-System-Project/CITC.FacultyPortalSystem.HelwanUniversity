@@ -1,7 +1,7 @@
 ﻿using Shared.Enums.ReportsModule;
 using Shared.Enums.ResearchesModule;
 
-namespace Shared.SpecificationParameters.ReportsAndDashboard.ResearchesModule
+namespace Shared.SpecificationParameters.ReportsAndDashboard.Tables.ResearchesModule
 {
     public class ResearchesPerYearReportSpecificationParameters : BaseReportsSpecificationParameters
     {

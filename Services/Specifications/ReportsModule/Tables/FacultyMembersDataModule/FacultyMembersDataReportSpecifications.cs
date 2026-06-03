@@ -1,11 +1,10 @@
 ﻿using Domain.Enums;
 using Microsoft.EntityFrameworkCore;
-using Services.Specifications;
 using Shared.Dtos.ReportsAndDashboard.FacultyMemberDataModule;
 using Shared.Enums.ReportsModule;
-using Shared.SpecificationParameters.ReportsAndDashboard.FacultyMembersDataModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Tables.FacultyMembersDataModule;
 
-namespace Services.Specifications.ReportsModule.FacultyMembersDataModule
+namespace Services.Specifications.ReportsModule.Tables.FacultyMembersDataModule
 {
     public class FacultyMembersDataReportSpecification
         : AggregationSpecification<FacultyMember, FacultyMembersDataReportResponseDTO>
@@ -15,13 +14,14 @@ namespace Services.Specifications.ReportsModule.FacultyMembersDataModule
         {
             SetCriteria(fd =>
                 !fd.IsDeleted
-                && (
-                    (parameters.FacultyIds != null && parameters.FacultyIds.Any()
-                        && parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value))
-                    ||
-                    (parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
-                        && parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId))
-                )
+              && (
+    (parameters.FacultyIds == null || !parameters.FacultyIds.Any()
+        || parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value))
+    ||
+    
+    (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any()
+        || parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!))
+)
                 && (string.IsNullOrWhiteSpace(parameters.Search) ||
                     fd.PersonalData!.NameAr.Contains(parameters.Search) ||
                     fd.PersonalData!.NameEn.Contains(parameters.Search) ||
@@ -78,8 +78,6 @@ namespace Services.Specifications.ReportsModule.FacultyMembersDataModule
         {
             return query
                 .Where(Criteria!)
-                .Skip(Skip)
-                .Take(Take)
                 .Select(fd => new FacultyMembersDataReportResponseDTO
                 {
                     Name = (fd.PersonalData!.Title!.ValueAr ?? "") + ". " + (fd.PersonalData.NameAr ?? ""),

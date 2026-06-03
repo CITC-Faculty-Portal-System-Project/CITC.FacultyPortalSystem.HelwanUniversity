@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Shared;
 using Shared.Dtos.ReportsAndDashboard;
+using Shared.Dtos.ReportsAndDashboard.ConferencesAndSeminarsModule;
 using Shared.Dtos.ReportsAndDashboard.FacultyMemberDataModule;
 using Shared.Dtos.ReportsAndDashboard.ResearchesModule;
-using Shared.SpecificationParameters.ReportsAndDashboard.FacultyMembersDataModule;
-using Shared.SpecificationParameters.ReportsAndDashboard.ResearchesModule;
+using Shared.Dtos.ReportsAndDashboard.WrtingsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ConferencesAndSeminarsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Tables.FacultyMembersDataModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ResearchesModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Tables.WritingsModule;
 
 namespace Presentation.Controllers.DashboardAndReportsModule
 {
@@ -43,45 +47,45 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         [Authorize(Policy = "Permission:Reports.Read")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
         [HttpPost("FacultyResearchesAndResearchersReportPreview")]
-        public async Task<ActionResult<string>> GetFacultyResearchesAndResearchersReportPreview([FromQuery] int FacultyIdFacultyResearchesReportPreview , ReportGenerationDTO notes)
-           => Ok(await _serviceManager.ReportsPreviewingService.PreviewFacultyResearchesAndResearchersReportAsync(FacultyIdFacultyResearchesReportPreview , notes.Notes));
+        public async Task<ActionResult<string>> GetFacultyResearchesAndResearchersReportPreview([FromQuery] int FacultyIdFacultyResearchesReportPreview , [FromQuery] string? notes)
+           => Ok(await _serviceManager.ReportsPreviewingService.PreviewFacultyResearchesAndResearchersReportAsync(FacultyIdFacultyResearchesReportPreview , notes));
 
         [Authorize(Policy = "Permission:Reports.Read")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        [HttpPost("TotalUniversityResearchesReportPreview")]
-        public async Task<ActionResult<string>> GetTotalUniversityResearchesReportPreview(ReportGenerationDTO notes)
-          => Ok(await _serviceManager.ReportsPreviewingService.PreviewResearchesReportAsync(notes.Notes));
+        [HttpGet("TotalUniversityResearchesReportPreview")]
+        public async Task<ActionResult<string>> GetTotalUniversityResearchesReportPreview([FromQuery] string? notes)
+          => Ok(await _serviceManager.ReportsPreviewingService.PreviewResearchesReportAsync(notes));
 
 
         [Authorize(Policy = "Permission:Reports.Read")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        [HttpPost("OverallSystemPerformanceReportPreview")]
-        public async Task<ActionResult<string>> GetOverallSystemPerformanceReportPreview(ReportGenerationDTO notes)
-         => Ok(await _serviceManager.ReportsPreviewingService.PreviewGeneralSystemInfoReportAsync(notes.Notes));
+        [HttpGet("OverallSystemPerformanceReportPreview")]
+        public async Task<ActionResult<string>> GetOverallSystemPerformanceReportPreview([FromQuery] string? notes)
+         => Ok(await _serviceManager.ReportsPreviewingService.PreviewGeneralSystemInfoReportAsync(notes));
 
         [Authorize(Policy = "Permission:Reports.Read")]
-        [HttpPost("DownloadFacultyResearchesReportPdf")]
-        public async Task<IActionResult> DownloadFacultyResearchesReportPdf([FromQuery] int facultyId, [FromBody] ReportGenerationDTO notes)
+        [HttpGet("DownloadFacultyResearchesReportPdf")]
+        public async Task<IActionResult> DownloadFacultyResearchesReportPdf([FromQuery] int facultyId, [FromQuery] string? notes)
         {
-            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateFacultyResearchesReportAsync(facultyId, notes.Notes);
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateFacultyResearchesReportAsync(facultyId, notes);
             return File(pdf, "application/pdf", "FacultyResearchesReport.pdf");
         }
 
 
         [Authorize(Policy = "Permission:Reports.Read")]
-        [HttpPost("DownloadGeneralSystemReportPdf")]
-        public async Task<IActionResult> DownloadGeneralSystemReportPdf([FromBody] ReportGenerationDTO notes)
+        [HttpGet("DownloadGeneralSystemReportPdf")]
+        public async Task<IActionResult> DownloadGeneralSystemReportPdf([FromQuery] string? notes)
         {
-            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateAdminDashboardReportAsync(notes.Notes);
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateAdminDashboardReportAsync(notes);
             return File(pdf, "application/pdf", "GeneralSystemReport.pdf");
         }
 
 
         [Authorize(Policy = "Permission:Reports.Read")]
-        [HttpPost("DownloadResearchesReportPdf")]
-        public async Task<IActionResult> DownloadResearchesReportPdf([FromBody] ReportGenerationDTO notes)
+        [HttpGet("DownloadResearchesReportPdf")]
+        public async Task<IActionResult> DownloadResearchesReportPdf([FromQuery] string? notes)
         {
-            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateResearchDashboardReportAsync(notes.Notes);
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateResearchDashboardReportAsync(notes);
             return File(pdf, "application/pdf", "GenerateResearchesReport.pdf");
         }
 
@@ -98,6 +102,23 @@ namespace Presentation.Controllers.DashboardAndReportsModule
             return Ok(await _serviceManager.ReportsDataService.GetFacultyMembersDataReportAsync(parameters));
         }
 
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberPrizesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberWritingsData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
+        [HttpGet("FacultyMembersDataReportPDF")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<ActionResult<string>> GetFacultyMembersReportPDF([FromQuery] FacultyMembersDataReportSpecificatonParameters parameters , string? notes)
+        {
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateFacultyMembersReportAsync(parameters, notes);
+            return File(pdf, "application/pdf", "FacultyMembersDataReport.pdf");
+        }
+
+
+
+
         [Authorize(Policy = "Permission:Reports.Read")]
         [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
         [Authorize(Policy = "Permission:FacultyMemberData.Read")]
@@ -108,6 +129,19 @@ namespace Presentation.Controllers.DashboardAndReportsModule
             return Ok(await _serviceManager.ReportsDataService.GetFacultyMembersResearchesReportAsync(parameters));
         }
 
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberData.Read")]
+        [HttpGet("FacultyMembersResearchesReportPDF")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<ActionResult<string>> GetFacultyMembersResearchesReportPDF([FromQuery] FacultyMembersResearchesSpecificationParameters parameters, string? notes)
+        {
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateFacultyMembersResearchesReportAsync(parameters, notes);
+            return File(pdf, "application/pdf", "FacultyMembersResearchesReport.pdf");
+        }
+
+
         [Authorize(Policy = "Permission:Reports.Read")]
         [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
         [HttpGet("ResearchesPerYearReportTable")]
@@ -115,6 +149,57 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         public async Task<ActionResult<PaginatedResult<ResearchesPerYearReportResponseDTO>>> GetResearchesPerYearReportTable([FromQuery] ResearchesPerYearReportSpecificationParameters parameters)
         {
             return Ok(await _serviceManager.ReportsDataService.GetResearchesPeryearReportAsync(parameters));
+        }
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
+        [HttpGet("ResearchesPerYearReportPDF")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<ActionResult<string>> GetResearchesPerYearReportPDF([FromQuery] ResearchesPerYearReportSpecificationParameters parameters, string? notes)
+        {
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateResearchesPerYearReportAsync(parameters, notes);
+            return File(pdf, "application/pdf", "ResearchesPerYearReport.pdf");
+        }
+
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberMissionsData.Read")]
+        [HttpGet("ConferencesAndSeminarsReportTable")]
+        [ProducesResponseType(typeof(PaginatedResult<ConferenceAndSeminarsReportResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResult<ConferenceAndSeminarsReportResponseDTO>>> GetConferencesAndSeminarsReportTable([FromQuery] ConferencesAndSeminarsReportSpecificationParameters parameters)
+        {
+            return Ok(await _serviceManager.ReportsDataService.GetConferencesAndSeminarsReportAsync(parameters));
+        }
+
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberMissionsData.Read")]
+        [HttpGet("ConferencesAndSeminarsReportPDF")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<ActionResult<string>> GetConferencesAndSeminarsReportPDF([FromQuery] ConferencesAndSeminarsReportSpecificationParameters parameters, string? notes)
+        {
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateConferencesAndSeminarsReportAsync(parameters, notes);
+            return File(pdf, "application/pdf", "ConferencesAndSeminarsReport.pdf");
+        }
+
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberWritingsData.Read")]
+        [HttpGet("WritingsReportTable")]
+        [ProducesResponseType(typeof(PaginatedResult<WritingsReportResponseDTO>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResult<WritingsReportResponseDTO>>> GetWritingsReportTable([FromQuery] WritingsReportSpecificationParameters parameters)
+        {
+            return Ok(await _serviceManager.ReportsDataService.GetWritingsReportAsync(parameters));
+        }
+
+        [Authorize(Policy = "Permission:Reports.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberWritingsData.Read")]
+        [HttpGet("WritingsReportPDF")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public async Task<ActionResult<string>> GetWritingsReportPDF([FromQuery] WritingsReportSpecificationParameters parameters, string? notes)
+        {
+            var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateWritingsReportAsync(parameters, notes);
+            return File(pdf, "application/pdf", "WritingsReport.pdf");
         }
 
 

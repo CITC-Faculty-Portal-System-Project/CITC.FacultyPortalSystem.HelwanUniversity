@@ -12,6 +12,8 @@ using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
+using Services.Abstraction.Contracts.Notification;
+using Services.Abstraction.Contracts.ReportsAndDashboard;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.EncryptionServices;
 using Services.EncryptionServices;
@@ -42,11 +44,12 @@ using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPate
 using Services.Implementations.CVGenerationModule.Templates;
 using Services.Implementations.MessagingAndChattingModule;
 using Services.Implementations.Notification;
+using Services.Implementations.ReportsAndDashboards;
+using Services.Implementations.ReportsAndDashboards.Helpers;
 using Services.Implementations.TicketingModule;
 using Shared.Common;
-using Services.Abstraction.Contracts.Notification;
-using Services.Abstraction.Contracts.ReportsAndDashboard;
-using Services.Implementations.ReportsAndDashboards;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -316,6 +319,13 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<ICVTemplate, AcademicTemplateCV>();
             services.AddScoped<ICVTemplate, ProfessionalTemplateCV>();
             services.AddScoped<CVTemplatesFactory>();
+            services.AddScoped<FacultyDepartmentResolver>();
+
+            services.AddSingleton(new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            });
 
 
 
