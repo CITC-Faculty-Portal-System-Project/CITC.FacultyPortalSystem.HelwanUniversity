@@ -5,6 +5,10 @@ using Shared.Dtos.ReportsAndDashboard.ConferencesAndSeminarsModule;
 using Shared.Dtos.ReportsAndDashboard.FacultyMemberDataModule;
 using Shared.Dtos.ReportsAndDashboard.ResearchesModule;
 using Shared.Dtos.ReportsAndDashboard.WrtingsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.PDF.ConferencesAndSeminarsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.PDF.FacultyMembersDataModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.PDF.ResearchesModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.PDF.WritingsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ConferencesAndSeminarsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.FacultyMembersDataModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ResearchesModule;
@@ -110,7 +114,7 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
         [HttpGet("FacultyMembersDataReportPDF")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> GetFacultyMembersReportPDF([FromQuery] FacultyMembersDataReportSpecificatonParameters parameters , string? notes)
+        public async Task<ActionResult<string>> GetFacultyMembersReportPDF([FromQuery] FacultyMembersDataReportPdfSpecificationParameters parameters , string? notes)
         {
             var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateFacultyMembersReportAsync(parameters, notes);
             return File(pdf, "application/pdf", "FacultyMembersDataReport.pdf");
@@ -135,7 +139,7 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         [Authorize(Policy = "Permission:FacultyMemberData.Read")]
         [HttpGet("FacultyMembersResearchesReportPDF")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> GetFacultyMembersResearchesReportPDF([FromQuery] FacultyMembersResearchesSpecificationParameters parameters, string? notes)
+        public async Task<ActionResult<string>> GetFacultyMembersResearchesReportPDF([FromQuery] FacultyMembersResearchesPdfSpecificationParameters parameters, string? notes)
         {
             var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateFacultyMembersResearchesReportAsync(parameters, notes);
             return File(pdf, "application/pdf", "FacultyMembersResearchesReport.pdf");
@@ -155,7 +159,7 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         [Authorize(Policy = "Permission:FacultyMemberResearchesData.Read")]
         [HttpGet("ResearchesPerYearReportPDF")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> GetResearchesPerYearReportPDF([FromQuery] ResearchesPerYearReportSpecificationParameters parameters, string? notes)
+        public async Task<ActionResult<string>> GetResearchesPerYearReportPDF([FromQuery] ResearchesPerYearPdfReportSpecificationParameters parameters, string? notes)
         {
             var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateResearchesPerYearReportAsync(parameters, notes);
             return File(pdf, "application/pdf", "ResearchesPerYearReport.pdf");
@@ -176,7 +180,7 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         [Authorize(Policy = "Permission:FacultyMemberMissionsData.Read")]
         [HttpGet("ConferencesAndSeminarsReportPDF")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> GetConferencesAndSeminarsReportPDF([FromQuery] ConferencesAndSeminarsReportSpecificationParameters parameters, string? notes)
+        public async Task<ActionResult<string>> GetConferencesAndSeminarsReportPDF([FromQuery] ConferencesAndSeminarsReportPdfSpecificationParameters parameters, string? notes)
         {
             var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateConferencesAndSeminarsReportAsync(parameters, notes);
             return File(pdf, "application/pdf", "ConferencesAndSeminarsReport.pdf");
@@ -196,7 +200,7 @@ namespace Presentation.Controllers.DashboardAndReportsModule
         [Authorize(Policy = "Permission:FacultyMemberWritingsData.Read")]
         [HttpGet("WritingsReportPDF")]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>> GetWritingsReportPDF([FromQuery] WritingsReportSpecificationParameters parameters, string? notes)
+        public async Task<ActionResult<string>> GetWritingsReportPDF([FromQuery] WritingsReportPdfSpecificationParameters parameters, string? notes)
         {
             var pdf = await _serviceManager.ReportsPDFGenerationService.GenerateWritingsReportAsync(parameters, notes);
             return File(pdf, "application/pdf", "WritingsReport.pdf");

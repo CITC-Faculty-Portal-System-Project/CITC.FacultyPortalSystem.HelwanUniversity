@@ -1,6 +1,7 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
 using Shared.Dtos.ReportsAndDashboard.ConferencesAndSeminarsModule;
 using Shared.Enums.ReportsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Base.ConferencesAndSeminarsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ConferencesAndSeminarsModule;
 
 namespace Services.Specifications.ReportsModule.Tables.ConferencesAndSeminarsModule
@@ -8,9 +9,21 @@ namespace Services.Specifications.ReportsModule.Tables.ConferencesAndSeminarsMod
     public class ConferencesAndSeminarsReportSpecification
         : AggregationSpecification<FacultyMember, ConferenceAndSeminarsReportResponseDTO>
     {
+        private readonly bool _isPaginated;
+        private readonly int _pageIndex;
+        private readonly int _pageSize;
+
         public ConferencesAndSeminarsReportSpecification(
-            ConferencesAndSeminarsReportSpecificationParameters parameters)
+            BaseConferencesAndSeminarsReportSpecifiactionParamters parameters
+            , ReportMode mode, int pageIndex = 1, int pageSize = 9
+                  , string? search = null)
         {
+
+            _isPaginated = mode == ReportMode.Table;
+            _pageIndex = pageIndex;
+            _pageSize = pageSize;
+
+
             SetCriteria(fd =>
                  !fd.IsDeleted
                  && (
@@ -27,9 +40,9 @@ namespace Services.Specifications.ReportsModule.Tables.ConferencesAndSeminarsMod
                      && (parameters.Type == null || c.Type == (Domain.Enums.ConferenceOrSeminar)parameters.Type)
                  )
                  && (
-                     string.IsNullOrWhiteSpace(parameters.Search)
-                     || fd.PersonalData!.NameAr.Contains(parameters.Search)
-                     || fd.PersonalData!.NameEn.Contains(parameters.Search)
+                     string.IsNullOrWhiteSpace(search)
+                     || fd.PersonalData!.NameAr.Contains(search)
+                     || fd.PersonalData!.NameEn.Contains(search)
                  )
              );
 
@@ -52,7 +65,9 @@ namespace Services.Specifications.ReportsModule.Tables.ConferencesAndSeminarsMod
                     break;
             }
 
-            applyPagination(parameters.PageSize, parameters.PageIndex);
+
+            if (mode == ReportMode.Table)
+                applyPagination(pageSize, pageIndex);
 
             AddIncludes(fd => fd.PersonalData!);
             AddIncludes(fd => fd.PersonalData!.Title);
@@ -61,7 +76,7 @@ namespace Services.Specifications.ReportsModule.Tables.ConferencesAndSeminarsMod
         public override IQueryable<ConferenceAndSeminarsReportResponseDTO>
             Apply(IQueryable<FacultyMember> query)
         {
-            return query
+            var result = query
                 .Where(Criteria!)
                 .Select(fd => new ConferenceAndSeminarsReportResponseDTO
                 {
@@ -73,6 +88,15 @@ namespace Services.Specifications.ReportsModule.Tables.ConferencesAndSeminarsMod
                         fd.ConferencesAndSeminars!
                             .Count()
                 });
+
+            if (_isPaginated)
+            {
+                result = result
+                    .Skip((_pageIndex - 1) * _pageSize)
+                    .Take(_pageSize);
+            }
+
+            return result;
         }
     }
 }

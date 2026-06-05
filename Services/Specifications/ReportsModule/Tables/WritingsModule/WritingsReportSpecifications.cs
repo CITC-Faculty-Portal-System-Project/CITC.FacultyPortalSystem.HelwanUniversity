@@ -1,4 +1,6 @@
 ﻿using Shared.Dtos.ReportsAndDashboard.WrtingsModule;
+using Shared.Enums.ReportsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Base.WritingsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.WritingsModule;
 
 namespace Services.Specifications.ReportsModule.Tables.WritingsModule
@@ -6,9 +8,21 @@ namespace Services.Specifications.ReportsModule.Tables.WritingsModule
     public class WritingsReportSpecifications
         : AggregationSpecification<FacultyMember, WritingsReportResponseDTO>
     {
+
+        private readonly bool _isPaginated;
+        private readonly int _pageIndex;
+        private readonly int _pageSize;
         public WritingsReportSpecifications(
-            WritingsReportSpecificationParameters parameters)
+            BaseWritingsReportSpecificationParameters parameters
+            , ReportMode mode, int pageIndex = 1, int pageSize = 9
+                  , string? search = null)
         {
+
+            _isPaginated = mode == ReportMode.Table;
+            _pageIndex = pageIndex;
+            _pageSize = pageSize;
+
+
             SetCriteria(fd =>
                 !fd.IsDeleted
 
@@ -33,13 +47,11 @@ namespace Services.Specifications.ReportsModule.Tables.WritingsModule
                 )
 
                 && (
-                    string.IsNullOrWhiteSpace(parameters.Search)
-                    || fd.PersonalData!.NameAr.Contains(parameters.Search)
-                    || fd.PersonalData!.NameEn.Contains(parameters.Search)
+                    string.IsNullOrWhiteSpace(search)
+                    || fd.PersonalData!.NameAr.Contains(search)
+                    || fd.PersonalData!.NameEn.Contains(search)
                 )
             );
-
-            applyPagination(parameters.PageSize, parameters.PageIndex);
 
             AddIncludes(fd => fd.PersonalData!);
             AddIncludes(fd => fd.PersonalData!.Title);
@@ -51,7 +63,7 @@ namespace Services.Specifications.ReportsModule.Tables.WritingsModule
         public override IQueryable<WritingsReportResponseDTO>
             Apply(IQueryable<FacultyMember> query)
         {
-            return query
+            var result = query
                 .Where(Criteria!)
                 .SelectMany(fd => fd.ScientificWritings!
                     .Select(w => new WritingsReportResponseDTO
@@ -67,6 +79,15 @@ namespace Services.Specifications.ReportsModule.Tables.WritingsModule
                                 !sw.IsDeleted
                                 && sw.AuthorRoleId == w.AuthorRoleId)
                     }));
+
+            if (_isPaginated)
+            {
+                result = result
+                    .Skip((_pageIndex - 1) * _pageSize)
+                    .Take(_pageSize);
+            }
+
+            return result;
         }
     }
 }

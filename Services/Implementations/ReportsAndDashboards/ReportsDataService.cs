@@ -8,6 +8,7 @@ using Shared.Dtos.ReportsAndDashboard.ConferencesAndSeminarsModule;
 using Shared.Dtos.ReportsAndDashboard.FacultyMemberDataModule;
 using Shared.Dtos.ReportsAndDashboard.ResearchesModule;
 using Shared.Dtos.ReportsAndDashboard.WrtingsModule;
+using Shared.Enums.ReportsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ConferencesAndSeminarsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.FacultyMembersDataModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ResearchesModule;
@@ -21,7 +22,7 @@ namespace Services.Implementations.ReportsAndDashboards
         {
             var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
 
-            var data = await repo.ExecuteAggregationAsync(new ConferencesAndSeminarsReportSpecification(parameters));
+            var data = await repo.ExecuteAggregationAsync(new ConferencesAndSeminarsReportSpecification(parameters, ReportMode.Table, parameters.PageIndex, parameters.PageSize, parameters.Search));
             var totalCount = await repo.CountAsync(
                 new ConferencesAndSeminarsReportCountSpecification(parameters));
 
@@ -34,7 +35,7 @@ namespace Services.Implementations.ReportsAndDashboards
         {
             var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
 
-            var data = await repo.ExecuteAggregationAsync(new FacultyMembersDataReportSpecification(parameters));        
+            var data = await repo.ExecuteAggregationAsync(new FacultyMembersDataReportSpecification(parameters, ReportMode.Table, parameters.PageIndex, parameters.PageSize, parameters.Search));        
             var totalCount = await repo.CountAsync(                      
                 new FacultyMembersDataReportCountSpecifications(parameters));
 
@@ -46,7 +47,7 @@ namespace Services.Implementations.ReportsAndDashboards
         {
             var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
 
-            var data = await repo.ExecuteAggregationAsync(new FacultyMembersResearchesReportSpecification(parameters));        
+            var data = await repo.ExecuteAggregationAsync(new FacultyMembersResearchesReportSpecification(parameters, ReportMode.Table, parameters.PageIndex, parameters.PageSize, parameters.Search));        
             var totalCount = await repo.CountAsync(                      
                 new FacultyMembersResearchesReportCountSpecification(parameters));
 
@@ -58,7 +59,7 @@ namespace Services.Implementations.ReportsAndDashboards
         {
             var repo = _unitOfWork.GetRepository<Research , int>();
 
-            var data = await repo.ExecuteAggregationAsync(new ResearchesPerYearReportSpecification(parameters));
+            var data = await repo.ExecuteAggregationAsync(new ResearchesPerYearReportSpecification(parameters , ReportMode.Table , parameters.PageIndex , parameters.PageSize , parameters.Search));
             
             var totalCount = await repo.CountAsync(
                 new ResearchesPerYearReportCountSpecification(parameters));
@@ -71,7 +72,7 @@ namespace Services.Implementations.ReportsAndDashboards
         {
             var repo = _unitOfWork.GetRepository<FacultyMember, Guid>();
 
-            var data = await repo.ExecuteAggregationAsync(new WritingsReportSpecifications(parameters));
+            var data = await repo.ExecuteAggregationAsync(new WritingsReportSpecifications(parameters, ReportMode.Table, parameters.PageIndex, parameters.PageSize, parameters.Search));
             var totalCount = await repo.CountAsync(
                 new WrtiningsReportCountSpecification(parameters));
 

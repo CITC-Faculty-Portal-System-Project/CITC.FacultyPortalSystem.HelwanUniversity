@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Shared.Dtos.ReportsAndDashboard.FacultyMemberDataModule;
 using Shared.Enums.ReportsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Base.FacultyMembersDataModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.FacultyMembersDataModule;
 
 namespace Services.Specifications.ReportsModule.Tables.FacultyMembersDataModule
@@ -9,26 +10,38 @@ namespace Services.Specifications.ReportsModule.Tables.FacultyMembersDataModule
     public class FacultyMembersDataReportSpecification
         : AggregationSpecification<FacultyMember, FacultyMembersDataReportResponseDTO>
     {
+        private readonly bool _isPaginated;
+        private readonly int _pageIndex;
+        private readonly int _pageSize;
+
         public FacultyMembersDataReportSpecification(
-            FacultyMembersDataReportSpecificatonParameters parameters)
+            BaseFacultyMembersDataReportSpecificationParameters parameters 
+            , ReportMode mode, int pageIndex = 1, int pageSize = 9
+                  , string? search = null)
         {
+            _isPaginated = mode == ReportMode.Table;
+            _pageIndex = pageIndex;
+            _pageSize = pageSize;
+
             SetCriteria(fd =>
                 !fd.IsDeleted
-              && (
-    (parameters.FacultyIds == null || !parameters.FacultyIds.Any()
-        || parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value))
-    ||
-    
-    (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any()
-        || parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!))
-)
-                && (string.IsNullOrWhiteSpace(parameters.Search) ||
-                    fd.PersonalData!.NameAr.Contains(parameters.Search) ||
-                    fd.PersonalData!.NameEn.Contains(parameters.Search) ||
-                    fd.PersonalData.Department.NameAR.Contains(parameters.Search) ||
-                    fd.PersonalData.Department.NameEN.Contains(parameters.Search) ||
-                    fd.ContactData!.OfficialEmail.Contains(parameters.Search) ||
-                    fd.ContactData.MainPhoneNumber.Contains(parameters.Search)));
+                  && (
+                    (parameters.FacultyIds != null && parameters.FacultyIds.Any() && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
+                        && (parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value) || parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!)))
+                    || (parameters.FacultyIds != null && parameters.FacultyIds.Any() && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any())
+                        && parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value))
+                    || ((parameters.FacultyIds == null || !parameters.FacultyIds.Any()) && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
+                        && parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!))
+                    || ((parameters.FacultyIds == null || !parameters.FacultyIds.Any()) && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any()))
+                )
+
+                && (string.IsNullOrWhiteSpace(search) ||
+                    fd.PersonalData!.NameAr.Contains(search) ||
+                    fd.PersonalData!.NameEn.Contains(search) ||
+                    fd.PersonalData.Department.NameAR.Contains(search) ||
+                    fd.PersonalData.Department.NameEN.Contains(search) ||
+                    fd.ContactData!.OfficialEmail.Contains(search) ||
+                    fd.ContactData.MainPhoneNumber.Contains(search)));
 
             switch (parameters.Sorting)
             {
@@ -67,16 +80,12 @@ namespace Services.Specifications.ReportsModule.Tables.FacultyMembersDataModule
                     AddOrderByDescending(fd => fd.PrizesAndRewards.Count());
                     break;
             }
-
-            applyPagination(parameters.PageSize, parameters.PageIndex);
-
-        
         }
 
         public override IQueryable<FacultyMembersDataReportResponseDTO>
             Apply(IQueryable<FacultyMember> query)
         {
-            return query
+            var result = query
                 .Where(Criteria!)
                 .Select(fd => new FacultyMembersDataReportResponseDTO
                 {
@@ -94,6 +103,15 @@ namespace Services.Specifications.ReportsModule.Tables.FacultyMembersDataModule
                     NoOfPatents = fd.Patents.Count(p => !p.IsDeleted),
                     NoOfAwards = fd.PrizesAndRewards.Count(pr => !pr.IsDeleted)
                 });
+
+            if (_isPaginated)
+            {
+                result = result
+                    .Skip((_pageIndex - 1) * _pageSize)
+                    .Take(_pageSize);
+            }
+
+            return result;
         }
     }
 }

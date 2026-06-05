@@ -1,14 +1,26 @@
 ﻿using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Shared.Dtos.ReportsAndDashboard.ResearchesModule;
 using Shared.Enums.ReportsModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.Base.ResearchesModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Tables.ResearchesModule;
 
 namespace Services.Specifications.ReportsModule.Tables.ResearchesModule
 {
     public class ResearchesPerYearReportSpecification : AggregationSpecification<Research, ResearchesPerYearReportResponseDTO>
     {
-       public ResearchesPerYearReportSpecification(ResearchesPerYearReportSpecificationParameters parameters)
+        private readonly bool _isPaginated;
+        private readonly int _pageIndex;
+        private readonly int _pageSize;
+
+        public ResearchesPerYearReportSpecification
+            (BaseResearchesPerYearReportSpecificationParameters parameters 
+                 , ReportMode mode , int pageIndex = 1 , int pageSize = 9 
+                  , string? search = null)
         {
+
+            _isPaginated = mode == ReportMode.Table;
+            _pageIndex = pageIndex;
+            _pageSize = pageSize;
 
             Domain.Enums.PublicationType? mappedPublicationType = null;
             if (parameters.PublicationType.HasValue)
@@ -78,8 +90,8 @@ namespace Services.Specifications.ReportsModule.Tables.ResearchesModule
     &&
 
     (
-        string.IsNullOrWhiteSpace(parameters.Search) ||
-        r.Title.Contains(parameters.Search)
+        string.IsNullOrWhiteSpace(search) ||
+        r.Title.Contains(search)
     ));
 
             switch (parameters.Sort)
@@ -92,14 +104,15 @@ namespace Services.Specifications.ReportsModule.Tables.ResearchesModule
                     break;
             }
 
-            applyPagination(parameters.PageSize, parameters.PageIndex);
+            
+      
 
         }
 
         public override IQueryable<ResearchesPerYearReportResponseDTO>
             Apply(IQueryable<Research> query)
         {
-            return query
+            var result = query
                 .Where(Criteria!)
                 .Select(r => new ResearchesPerYearReportResponseDTO
                 {
@@ -109,6 +122,15 @@ namespace Services.Specifications.ReportsModule.Tables.ResearchesModule
                    
                     PubYear = r.PubYear
                 });
+
+            if (_isPaginated)
+            {
+                result = result
+                    .Skip((_pageIndex - 1) * _pageSize)
+                    .Take(_pageSize);
+            }
+
+            return result;
         }
     }
 }
