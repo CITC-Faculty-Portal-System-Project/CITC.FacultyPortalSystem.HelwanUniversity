@@ -20,6 +20,7 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
         IManifestationsOfScientificAppreciationService
     {
         protected override string EntityName => "Manifestations of Scientific Appreciation";
+        private string deleteLater => "manifestation of scientific appreciation";
 
         public async Task<PaginatedResult<ManifestationsOfScientificAppreciationResponseDTO>> GetAllManifestationsOfScientificAppreciationAsync(
             ManifestationsOfScientificAppreciationSpecificationParameters parameters,
@@ -28,11 +29,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
-			var manifestationsLog = new LogEntry
+            #region Log
+            var manifestationsLog = new LogEntry
             {
-                Category = Category.FacultyMemberPrizesAndRewards.ToString(),
+                Category = Category.FacultyMemberAcademicData.ToString(),
                 CategoryAction = CategoryAction.ManifestationsOfScientificAppreciationActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName
@@ -45,11 +45,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
             if(manifestations is null)
             {
 				#region Log
-				manifestationsLog.RenderedMessage = $"Manifestations of scientific appreciation not found for user: {userOfData.UserName}.";
+				manifestationsLog.RenderedMessage = $"Manifestations of scientific appreciation not found for user: {currentUser.UserName}.";
 				manifestationsLog.Level = "Warning";
 				manifestationsLog.Timestamp = DateTime.Now;
-				manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their manifestations of scientific appreciation data, but no manifestations of scientific appreciation data was found in the database for user with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} manifestations of scientific appreciation data, but no manifestations of scientific appreciation data was found in the database for user: {userOfData.UserName}";
+				manifestationsLog.AdditionalData = $"User tried to get their manifestations of scientific appreciation data, but no manifestations of scientific appreciation data was found in the database for user with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", manifestationsLog);
 				#endregion
 				throw NotFound();
@@ -61,11 +60,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
                 new ManifestationsOfScientificAppreciationCountSpecifications(parameters, email));
 
 			#region Log
-			manifestationsLog.RenderedMessage = $"Manifestations of scientific appreciation data retrieved for user: {userOfData.UserName}.";
+			manifestationsLog.RenderedMessage = $"Manifestations of scientific appreciation data retrieved for user: {currentUser.UserName}.";
 			manifestationsLog.Level = "Information";
 			manifestationsLog.Timestamp = DateTime.Now;
-			manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their manifestations of scientific appreciation data successfully, total count of manifestations of scientific appreciation data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} manifestations of scientific appreciation data successfully, total count of manifestations of scientific appreciation data retrieved: {totalCount}.";
+			manifestationsLog.AdditionalData = $"User retrieved their manifestations of scientific appreciation data successfully, total count of manifestations of scientific appreciation data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", manifestationsLog);
 			#endregion
 
@@ -82,10 +80,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var manifestationsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ManifestationsOfScientificAppreciationActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -99,9 +96,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				#region Log
 				manifestationsLog.Timestamp = DateTime.Now;
 				manifestationsLog.Level = "Warning";
-				manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation not found for user: {userOfData.UserName}.";
-				manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database.";
+				manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation not found for user: {currentUser.UserName}.";
+				manifestationsLog.AdditionalData = $"User tried to get their manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", manifestationsLog);
 				#endregion
 				throw NotFound();
@@ -128,9 +124,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			#region Log
 			manifestationsLog.Timestamp = DateTime.Now;
 			manifestationsLog.Level = "Information";
-			manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation data retrieved for user: {userOfData.UserName}.";
-			manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their manifestation of scientific appreciation data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} manifestation of scientific appreciation data with id: {id} successfully.";
+			manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation data retrieved for user: {currentUser.UserName}.";
+			manifestationsLog.AdditionalData = $"User retrieved their manifestation of scientific appreciation data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", manifestationsLog);
 			#endregion
 			return Mapper.Map<ManifestationsOfScientificAppreciationResponseDTO>(manifestation);
@@ -144,10 +139,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
             var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var manifestationsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ManifestationsOfScientificAppreciationActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -165,8 +159,7 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				manifestationsLog.Timestamp = DateTime.Now;
 				manifestationsLog.Level = "Warning";
 				manifestationsLog.RenderedMessage = $"Faculty Member not found.";
-				manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a manifestation of scientific appreciation for a faculty member that does not exist in database, no faculty member found with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to create a manifestation of scientific appreciation for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
+				manifestationsLog.AdditionalData = $"User tried to create a manifestation of scientific appreciation for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", manifestationsLog);
 				#endregion
 				throw;
@@ -182,10 +175,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			#region Log
 			manifestationsLog.Timestamp = DateTime.Now;
 			manifestationsLog.Level = "Information";
-			manifestationsLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a manifestation of scientific appreciation."
-				: $"Admin: {currentUser.UserName} created a manifestation of scientific appreciation for user: {userOfData.UserName}";
-			manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a manifestation of scientific appreciation with id: {response.Id} and title: {response.TitleOfAppreciation} successfully."
-				: $"Admin: {currentUser.UserName} created a manifestation of scientific appreciation with id: {response.Id} and title: {response.TitleOfAppreciation} for user: {userOfData.UserName} successfully.";
+			manifestationsLog.RenderedMessage = $"User: {currentUser.UserName} created a manifestation of scientific appreciation.";
+			manifestationsLog.AdditionalData = $"User created a manifestation of scientific appreciation with id: {response.Id} and title: {response.TitleOfAppreciation} successfully.";
 			_logger.LogInformation("{@LogDetails}", manifestationsLog);
 			#endregion
 			return response;
@@ -198,10 +189,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var manifestationsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ManifestationsOfScientificAppreciationActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -219,9 +209,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				#region Log
 				manifestationsLog.Timestamp = DateTime.Now;
 				manifestationsLog.Level = "Warning";
-				manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation not found for user: {userOfData.UserName}.";
-				manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database.";
+				manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation not found for user: {currentUser.UserName}.";
+				manifestationsLog.AdditionalData = $"User tried to update their manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", manifestationsLog);
 				#endregion
 				throw NotFound();
@@ -255,9 +244,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			#region Log
 			manifestationsLog.Timestamp = DateTime.Now;
 			manifestationsLog.Level = "Information";
-			manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation data updated for user: {userOfData.UserName}.";
-			manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their manifestation of scientific appreciation data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
-				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} manifestation of scientific appreciation data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation data updated for user: {currentUser.UserName}.";
+			manifestationsLog.AdditionalData = $"User updated their manifestation of scientific appreciation data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", manifestationsLog);
 			#endregion
 			return newData;
@@ -270,10 +258,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var manifestationsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ManifestationsOfScientificAppreciationActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -286,9 +273,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				#region Log
 				manifestationsLog.Timestamp = DateTime.Now;
 				manifestationsLog.Level = "Warning";
-				manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation not found for user: {userOfData.UserName}.";
-				manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database.";
+				manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation not found for user: {currentUser.UserName}.";
+				manifestationsLog.AdditionalData = $"User tried to delete their manifestation of scientific appreciation data with id: {id}, but no manifestation of scientific appreciation data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", manifestationsLog);
 				#endregion
 				throw NotFound();
@@ -319,9 +305,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			#region Log
 			manifestationsLog.Timestamp = DateTime.Now;
 			manifestationsLog.Level = "Information";
-			manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation data deleted for user: {userOfData.UserName}.";
-			manifestationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their manifestation of scientific appreciation data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} manifestation of scientific appreciation data with id: {id} successfully.";
+			manifestationsLog.RenderedMessage = $"Manifestation of scientific appreciation data deleted for user: {currentUser.UserName}.";
+			manifestationsLog.AdditionalData = $"User deleted their manifestation of scientific appreciation data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", manifestationsLog);
 			#endregion
 		}

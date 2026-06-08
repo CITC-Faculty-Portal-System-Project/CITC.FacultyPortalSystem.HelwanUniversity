@@ -28,11 +28,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
-			var projectsLog = new LogEntry
+            #region Log
+            var projectsLog = new LogEntry
             {
-                Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+                Category = Category.FacultyMemberAcademicData.ToString(),
                 CategoryAction = CategoryAction.ProjectsServiceActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName
@@ -45,11 +44,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
             if(projects is null)
             {
 				#region Log
-				projectsLog.RenderedMessage = $"Projects not found for user: {userOfData.UserName}.";
+				projectsLog.RenderedMessage = $"Projects not found for user: {currentUser.UserName}.";
 				projectsLog.Level = "Warning";
 				projectsLog.Timestamp = DateTime.Now;
-				projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their projects data, but no projects data was found in the database for user with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} projects data, but no projects data was found in the database for user: {userOfData.UserName}";
+				projectsLog.AdditionalData = $"User tried to get their projects data, but no projects data was found in the database for user with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", projectsLog);
 				#endregion
 				throw NotFound();
@@ -61,11 +59,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
                 new ProjectsCountSpecifications(parameters, email));
 
 			#region Log
-			projectsLog.RenderedMessage = $"Projects data retrieved for user: {userOfData.UserName}.";
+			projectsLog.RenderedMessage = $"Projects data retrieved for user: {currentUser.UserName}.";
 			projectsLog.Level = "Information";
 			projectsLog.Timestamp = DateTime.Now;
-			projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their projects data successfully, total count of projects data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} projects data successfully, total count of projects data retrieved: {totalCount}.";
+			projectsLog.AdditionalData = $"User retrieved their projects data successfully, total count of projects data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", projectsLog);
 			#endregion
 
@@ -82,10 +79,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
         {
             #region Log
             var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var projectsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ProjectsServiceActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -99,9 +95,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				projectsLog.Timestamp = DateTime.Now;
 				projectsLog.Level = "Warning";
-				projectsLog.RenderedMessage = $"Project not found for user: {userOfData.UserName}.";
-				projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their project data with id: {id}, but no project data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} project data with id: {id}, but no project data with this id was found in the database.";
+				projectsLog.RenderedMessage = $"Project not found for user: {currentUser.UserName}.";
+				projectsLog.AdditionalData = $"User tried to get their project data with id: {id}, but no project data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", projectsLog);
 				#endregion
 				throw NotFound();
@@ -128,9 +123,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			projectsLog.Timestamp = DateTime.Now;
 			projectsLog.Level = "Information";
-			projectsLog.RenderedMessage = $"Project data retrieved for user: {userOfData.UserName}.";
-			projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their project data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} project data with id: {id} successfully.";
+			projectsLog.RenderedMessage = $"Project data retrieved for user: {currentUser.UserName}.";
+			projectsLog.AdditionalData = $"User retrieved their project data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", projectsLog);
 			#endregion
 			return Mapper.Map<ProjectsResponseDto>(project);
@@ -143,11 +137,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
-			var projectsLog = new LogEntry
+            #region Log
+            var projectsLog = new LogEntry
             {
-                Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+                Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ProjectsServiceActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName
@@ -165,8 +158,7 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				projectsLog.Timestamp = DateTime.Now;
 				projectsLog.Level = "Warning";
 				projectsLog.RenderedMessage = $"Faculty Member not found.";
-				projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a project for a faculty member that does not exist in database, no faculty member found with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to create a project for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
+				projectsLog.AdditionalData = $"User tried to create a project for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", projectsLog);
 				#endregion
 				throw;
@@ -182,10 +174,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			projectsLog.Timestamp = DateTime.Now;
 			projectsLog.Level = "Information";
-			projectsLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a project."
-				: $"Admin: {currentUser.UserName} created a project for user: {userOfData.UserName}";
-			projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a project with id: {response.Id} and name: {response.NameOfProject} successfully."
-				: $"Admin: {currentUser.UserName} created a project with id: {response.Id} and name: {response.NameOfProject} for user: {userOfData.UserName} successfully.";
+			projectsLog.RenderedMessage = $"User: {currentUser.UserName} created a project.";
+			projectsLog.AdditionalData = $"User created a project with id: {response.Id} and name: {response.NameOfProject} successfully.";
 			_logger.LogInformation("{@LogDetails}", projectsLog);
 			#endregion
 			return response;
@@ -198,10 +188,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
         {
 			#region Log
             var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var projectsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ProjectsServiceActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -219,9 +208,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				projectsLog.Timestamp = DateTime.Now;
 				projectsLog.Level = "Warning";
-				projectsLog.RenderedMessage = $"Project not found for user: {userOfData.UserName}.";
-				projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their project data with id: {id}, but no project data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} project data with id: {id}, but no project data with this id was found in the database.";
+				projectsLog.RenderedMessage = $"Project not found for user: {currentUser.UserName}.";
+				projectsLog.AdditionalData = $"User tried to update their project data with id: {id}, but no project data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", projectsLog);
 				#endregion
 				throw NotFound();
@@ -255,9 +243,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			projectsLog.Timestamp = DateTime.Now;
 			projectsLog.Level = "Information";
-			projectsLog.RenderedMessage = $"Project data updated for user: {userOfData.UserName}.";
-			projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their project data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
-				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} project data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			projectsLog.RenderedMessage = $"Project data updated for user: {currentUser.UserName}.";
+			projectsLog.AdditionalData = $"User updated their project data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", projectsLog);
 			#endregion
 			return Mapper.Map<ProjectsResponseDto>(project);
@@ -269,10 +256,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
         {
             #region Log
             var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var projectsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ProjectsServiceActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -286,9 +272,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				projectsLog.Timestamp = DateTime.Now;
 				projectsLog.Level = "Warning";
-				projectsLog.RenderedMessage = $"Project not found for user: {userOfData.UserName}.";
-				projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their project data with id: {id}, but no project data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} project data with id: {id}, but no project data with this id was found in the database.";
+				projectsLog.RenderedMessage = $"Project not found for user: {currentUser.UserName}.";
+				projectsLog.AdditionalData = $"User tried to delete their project data with id: {id}, but no project data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", projectsLog);
 				#endregion
 				throw NotFound();
@@ -319,9 +304,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			projectsLog.Timestamp = DateTime.Now;
 			projectsLog.Level = "Information";
-			projectsLog.RenderedMessage = $"Project data deleted for user: {userOfData.UserName}.";
-			projectsLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their project data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} project data with id: {id} successfully.";
+			projectsLog.RenderedMessage = $"Project data deleted for user: {currentUser.UserName}.";
+			projectsLog.AdditionalData = $"User deleted their project data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", projectsLog);
 			#endregion
 		}

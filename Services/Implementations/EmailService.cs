@@ -190,7 +190,7 @@ namespace Services.Implementations
                 credentialsEmailLog.Timestamp = DateTime.Now;
 				credentialsEmailLog.Level = "Error";
 				credentialsEmailLog.RenderedMessage = $"Email not found in cache for user: {userName}";
-                credentialsEmailLog.AdditionalData = $"Attempted to send credentials email for user with id: {userId} but no email was found in cache. This may indicate a caching issue or that the email was never cached for this user.";
+                credentialsEmailLog.AdditionalData = $"Attempted to send credentials email for user ID {userId} but no email was found in cache. This may indicate a caching issue or that the email was never cached for this user.";
                 _logger.LogError("{@LogDetails}", credentialsEmailLog);
 				#endregion
 				throw new InvalidOperationException("Email not found in cache");
@@ -203,8 +203,8 @@ namespace Services.Implementations
             #region Log
             credentialsEmailLog.Timestamp = DateTime.Now;
 			credentialsEmailLog.Level = "Information";
-			credentialsEmailLog.RenderedMessage = $"Credentials email sent successfully.";
-			credentialsEmailLog.AdditionalData = $"Sent credentials email to {email} for user Id: {userId} with username: {userName} / password: {password} . This email contains the user's login credentials.";
+			credentialsEmailLog.RenderedMessage = $"Credentials email sent successfully to {email} for user {userName}.";
+			credentialsEmailLog.AdditionalData = $"Sent credentials email to {email} for user Id {userId} with username : {userName} / password : {password} . This email contains the user's login credentials.";
 			_logger.LogInformation("{@LogDetails}", credentialsEmailLog);
 			#endregion
 		}
@@ -239,7 +239,7 @@ namespace Services.Implementations
             otpLog.Timestamp = DateTime.Now;
 			otpLog.Level = "Information";
 			otpLog.RenderedMessage = $"OTP email sent successfully to {email}.";
-			otpLog.AdditionalData = $"Sent OTP email to {email} with OTP: {otp}.";
+			otpLog.AdditionalData = $"Sent OTP email to {email} with OTP: {otp}. This email contains a one-time password for resetting the user's password.";
 			_logger.LogInformation("{@LogDetails}", otpLog);
 			#endregion
 
