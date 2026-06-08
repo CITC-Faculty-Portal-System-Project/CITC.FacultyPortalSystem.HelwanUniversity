@@ -1,4 +1,5 @@
-﻿using QuestPDF.Drawing;
+﻿using Microsoft.AspNetCore.Hosting;
+using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -6,9 +7,9 @@ using Shared.Dtos.CVGenerationModule;
 
 namespace Services.Implementations.CVGenerationModule.Pdf
 {
-    public class ModernPdfDocumentCV(CVResponseDTO _cv) : IDocument
+    public class ModernPdfDocumentCV(CVResponseDTO _cv, IWebHostEnvironment _env) : IDocument
     {
-        private readonly TextStyle ArabicStyle = TextStyle.Default.FontFamily("Cairo").FontSize(10);
+        private TextStyle ArabicStyle => TextStyle.Default.FontFamily("Cairo", "Noto Sans Arabic");
         private readonly string MainColor = "#19355a";
         private readonly string AccentColor = "#b38e19";
         private readonly string SidebarColor = "#f0f4f8";
@@ -17,7 +18,6 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         public void Compose(IDocumentContainer container)
         {
-            FontManager.RegisterFont(File.OpenRead("./fonts/Cairo-Regular.ttf"));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
@@ -25,44 +25,74 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                 page.PageColor("#f8fafc");
                 page.ContentFromRightToLeft();
 
-                // الحل الجذري: رسم خلفية الأعمدة في طبقة الـ Background لتمتد لآخر الصفحة الحالية فقط
                 page.Background().Row(row =>
                 {
-                    row.RelativeItem(1).Background(SidebarColor); // خلفية السايد بار (يمين)
-                    row.RelativeItem(2).Background(Colors.White);  // خلفية المحتوى (يسار)
+                    row.RelativeItem(1).Background(SidebarColor);
+                    row.RelativeItem(2).Background(Colors.White);
                 });
 
                 page.Content().Column(mainColumn =>
                 {
-                    // 1. Header - يظهر مرة واحدة فقط في أول صفحة
+                    // 1. Header
                     mainColumn.Item().Background(MainColor).Padding(35).Column(headerCol =>
                     {
-                        headerCol.Item().Text(_cv.NameAr).FontSize(24).Bold().FontColor(Colors.White).FontFamily("Cairo");
-                        if (_cv.Title != null) headerCol.Item().PaddingBottom(5).Text(_cv.Title.ValueAr).FontSize(13).FontColor(AccentColor).Bold();
+                        headerCol.Item().Text(_cv.NameAr)
+                            .FontSize(24).Bold().FontColor(Colors.White)
+                            .Style(ArabicStyle);
+
+                        if (_cv.Title != null)
+                            headerCol.Item().PaddingBottom(5)
+                                .Text(_cv.Title.ValueAr)
+                                .FontSize(13).FontColor(AccentColor).Bold()
+                                .Style(ArabicStyle);
 
                         headerCol.Item().Row(r =>
                         {
                             r.Spacing(8);
-                            var st = TextStyle.Default.FontColor("#cbd5e1").FontSize(8).FontFamily("Cairo");
-                            if (_cv.Department != null) r.AutoItem().Text(_cv.Department).Style(st);
-                            if (_cv.Authority != null) { r.AutoItem().Text("·").Style(st); r.AutoItem().Text(_cv.Authority.ValueAr).Style(st); }
-                            if (_cv.University != null) { r.AutoItem().Text("·").Style(st); r.AutoItem().Text(_cv.University.ValueAr).Style(st); }
-                            if (_cv.BirthDate.HasValue) { r.AutoItem().Text("·").Style(st); r.AutoItem().Text($"تاريخ الميلاد: {_cv.BirthDate.Value:yyyy/MM/dd}").Style(st); }
+                            var st = ArabicStyle.FontColor("#cbd5e1").FontSize(8);
+
+                            if (_cv.Department != null)
+                                r.AutoItem().Text(_cv.Department).Style(st);
+
+                            if (_cv.Authority != null)
+                            {
+                                r.AutoItem().Text("·").Style(st);
+                                r.AutoItem().Text(_cv.Authority.ValueAr).Style(st);
+                            }
+
+                            if (_cv.University != null)
+                            {
+                                r.AutoItem().Text("·").Style(st);
+                                r.AutoItem().Text(_cv.University.ValueAr).Style(st);
+                            }
+
+                            if (_cv.BirthDate.HasValue)
+                            {
+                                r.AutoItem().Text("·").Style(st);
+                                r.AutoItem().Text($"تاريخ الميلاد: {_cv.BirthDate.Value:yyyy/MM/dd}").Style(st);
+                            }
                         });
                     });
 
                     // 2. Body Layout
                     mainColumn.Item().Row(row =>
                     {
-                        // --- SIDEBAR (اليمين) ---
-                        // ShowOnce تضمن عدم تكرار العناوين والبيانات في الصفحات التالية إذا انتهت
+                        // --- SIDEBAR ---
                         row.RelativeItem(1).ShowOnce().Padding(20).Column(sidebarCol =>
                         {
                             DrawSectionTitle(sidebarCol, "بيانات الاتصال");
-                            if (!string.IsNullOrEmpty(_cv.OfficialEmail)) DrawContactRow(sidebarCol, "البريد: ", _cv.OfficialEmail);
-                            if (!string.IsNullOrEmpty(_cv.MainPhoneNumber)) DrawContactRow(sidebarCol, "الهاتف: ", _cv.MainPhoneNumber);
-                            if (!string.IsNullOrEmpty(_cv.WorkPhoneNumber)) DrawContactRow(sidebarCol, "هاتف العمل: ", _cv.WorkPhoneNumber);
-                            if (!string.IsNullOrEmpty(_cv.FaxNumber)) DrawContactRow(sidebarCol, "الفاكس: ", _cv.FaxNumber);
+
+                            if (!string.IsNullOrEmpty(_cv.OfficialEmail))
+                                DrawContactRow(sidebarCol, "البريد: ", _cv.OfficialEmail);
+
+                            if (!string.IsNullOrEmpty(_cv.MainPhoneNumber))
+                                DrawContactRow(sidebarCol, "الهاتف: ", _cv.MainPhoneNumber);
+
+                            if (!string.IsNullOrEmpty(_cv.WorkPhoneNumber))
+                                DrawContactRow(sidebarCol, "هاتف العمل: ", _cv.WorkPhoneNumber);
+
+                            if (!string.IsNullOrEmpty(_cv.FaxNumber))
+                                DrawContactRow(sidebarCol, "الفاكس: ", _cv.FaxNumber);
 
                             if (_cv.Skills?.Any() == true)
                             {
@@ -70,7 +100,10 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                                 sidebarCol.Item().PaddingTop(5).Column(c =>
                                 {
                                     foreach (var s in _cv.Skills)
-                                        c.Item().PaddingBottom(3).Text($"• {s}").FontSize(9).Style(ArabicStyle);
+                                        c.Item().PaddingBottom(3)
+                                            .Text($"• {s}")
+                                            .FontSize(9)
+                                            .Style(ArabicStyle);
                                 });
                             }
 
@@ -86,13 +119,16 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                             }
                         });
 
-                        // --- MAIN CONTENT (اليسار) ---
+                        // --- MAIN CONTENT ---
                         row.RelativeItem(2).Padding(25).Column(contentCol =>
                         {
                             if (!string.IsNullOrEmpty(_cv.BioSummary))
                             {
                                 DrawSectionTitle(contentCol, "نبذة تعريفية");
-                                contentCol.Item().PaddingBottom(10).Text(_cv.BioSummary).FontSize(10).LineHeight(1.6f);
+                                contentCol.Item().PaddingBottom(10)
+                                    .Text(_cv.BioSummary)
+                                    .FontSize(10).LineHeight(1.6f)
+                                    .Style(ArabicStyle);
                             }
 
                             RenderList(contentCol, "الخبرات العامة", _cv.GeneralExperiences, ge => (ge.ExperienceTitle ?? "", $"{ge.Authority} · {ge.CountryOrCity} · {ge.StartDate:yyyy/MM/dd} – {(ge.EndDate.HasValue ? ge.EndDate.Value.ToString("yyyy/MM/dd") : "الآن")}"));
@@ -128,24 +164,30 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         private void DrawSectionTitle(ColumnDescriptor column, string title)
         {
-            column.Item().PaddingTop(15).PaddingBottom(10).Row(row => {
-                row.AutoItem().BorderRight(4).BorderColor(AccentColor).PaddingRight(10).Text(title).FontSize(11).Bold().FontColor(MainColor).FontFamily("Cairo");
+            column.Item().PaddingTop(15).PaddingBottom(10).Row(row =>
+            {
+                row.AutoItem().BorderRight(4).BorderColor(AccentColor).PaddingRight(10)
+                    .Text(title)
+                    .FontSize(11).Bold().FontColor(MainColor)
+                    .Style(ArabicStyle);
             });
         }
 
         private void DrawContactRow(ColumnDescriptor column, string label, string value)
         {
-            column.Item().PaddingBottom(5).Text(t => {
-                t.Span(label).FontSize(8).FontColor("#64748b").Bold();
-                t.Span(value).FontSize(8).FontColor("#1e293b");
+            column.Item().PaddingBottom(5).Text(t =>
+            {
+                t.Span(label).FontSize(8).FontColor("#64748b").Bold().Style(ArabicStyle);
+                t.Span(value).FontSize(8).FontColor("#1e293b").Style(ArabicStyle);
             });
         }
 
         private void DrawSocialRow(ColumnDescriptor column, string label, string value)
         {
-            column.Item().PaddingBottom(2).Text(t => {
-                t.Span($"{label}: ").FontSize(8).FontColor(MainColor).Bold();
-                t.Span(value).FontSize(8).FontColor("#1e293b");
+            column.Item().PaddingBottom(2).Text(t =>
+            {
+                t.Span($"{label}: ").FontSize(8).FontColor(MainColor).Bold().Style(ArabicStyle);
+                t.Span(value).FontSize(8).FontColor("#1e293b").Style(ArabicStyle);
             });
         }
 
@@ -156,13 +198,18 @@ namespace Services.Implementations.CVGenerationModule.Pdf
             foreach (var item in list)
             {
                 var (t, m) = mapper(item);
-                col.Item().PaddingBottom(8).BorderBottom(1).BorderColor(Colors.Grey.Lighten4).Column(c => {
+                col.Item().PaddingBottom(8).BorderBottom(1).BorderColor(Colors.Grey.Lighten4).Column(c =>
+                {
                     c.Item().Text(t).FontSize(10).Bold().Style(ArabicStyle);
-                    c.Item().Text(m).FontSize(8).FontColor(Colors.Grey.Medium);
+                    c.Item().Text(m).FontSize(8).FontColor(Colors.Grey.Medium).Style(ArabicStyle);
                 });
             }
         }
 
-        private bool HasSocialMedia() => !string.IsNullOrEmpty(_cv.PersonalWebsite) || !string.IsNullOrEmpty(_cv.LinkedIn) || !string.IsNullOrEmpty(_cv.YouTube) || !string.IsNullOrEmpty(_cv.Facebook);
+        private bool HasSocialMedia() =>
+            !string.IsNullOrEmpty(_cv.PersonalWebsite) ||
+            !string.IsNullOrEmpty(_cv.LinkedIn) ||
+            !string.IsNullOrEmpty(_cv.YouTube) ||
+            !string.IsNullOrEmpty(_cv.Facebook);
     }
 }

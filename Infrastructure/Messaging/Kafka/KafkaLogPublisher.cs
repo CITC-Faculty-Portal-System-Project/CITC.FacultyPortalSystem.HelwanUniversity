@@ -7,7 +7,7 @@ namespace Messaging.Kafka
 		private readonly IProducer<string?, string> _producer;
 		private readonly string _topic;
 
-		public KafkaLogPublisher(string bootstrapServers = "localhost:9092", string topic = "logs-topic")
+		public KafkaLogPublisher(string bootstrapServers = "kafka:9092", string topic = "logs-topic")
 		{
 			var config = new ProducerConfig
 			{

@@ -9,11 +9,11 @@ using Presistence.Identity;
 
 #nullable disable
 
-namespace Presistence.Identity.Migrations
+namespace Presistence.Migrations
 {
     [DbContext(typeof(IdentityStoreDbContext))]
-    [Migration("20260304024904_PermissionEntitesInitalCreate")]
-    partial class PermissionEntitesInitalCreate
+    [Migration("20260505122158_AddedReportsPermissions")]
+    partial class AddedReportsPermissions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -764,6 +764,54 @@ namespace Presistence.Identity.Migrations
                             IsDeleted = false,
                             Type = 12,
                             VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Code = "Reports.Create",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Create entities which Reports includes",
+                            DisplayName = "Reports - Create",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Code = "Reports.Read",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Read entities which Reports includes",
+                            DisplayName = "Reports - Read",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Code = "Reports.Update",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Update entities which Reports includes",
+                            DisplayName = "Reports - Update",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Code = "Reports.Delete",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = "",
+                            Description = "Enables Assignee to Delete entities which Reports includes",
+                            DisplayName = "Reports - Delete",
+                            IsDeleted = false,
+                            Type = 13,
+                            VersionNo = 0
                         });
                 });
 
@@ -1003,6 +1051,21 @@ namespace Presistence.Identity.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.UserRole", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -1072,21 +1135,6 @@ namespace Presistence.Identity.Migrations
                     b.ToTable("AspNetUserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles", (string)null);
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -1144,6 +1192,25 @@ namespace Presistence.Identity.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.IdentityModule.Users.UserRole", b =>
+                {
+                    b.HasOne("Domain.Entities.IdentityModule.Users.Role", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.IdentityModule.Users.User", "User")
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Domain.Entities.IdentityModule.Users.Role", null)
@@ -1171,21 +1238,6 @@ namespace Presistence.Identity.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
-                {
-                    b.HasOne("Domain.Entities.IdentityModule.Users.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.IdentityModule.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
                     b.HasOne("Domain.Entities.IdentityModule.Users.User", null)
@@ -1205,11 +1257,15 @@ namespace Presistence.Identity.Migrations
             modelBuilder.Entity("Domain.Entities.IdentityModule.Users.Role", b =>
                 {
                     b.Navigation("Permissions");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Domain.Entities.IdentityModule.Users.User", b =>
                 {
                     b.Navigation("Permissions");
+
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

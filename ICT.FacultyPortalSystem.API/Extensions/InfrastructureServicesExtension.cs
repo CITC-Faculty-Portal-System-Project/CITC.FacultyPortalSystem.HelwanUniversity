@@ -59,7 +59,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 return ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection")!);
             });
 
-			services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
+            services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
 			services.Configure<RabbitMQSettings>(
                 configuration.GetSection("RabbitMQSettings"));
@@ -148,7 +148,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-            services.AddHostedService<IdentitySeedHostedService>();
+            //services.AddHostedService<IdentitySeedHostedService>();
             services.AddAuthorization();
             return services;
         }
