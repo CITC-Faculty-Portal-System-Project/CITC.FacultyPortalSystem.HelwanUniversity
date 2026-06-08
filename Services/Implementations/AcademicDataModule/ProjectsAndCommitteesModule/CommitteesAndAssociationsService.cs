@@ -29,10 +29,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var committeesLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.CommitteesAndAssociationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -45,11 +44,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			if (committees is null)
 			{
 				#region Log
-				committeesLogs.RenderedMessage = $"Committees and associations not found for user: {userOfData.UserName}.";
+				committeesLogs.RenderedMessage = $"Committees and associations not found for user: {currentUser.UserName}.";
 				committeesLogs.Level = "Warning";
 				committeesLogs.Timestamp = DateTime.Now;
-				committeesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their committees and associations data, but no committees and/or associations data was found in the database for user with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} committees and associations data, but no committees and/or associations data was found in the database for user: {userOfData.UserName}";
+				committeesLogs.AdditionalData = $"User tried to get their committees and associations data, but no committees and/or associations data was found in the database for user with email : {email}.";
 				_logger.LogWarning(committeesLogs.ToString());
 				#endregion
 				throw NotFound();
@@ -61,11 +59,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				new CommitteesAndAssociationsCountSpecifications(parameters, email));
 
 			#region Log
-			committeesLogs.RenderedMessage = $"Committees and associations data retrieved for user: {userOfData.UserName}.";
+			committeesLogs.RenderedMessage = $"Committees and associations data retrieved for user: {currentUser.UserName}.";
 			committeesLogs.Level = "Information";
 			committeesLogs.Timestamp = DateTime.Now;
-			committeesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their committees and associations data successfully, total count of committees and associations data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} committees and associations data successfully, total count of committees and associations data retrieved: {totalCount}.";
+			committeesLogs.AdditionalData = $"User retrieved their committees and associations data successfully, total count of committees and associations data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", committeesLogs);
 			#endregion
 
@@ -82,10 +79,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var committeeLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.CommitteesAndAssociationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -99,9 +95,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				committeeLogs.Timestamp = DateTime.Now;
 				committeeLogs.Level = "Warning";
-				committeeLogs.RenderedMessage = $"Committee or association not found for user: {userOfData.UserName}.";
-				committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their committee or association data with id: {id}, but no committee or association data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} committee or association data with id: {id}, but no committee or association data with this id was found in the database.";
+				committeeLogs.RenderedMessage = $"Committee or association not found for user: {currentUser.UserName}.";
+				committeeLogs.AdditionalData = $"User tried to get their committee or association data with id: {id}, but no committee or association data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", committeeLogs);
 				#endregion
 				throw NotFound();
@@ -128,9 +123,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			committeeLogs.Timestamp = DateTime.Now;
 			committeeLogs.Level = "Information";
-			committeeLogs.RenderedMessage = $"Committee or association data retrieved for user: {userOfData.UserName}.";
-			committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their committee or association data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} committee or association data with id: {id} successfully.";
+			committeeLogs.RenderedMessage = $"Committee or association data retrieved for user: {currentUser.UserName}.";
+			committeeLogs.AdditionalData = $"User retrieved their committee or association data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", committeeLogs);
 			#endregion
 			return Mapper.Map<CommitteesAndAssociationsResponseDto>(committee);
@@ -144,10 +138,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var committeeLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.CommitteesAndAssociationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -165,8 +158,7 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				committeeLogs.Timestamp = DateTime.Now;
 				committeeLogs.Level = "Warning";
 				committeeLogs.RenderedMessage = $"Faculty Member not found.";
-				committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a committee or association for a faculty member that does not exist in database, no faculty member found with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to create a committee or association for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
+				committeeLogs.AdditionalData = $"User tried to create a committee or association for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", committeeLogs);
 				#endregion
 				throw;
@@ -182,10 +174,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			committeeLogs.Timestamp = DateTime.Now;
 			committeeLogs.Level = "Information";
-			committeeLogs.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a committee or association."
-				: $"Admin: {currentUser.UserName} created a committee or association for user: {userOfData.UserName}";
-			committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User created a committee or association with id: {response.Id} and name: {response.NameOfCommitteeOrAssociation} successfully."
-				: $"Admin: {currentUser.UserName} created a committee or association with id: {response.Id} and name: {response.NameOfCommitteeOrAssociation} for user: {userOfData.UserName} successfully.";
+			committeeLogs.RenderedMessage = $"User: {currentUser.UserName} created a committee or association.";
+			committeeLogs.AdditionalData = $"User created a committee or association with id: {response.Id} and name: {response.NameOfCommitteeOrAssociation} successfully.";
 			_logger.LogInformation("{@LogDetails}", committeeLogs);
 			#endregion
 			return response;
@@ -198,10 +188,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var committeeLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.CommitteesAndAssociationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -219,9 +208,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				committeeLogs.Timestamp = DateTime.Now;
 				committeeLogs.Level = "Warning";
-				committeeLogs.RenderedMessage = $"Committee or association not found for user: {userOfData.UserName}.";
-				committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their committee or association data with id: {id}, but no committee or association data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} committee or association data with id: {id}, but no committee or association data with this id was found in the database.";
+				committeeLogs.RenderedMessage = $"Committee or association not found for user: {currentUser.UserName}.";
+				committeeLogs.AdditionalData = $"User tried to update their committee or association data with id: {id}, but no committee or association data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", committeeLogs);
 				#endregion
 				throw NotFound();
@@ -255,9 +243,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			committeeLogs.Timestamp = DateTime.Now;
 			committeeLogs.Level = "Information";
-			committeeLogs.RenderedMessage = $"Committee or association data updated for user: {userOfData.UserName}.";
-			committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User updated their committee or association data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
-				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} committee or association data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			committeeLogs.RenderedMessage = $"Committee or association data updated for user: {currentUser.UserName}.";
+			committeeLogs.AdditionalData = $"User updated their committee or association data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", committeeLogs);
 			#endregion
 			return newData;
@@ -269,10 +256,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var committeeLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.CommitteesAndAssociationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -285,9 +271,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				committeeLogs.Timestamp = DateTime.Now;
 				committeeLogs.Level = "Warning";
-				committeeLogs.RenderedMessage = $"Committee or association not found for user: {userOfData.UserName}.";
-				committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their committee or association data with id: {id}, but no committee or association data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} committee or association data with id: {id}, but no committee or association data with this id was found in the database.";
+				committeeLogs.RenderedMessage = $"Committee or association not found for user: {currentUser.UserName}.";
+				committeeLogs.AdditionalData = $"User tried to delete their committee or association data with id: {id}, but no committee or association data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", committeeLogs);
 				#endregion
 				throw NotFound();
@@ -318,9 +303,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			committeeLogs.Timestamp = DateTime.Now;
 			committeeLogs.Level = "Information";
-			committeeLogs.RenderedMessage = $"Committee or association data deleted for user: {userOfData.UserName}.";
-			committeeLogs.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their committee or association data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} committee or association data with id: {id} successfully.";
+			committeeLogs.RenderedMessage = $"Committee or association data deleted for user: {currentUser.UserName}.";
+			committeeLogs.AdditionalData = $"User deleted their committee or association data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", committeeLogs);
 			#endregion
 		}

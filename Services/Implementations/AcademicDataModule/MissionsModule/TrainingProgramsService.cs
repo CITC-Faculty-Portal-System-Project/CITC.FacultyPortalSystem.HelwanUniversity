@@ -28,11 +28,10 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
-			var trainingProgramsLog = new LogEntry
+            #region Log
+            var trainingProgramsLog = new LogEntry
             {
-                Category = Category.FacultyMemberMissions.ToString(),
+                Category = Category.FacultyMemberAcademicData.ToString(),
                 CategoryAction = CategoryAction.TrainingProgramsActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName,
@@ -44,11 +43,10 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             if(trainingPrograms is null)
             {
 				#region Log
-				trainingProgramsLog.RenderedMessage = $"Training programs not found for user: {userOfData.UserName}.";
+				trainingProgramsLog.RenderedMessage = $"Training programs not found for user: {currentUser.UserName}.";
 				trainingProgramsLog.Level = "Warning";
 				trainingProgramsLog.Timestamp = DateTime.Now;
-				trainingProgramsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their training programs data, but no training programs data was found in the database for user with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} training programs data, but no training programs data was found in the database for user: {userOfData.UserName}";
+				trainingProgramsLog.AdditionalData = $"User tried to get their training programs data, but no training programs data was found in the database for user with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", trainingProgramsLog);
 				#endregion
 				throw NotFound();
@@ -60,11 +58,10 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
                 new TrainingProgramsCountSpecifications(parameters, email));
 
 			#region Log
-			trainingProgramsLog.RenderedMessage = $"Training programs data retrieved for user: {userOfData.UserName}.";
+			trainingProgramsLog.RenderedMessage = $"Training programs data retrieved for user: {currentUser.UserName}.";
 			trainingProgramsLog.Level = "Information";
 			trainingProgramsLog.Timestamp = DateTime.Now;
-			trainingProgramsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their training programs data successfully, total count of training programs data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} training programs data successfully, total count of training programs data retrieved: {totalCount}.";
+			trainingProgramsLog.AdditionalData = $"User retrieved their training programs data successfully, total count of training programs data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", trainingProgramsLog);
 			#endregion
 
@@ -81,10 +78,9 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
         {
             #region Log
             var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var trainingProgramLog = new LogEntry
             {
-                Category = Category.FacultyMemberMissions.ToString(),
+                Category = Category.FacultyMemberAcademicData.ToString(),
                 CategoryAction = CategoryAction.TrainingProgramsActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName,
@@ -98,9 +94,8 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				#region Log
 				trainingProgramLog.Timestamp = DateTime.Now;
 				trainingProgramLog.Level = "Warning";
-				trainingProgramLog.RenderedMessage = $"Training program not found for user: {userOfData.UserName}.";
-				trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their training program data with id: {id}, but no training program data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} training program data with id: {id}, but no training program data with this id was found in the database.";
+				trainingProgramLog.RenderedMessage = $"Training program not found for user: {currentUser.UserName}.";
+				trainingProgramLog.AdditionalData = $"User tried to get their training program data with id: {id}, but no training program data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
 				#endregion
 				throw NotFound();
@@ -127,9 +122,8 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#region Log
 			trainingProgramLog.Timestamp = DateTime.Now;
 			trainingProgramLog.Level = "Information";
-			trainingProgramLog.RenderedMessage = $"Training program data retrieved for user: {userOfData.UserName}.";
-			trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their training program data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} training program data with id: {id} successfully.";
+			trainingProgramLog.RenderedMessage = $"Training program data retrieved for user: {currentUser.UserName}.";
+			trainingProgramLog.AdditionalData = $"User retrieved their training program data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", trainingProgramLog);
 			#endregion
 			return Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
@@ -142,11 +136,10 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
-			var trainingProgramLog = new LogEntry
+            #region Log
+            var trainingProgramLog = new LogEntry
 			{
-				Category = Category.FacultyMemberMissions.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TrainingProgramsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -164,8 +157,7 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				trainingProgramLog.Timestamp = DateTime.Now;
 				trainingProgramLog.Level = "Warning";
 				trainingProgramLog.RenderedMessage = $"Faculty Member not found.";
-				trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a training program for a faculty member that does not exist in database, no faculty member found with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to create a training program for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
+				trainingProgramLog.AdditionalData = $"User tried to create a training program for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
 				#endregion
 				throw;
@@ -181,10 +173,8 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             #region Log
             trainingProgramLog.Timestamp = DateTime.Now;
 			trainingProgramLog.Level = "Information";
-            trainingProgramLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a training program."
-				: $"Admin: {currentUser.UserName} created a training program for user: {userOfData.UserName}";
-            trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a training program with id: {response.Id} and Name: {response.TrainingProgramName} successfully."
-				: $"Admin: {currentUser.UserName} created a training program with id: {response.Id} and Name: {response.TrainingProgramName} for user: {userOfData.UserName} successfully.";
+            trainingProgramLog.RenderedMessage = $"User: {currentUser.UserName} created a training program.";
+            trainingProgramLog.AdditionalData = $"User created a training program with id: {response.Id} and Name: {response.TrainingProgramName} successfully.";
 			_logger.LogInformation("{@LogDetails}", trainingProgramLog);
 			#endregion
 			return response;
@@ -197,10 +187,9 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
         {
 			#region Log
             var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var trainingProgramLog = new LogEntry
 			{
-				Category = Category.FacultyMemberMissions.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TrainingProgramsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -218,9 +207,8 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
                 #region Log
                 trainingProgramLog.Timestamp = DateTime.Now;
 				trainingProgramLog.Level = "Warning";
-				trainingProgramLog.RenderedMessage = $"Training program not found for user: {userOfData.UserName}.";
-				trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their training program data with id: {id}, but no training program data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} training program data with id: {id}, but no training program data with this id was found in the database.";
+				trainingProgramLog.RenderedMessage = $"Training program not found for user: {currentUser.UserName}.";
+				trainingProgramLog.AdditionalData = $"User tried to update their training program data with id: {id}, but no training program data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
 				#endregion
 				throw NotFound();
@@ -254,9 +242,8 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
             #region Log
             trainingProgramLog.Timestamp = DateTime.Now;
 			trainingProgramLog.Level = "Information";
-			trainingProgramLog.RenderedMessage = $"Training program data updated for user: {userOfData.UserName}.";
-			trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their training program data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
-				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} training program data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			trainingProgramLog.RenderedMessage = $"Training program data updated for user: {currentUser.UserName}.";
+			trainingProgramLog.AdditionalData = $"User updated their training program data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", trainingProgramLog);
 			#endregion
 			return Mapper.Map<TrainingProgramsResponseDto>(trainingProgram);
@@ -268,10 +255,9 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var trainingProgramLog = new LogEntry
 			{
-				Category = Category.FacultyMemberMissions.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TrainingProgramsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -284,9 +270,8 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				#region Log
 				trainingProgramLog.Timestamp = DateTime.Now;
 				trainingProgramLog.Level = "Warning";
-				trainingProgramLog.RenderedMessage = $"Training program not found for user: {userOfData.UserName}.";
-				trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their training program data with id: {id}, but no training program data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} training program data with id: {id}, but no training program data with this id was found in the database.";
+				trainingProgramLog.RenderedMessage = $"Training program not found for user: {currentUser.UserName}.";
+				trainingProgramLog.AdditionalData = $"User tried to delete their training program data with id: {id}, but no training program data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", trainingProgramLog);
 				#endregion
 				throw NotFound();
@@ -317,9 +302,8 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#region Log
 			trainingProgramLog.Timestamp = DateTime.Now;
 			trainingProgramLog.Level = "Information";
-			trainingProgramLog.RenderedMessage = $"Training program data deleted for user: {userOfData.UserName}.";
-			trainingProgramLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their training program data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} training program data with id: {id} successfully.";
+			trainingProgramLog.RenderedMessage = $"Training program data deleted for user: {currentUser.UserName}.";
+			trainingProgramLog.AdditionalData = $"User deleted their training program data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", trainingProgramLog);
 			#endregion
 		}

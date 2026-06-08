@@ -278,7 +278,7 @@ namespace Services.Implementations.AdminModule
 				userManagementLog.RenderedMessage = $"User created successfully.";
 				userManagementLog.Timestamp = DateTime.Now;
 				userManagementLog.Level = "Information";
-				userManagementLog.AdditionalData = $"Admin: {currentUser.UserName} created a user with name : {result.UserName ?? result.Name}, id : {result.Id}, email : {result.Email}, role(s) : {result.Roles?.ToList()} was created successfully.";
+				userManagementLog.AdditionalData = $"User with name : {result.UserName ?? result.Name}, id : {result.Id}, email : {result.Email}, role(s) : {result.Roles?.ToList()} was created successfully";
 				_logger.LogInformation("{@LogDetails}", userManagementLog);
 				#endregion
 				return result;
@@ -289,7 +289,7 @@ namespace Services.Implementations.AdminModule
 				userManagementLog.RenderedMessage = $"Failed to create user.";
 				userManagementLog.Timestamp = DateTime.Now;
 				userManagementLog.Level = "Warning";
-				userManagementLog.AdditionalData = $"Admin: {currentUser.UserName} failed to create user with name: {user.UserName}, national number: {user.NationalNumber}, email: {user.Email}.";
+				userManagementLog.AdditionalData = $"Failed to create user with name : {user.UserName}, national number : {user.NationalNumber}, email : {user.Email}.";
 				userManagementLog.Exception = ex.ToString();
 				userManagementLog.ExceptionMessage = ex.Message;
 				userManagementLog.ExceptionDetail = ex.StackTrace;
@@ -320,10 +320,10 @@ namespace Services.Implementations.AdminModule
 			var usersResponse = Mapper.Map<IEnumerable<UserShowForAdminResponseDTO>>(users);
 
 			#region Log
-			userManagementLog.RenderedMessage = $"Admin retrieved all users successfully";
+			userManagementLog.RenderedMessage = $"User retrieved all users successfully";
 			userManagementLog.Timestamp = DateTime.Now;
 			userManagementLog.Level = "Information";
-			userManagementLog.AdditionalData = $"Admin: {currentUser.UserName} retrieved all [{users.Count()}] users successfully.";
+			userManagementLog.AdditionalData = $"User retrieved all [{users.Count()}] users successfully.";
 			_logger.LogInformation("{@LogDetails}", userManagementLog);
 			#endregion
 			return new PaginatedResult<UserShowForAdminResponseDTO>(parameters.PageIndex, currentPage, totalPagesCount, usersResponse);
@@ -350,7 +350,7 @@ namespace Services.Implementations.AdminModule
 				userManagementLog.RenderedMessage = $"Failed to retrieve user.";
 				userManagementLog.Timestamp = DateTime.Now;
 				userManagementLog.Level = "Warning";
-				userManagementLog.AdditionalData = $"Admin: {currentUser.UserName} failed to retrieve user with id : {userId}. User not found.";
+				userManagementLog.AdditionalData = $"Failed to retrieve user with id : {userId}. User not found.";
 				_logger.LogWarning("{@LogDetails}", userManagementLog);
 				#endregion
 				throw NotFound();
@@ -360,7 +360,7 @@ namespace Services.Implementations.AdminModule
 			userManagementLog.RenderedMessage = $"User retrieved successfully.";
 			userManagementLog.Timestamp = DateTime.Now;
 			userManagementLog.Level = "Information";
-			userManagementLog.AdditionalData = $"User with id: {user.Id} was retrieved successfully.";
+			userManagementLog.AdditionalData = $"User with id : {user.Id} was retrieved successfully.";
 			_logger.LogInformation("{@LogDetails}", userManagementLog);
 			#endregion
 			return Mapper.Map<UserShowForAdminResponseDTO>(user);
@@ -399,8 +399,7 @@ namespace Services.Implementations.AdminModule
 				userManagementLog.RenderedMessage = $"User credentials updated successfully.";
 				userManagementLog.Timestamp = DateTime.Now;
 				userManagementLog.Level = "Information";
-				userManagementLog.AdditionalData = $"User with id : {userId} had their credentials updated successfully by Admin: {currentUser.UserName}." +
-					$" Updated credentials : [username : {(oldCredentials.UserName != foundUserEntity.UserName ? user.UserName : "No Update")}," +
+				userManagementLog.AdditionalData = $"User with id : {userId} had their credentials updated successfully. updated credentials : [username : {(oldCredentials.UserName != foundUserEntity.UserName ? user.UserName : "No Update")}," +
 					$" email : {(oldCredentials.Email != foundUserEntity.Email ? user.Email : "No Update")}," +
 					$" national number : {(oldCredentials.NationalNumber != foundUserEntity.NationalNumber ? user.NationalNumber : "No Update")}," +
 					$" password : {(string.IsNullOrWhiteSpace(user.Password) ? "Not Updated" : $"{user.Password}")}].";
@@ -413,7 +412,7 @@ namespace Services.Implementations.AdminModule
 				userManagementLog.RenderedMessage = $"Failed to edit user credentials.";
 				userManagementLog.Timestamp = DateTime.Now;
 				userManagementLog.Level = "warning";
-				userManagementLog.AdditionalData = $"Admin: {currentUser.UserName} failed to edit [username / email / national number / password] for user with id: {userId}.";
+				userManagementLog.AdditionalData = $"Failed to edit [username / email / national number / password] for user with id : {userId}.";
 				userManagementLog.Exception = ex.ToString();
 				userManagementLog.ExceptionMessage = ex.Message;
 				userManagementLog.ExceptionDetail = ex.StackTrace;
@@ -448,7 +447,7 @@ namespace Services.Implementations.AdminModule
 				userPermissionsLog.RenderedMessage = $"User assigned permissions successfully";
 				userPermissionsLog.Timestamp = DateTime.Now;
 				userPermissionsLog.Level = "Information";
-				userPermissionsLog.AdditionalData = $"User with id: {userId} was assigned the following permission(s): [{permissions?.Select(p => p.DisplayName).ToList()}] successfully.";
+				userPermissionsLog.AdditionalData = $"User with id : {userId} was assigned the following permission(s) : [{permissions?.Select(p => p.DisplayName).ToList()}] successfully.";
 				_logger.LogInformation("{@LogDetails}", userPermissionsLog);
 				#endregion
 				return Mapper.Map<UserShowForAdminResponseDTO>(userEntity);
@@ -459,7 +458,7 @@ namespace Services.Implementations.AdminModule
 				userPermissionsLog.RenderedMessage = $"Failed to assign permissions to user.";
 				userPermissionsLog.Timestamp = DateTime.Now;
 				userPermissionsLog.Level = "Warning";
-				userPermissionsLog.AdditionalData = $"Admin: {currentUser.UserName} failed to assign the following permission(s): [{permissions?.Select(p => p.DisplayName).ToList()}] to user with id: {userId}.";
+				userPermissionsLog.AdditionalData = $"Failed to assign the following permission(s) : [{permissions?.Select(p => p.DisplayName).ToList()}] to user with id : {userId}.";
 				userPermissionsLog.ExceptionMessage = ex.Message;
 				userPermissionsLog.Exception = ex.ToString();
 				userPermissionsLog.ExceptionDetail = ex.StackTrace;
@@ -489,7 +488,7 @@ namespace Services.Implementations.AdminModule
 				userPermissionsLog.RenderedMessage = $"User not found.";
 				userPermissionsLog.Timestamp = DateTime.Now;
 				userPermissionsLog.Level = "Warning";
-				userPermissionsLog.AdditionalData = $"Admin: {currentUser.UserName} failed to revoke permissions from user with id: {userId} because the user was not found.";
+				userPermissionsLog.AdditionalData = $"Failed to revoke permissions from user with id : {userId} because the user was not found.";
 				_logger.LogWarning("{@LogDetails}", userPermissionsLog);
 				#endregion
 				throw NotFound();
@@ -525,7 +524,7 @@ namespace Services.Implementations.AdminModule
 			userPermissionsLog.RenderedMessage = $"User permissions revoked successfully.";
 			userPermissionsLog.Timestamp = DateTime.Now;
 			userPermissionsLog.Level = "Information";
-			userPermissionsLog.AdditionalData = $"User with id: {userId} was revoked the following permission(s): [{permissions?.Select(p => p.DisplayName).ToList()}] successfully.";
+			userPermissionsLog.AdditionalData = $"User with id : {userId} was revoked the following permission(s) : [{permissions?.Select(p => p.DisplayName).ToList()}] successfully.";
 			_logger.LogInformation("{@LogDetails}", userPermissionsLog);
 			#endregion
 			return Mapper.Map<UserShowForAdminResponseDTO>(user);
@@ -579,7 +578,7 @@ namespace Services.Implementations.AdminModule
 			userPermissionsLog.RenderedMessage = $"Current user permissions retrieved successfully.";
 			userPermissionsLog.Timestamp = DateTime.Now;
 			userPermissionsLog.Level = "Information";
-			userPermissionsLog.AdditionalData = $"Current user with id: {currentUser.UserId} retrieved their permissions successfully. Permissions count: {permissions.Count}.";
+			userPermissionsLog.AdditionalData = $"Current user with id : {currentUser.UserId} retrieved their permissions successfully. Permissions count : {permissions.Count}.";
 			_logger.LogInformation("{@LogDetails}", userPermissionsLog);
 			#endregion
 			return permissions;
@@ -608,9 +607,10 @@ namespace Services.Implementations.AdminModule
 			userPermissionsLog.RenderedMessage = $"All system permissions retrieved successfully.";
 			userPermissionsLog.Timestamp = DateTime.Now;
 			userPermissionsLog.Level = "Information";
-			userPermissionsLog.AdditionalData = $"Admin: {currentUser.UserId} retrieved all system permissions successfully. Permissions count: {permissions.Count()}.";
+			userPermissionsLog.AdditionalData = $"User with id : {currentUser.UserId} retrieved all system permissions successfully. Permissions count : {permissions.Count()}.";
 			_logger.LogInformation("{@LogDetails}", userPermissionsLog);
 			#endregion
+
 			return Mapper.Map<IEnumerable<PermissionResponseDTO>>(permissions);
 		}
 
@@ -633,7 +633,7 @@ namespace Services.Implementations.AdminModule
 				userManagementLog.RenderedMessage = $"User not found.";
 				userManagementLog.Timestamp = DateTime.Now;
 				userManagementLog.Level = "Warning";
-				userManagementLog.AdditionalData = $"Admin: {currentUser.UserName} failed to get user email and id from username because user with username: {username} was not found.";
+				userManagementLog.AdditionalData = $"Failed to get user email and id from username because user with username : {username} was not found.";
 				_logger.LogWarning("{@LogDetails}", userManagementLog);
 				#endregion
 				throw new UserNotFoundException("User Wasn't Found");
@@ -643,7 +643,7 @@ namespace Services.Implementations.AdminModule
 			userManagementLog.RenderedMessage = $"User email and id retrieved successfully";
 			userManagementLog.Timestamp = DateTime.Now;
 			userManagementLog.Level = "Information";
-			userManagementLog.AdditionalData = $"User's id: {user.Id} and email: {user.Email} were successfully retrieved from username: {username}.";
+			userManagementLog.AdditionalData = $"User id : {user.Id} and email : {user.Email} were retrieved successfully from username : {username}.";
 			_logger.LogInformation("{@LogDetails}", userManagementLog);
 			#endregion
 			return new UserIdentifiersResposnseDTO

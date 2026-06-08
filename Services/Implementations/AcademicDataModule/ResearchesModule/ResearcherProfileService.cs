@@ -21,18 +21,16 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
         public async Task<ResearcherProfileResponseDTO> GetResearcherProfile(Guid? facultyMemberId = null)
         {
             var currentUser = await GetCurrentUserAsync();
-            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
-
             #region Log
-            var userOfData = (facultyMemberId is null) ? currentUser : await GetUserByIdAsync(targetFacultyMemberId); 
-			var researcherLog = new LogEntry
+            var researcherLog = new LogEntry
             {
-                Category = Category.FacultyMemberResearches.ToString(),
+                Category = Category.FacultyMemberAcademicData.ToString(),
                 CategoryAction = CategoryAction.ResearcherProfileActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName
             };
             #endregion
+            var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
             var profile = await Repo.GetAsync(
                 new ResearcherProfileSpceification(targetFacultyMemberId));
@@ -60,9 +58,8 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			researcherLog.Timestamp = DateTime.Now;
 			researcherLog.Level = "Information";
-			researcherLog.RenderedMessage = $"Researcher profile data retrieved for user: {userOfData.UserName}.";
-			researcherLog.AdditionalData = (facultyMemberId is null) ? $"User retrieved their researcher profile successfully."
-                : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} researcher profile.";
+			researcherLog.RenderedMessage = $"Researcher profile retrieved for user: {currentUser.UserName}.";
+			researcherLog.AdditionalData = $"User retrieved their researcher profile successfully.";
 			_logger.LogInformation("{@LogDetails}", researcherLog);
 			#endregion
 			return Mapper.Map<ResearcherProfileResponseDTO>(profile);

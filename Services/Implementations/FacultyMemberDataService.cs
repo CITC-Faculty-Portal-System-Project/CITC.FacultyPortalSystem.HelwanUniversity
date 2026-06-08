@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Domain.Entities.CVGenerationModule;
+using Domain.Entities.FacultyMemberDataModule;
+using Microsoft.Extensions.Logging;
 using Services.Global;
+using Services.Specifications.CVGenerationModule;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Enums.Logging;
 using System.Text.Encodings.Web;
@@ -34,20 +37,16 @@ namespace Services.Implementations
         #region PersonalData
 
         public async Task<PersonalDataResponseDto?> GetPersonalDataAsync(string? facultyMemberEmail = null)
-        {
+        {            
             var currentUser = await GetCurrentUserAsync();
-            var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail); 
             var personalDateLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
+                Category = Category.FacultyMemberService.ToString(),
                 CategoryAction = CategoryAction.PersonalDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
-            #endregion
+            };
+
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             var personalData = await PersonalDataRepo.GetAsync(
                 new PersonalDataWithIncludesSpecifications(email));
@@ -56,10 +55,11 @@ namespace Services.Implementations
             {
                 #region Log
                 personalDateLog.Timestamp = DateTime.Now;
-                personalDateLog.RenderedMessage = $"Personal data not found for user: {userOfData.UserName}.";
+                personalDateLog.RenderedMessage = $"Personal data not found for user: {currentUser.UserName}.";
                 personalDateLog.Level = "Warning";
-                personalDateLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their personal data, but no personal data was found in the database for user with email: {email}."
-                    : $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} personal data, but no personal data was found in the database for user: {userOfData.UserName}.";
+                personalDateLog.UserIP = GetUserIP();
+                personalDateLog.UserName = currentUser.UserName;
+                personalDateLog.AdditionalData = $"User tried to get their personal data, but no personal data was found in the database for user with email : {currentUser.Email}.";
                 _logger.LogWarning("{@LogDetails}", personalDateLog);
                 #endregion
                 throw new NotFoundException("Personal Data is Not Found.");
@@ -71,14 +71,24 @@ namespace Services.Implementations
                         personalData.FacultyMemberId,
                         facultyMemberEmail);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
 				#region Log
-				personalDateLog.Timestamp = DateTime.Now;
-				personalDateLog.Level = "Warning";
-                personalDateLog.RenderedMessage = $"User unauthorized to access personal data.";
-                personalDateLog.AdditionalData = $"User tried to get personal data that does not belong to them, personal data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-				_logger.LogWarning("{@LogDetails}", personalDateLog);
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to access personal data.",
+					AdditionalData = $"User tried to access personal data that does not belong to them. Personal data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
@@ -96,11 +106,12 @@ namespace Services.Implementations
           
             #region Log
             personalDateLog.Timestamp = DateTime.Now;
-            personalDateLog.RenderedMessage = $"Personal data retrieved for user: {userOfData.UserName}.";
+            personalDateLog.RenderedMessage = $"Personal data retrieved for user: {currentUser.UserName}.";
             personalDateLog.Level = "Information";
-            personalDateLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their personal data successfully."
-                : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} personal data successfully.";
-			_logger.LogInformation("{@LogDetails}", personalDateLog);
+            personalDateLog.UserIP = GetUserIP();
+            personalDateLog.UserName = currentUser.UserName;
+            personalDateLog.AdditionalData = $"User retrieved their personal data successfully.";
+            _logger.LogInformation("{@LogDetails}", personalDateLog);
             #endregion
             return result;
         }
@@ -117,18 +128,13 @@ namespace Services.Implementations
                 Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
             };
 
-            var email = facultyMemberEmail ?? currentUser.Email;
-
-            #region Log
-            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var updatePersonalDataLog = new LogEntry
+            var updatePersonalDataLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
+                Category = Category.FacultyMemberService.ToString(),
                 CategoryAction = CategoryAction.PersonalDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
-            #endregion
+            };
+
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             var personalData = await PersonalDataRepo.GetAsync(
                 new PersonalDataWithIncludesSpecifications(email));
@@ -137,10 +143,11 @@ namespace Services.Implementations
             {
                 #region Log
                 updatePersonalDataLog.Timestamp = DateTime.Now;
-                updatePersonalDataLog.RenderedMessage = $"Personal data not found for user: {userOfData.UserName}.";
+                updatePersonalDataLog.RenderedMessage = $"Personal data not found for user: {currentUser.UserName}.";
                 updatePersonalDataLog.Level = "Warning";
-                updatePersonalDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their personal data, but no personal data was found in the database for user with email: {email}."
-                    : $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} personal data, but no personal data was found in the database for user: {userOfData.UserName}.";
+                updatePersonalDataLog.UserIP = GetUserIP();
+                updatePersonalDataLog.UserName = currentUser.UserName;
+                updatePersonalDataLog.AdditionalData = $"User tried to update their personal data, but no personal data was found in the database for user with email : {currentUser.Email}.";
                 _logger.LogWarning("{@LogDetails}", updatePersonalDataLog); 
                 #endregion
                 throw new NotFoundException("Personal Data is Not Found.");
@@ -153,14 +160,24 @@ namespace Services.Implementations
                         personalData.FacultyMemberId,
                         facultyMemberEmail);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
 				#region Log
-				updatePersonalDataLog.Timestamp = DateTime.Now;
-				updatePersonalDataLog.Level = "Warning";
-				updatePersonalDataLog.RenderedMessage = $"User unauthorized to access personal data.";
-				updatePersonalDataLog.AdditionalData = $"User tried to update personal data that does not belong to them, personal data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-				_logger.LogWarning("{@LogDetails}", updatePersonalDataLog);
+                var ensureOwnershipLog = new LogEntry
+                {
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to update personal data.",
+					AdditionalData = $"User tried to update personal data that does not belong to them. Personal data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
@@ -175,10 +192,11 @@ namespace Services.Implementations
 
             #region Log
             updatePersonalDataLog.Timestamp = DateTime.Now;
-            updatePersonalDataLog.RenderedMessage = $"Personal data updated for user: {userOfData.UserName}.";
+            updatePersonalDataLog.RenderedMessage = $"Personal data updated for user: {currentUser.UserName}.";
             updatePersonalDataLog.Level = "Information";
-            updatePersonalDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their personal data successfully. \nOld Data: {JsonSerializer.Serialize(oldPersonalData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(result, jsonOptions)}."
-                : $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} personal data successfully. \nOld Data: {JsonSerializer.Serialize(oldPersonalData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(result, jsonOptions)}.";
+            updatePersonalDataLog.UserIP = GetUserIP();
+            updatePersonalDataLog.UserName = currentUser.UserName;
+            updatePersonalDataLog.AdditionalData = $"User updated their personal data successfully. \nOld Data: {JsonSerializer.Serialize(oldPersonalData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(result, jsonOptions)}.";
             _logger.LogInformation("{@LogDetails}", updatePersonalDataLog);
             #endregion
             return result;
@@ -192,19 +210,14 @@ namespace Services.Implementations
         {
 
             var currentUser = await GetCurrentUserAsync();
-			var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var contactDataLog = new LogEntry
+            var contactDataLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
+                Category = Category.FacultyMemberService.ToString(),
                 CategoryAction = CategoryAction.ContactDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
-            #endregion
+            };
 
+            var email = facultyMemberEmail ?? currentUser.Email;
             var contactData = await ContactDataRepo.GetAsync(
                 new ContactDataWithFacultyMemberEmailSpecifications(email));
 
@@ -212,10 +225,11 @@ namespace Services.Implementations
             {
                 #region Log
                 contactDataLog.Timestamp = DateTime.Now;
-                contactDataLog.RenderedMessage = $"Contact data not found for user: {userOfData.UserName}.";
+                contactDataLog.RenderedMessage = $"Contact data not found for user: {currentUser.UserName}.";
                 contactDataLog.Level = "Warning";
-                contactDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their contact data, but no contact data was found in the database for user with email: {email}."
-                    : $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} contact data, but no contact data was found in the database for user: {userOfData.UserName}.";
+                contactDataLog.UserIP = GetUserIP();
+                contactDataLog.UserName = currentUser.UserName;
+                contactDataLog.AdditionalData = $"User tried to get their contact data, but no contact data was found in the database for user with email : {currentUser.Email}.";
                 _logger.LogWarning("{@LogDetails}", contactDataLog);
                 #endregion
                 throw new NotFoundException("Contact Data is Not Found.");
@@ -227,24 +241,35 @@ namespace Services.Implementations
                         contactData.FacultyMemberId,
                         facultyMemberEmail);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
 				#region Log
-				contactDataLog.Timestamp = DateTime.Now;
-				contactDataLog.Level = "Warning";
-				contactDataLog.RenderedMessage = $"User unauthorized to access contact data.";
-				contactDataLog.AdditionalData = $"User tried to get contact data that does not belong to them, contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-				_logger.LogWarning("{@LogDetails}", contactDataLog);
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to access contact data.",
+					AdditionalData = $"User tried to access contatct data that does not belong to them. Contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
 
             #region Log
             contactDataLog.Timestamp = DateTime.Now;
-            contactDataLog.RenderedMessage = $"Contact data retrieved for user: {userOfData.UserName}.";
+            contactDataLog.RenderedMessage = $"Contact data retrieved for user: {currentUser.UserName}.";
             contactDataLog.Level = "Information";
-            contactDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their contact data successfully."
-                : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} contact data successfully.";
+            contactDataLog.UserIP = GetUserIP();
+            contactDataLog.UserName = currentUser.UserName;
+            contactDataLog.AdditionalData = $"User retrieved their contact data successfully.";
             _logger.LogInformation("{@LogDetails}", contactDataLog);
             #endregion
             return Mapper.Map<ContactDataResponseDto>(contactData);
@@ -262,18 +287,13 @@ namespace Services.Implementations
 				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
 			};
 
-            var email = facultyMemberEmail ?? currentUser.Email;
-
-            #region Log
-            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var updateContactDataLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
+                Category = Category.FacultyMemberService.ToString(),
                 CategoryAction = CategoryAction.ContactDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			};
-            #endregion
+            };
+
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             var contactData = await ContactDataRepo.GetAsync(
                 new ContactDataWithFacultyMemberEmailSpecifications(email));
@@ -282,10 +302,11 @@ namespace Services.Implementations
             {
                 #region Log
                 updateContactDataLog.Timestamp = DateTime.Now;
-                updateContactDataLog.RenderedMessage = $"Contect data not found for user: {userOfData.UserName}";
+                updateContactDataLog.RenderedMessage = $"Contect data not found for user: {currentUser.UserName}";
                 updateContactDataLog.Level = "Warning";
-                updateContactDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their contact data, but no contact data was found in the database for user with email: {email}"
-                    : $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} contact data, but no contact data was found in the database for user: {userOfData.UserName}.";
+                updateContactDataLog.UserIP = GetUserIP();
+                updateContactDataLog.UserName = currentUser.UserName;
+                updateContactDataLog.AdditionalData = $"User tried to update their contact data, but no contact data was found in the database for user with email : {currentUser.Email}";
                 _logger.LogWarning("{@LogDetails}", updateContactDataLog);
                 #endregion
                 throw new NotFoundException("Contact Data is Not Found.");
@@ -298,14 +319,24 @@ namespace Services.Implementations
                         contactData.FacultyMemberId,
                         facultyMemberEmail);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
 				#region Log
-				updateContactDataLog.Timestamp = DateTime.Now;
-				updateContactDataLog.Level = "Warning";
-				updateContactDataLog.RenderedMessage = $"User unauthorized to access contact data.";
-				updateContactDataLog.AdditionalData = $"User tried to update contact data that does not belong to them, contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-				_logger.LogWarning("{@LogDetails}", updateContactDataLog);
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to update contact data.",
+					AdditionalData = $"User tried to update contact data that does not belong to them. Contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
@@ -321,9 +352,10 @@ namespace Services.Implementations
             #region Log
             updateContactDataLog.Timestamp = DateTime.Now;
             updateContactDataLog.Level = "Information";
-            updateContactDataLog.RenderedMessage = $"Contact data updated for user: {userOfData.UserName}";
-            updateContactDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their contact data successfully. \nOld Data: {JsonSerializer.Serialize(oldContactData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedContactData, jsonOptions)}"
-                : $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} contact data successfully. \nOld Data: {JsonSerializer.Serialize(oldContactData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedContactData, jsonOptions)}";
+            updateContactDataLog.RenderedMessage = $"Contact data updated for user: {currentUser.UserName}";
+            updateContactDataLog.UserIP = GetUserIP();
+            updateContactDataLog.UserName = currentUser.UserName;
+            updateContactDataLog.AdditionalData = $"User updated their contact data successfully. \nOld Data: {JsonSerializer.Serialize(oldContactData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedContactData, jsonOptions)}";
             _logger.LogInformation("{@LogDetails}", updateContactDataLog);
             #endregion
 
@@ -339,17 +371,13 @@ namespace Services.Implementations
 
             var currentUser = await GetCurrentUserAsync();
 
-			var email = facultyMemberEmail ?? currentUser.Email;
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var identificationCardDataLog = new LogEntry
+            var identificationCardDataLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
-                CategoryAction = CategoryAction.IdentificationCardDataActions.ToString(),
-                UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
-            #endregion
+                Category = Category.FacultyMemberService.ToString(),
+                CategoryAction = CategoryAction.IdentificationCardDataActions.ToString()
+            };
+
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             var identificationCard = await IdentificationCardRepo.GetAsync(
                 new IdentificationCardWithFacultyMemberEmailSpecifications(email));
@@ -362,14 +390,24 @@ namespace Services.Implementations
                                 identificationCard.FacultyMemberId,
                                 facultyMemberEmail);
                 }
-                catch (UnauthorizedAccessException)
+                catch (Exception ex)
                 {
 					#region Log
-					identificationCardDataLog.Timestamp = DateTime.Now;
-					identificationCardDataLog.Level = "Warning";
-					identificationCardDataLog.RenderedMessage = $"User unauthorized to access identification card data.";
-					identificationCardDataLog.AdditionalData = $"User tried to get identification card data that does not belong to them, identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-					_logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+					var ensureOwnershipLog = new LogEntry
+					{
+						Category = Category.FacultyMemberService.ToString(),
+						CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+						Timestamp = DateTime.Now,
+						RenderedMessage = $"User unauthorized to access identification card data.",
+						AdditionalData = $"User tried to access identification card data that does not belong to them. identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+						Exception = ex.ToString(),
+						ExceptionDetail = ex.StackTrace,
+						ExceptionMessage = ex.Message,
+						UserIP = GetUserIP(),
+						UserName = currentUser.UserName,
+						Level = "Error"
+					};
+					_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 					#endregion
 					throw;
                 }
@@ -377,9 +415,10 @@ namespace Services.Implementations
                 #region Log
                 identificationCardDataLog.Timestamp = DateTime.Now;
                 identificationCardDataLog.Level = "Information";
-                identificationCardDataLog.RenderedMessage = $"Identification card retrieved for user: {userOfData.UserName}";
-                identificationCardDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their identification card data successfully."
-                    : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} identification card data successfully.";
+                identificationCardDataLog.UserIP = GetUserIP();
+                identificationCardDataLog.UserName = currentUser.UserName;
+                identificationCardDataLog.RenderedMessage = $"Identification card retrieved for user: {currentUser.UserName}";
+                identificationCardDataLog.AdditionalData = $"User retrieved their identification card data successfully";
                 _logger.LogInformation("{@LogDetails}", identificationCardDataLog);
                 #endregion
                 return Mapper.Map<IdentificationCardDto>(identificationCard);
@@ -398,20 +437,32 @@ namespace Services.Implementations
 				#region Log
 				identificationCardDataLog.Timestamp = DateTime.Now;
 				identificationCardDataLog.Level = "Warning";
+				identificationCardDataLog.UserIP = GetUserIP();
+				identificationCardDataLog.UserName = currentUser.UserName;
 				identificationCardDataLog.RenderedMessage = $"Faculty Member Not Found.";
-				identificationCardDataLog.AdditionalData = $"User tried to get identification card data for a faculty member that does not exist in database, No faculty member found with email: {email}.";
+				identificationCardDataLog.AdditionalData = $"User tried to get identification card data for a faculty member that does not exist in database, No faculty member found with email : {currentUser.Email}.";
 				_logger.LogWarning("{@LogDetails}", identificationCardDataLog);
                 #endregion
                 throw;
 			}
-			catch (UnauthorizedAccessException)
+			catch (Exception ex)
             {
-                #region Log
-                identificationCardDataLog.Timestamp = DateTime.Now;
-				identificationCardDataLog.RenderedMessage = $"User unauthorized to access identification card data.";
-				identificationCardDataLog.AdditionalData = $"User tried to get identification card data that does not belong to them. Identification card faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.";
-				identificationCardDataLog.Level = "Warning";
-				_logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+				#region Log
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to access identification card data.",
+					AdditionalData = $"Faculty member id does not match the logged in user id. Faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
@@ -432,11 +483,13 @@ namespace Services.Implementations
             #region Log
             identificationCardDataLog.Timestamp = DateTime.Now;
             identificationCardDataLog.Level = "Information";
+            identificationCardDataLog.UserIP = GetUserIP();
+            identificationCardDataLog.UserName = currentUser.UserName;
             identificationCardDataLog.RenderedMessage = $"Identification card retrieved for user: {currentUser.UserName}.";
-            identificationCardDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved new identification card data successfully."
-                : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} identification card data successfully.";
+            identificationCardDataLog.AdditionalData = $"User retrieved new identification card successfully.";
             _logger.LogInformation("{@LogDetails}", identificationCardDataLog);
             #endregion
+
             return Mapper.Map<IdentificationCardDto>(newCard);
         }
 
@@ -453,18 +506,13 @@ namespace Services.Implementations
 				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
 			};
 
-			var email = facultyMemberEmail ?? currentUser.Email;
-
-            #region Log
-            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var identificationCardDataLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
-                CategoryAction = CategoryAction.IdentificationCardDataActions.ToString(),
-				UserIP = GetUserIP(),
-                UserName = currentUser.UserName
-			}; 
-            #endregion
+                Category = Category.FacultyMemberService.ToString(),
+                CategoryAction = CategoryAction.IdentificationCardDataActions.ToString()
+            };
+
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             var identificationCard = await IdentificationCardRepo.GetAsync(
                 new IdentificationCardWithFacultyMemberEmailSpecifications(email));
@@ -474,9 +522,10 @@ namespace Services.Implementations
                 #region Log
                 identificationCardDataLog.Timestamp = DateTime.Now;
                 identificationCardDataLog.Level = "Warning";
-                identificationCardDataLog.RenderedMessage = $"Identification card data not found for user: {userOfData.UserName}.";
-                identificationCardDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their identification card data, but no identification card data was found in the database for user with email: {email}."
-                    : $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} identification card data, but no identification card data was found in the database for user: {userOfData.UserName}.";
+                identificationCardDataLog.RenderedMessage = $"Identification card data not found for user: {currentUser.UserName}.";
+                identificationCardDataLog.AdditionalData = $"User tried to update their identification card data, but no identification card data was found in the database for user with email : {currentUser.Email}.";
+                identificationCardDataLog.UserIP = GetUserIP();
+                identificationCardDataLog.UserName = currentUser.UserName;
                 _logger.LogWarning("{@LogDetails}", identificationCardDataLog);
                 #endregion
                 throw new NotFoundException("Identification Card is Not Found.");
@@ -489,14 +538,24 @@ namespace Services.Implementations
                         identificationCard.FacultyMemberId,
                         facultyMemberEmail);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
 				#region Log
-				identificationCardDataLog.Timestamp = DateTime.Now;
-				identificationCardDataLog.Level = "Warning";
-				identificationCardDataLog.RenderedMessage = $"User unauthorized to access identification card data.";
-				identificationCardDataLog.AdditionalData = $"User tried to update identification card data that does not belong to them, identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-				_logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to update identification card data.",
+					AdditionalData = $"User tried to update identification card data that does not belong to them. identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
@@ -511,12 +570,14 @@ namespace Services.Implementations
 
             #region Log
             identificationCardDataLog.Timestamp = DateTime.Now;
-            identificationCardDataLog.RenderedMessage = $"Identification card data updated for user: {userOfData.UserName}.";
+            identificationCardDataLog.RenderedMessage = $"Identification card data updated for user: {currentUser.UserName}.";
             identificationCardDataLog.Level = "Information";
-            identificationCardDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their identification card data successfully. \nOld Data: {JsonSerializer.Serialize(identificationCard, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedIdentificationCard, jsonOptions)}."
-                : $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} identification card data successfully. \nOld Data: {JsonSerializer.Serialize(identificationCard, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedIdentificationCard, jsonOptions)}.";
+            identificationCardDataLog.UserIP = GetUserIP();
+            identificationCardDataLog.UserName = currentUser.UserName;
+            identificationCardDataLog.AdditionalData = $"User updated their identification card data successfully. \nOld Data: {JsonSerializer.Serialize(identificationCard, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedIdentificationCard, jsonOptions)}.";
             _logger.LogInformation("{@LogDetails}", identificationCardDataLog);
             #endregion
+
             return Mapper.Map<IdentificationCardDto>(identificationCard);
         }
 
@@ -527,18 +588,14 @@ namespace Services.Implementations
         {
 
             var currentUser = await GetCurrentUserAsync();
-			var email = facultyMemberEmail ?? (currentUser.Email);
 
-            #region Log
-            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var socialMediaLog = new LogEntry
+            var socialMediaLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
+                Category = Category.FacultyMemberService.ToString(),
                 CategoryAction = CategoryAction.SocialMediaDataActions.ToString(),
-                UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			};
-            #endregion
+            };
+
+            var email = facultyMemberEmail ?? (currentUser.Email);
 
             var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
                 new SocialMediaWithFacultyMemberEmailSpecifications(email));
@@ -551,14 +608,24 @@ namespace Services.Implementations
                                 socialMediaPlatforms.FacultyMemberId,
                                 facultyMemberEmail);
                 }
-                catch (UnauthorizedAccessException)
+                catch (Exception ex)
                 {
 					#region Log
-					socialMediaLog.Timestamp = DateTime.Now;
-					socialMediaLog.Level = "Warning";
-					socialMediaLog.RenderedMessage = $"User unauthorized to access social media platforms data.";
-					socialMediaLog.AdditionalData = $"User tried to get social media platforms data that does not belong to them, social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-					_logger.LogWarning("{@LogDetails}", socialMediaLog);
+					var ensureOwnershipLog = new LogEntry
+					{
+						Category = Category.FacultyMemberService.ToString(),
+						CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+						Timestamp = DateTime.Now,
+						RenderedMessage = $"User unauthorized to access social media platforms data.",
+						AdditionalData = $"User tried to access social media platforms data that does not belong to them. social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+						Exception = ex.ToString(),
+						ExceptionDetail = ex.StackTrace,
+						ExceptionMessage = ex.Message,
+						UserIP = GetUserIP(),
+						UserName = currentUser.UserName,
+						Level = "Error"
+					};
+					_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 					#endregion
 					throw;
                 }
@@ -566,9 +633,10 @@ namespace Services.Implementations
                 #region Log
                 socialMediaLog.Timestamp = DateTime.Now;
                 socialMediaLog.Level = "Information";
-                socialMediaLog.RenderedMessage = $"Social media platforms data retrieved for user: {userOfData.UserName}";
-                socialMediaLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their social media platforms data successfully."
-                    : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} social media platforms data successfully.";
+                socialMediaLog.UserIP = GetUserIP();
+                socialMediaLog.UserName = currentUser.UserName;
+                socialMediaLog.RenderedMessage = $"Social media platforms data retrieved for user: {currentUser.UserName}";
+                socialMediaLog.AdditionalData = $"User retrieved their social media platforms data successfully";
                 _logger.LogInformation("{@LogDetails}", socialMediaLog);
                 #endregion
                 return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
@@ -587,20 +655,32 @@ namespace Services.Implementations
 				#region Log
 				socialMediaLog.Timestamp = DateTime.Now;
 				socialMediaLog.Level = "Warning";
+				socialMediaLog.UserIP = GetUserIP();
+				socialMediaLog.UserName = currentUser.UserName;
 				socialMediaLog.RenderedMessage = $"Faculty member not found.";
-				socialMediaLog.AdditionalData = $"User tried to get social media platforms data for a faculty member that does not exist in database, no faculty member found with email: {email}.";
+				socialMediaLog.AdditionalData = $"User tried to get social media platforms data for a faculty member that does not exist in database, no faculty member found with email : {currentUser.Email}.";
 				_logger.LogWarning("{@LogDetails}", socialMediaLog);
                 #endregion
                 throw;
 			}
-			catch (UnauthorizedAccessException)
+			catch (Exception ex)
             {
 				#region Log
-				socialMediaLog.Timestamp = DateTime.Now;
-				socialMediaLog.RenderedMessage = $"User unauthorized to access social media platforms data.";
-				socialMediaLog.AdditionalData = $"User tried to get social media platforms data that does not belong to them. social media platforms data faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.";
-				socialMediaLog.Level = "Warning";
-				_logger.LogWarning("{@LogDetails}", socialMediaLog);
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to access social media platforms data.",
+					AdditionalData = $"Faculty member id does not match the logged in user id. social media platforms data faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
@@ -622,11 +702,13 @@ namespace Services.Implementations
             #region Log
             socialMediaLog.Timestamp = DateTime.Now;
             socialMediaLog.Level = "Information";
-            socialMediaLog.RenderedMessage = $"Social media platforms data retrieved for user: {userOfData.UserName}.";
-            socialMediaLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved new social media platforms data successfully."
-                : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} social media platforms data successfully.";
+            socialMediaLog.UserIP = GetUserIP();
+            socialMediaLog.UserName = currentUser.UserName;
+            socialMediaLog.RenderedMessage = $"Social media platforms data retrieved for user: {currentUser.UserName}.";
+            socialMediaLog.AdditionalData = $"User retrieved new social media platforms data successfully.";
             _logger.LogInformation("{@LogDetails}", socialMediaLog);
             #endregion
+
             return Mapper.Map<SocialMediaPlatformsDto>(newSocialMediaPlatforms);
         }
 
@@ -634,6 +716,7 @@ namespace Services.Implementations
             SocialMediaPlatformsDto socialMediaPlatformsDto,
             string? facultyMemberEmail = null)
         {
+
             var currentUser = await GetCurrentUserAsync();
 
 			var jsonOptions = new JsonSerializerOptions
@@ -642,20 +725,15 @@ namespace Services.Implementations
 				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
 			};
 
-			var email = facultyMemberEmail ?? currentUser.Email;
-
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var updateSocialMediaLog = new LogEntry
             {
-                Category = Category.FacultyMemberDataService.ToString(),
-                CategoryAction = CategoryAction.SocialMediaDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			};
-			#endregion
+                Category = Category.FacultyMemberService.ToString(),
+                CategoryAction = CategoryAction.SocialMediaDataActions.ToString()
+            };
 
-			var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
+            var email = facultyMemberEmail ?? currentUser.Email;
+
+            var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
                 new SocialMediaWithFacultyMemberEmailSpecifications(email));
 
             if (socialMediaPlatforms is null)
@@ -663,9 +741,10 @@ namespace Services.Implementations
                 #region Log
                 updateSocialMediaLog.Timestamp = DateTime.Now;
                 updateSocialMediaLog.Level = "Warning";
-                updateSocialMediaLog.RenderedMessage = $"Social media platforms data not found for user: {userOfData.UserName}.";
-                updateSocialMediaLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their social media platforms data, but no social media platforms data was found in the database for user with email: {email}."
-                    : $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} social media platforms data, but no social media platforms data was found in the database for user: {userOfData.UserName}.";
+                updateSocialMediaLog.RenderedMessage = $"Social media platforms data not found for user: {currentUser.UserName}.";
+                updateSocialMediaLog.AdditionalData = $"User tried to update their social media platforms data, but no social media data was found in the database for user with email : {currentUser.Email}.";
+                updateSocialMediaLog.UserIP = GetUserIP();
+                updateSocialMediaLog.UserName = currentUser.UserName;
                 _logger.LogWarning("{@LogDetails}", updateSocialMediaLog);
                 #endregion
                 throw new NotFoundException("Social Media Platforms Are Not Found.");
@@ -678,14 +757,24 @@ namespace Services.Implementations
                         socialMediaPlatforms.FacultyMemberId,
                         facultyMemberEmail);
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
 				#region Log
-				updateSocialMediaLog.Timestamp = DateTime.Now;
-				updateSocialMediaLog.Level = "Warning";
-				updateSocialMediaLog.RenderedMessage = $"User unauthorized to access social media platforms data.";
-				updateSocialMediaLog.AdditionalData = $"User tried to update social media platforms data that does not belong to them, social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-				_logger.LogWarning("{@LogDetails}", updateSocialMediaLog);
+				var ensureOwnershipLog = new LogEntry
+				{
+					Category = Category.FacultyMemberService.ToString(),
+					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
+					Timestamp = DateTime.Now,
+					RenderedMessage = $"User unauthorized to update social media platforms data.",
+					AdditionalData = $"User tried to upate social media platforms data that does not belong to them. social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
+					Exception = ex.ToString(),
+					ExceptionDetail = ex.StackTrace,
+					ExceptionMessage = ex.Message,
+					UserIP = GetUserIP(),
+					UserName = currentUser.UserName,
+					Level = "Error"
+				};
+				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
 				#endregion
 				throw;
             }
@@ -699,12 +788,14 @@ namespace Services.Implementations
 
             #region Log
             updateSocialMediaLog.Timestamp = DateTime.Now;
-            updateSocialMediaLog.RenderedMessage = $"Social media platforms data updated for user: {userOfData.UserName}.";
+            updateSocialMediaLog.RenderedMessage = $"Social media platforms data updated for user: {currentUser.UserName}.";
             updateSocialMediaLog.Level = "Information";
-            updateSocialMediaLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their social media platforms data successfully. \nOld Data: {JsonSerializer.Serialize(oldSocialMediaData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedSocialMediaData, jsonOptions)}."
-                : $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} social media platforms data successfully. \nOld Data: {JsonSerializer.Serialize(oldSocialMediaData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedSocialMediaData, jsonOptions)}.";
+            updateSocialMediaLog.UserIP = GetUserIP();
+            updateSocialMediaLog.UserName = currentUser.UserName;
+            updateSocialMediaLog.AdditionalData = $"User updated their social media platforms data successfully. \nOld Data: {JsonSerializer.Serialize(oldSocialMediaData, jsonOptions)} \nNew Data: {JsonSerializer.Serialize(updatedSocialMediaData, jsonOptions)}.";
             _logger.LogInformation("{@LogDetails}", updateSocialMediaLog);
             #endregion
+
             return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
         }
 
