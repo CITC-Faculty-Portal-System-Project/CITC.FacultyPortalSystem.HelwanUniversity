@@ -14,7 +14,7 @@ namespace Services.Implementations.AttachmentsModule.Helpers
            IAuthenticationService _authenticationService)
     {
         public Func<Guid, string> BuildRemotePath { get; } =
-            userId => $"/{userId}/{Guid.NewGuid()}";
+            userId => $"files/{userId}/{Guid.NewGuid()}";
 
         public async Task<IReadOnlyList<AttachmentResponseDTO>> AddInternalAsync<TAttachment>(
             int ownerId,

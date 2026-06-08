@@ -10,16 +10,5 @@
 		ExternalDataHandling = 6,
 		FacultyMemberService = 7,
 		FacultyMemberAcademicData = 8,
-		UserManagement = 9,
-		TicketingSupport = 10,
-		FacultyMemberContributionsAndParticipations = 11,
-		FacultyMemberExperiences = 12,
-		FacultyMemberMissions = 13,
-		FacultyMemberPrizesAndRewards = 14,
-		FacultyMemberProjectsAndCommittees = 15,
-		FacultyMemberWritingsAndPatents = 16,
-		FacultyMemberScientificProgression = 17,
-		FacultyMemberResearches = 18,
-		FacultyMemberDataService = 19,
 	}
 }
