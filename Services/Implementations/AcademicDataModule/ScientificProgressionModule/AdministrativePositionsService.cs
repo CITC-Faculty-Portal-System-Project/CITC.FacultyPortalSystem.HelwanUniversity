@@ -28,10 +28,11 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var positionLogs = new LogEntry
+			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
+			var positionLogs = new LogEntry
             {
-                Category = Category.FacultyMemberAcademicData.ToString(),
+                Category = Category.FacultyMemberScientificProgression.ToString(),
                 CategoryAction = CategoryAction.AdministrativePositionsActions.ToString(),
                 UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -43,10 +44,11 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             if (positions is null)
             {
 				#region Log
-				positionLogs.RenderedMessage = $"Administrative positions not found for user: {currentUser.UserName}.";
+				positionLogs.RenderedMessage = $"Administrative positions not found for user: {userOfData.UserName}.";
 				positionLogs.Level = "Warning";
 				positionLogs.Timestamp = DateTime.Now;
-				positionLogs.AdditionalData = $"User tried to get their administrative positions data, but no administrative positions data was found in the database for user with email : {email}.";
+				positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their administrative positions data, but no administrative positions data was found in the database for user with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} administrative positions data, but no administrative positions data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", positionLogs);
 				#endregion
 				throw NotFound();
@@ -58,10 +60,11 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
                 new AdministrativePositionsCountSpecifications(parameters, email));
 
 			#region Log
-			positionLogs.RenderedMessage = $"Administrative positions data retrieved for user: {currentUser.UserName}.";
+			positionLogs.RenderedMessage = $"Administrative positions data retrieved for user: {userOfData.UserName}.";
 			positionLogs.Level = "Information";
 			positionLogs.Timestamp = DateTime.Now;
-			positionLogs.AdditionalData = $"User retrieved their administrative positions data successfully, total count of administrative positions data retrieved: {totalCount}.";
+			positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their administrative positions data successfully, total count of administrative positions data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} administrative positions data successfully, total count of administrative positions data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", positionLogs);
 			#endregion
 
@@ -78,9 +81,10 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var positionLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberScientificProgression.ToString(),
 				CategoryAction = CategoryAction.AdministrativePositionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -93,8 +97,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				#region Log
 				positionLogs.Timestamp = DateTime.Now;
 				positionLogs.Level = "Warning";
-				positionLogs.RenderedMessage = $"Administrative position not found for user: {currentUser.UserName}.";
-				positionLogs.AdditionalData = $"User tried to get their administrative position data with id: {id}, but no administrative position data with this id was found in the database.";
+				positionLogs.RenderedMessage = $"Administrative position not found for user: {userOfData.UserName}.";
+				positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their administrative position data with id: {id}, but no administrative position data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} administrative position data with id: {id}, but no administrative position data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", positionLogs);
 				#endregion
 				throw NotFound();
@@ -121,8 +126,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			positionLogs.Timestamp = DateTime.Now;
 			positionLogs.Level = "Information";
-			positionLogs.RenderedMessage = $"Administrative position data retrieved for user: {currentUser.UserName}.";
-			positionLogs.AdditionalData = $"User retrieved their administrative position data with id: {id} successfully.";
+			positionLogs.RenderedMessage = $"Administrative position data retrieved for user: {userOfData.UserName}.";
+			positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their administrative position data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} administrative position data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", positionLogs);
 			#endregion
 			return Mapper.Map<AdministrativePositionDto>(position);
@@ -136,9 +142,10 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
             var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var positionLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberScientificProgression.ToString(),
 				CategoryAction = CategoryAction.AdministrativePositionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -156,7 +163,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				positionLogs.Timestamp = DateTime.Now;
 				positionLogs.Level = "Warning";
 				positionLogs.RenderedMessage = $"Faculty Member not found.";
-				positionLogs.AdditionalData = $"User tried to create an administrative position for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create an administrative position for a faculty member that does not exist in database, no faculty member found with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to create a administrative position for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
 				_logger.LogWarning("{@LogDetails}", positionLogs);
 				#endregion
 				throw;
@@ -172,8 +180,10 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			positionLogs.Timestamp = DateTime.Now;
 			positionLogs.Level = "Information";
-			positionLogs.RenderedMessage = $"User: {currentUser.UserName} created an administrative position.";
-			positionLogs.AdditionalData = $"User created a administrative position with id: {response.Id} and position: {response.Position} successfully.";
+			positionLogs.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created an administrative position."
+				: $"Admin: {currentUser.UserName} created a administrative position for user: {userOfData.UserName}";
+			positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User created a administrative position with id: {response.Id} and position: {response.Position} successfully."
+				: $"Admin: {currentUser.UserName} created a administrative position with id: {response.Id} and position: {response.Position} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", positionLogs);
 			#endregion
 			return response;
@@ -186,9 +196,10 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var positionLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberScientificProgression.ToString(),
 				CategoryAction = CategoryAction.AdministrativePositionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -205,8 +216,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				#region Log
 				positionLogs.Timestamp = DateTime.Now;
 				positionLogs.Level = "Warning";
-				positionLogs.RenderedMessage = $"administrative position not found for user: {currentUser.UserName}.";
-				positionLogs.AdditionalData = $"User tried to update their administrative position data with id: {id}, but no administrative position data with this id was found in the database.";
+				positionLogs.RenderedMessage = $"administrative position not found for user: {userOfData.UserName}.";
+				positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their administrative position data with id: {id}, but no administrative position data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} administrative position data with id: {id}, but no administrative position data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", positionLogs);
 				#endregion
 				throw NotFound();
@@ -240,8 +252,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			positionLogs.Timestamp = DateTime.Now;
 			positionLogs.Level = "Information";
-			positionLogs.RenderedMessage = $"Administrative position data updated for user: {currentUser.UserName}.";
-			positionLogs.AdditionalData = $"User updated their administrative position data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			positionLogs.RenderedMessage = $"Administrative position data updated for user: {userOfData.UserName}.";
+			positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User updated their administrative position data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} administrative position data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", positionLogs);
 			#endregion
 			return Mapper.Map<AdministrativePositionDto>(position);
@@ -253,9 +266,10 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var positionLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberScientificProgression.ToString(),
 				CategoryAction = CategoryAction.AdministrativePositionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -267,8 +281,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				#region Log
 				positionLogs.Timestamp = DateTime.Now;
 				positionLogs.Level = "Warning";
-				positionLogs.RenderedMessage = $"Administrative position not found for user: {currentUser.UserName}.";
-				positionLogs.AdditionalData = $"User tried to delete their administrative position data with id: {id}, but no administrative position data with this id was found in the database.";
+				positionLogs.RenderedMessage = $"Administrative position not found for user: {userOfData.UserName}.";
+				positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their administrative position data with id: {id}, but no administrative position data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} administrative position data with id: {id}, but no administrative position data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", positionLogs);
 				#endregion
 				throw NotFound();
@@ -299,8 +314,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			positionLogs.Timestamp = DateTime.Now;
 			positionLogs.Level = "Information";
-			positionLogs.RenderedMessage = $"Administrative position data deleted for user: {currentUser.UserName}.";
-			positionLogs.AdditionalData = $"User deleted their administrative position data with id: {id} successfully.";
+			positionLogs.RenderedMessage = $"Administrative position data deleted for user: {userOfData.UserName}.";
+			positionLogs.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their administrative position data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} administrative position data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", positionLogs);
 			#endregion
 		}

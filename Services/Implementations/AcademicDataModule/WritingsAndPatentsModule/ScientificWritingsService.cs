@@ -28,10 +28,11 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var writingsLog = new LogEntry
+			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
+			var writingsLog = new LogEntry
             {
-                Category = Category.FacultyMemberAcademicData.ToString(),
+                Category = Category.FacultyMemberWritingsAndPatents.ToString(),
                 CategoryAction = CategoryAction.ScientificWritingsActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName,
@@ -43,10 +44,11 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             if(scientificWritings is null)
             {
 				#region Log
-				writingsLog.RenderedMessage = $"Scientific writings not found for user: {currentUser.UserName}.";
+				writingsLog.RenderedMessage = $"Scientific writings not found for user: {userOfData.UserName}.";
 				writingsLog.Level = "Warning";
 				writingsLog.Timestamp = DateTime.Now;
-				writingsLog.AdditionalData = $"User tried to get their scientific writings data, but no scientific writings data was found in the database for user with email : {email}.";
+				writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their scientific writings data, but no scientific writings data was found in the database for user with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} scientific writings data, but no scientific writings data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", writingsLog);
 				#endregion
 				throw NotFound();
@@ -58,10 +60,11 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
                 new ScientificWritingsCountSpecifications(parameters, email));
 
 			#region Log
-			writingsLog.RenderedMessage = $"Scientific writings data retrieved for user: {currentUser.UserName}.";
+			writingsLog.RenderedMessage = $"Scientific writings data retrieved for user: {userOfData.UserName}.";
 			writingsLog.Level = "Information";
 			writingsLog.Timestamp = DateTime.Now;
-			writingsLog.AdditionalData = $"User retrieved their scientific writings data successfully, total count of scientific writings data retrieved: {totalCount}.";
+			writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their scientific writings data successfully, total count of scientific writings data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} scientific writings data successfully, total count of scientific writings data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", writingsLog);
 			#endregion
 
@@ -78,9 +81,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var writingsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.ScientificWritingsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -94,8 +98,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				#region Log
 				writingsLog.Timestamp = DateTime.Now;
 				writingsLog.Level = "Warning";
-				writingsLog.RenderedMessage = $"Scientific writing not found for user: {currentUser.UserName}.";
-				writingsLog.AdditionalData = $"User tried to get their scientific writing data with id: {id}, but no scientific writing data with this id was found in the database.";
+				writingsLog.RenderedMessage = $"Scientific writing not found for user: {userOfData.UserName}.";
+				writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their scientific writing data with id: {id}, but no scientific writing data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} scientific writing data with id: {id}, but no scientific writing data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", writingsLog);
 				#endregion
 				throw NotFound();
@@ -122,8 +127,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			writingsLog.Timestamp = DateTime.Now;
 			writingsLog.Level = "Information";
-			writingsLog.RenderedMessage = $"Scientific writing data retrieved for user: {currentUser.UserName}.";
-			writingsLog.AdditionalData = $"User retrieved their scientific writing data with id: {id} successfully.";
+			writingsLog.RenderedMessage = $"Scientific writing data retrieved for user: {userOfData.UserName}.";
+			writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their scientific writing data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} scientific writing data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", writingsLog);
 			#endregion
 			return Mapper.Map<ScientificWritingsResponseDTO>(scientificWriting);
@@ -137,9 +143,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var writingsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.ScientificWritingsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -157,7 +164,8 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				writingsLog.Timestamp = DateTime.Now;
 				writingsLog.Level = "Warning";
 				writingsLog.RenderedMessage = $"Faculty Member not found.";
-				writingsLog.AdditionalData = $"User tried to create a scientific writing for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a scientific writing for a faculty member that does not exist in database, no faculty member found with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to create a scientific writing for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
 				_logger.LogWarning("{@LogDetails}", writingsLog);
 				#endregion
 				throw;
@@ -173,8 +181,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			writingsLog.Timestamp = DateTime.Now;
 			writingsLog.Level = "Information";
-			writingsLog.RenderedMessage = $"User: {currentUser.UserName} created a scientific writing.";
-			writingsLog.AdditionalData = $"User created a scientific writing with id: {response.Id} and title: {response.Title} successfully.";
+			writingsLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a scientific writing."
+				: $"Admin: {currentUser.UserName} created a scientific writing for user: {userOfData.UserName}";
+			writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a scientific writing with id: {response.Id} and title: {response.Title} successfully."
+				: $"Admin: {currentUser.UserName} created a scientific writing with id: {response.Id} and title: {response.Title} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", writingsLog);
 			#endregion
 			return response;
@@ -187,9 +197,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var writingsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.ScientificWritingsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -207,8 +218,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				#region Log
 				writingsLog.Timestamp = DateTime.Now;
 				writingsLog.Level = "Warning";
-				writingsLog.RenderedMessage = $"Scientific writing not found for user: {currentUser.UserName}.";
-				writingsLog.AdditionalData = $"User tried to update their scientific writing data with id: {scientificWritingId}, but no scientific writing data with this id was found in the database.";
+				writingsLog.RenderedMessage = $"Scientific writing not found for user: {userOfData.UserName}.";
+				writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their scientific writing data with id: {scientificWritingId}, but no scientific writing data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} scientific writing data with id: {scientificWritingId}, but no scientific writing data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", writingsLog);
 				#endregion
 				throw NotFound();
@@ -242,8 +254,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			writingsLog.Timestamp = DateTime.Now;
 			writingsLog.Level = "Information";
-			writingsLog.RenderedMessage = $"Scientific writing data updated for user: {currentUser.UserName}.";
-			writingsLog.AdditionalData = $"User updated their scientific writing data with id: {scientificWritingId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			writingsLog.RenderedMessage = $"Scientific writing data updated for user: {userOfData.UserName}.";
+			writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their scientific writing data with id: {scientificWritingId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} scientific writing data with id: {scientificWritingId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", writingsLog);
 			#endregion
 			return newData;
@@ -255,9 +268,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var writingsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.ScientificWritingsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -270,8 +284,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				#region Log
 				writingsLog.Timestamp = DateTime.Now;
 				writingsLog.Level = "Warning";
-				writingsLog.RenderedMessage = $"Scientific writing not found for user: {currentUser.UserName}.";
-				writingsLog.AdditionalData = $"User tried to delete their scientific writing data with id: {scientificWritingId}, but no scientific writing data with this id was found in the database.";
+				writingsLog.RenderedMessage = $"Scientific writing not found for user: {userOfData.UserName}.";
+				writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their scientific writing data with id: {scientificWritingId}, but no scientific writing data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} scientific writing data with id: {scientificWritingId}, but no scientific writing data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", writingsLog);
 				#endregion
 				throw NotFound();
@@ -302,8 +317,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			writingsLog.Timestamp = DateTime.Now;
 			writingsLog.Level = "Information";
-			writingsLog.RenderedMessage = $"Scientific writing data deleted for user: {currentUser.UserName}.";
-			writingsLog.AdditionalData = $"User deleted their scientific writing data with id: {scientificWritingId} successfully.";
+			writingsLog.RenderedMessage = $"Scientific writing data deleted for user: {userOfData.UserName}.";
+			writingsLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their scientific writing data with id: {scientificWritingId} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} scientific writing data with id: {scientificWritingId} successfully.";
 			_logger.LogInformation("{@LogDetails}", writingsLog);
 			#endregion
 		}
