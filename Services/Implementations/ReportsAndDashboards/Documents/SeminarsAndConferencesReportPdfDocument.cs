@@ -266,16 +266,22 @@ namespace Services.Implementations.ReportsAndDashboards.Documents
 
                 foreach (var item in _data)
                 {
-                    var bg = even ? RowAlt : White;
-                    string typeText = item.Type == ConferenceOrSeminar.Conference ? "مؤتمر" : "ندوة";
+                    foreach (var typeItem in item.ConferencesAndSeminars)
+                    {
+                        var bg = even ? RowAlt : White;
 
-                    BodyCell(table.Cell(), index.ToString(), bg, center: true);
-                    BodyCell(table.Cell(), item.FacultyMemberName, bg, center: false);
-                    BodyCell(table.Cell(), typeText, bg, center: true);
-                    BodyCell(table.Cell(), item.NoOfConferencesOrSeminars.ToString(), bg, center: true);
+                        string typeText = typeItem.Type == ConferenceOrSeminar.Conference
+                            ? "مؤتمر"
+                            : "ندوة";
 
-                    even = !even;
-                    index++;
+                        BodyCell(table.Cell(), index.ToString(), bg, center: true);
+                        BodyCell(table.Cell(), item.FacultyMemberName, bg, center: false);
+                        BodyCell(table.Cell(), typeText, bg, center: true);
+                        BodyCell(table.Cell(), typeItem.NoOfConferencesOrSeminars.ToString(), bg, center: true);
+
+                        even = !even;
+                        index++;
+                    }
                 }
             });
         }

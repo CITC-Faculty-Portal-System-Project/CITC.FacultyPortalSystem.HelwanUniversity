@@ -240,8 +240,16 @@ namespace Services.Implementations.ReportsAndDashboards.Documents
 
                 int index = 1;
                 bool even = false;
+                var rows = _data
+                    .SelectMany(x => x.Writings.Select(w => new
+                    {
+                        x.FacultyMemberName,
+                        w.AuthorRole,
+                        w.NoOfWritings
+                    }))
+                    .ToList();
 
-                foreach (var item in _data)
+                foreach (var item in rows)
                 {
                     var bg = even ? RowAlt : White;
 

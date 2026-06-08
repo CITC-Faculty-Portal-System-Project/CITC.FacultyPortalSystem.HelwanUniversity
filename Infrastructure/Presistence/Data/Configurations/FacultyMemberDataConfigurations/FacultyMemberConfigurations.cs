@@ -39,6 +39,12 @@
                 .HasForeignKey(tc => tc.MemberId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
+            builder.HasMany(f => f.CVPreferences)
+                .WithOne(cv => cv.FacultyMember)
+                .HasForeignKey(cv => cv.FacultyMemberId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             #endregion
         }
     }

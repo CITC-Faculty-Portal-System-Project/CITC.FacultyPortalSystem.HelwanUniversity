@@ -7,6 +7,7 @@ using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Domain.Entities.AcademicDataModule.ResearchesModule;
 using Domain.Entities.AcademicDataModule.ScientificProgressionModule;
 using Domain.Entities.AcademicDataModule.WritingsAndPatents;
+using Domain.Entities.CVGenerationModule;
 using System.ComponentModel.DataAnnotations;
 
 namespace Domain.Entities.FacultyMemberDataModule
@@ -78,8 +79,13 @@ namespace Domain.Entities.FacultyMemberDataModule
         public ICollection<ParticipationInQualityWorks> ParticipationInQualityWorks { get; set; } = new HashSet<ParticipationInQualityWorks>();
         #endregion
 
+        #region CVModule
+
+        public ICollection<SavedCVPreferences>? CVPreferences { get; set; } = new List<SavedCVPreferences>();
+
         #endregion
 
+        #endregion
 
         #region ResarchesModule
 

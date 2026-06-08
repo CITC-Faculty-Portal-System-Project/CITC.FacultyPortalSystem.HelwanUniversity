@@ -48,15 +48,14 @@ namespace Presistence.Repositories
                 .CountAsync();
 
         public async Task<IReadOnlyList<TResult>> ExecuteAggregationAsync<TResult>(
-            IAggregationSpecification<TEntity, TResult> spec)
+      IAggregationSpecification<TEntity, TResult> spec)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
-            var result = spec.Apply(query);
 
-            if (result is IAsyncEnumerable<TResult>)
-                return await result.ToListAsync();
-            else
-                return result.ToList();
+            var result = AggregationSpecificationEvaluator
+                .CreateQuery(query, spec);
+
+            return await result.ToListAsync();
         }
 
         public IQueryable<TEntity> GetQueryable(
