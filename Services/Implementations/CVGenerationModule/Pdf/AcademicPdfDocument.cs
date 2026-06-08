@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using QuestPDF.Drawing;
+﻿using QuestPDF.Drawing;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -7,9 +6,9 @@ using Shared.Dtos.CVGenerationModule;
 
 namespace Services.Implementations.CVGenerationModule.Pdf
 {
-    public class AcademicPdfDocumentCV(CVResponseDTO _cv, IWebHostEnvironment _env) : IDocument
+    public class AcademicPdfDocumentCV(CVResponseDTO _cv) : IDocument
     {
-        private TextStyle ArabicStyle => TextStyle.Default.FontFamily("Cairo", "Noto Sans Arabic");
+        private readonly TextStyle ArabicStyle = TextStyle.Default.FontFamily("Cairo").FontSize(9);
         private readonly string MainColor = "#19355a";
         private readonly string AccentColor = "#b38e19";
         private readonly string CardBg = "#f8fafc";
@@ -19,6 +18,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         public void Compose(IDocumentContainer container)
         {
+            FontManager.RegisterFont(File.OpenRead("./fonts/Cairo-Regular.ttf"));
             container.Page(page =>
             {
                 page.Size(PageSizes.A4);
@@ -34,21 +34,14 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                     {
                         row.RelativeItem(55).Padding(30).Column(c =>
                         {
-                            c.Item().Text(_cv.NameAr ?? "")
-                                .FontSize(22).ExtraBold().FontColor(Colors.White)
-                                .Style(ArabicStyle);
-
+                            c.Item().Text(_cv.NameAr ?? "").FontSize(22).ExtraBold().FontColor(Colors.White).FontFamily("Cairo");
                             if (_cv.Title != null)
-                                c.Item().PaddingBottom(5)
-                                    .Text(_cv.Title.ValueAr ?? "")
-                                    .FontSize(11).Bold().FontColor(AccentColor)
-                                    .Style(ArabicStyle);
+                                c.Item().PaddingBottom(5).Text(_cv.Title.ValueAr ?? "").FontSize(11).Bold().FontColor(AccentColor);
 
                             if (!string.IsNullOrEmpty(_cv.BioSummary))
-                                c.Item().Text(_cv.BioSummary)
-                                    .FontSize(8).FontColor("#cbd5e1").LineHeight(1.5f)
-                                    .Style(ArabicStyle);
+                                c.Item().Text(_cv.BioSummary).FontSize(8).FontColor("#cbd5e1").LineHeight(1.5f);
                         });
+
 
                         row.ConstantItem(1).PaddingVertical(30).Background("#26FFFFFF");
 
@@ -58,41 +51,20 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                             if (_cv.Authority != null) DrawHeaderMeta(c, "الجهة: ", _cv.Authority.ValueAr ?? "");
                             if (_cv.University != null) DrawHeaderMeta(c, "الجامعة: ", _cv.University.ValueAr ?? "");
 
-                            c.Item().PaddingTop(5).Column(contactCol =>
-                            {
-                                if (!string.IsNullOrEmpty(_cv.OfficialEmail))
-                                    contactCol.Item().Text(_cv.OfficialEmail)
-                                        .Style(ArabicStyle).FontColor(Colors.White);
-
-                                if (!string.IsNullOrEmpty(_cv.MainPhoneNumber))
-                                    contactCol.Item().Text($"هاتف: {_cv.MainPhoneNumber}")
-                                        .Style(ArabicStyle).FontColor(Colors.White);
-
-                                if (!string.IsNullOrEmpty(_cv.WorkPhoneNumber))
-                                    contactCol.Item().Text($"هاتف عمل: {_cv.WorkPhoneNumber}")
-                                        .Style(ArabicStyle).FontColor(Colors.White);
-
-                                if (!string.IsNullOrEmpty(_cv.FaxNumber))
-                                    contactCol.Item().Text($"فاكس: {_cv.FaxNumber}")
-                                        .Style(ArabicStyle).FontColor(Colors.White);
-
-                                if (_cv.BirthDate.HasValue)
-                                    contactCol.Item().Text($"تاريخ الميلاد: {_cv.BirthDate.Value:yyyy/MM/dd}")
-                                        .FontSize(8).FontColor(Colors.White)
-                                        .Style(ArabicStyle);
+                            c.Item().PaddingTop(5).Column(contactCol => {
+                                if (!string.IsNullOrEmpty(_cv.OfficialEmail)) contactCol.Item().Text(_cv.OfficialEmail).Style(ArabicStyle).FontColor(Colors.White);
+                                if (!string.IsNullOrEmpty(_cv.MainPhoneNumber)) contactCol.Item().Text($"هاتف: {_cv.MainPhoneNumber}").Style(ArabicStyle).FontColor(Colors.White);
+                                if (!string.IsNullOrEmpty(_cv.WorkPhoneNumber)) contactCol.Item().Text($"هاتف عمل: {_cv.WorkPhoneNumber}").Style(ArabicStyle).FontColor(Colors.White);
+                                if (!string.IsNullOrEmpty(_cv.FaxNumber)) contactCol.Item().Text($"فاكس: {_cv.FaxNumber}").Style(ArabicStyle).FontColor(Colors.White);
+                                if (_cv.BirthDate.HasValue) contactCol.Item().Text($"تاريخ الميلاد: {_cv.BirthDate.Value:yyyy/MM/dd}").FontSize(8).FontColor(Colors.White);
                             });
 
                             if (_cv.Skills?.Any() == true)
                             {
-                                c.Item().PaddingTop(8).Row(r =>
-                                {
+                                c.Item().PaddingTop(8).Row(r => {
                                     r.Spacing(4);
                                     foreach (var s in _cv.Skills.Take(4))
-                                        r.AutoItem()
-                                            .PaddingHorizontal(6).PaddingVertical(2)
-                                            .Background("#33b38e19").Border(0.5f).BorderColor(AccentColor)
-                                            .Text(s ?? "").FontSize(7).Bold().FontColor(AccentColor)
-                                            .Style(ArabicStyle);
+                                        r.AutoItem().PaddingHorizontal(6).PaddingVertical(2).Background("#33b38e19").Border(0.5f).BorderColor(AccentColor).Text(s ?? "").FontSize(7).Bold().FontColor(AccentColor);
                                 });
                             }
                         });
@@ -179,6 +151,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                         if (HasSocialMedia())
                         {
                             var socialFields = new List<(string label, string val)>();
+
                             if (!string.IsNullOrEmpty(_cv.PersonalWebsite)) socialFields.Add(("الموقع الشخصي", _cv.PersonalWebsite));
                             if (!string.IsNullOrEmpty(_cv.LinkedIn)) socialFields.Add(("LinkedIn", _cv.LinkedIn));
                             if (!string.IsNullOrEmpty(_cv.GoogleScholar)) socialFields.Add(("Google Scholar", _cv.GoogleScholar));
@@ -194,8 +167,7 @@ namespace Services.Implementations.CVGenerationModule.Pdf
                     });
                 });
 
-                page.Footer().AlignCenter().Text(x =>
-                {
+                page.Footer().AlignCenter().Text(x => {
                     x.Span("صفحة ").Style(ArabicStyle.FontSize(8));
                     x.CurrentPageNumber().FontSize(8);
                 });
@@ -204,10 +176,9 @@ namespace Services.Implementations.CVGenerationModule.Pdf
 
         private void DrawHeaderMeta(ColumnDescriptor c, string label, string value)
         {
-            c.Item().Text(t =>
-            {
-                t.Span(label).Bold().FontColor(AccentColor).FontSize(9).Style(ArabicStyle);
-                t.Span(value).FontColor(Colors.White).FontSize(9).Style(ArabicStyle);
+            c.Item().Text(t => {
+                t.Span(label).Bold().FontColor(AccentColor).FontSize(9);
+                t.Span(value).FontColor(Colors.White).FontSize(9);
             });
         }
 
@@ -215,52 +186,38 @@ namespace Services.Implementations.CVGenerationModule.Pdf
         {
             if (list?.Any() != true) return;
 
-            col.Item().PaddingTop(20).PaddingBottom(10).Row(row =>
-            {
+            col.Item().PaddingTop(20).PaddingBottom(10).Row(row => {
                 row.AutoItem().PaddingRight(8).Height(3).Width(32).Background(AccentColor);
-                row.AutoItem().PaddingRight(8)
-                    .Text(title).FontSize(10).ExtraBold().FontColor(MainColor)
-                    .Style(ArabicStyle);
+                row.AutoItem().PaddingRight(8).Text(title).FontSize(10).ExtraBold().FontColor(MainColor);
                 row.RelativeItem().PaddingTop(6).Height(1).Background(Colors.Grey.Lighten2);
             });
 
             foreach (var item in list)
             {
                 var (entryTitle, fields) = mapper(item);
-                col.Item().PaddingBottom(8)
-                    .Background(CardBg).Border(1).BorderColor(Colors.Grey.Lighten3)
-                    .BorderRight(3).BorderColor(AccentColor)
-                    .Padding(12).Column(c =>
-                    {
-                        if (!string.IsNullOrEmpty(entryTitle))
-                            c.Item().PaddingBottom(4)
-                                .Text(entryTitle).FontSize(9).Bold().FontColor(MainColor)
-                                .Style(ArabicStyle);
+                col.Item().PaddingBottom(8).Background(CardBg).Border(1).BorderColor(Colors.Grey.Lighten3).BorderRight(3).BorderColor(AccentColor).Padding(12).Column(c => {
+                    if (!string.IsNullOrEmpty(entryTitle))
+                        c.Item().PaddingBottom(4).Text(entryTitle).FontSize(9).Bold().FontColor(MainColor);
 
-                        foreach (var f in fields.Where(x => !string.IsNullOrEmpty(x.val)))
-                        {
-                            c.Item().BorderBottom(1).BorderColor(Colors.Grey.Lighten4).PaddingVertical(2).Row(r =>
-                            {
-                                r.ConstantItem(100)
-                                    .Text(f.label).FontSize(8).Bold().FontColor(AccentColor)
-                                    .Style(ArabicStyle);
-                                r.RelativeItem()
-                                    .Text(f.val).FontSize(8).FontColor("#1e293b")
-                                    .Style(ArabicStyle);
-                            });
-                        }
-                    });
+                    foreach (var f in fields.Where(x => !string.IsNullOrEmpty(x.val)))
+                    {
+                        c.Item().BorderBottom(1).BorderColor(Colors.Grey.Lighten4).PaddingVertical(2).Row(r => {
+                            r.ConstantItem(100).Text(f.label).FontSize(8).Bold().FontColor(AccentColor);
+                            r.RelativeItem().Text(f.val).FontSize(8).FontColor("#1e293b");
+                        });
+                    }
+                });
             }
         }
 
         private bool HasSocialMedia() =>
-            !string.IsNullOrEmpty(_cv.PersonalWebsite) ||
-            !string.IsNullOrEmpty(_cv.LinkedIn) ||
-            !string.IsNullOrEmpty(_cv.GoogleScholar) ||
-            !string.IsNullOrEmpty(_cv.Scopus) ||
-            !string.IsNullOrEmpty(_cv.YouTube) ||
-            !string.IsNullOrEmpty(_cv.Facebook) ||
-            !string.IsNullOrEmpty(_cv.Instagram) ||
-            !string.IsNullOrEmpty(_cv.X);
+        !string.IsNullOrEmpty(_cv.PersonalWebsite) ||
+        !string.IsNullOrEmpty(_cv.LinkedIn) ||
+        !string.IsNullOrEmpty(_cv.GoogleScholar) ||
+        !string.IsNullOrEmpty(_cv.Scopus) ||
+        !string.IsNullOrEmpty(_cv.YouTube) ||
+        !string.IsNullOrEmpty(_cv.Facebook) ||
+        !string.IsNullOrEmpty(_cv.Instagram) ||
+        !string.IsNullOrEmpty(_cv.X);
     }
 }

@@ -31,10 +31,8 @@ namespace Services.Abstraction.Contracts
 
         //Getting Current Logged User Email Without the need from user to pass the email to end-point
         public string GetLoggedUserEmail();
-
-		//Get User by Id
-		Task<UserResultDto> GetUserByIdAsync(Guid userId);
-
+        
+    
 		string? GetUserIP();
 	}
 }
