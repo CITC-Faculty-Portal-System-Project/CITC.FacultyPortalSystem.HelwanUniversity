@@ -29,9 +29,10 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var experiencesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberExperiences.ToString(),
 				CategoryAction = CategoryAction.GeneralExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -43,10 +44,11 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			if (generalExperiences is null)
 			{
 				#region Log
-				experiencesLog.RenderedMessage = $"General experiences not found for user: {currentUser.UserName}.";
+				experiencesLog.RenderedMessage = $"General experiences not found for user: {userOfData.UserName}.";
 				experiencesLog.Level = "Warning";
 				experiencesLog.Timestamp = DateTime.Now;
-				experiencesLog.AdditionalData = $"User tried to get their general experiences data, but no general experiences data was found in the database for user with email : {email}.";
+				experiencesLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their general experiences data, but no general experiences data was found in the database for user with email : {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} general experiences data, but no general experiences data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", experiencesLog);
 				#endregion
 				throw NotFound();
@@ -58,10 +60,11 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				new GeneralExperiencesCountSpecifications(parameters, email));
 
 			#region Log
-			experiencesLog.RenderedMessage = $"General experiences data retrieved for user: {currentUser.UserName}.";
+			experiencesLog.RenderedMessage = $"General experiences data retrieved for user: {userOfData.UserName}.";
 			experiencesLog.Level = "Information";
 			experiencesLog.Timestamp = DateTime.Now;
-			experiencesLog.AdditionalData = $"User retrieved their general experiences data successfully, total count of general experiences data retrieved: {totalCount}.";
+			experiencesLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their general experiences data successfully, total count of general experiences data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} general experiences data successfully, total count of general experiences data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", experiencesLog);
 			#endregion
 
@@ -78,9 +81,10 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var experiencesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberExperiences.ToString(),
 				CategoryAction = CategoryAction.GeneralExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -94,8 +98,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				#region Log
 				experiencesLog.Timestamp = DateTime.Now;
 				experiencesLog.Level = "Warning";
-				experiencesLog.RenderedMessage = $"General experience not found for user: {currentUser.UserName}.";
-				experiencesLog.AdditionalData = $"User tried to get their general experience data with id: {id}, but no general experience data with this id was found in the database.";
+				experiencesLog.RenderedMessage = $"General experience not found for user: {userOfData.UserName}.";
+				experiencesLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their general experience data with id: {id}, but no general experience data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} general experience data with id: {id}, but no general experience data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", experiencesLog);
 				#endregion
 				throw NotFound();
@@ -122,8 +127,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			experiencesLog.Timestamp = DateTime.Now;
 			experiencesLog.Level = "Information";
-			experiencesLog.RenderedMessage = $"General experience data retrieved for user: {currentUser.UserName}.";
-			experiencesLog.AdditionalData = $"User retrieved their general experience data with id: {id} successfully.";
+			experiencesLog.RenderedMessage = $"General experience data retrieved for user: {userOfData.UserName}.";
+			experiencesLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their general experience data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} general experience data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", experiencesLog);
 			#endregion
 			return Mapper.Map<GeneralExperiencesResponseDTO>(generalExperience);
@@ -137,9 +143,10 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var generalExperienceLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberExperiences.ToString(),
 				CategoryAction = CategoryAction.GeneralExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -157,7 +164,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				generalExperienceLog.Timestamp = DateTime.Now;
 				generalExperienceLog.Level = "Warning";
 				generalExperienceLog.RenderedMessage = $"Faculty Member not found.";
-				generalExperienceLog.AdditionalData = $"User tried to create a general experience for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				generalExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a general experience for a faculty member that does not exist in database, no faculty member found with email : {email}."
+					: $"Admin: {currentUser.UserName} tried to create a general experience for user: {userOfData.UserName}, but no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", generalExperienceLog);
 				#endregion
 				throw;
@@ -173,8 +181,11 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			generalExperienceLog.Timestamp = DateTime.Now;
 			generalExperienceLog.Level = "Information";
-			generalExperienceLog.RenderedMessage = $"User: {currentUser.UserName} created a general experience.";
-			generalExperienceLog.AdditionalData = $"User created a general experience with id: {response.Id} and title: {response.ExperienceTitle} successfully.";
+			generalExperienceLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a general experience."
+				: $"Admin: {currentUser.UserName} created a general experience for user: {userOfData.UserName}";
+			generalExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a general experience with id: {response.Id} and title: {response.ExperienceTitle} successfully."
+				: $"Admin: {currentUser.UserName} created a general experience with id: {response.Id} and title: {response.ExperienceTitle} for user: {userOfData.UserName} successfully.";
+
 			_logger.LogInformation("{@LogDetails}", generalExperienceLog);
 			#endregion
 			return response;
@@ -187,9 +198,10 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var generalExperienceLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberExperiences.ToString(),
 				CategoryAction = CategoryAction.GeneralExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -207,8 +219,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				#region Log
 				generalExperienceLog.Timestamp = DateTime.Now;
 				generalExperienceLog.Level = "Warning";
-				generalExperienceLog.RenderedMessage = $"General experience not found for user: {currentUser.UserName}.";
-				generalExperienceLog.AdditionalData = $"User tried to update their general experience data with id: {generalExperienceId}, but no general experience data with this id was found in the database.";
+				generalExperienceLog.RenderedMessage = $"General experience not found for user: {userOfData.UserName}.";
+				generalExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their general experience data with id: {generalExperienceId}, but no general experience data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} general experience data with id: {generalExperienceId}, but no general experience data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", generalExperienceLog);
 				#endregion
 				throw NotFound();
@@ -242,8 +255,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			generalExperienceLog.Timestamp = DateTime.Now;
 			generalExperienceLog.Level = "Information";
-			generalExperienceLog.RenderedMessage = $"General experience data updated for user: {currentUser.UserName}.";
-			generalExperienceLog.AdditionalData = $"User updated their general experience data with id: {generalExperienceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			generalExperienceLog.RenderedMessage = $"General experience data updated for user: {userOfData.UserName}.";
+			generalExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their general experience data with id: {generalExperienceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} general experience data with id: {generalExperienceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", generalExperienceLog);
 			#endregion
 			return newData;
@@ -255,9 +269,10 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var generalExperienceLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberExperiences.ToString(),
 				CategoryAction = CategoryAction.GeneralExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -270,8 +285,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				#region Log
 				generalExperienceLog.Timestamp = DateTime.Now;
 				generalExperienceLog.Level = "Warning";
-				generalExperienceLog.RenderedMessage = $"General experience not found for user: {currentUser.UserName}.";
-				generalExperienceLog.AdditionalData = $"User tried to delete their general experience data with id: {generalExperienceId}, but no general experience data with this id was found in the database.";
+				generalExperienceLog.RenderedMessage = $"General experience not found for user: {userOfData.UserName}.";
+				generalExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their general experience data with id: {generalExperienceId}, but no general experience data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} general experience data with id: {generalExperienceId}, but no general experience data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", generalExperienceLog);
 				#endregion
 				throw NotFound();
@@ -302,8 +318,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			generalExperienceLog.Timestamp = DateTime.Now;
 			generalExperienceLog.Level = "Information";
-			generalExperienceLog.RenderedMessage = $"General experience data deleted for user: {currentUser.UserName}.";
-			generalExperienceLog.AdditionalData = $"User deleted their general experience data with id: {generalExperienceId} successfully.";
+			generalExperienceLog.RenderedMessage = $"General experience data deleted for user: {userOfData.UserName}.";
+			generalExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their general experience data with id: {generalExperienceId} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} general experience data with id: {generalExperienceId} successfully.";
 			_logger.LogInformation("{@LogDetails}", generalExperienceLog);
 			#endregion
 		}

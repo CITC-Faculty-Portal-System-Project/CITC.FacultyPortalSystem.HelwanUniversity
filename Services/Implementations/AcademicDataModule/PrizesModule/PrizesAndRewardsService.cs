@@ -28,10 +28,11 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var prizesLogs = new LogEntry
+			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
+			var prizesLogs = new LogEntry
             {
-                Category = Category.FacultyMemberAcademicData.ToString(),
+                Category = Category.FacultyMemberPrizesAndRewards.ToString(),
                 CategoryAction = CategoryAction.PrizesAndRewardsActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName
@@ -44,10 +45,11 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
             if (prizes is null)
             {
 				#region Log
-				prizesLogs.RenderedMessage = $"Prizes and rewards not found for user: {currentUser.UserName}.";
+				prizesLogs.RenderedMessage = $"Prizes and rewards not found for user: {userOfData.UserName}.";
 				prizesLogs.Level = "Warning";
 				prizesLogs.Timestamp = DateTime.Now;
-				prizesLogs.AdditionalData = $"User tried to get their prizes and rewards data, but no prizes and/or rewards data was found in the database for user with email : {email}.";
+				prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their prizes and rewards data, but no prizes and/or rewards data was found in the database for user with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} prizes and rewards data, but no prizes and/or rewards data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", prizesLogs);
 				#endregion
 				throw NotFound();
@@ -59,10 +61,11 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
                 new PrizesAndRewardsCountSpecifications(parameters, email));
 
 			#region Log
-			prizesLogs.RenderedMessage = $"Prizes and rewards data retrieved for user: {currentUser.UserName}.";
+			prizesLogs.RenderedMessage = $"Prizes and rewards data retrieved for user: {userOfData.UserName}.";
 			prizesLogs.Level = "Information";
 			prizesLogs.Timestamp = DateTime.Now;
-			prizesLogs.AdditionalData = $"User retrieved their prizes and rewards data successfully, total count of prizes and rewards data retrieved: {totalCount}.";
+			prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their prizes and rewards data successfully, total count of prizes and rewards data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} prizes and rewards data successfully, total count of prizes and rewards data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", prizesLogs);
 			#endregion
 
@@ -79,9 +82,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var prizesLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
 				CategoryAction = CategoryAction.PrizesAndRewardsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -95,8 +99,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				#region Log
 				prizesLogs.Timestamp = DateTime.Now;
 				prizesLogs.Level = "Warning";
-				prizesLogs.RenderedMessage = $"Prize or reward not found for user: {currentUser.UserName}.";
-				prizesLogs.AdditionalData = $"User tried to get their prize or reward data with id: {id}, but no prize or reward data with this id was found in the database.";
+				prizesLogs.RenderedMessage = $"Prize or reward not found for user: {userOfData.UserName}.";
+				prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their prize or reward data with id: {id}, but no prize or reward data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} prize or reward data with id: {id}, but no prize or reward data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", prizesLogs);
 				#endregion
 				throw NotFound();
@@ -124,7 +129,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			prizesLogs.Timestamp = DateTime.Now;
 			prizesLogs.Level = "Information";
 			prizesLogs.RenderedMessage = $"Prize or reward data retrieved for user: {currentUser.UserName}.";
-			prizesLogs.AdditionalData = $"User retrieved their prize or reward data with id: {id} successfully.";
+			prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their prize or reward data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} prize or reward data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", prizesLogs);
 			#endregion
 			return Mapper.Map<PrizesAndRewardsResponseDTO>(prize);
@@ -138,9 +144,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
             var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var prizesLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
 				CategoryAction = CategoryAction.PrizesAndRewardsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -158,7 +165,8 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				prizesLogs.Timestamp = DateTime.Now;
 				prizesLogs.Level = "Warning";
 				prizesLogs.RenderedMessage = $"Faculty Member not found.";
-				prizesLogs.AdditionalData = $"User tried to create a prize or reward for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a prize or reward for a faculty member that does not exist in database, no faculty member found with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to create a prize or reward for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
 				_logger.LogWarning("{@LogDetails}", prizesLogs);
 				#endregion
 				throw;
@@ -174,8 +182,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			#region Log
 			prizesLogs.Timestamp = DateTime.Now;
 			prizesLogs.Level = "Information";
-			prizesLogs.RenderedMessage = $"User: {currentUser.UserName} created a prize or reward.";
-			prizesLogs.AdditionalData = $"User created a prize or reward with id: {response.Id} and awarding authority: {response.AwardingAuthority} successfully.";
+			prizesLogs.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a prize or reward."
+				: $"Admin: {currentUser.UserName} created a prize or reward for user: {userOfData.UserName}";
+			prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User created a prize or reward with id: {response.Id} and awarding authority: {response.AwardingAuthority} successfully."
+				: $"Admin: {currentUser.UserName} created a prize or reward with id: {response.Id} and awarding authority: {response.AwardingAuthority} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", prizesLogs);
 			#endregion
 			return response;
@@ -188,9 +198,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var prizesLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
 				CategoryAction = CategoryAction.PrizesAndRewardsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -208,8 +219,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				#region Log
 				prizesLogs.Timestamp = DateTime.Now;
 				prizesLogs.Level = "Warning";
-				prizesLogs.RenderedMessage = $"Prize or reward not found for user: {currentUser.UserName}.";
-				prizesLogs.AdditionalData = $"User tried to update their prize or reward data with id: {id}, but no prize or reward data with this id was found in the database.";
+				prizesLogs.RenderedMessage = $"Prize or reward not found for user: {userOfData.UserName}.";
+				prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their prize or reward data with id: {id}, but no prize or reward data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} prize or reward data with id: {id}, but no prize or reward data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", prizesLogs);
 				#endregion
 				throw NotFound();
@@ -243,8 +255,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			#region Log
 			prizesLogs.Timestamp = DateTime.Now;
 			prizesLogs.Level = "Information";
-			prizesLogs.RenderedMessage = $"Prize or reward data updated for user: {currentUser.UserName}.";
-			prizesLogs.AdditionalData = $"User updated their prize or reward data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			prizesLogs.RenderedMessage = $"Prize or reward data updated for user: {userOfData.UserName}.";
+			prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User updated their prize or reward data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} prize or reward data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", prizesLogs);
 			#endregion
 			return Mapper.Map<PrizesAndRewardsResponseDTO>(prize);
@@ -256,9 +269,10 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var prizesLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberPrizesAndRewards.ToString(),
 				CategoryAction = CategoryAction.PrizesAndRewardsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -271,8 +285,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 				#region Log
 				prizesLogs.Timestamp = DateTime.Now;
 				prizesLogs.Level = "Warning";
-				prizesLogs.RenderedMessage = $"Prize or reward not found for user: {currentUser.UserName}.";
-				prizesLogs.AdditionalData = $"User tried to delete their prize or reward data with id: {id}, but no prize or reward data with this id was found in the database.";
+				prizesLogs.RenderedMessage = $"Prize or reward not found for user: {userOfData.UserName}.";
+				prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their prize or reward data with id: {id}, but no prize or reward data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} prize or reward data with id: {id}, but no prize or reward data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", prizesLogs);
 				#endregion
 				throw NotFound();
@@ -303,8 +318,9 @@ namespace Services.Implementations.AcademicDataModule.PrizesModule
 			#region Log
 			prizesLogs.Timestamp = DateTime.Now;
 			prizesLogs.Level = "Information";
-			prizesLogs.RenderedMessage = $"Prize or reward data deleted for user: {currentUser.UserName}.";
-			prizesLogs.AdditionalData = $"User deleted their prize or reward data with id: {id} successfully.";
+			prizesLogs.RenderedMessage = $"Prize or reward data deleted for user: {userOfData.UserName}.";
+			prizesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their prize or reward data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} prize or reward data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", prizesLogs);
 			#endregion
 		}

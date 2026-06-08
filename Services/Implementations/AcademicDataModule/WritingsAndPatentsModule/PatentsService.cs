@@ -28,10 +28,11 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var patentsLog = new LogEntry
+			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
+			var patentsLog = new LogEntry
             {
-                Category = Category.FacultyMemberAcademicData.ToString(),
+                Category = Category.FacultyMemberWritingsAndPatents.ToString(),
                 CategoryAction = CategoryAction.PatentsActions.ToString(),
                 UserIP = GetUserIP(),
                 UserName = currentUser.UserName
@@ -44,10 +45,11 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             if(patents is null)
             {
 				#region Log
-				patentsLog.RenderedMessage = $"Patents not found for user: {currentUser.UserName}.";
+				patentsLog.RenderedMessage = $"Patents not found for user: {userOfData.UserName}.";
 				patentsLog.Level = "Warning";
 				patentsLog.Timestamp = DateTime.Now;
-				patentsLog.AdditionalData = $"User tried to get their patents data, but no patents data was found in the database for user with email : {email}.";
+				patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their patents data, but no patents data was found in the database for user with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} patents data, but no patents data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", patentsLog);
 				#endregion
 				throw NotFound();
@@ -59,10 +61,11 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
                 new PatentsCountSpecifications(parameters, email));
 
 			#region Log
-			patentsLog.RenderedMessage = $"Patents data retrieved for user: {currentUser.UserName}.";
+			patentsLog.RenderedMessage = $"Patents data retrieved for user: {userOfData.UserName}.";
 			patentsLog.Level = "Information";
 			patentsLog.Timestamp = DateTime.Now;
-			patentsLog.AdditionalData = $"User retrieved their patents data successfully, total count of patents data retrieved: {totalCount}.";
+			patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their patents data successfully, total count of patents data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} patents data successfully, total count of patents data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", patentsLog);
 			#endregion
 
@@ -79,9 +82,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var patentsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.PatentsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -95,8 +99,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				#region Log
 				patentsLog.Timestamp = DateTime.Now;
 				patentsLog.Level = "Warning";
-				patentsLog.RenderedMessage = $"Patent not found for user: {currentUser.UserName}.";
-				patentsLog.AdditionalData = $"User tried to get their patent data with id: {id}, but no patent data with this id was found in the database.";
+				patentsLog.RenderedMessage = $"Patent not found for user: {userOfData.UserName}.";
+				patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their patent data with id: {id}, but no patent data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} patent data with id: {id}, but no patent data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", patentsLog);
 				#endregion
 				throw NotFound();
@@ -123,8 +128,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			patentsLog.Timestamp = DateTime.Now;
 			patentsLog.Level = "Information";
-			patentsLog.RenderedMessage = $"Patent data retrieved for user: {currentUser.UserName}.";
-			patentsLog.AdditionalData = $"User retrieved their patent data with id: {id} successfully.";
+			patentsLog.RenderedMessage = $"Patent data retrieved for user: {userOfData.UserName}.";
+			patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their patent data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} patent data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", patentsLog);
 			#endregion
 			return Mapper.Map<PatentsResponseDTO>(patent);
@@ -138,9 +144,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
             var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var patentsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.PatentsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -158,7 +165,8 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				patentsLog.Timestamp = DateTime.Now;
 				patentsLog.Level = "Warning";
 				patentsLog.RenderedMessage = $"Faculty Member not found.";
-				patentsLog.AdditionalData = $"User tried to create a patent for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a patent for a faculty member that does not exist in database, no faculty member found with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to create a patent for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
 				_logger.LogWarning("{@LogDetails}", patentsLog);
 				#endregion
 				throw;
@@ -174,8 +182,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			patentsLog.Timestamp = DateTime.Now;
 			patentsLog.Level = "Information";
-			patentsLog.RenderedMessage = $"User: {currentUser.UserName} created a patent.";
-			patentsLog.AdditionalData = $"User created a patent with id: {response.Id} and name: {response.NameOfPatent} successfully.";
+			patentsLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a patent."
+				: $"Admin: {currentUser.UserName} created a patent for user: {userOfData.UserName}";
+			patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a patent with id: {response.Id} and name: {response.NameOfPatent} successfully."
+				: $"Admin: {currentUser.UserName} created a patent with id: {response.Id} and name: {response.NameOfPatent} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", patentsLog);
 			#endregion
 			return response;
@@ -188,9 +198,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var patentsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.PatentsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -208,8 +219,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				#region Log
 				patentsLog.Timestamp = DateTime.Now;
 				patentsLog.Level = "Warning";
-				patentsLog.RenderedMessage = $"Patent not found for user: {currentUser.UserName}.";
-				patentsLog.AdditionalData = $"User tried to update their patent data with id: {patentId}, but no patent data with this id was found in the database.";
+				patentsLog.RenderedMessage = $"Patent not found for user: {userOfData.UserName}.";
+				patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their patent data with id: {patentId}, but no patent data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} patent data with id: {patentId}, but no patent data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", patentsLog);
 				#endregion
 				throw NotFound();
@@ -243,8 +255,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			patentsLog.Timestamp = DateTime.Now;
 			patentsLog.Level = "Information";
-			patentsLog.RenderedMessage = $"Patent data updated for user: {currentUser.UserName}.";
-			patentsLog.AdditionalData = $"User updated their patent data with id: {patentId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			patentsLog.RenderedMessage = $"Patent data updated for user: {userOfData.UserName}.";
+			patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their patent data with id: {patentId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} patent data with id: {patentId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", patentsLog);
 			#endregion
 			return newData;
@@ -256,9 +269,10 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
         {
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var patentsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberWritingsAndPatents.ToString(),
 				CategoryAction = CategoryAction.PatentsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -271,8 +285,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 				#region Log
 				patentsLog.Timestamp = DateTime.Now;
 				patentsLog.Level = "Warning";
-				patentsLog.RenderedMessage = $"Patent not found for user: {currentUser.UserName}.";
-				patentsLog.AdditionalData = $"User tried to delete their patent data with id: {patentId}, but no patent data with this id was found in the database.";
+				patentsLog.RenderedMessage = $"Patent not found for user: {userOfData.UserName}.";
+				patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their patent data with id: {patentId}, but no patent data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} patent data with id: {patentId}, but no patent data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", patentsLog);
 				#endregion
 				throw NotFound();
@@ -303,8 +318,9 @@ namespace Services.Implementations.AcademicDataModule.WritingsAndPatentsModule
 			#region Log
 			patentsLog.Timestamp = DateTime.Now;
 			patentsLog.Level = "Information";
-			patentsLog.RenderedMessage = $"Patent data deleted for user: {currentUser.UserName}.";
-			patentsLog.AdditionalData = $"User deleted their patent data with id: {patentId} successfully.";
+			patentsLog.RenderedMessage = $"Patent data deleted for user: {userOfData.UserName}.";
+			patentsLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their patent data with id: {patentId} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} patent data with id: {patentId} successfully.";
 			_logger.LogInformation("{@LogDetails}", patentsLog);
 			#endregion
 		}

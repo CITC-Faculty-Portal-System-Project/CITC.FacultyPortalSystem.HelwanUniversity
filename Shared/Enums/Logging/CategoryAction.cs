@@ -49,5 +49,6 @@
 		ResearcherProfileActions = 45,
 		ResearchesActions = 46,
 		ThesesActions = 47,
+		JobRanksActions = 48,
 	}
 }
