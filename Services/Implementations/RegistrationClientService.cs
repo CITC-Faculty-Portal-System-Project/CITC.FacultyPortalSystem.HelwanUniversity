@@ -32,8 +32,8 @@ namespace Services.Implementations
 					#region Log
 					clientLog.Timestamp = DateTime.Now;
 					clientLog.Level = "Information";
-					clientLog.RenderedMessage = $"Successfully retrieved registered user data for national number: {nationalNumber}";
-					clientLog.AdditionalData = $"Retrieved user national number and email after registeration from the endpoint: {_configuration["FarooqExternalSystem"]}/{nationalNumber}";
+					clientLog.RenderedMessage = $"Successfully retrieved data for national number: {nationalNumber}";
+					clientLog.AdditionalData = $"Retrieved user national number and email after registeration from the endpoint {_configuration["FarooqExternalSystem"]}/{nationalNumber}";
 					clientLog.UserIP = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(); ;
 					_logger.LogInformation("{@LogDetails}", clientLog);
 					#endregion
@@ -69,7 +69,7 @@ namespace Services.Implementations
 			#region Log
 			clientLog.Timestamp = DateTime.Now;
 			clientLog.Level = "Error";
-			clientLog.RenderedMessage = $"Failed to retrieve data for registeration.";
+			clientLog.RenderedMessage = $"Failed to retrieve data for national number: {nationalNumber}";
 			clientLog.AdditionalData = $"The external endpoint {_configuration["FarooqExternalSystem"]}/{nationalNumber} returned an unsuccessful status code ({response.StatusCode}) for national number: {nationalNumber}.";
 			clientLog.UserIP = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
 			_logger.LogError("{@LogDetails}", clientLog);

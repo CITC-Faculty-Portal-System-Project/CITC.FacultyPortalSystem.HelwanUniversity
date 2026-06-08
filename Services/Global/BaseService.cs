@@ -31,17 +31,10 @@ namespace Services.Global
                 ?? throw new NotFoundException($"Faculty Member with email {email} not found.");
         }
 
-        protected async Task<UserResultDto> GetUserByEmailAsync(string email)
-            => await AuthService.GetCurrentUserAsync(email)
-				?? throw new NotFoundException($"User with email {email} not found.");
+        #endregion
 
-        protected async Task<UserResultDto> GetUserByIdAsync(Guid id)
-            => await AuthService.GetUserByIdAsync(id)
-				?? throw new NotFoundException($"User with ID {id} not found.");
-		#endregion
-
-		#region Repository
-		protected string? GetUserIP()
+        #region Repository
+        protected string? GetUserIP()
             => AuthService.GetUserIP();
         #endregion
 
