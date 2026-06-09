@@ -12,6 +12,7 @@ namespace Services.Specifications.ReportsModule.WritingsModule
         private readonly bool _isPaginated;
         private readonly int _pageIndex;
         private readonly int _pageSize;
+        private readonly List<Guid>? _roles;
 
         public WritingsReportSpecifications(
             BaseWritingsReportSpecificationParameters parameters,
@@ -23,37 +24,45 @@ namespace Services.Specifications.ReportsModule.WritingsModule
             _isPaginated = mode == ReportMode.Table;
             _pageIndex = pageIndex;
             _pageSize = pageSize;
+            
+            if (parameters.Roles is not null)
+                _roles = parameters.Roles;
 
             SetCriteria(fd =>
                 !fd.IsDeleted
-
-                && (
+                &&
+                (
                     parameters.FacultyIds != null && parameters.FacultyIds.Any()
                     && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
-                        && (parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value)
-                            || parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!))
+                    && (
+                        parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value)
+                        || parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!)
+                    )
 
-                    || parameters.FacultyIds != null && parameters.FacultyIds.Any()
-                        && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any())
-                        && parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value)
+                    ||
+                    parameters.FacultyIds != null && parameters.FacultyIds.Any()
+                    && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any())
+                    && parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value)
 
-                    || (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
-                        && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
-                        && parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!)
+                    ||
+                    (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
+                    && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
+                    && parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId!)
 
-                    || (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
-                        && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any())
+                    ||
+                    (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
+                    && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any())
                 )
-
-                && (
+                &&
+                (
                     parameters.Roles == null
                     || !parameters.Roles.Any()
                     || fd.ScientificWritings!.Any(w =>
                         !w.IsDeleted &&
                         parameters.Roles.Contains(w.AuthorRoleId))
                 )
-
-                && (
+                &&
+                (
                     string.IsNullOrWhiteSpace(search)
                     || fd.PersonalData!.NameAr.Contains(search)
                     || fd.PersonalData!.NameEn.Contains(search)
@@ -71,13 +80,11 @@ namespace Services.Specifications.ReportsModule.WritingsModule
                     break;
 
                 case WritingsReportSortingOptions.NoOfWritingsASC:
-                    AddOrderBy(fd => fd.ScientificWritings!
-                        .Count(w => !w.IsDeleted));
+                    AddOrderBy(fd => fd.ScientificWritings!.Count(w => !w.IsDeleted));
                     break;
 
                 case WritingsReportSortingOptions.NoOfWritingsDESC:
-                    AddOrderByDescending(fd => fd.ScientificWritings!
-                        .Count(w => !w.IsDeleted));
+                    AddOrderByDescending(fd => fd.ScientificWritings!.Count(w => !w.IsDeleted));
                     break;
 
                 default:
@@ -92,25 +99,30 @@ namespace Services.Specifications.ReportsModule.WritingsModule
             AddIncludes(fd => fd.PersonalData!.Title);
 
             AddIncludeWithChain(fd => fd
-                        .Include(w => w.ScientificWritings)
-                        .ThenInclude(w => w.AuthorRole));
+                .Include(x => x.ScientificWritings)
+                .ThenInclude(x => x.AuthorRole));
         }
 
         public override IQueryable<WritingsReportResponseDTO> Apply(IQueryable<FacultyMember> query)
         {
             var baseQuery = query.Where(Criteria!);
 
-            var projected = baseQuery.SelectMany(fd =>
-                fd.ScientificWritings!
-                    .Where(w => !w.IsDeleted)
-                    .Select(w => new WritingsReportResponseDTO
-                    {
-                        FacultyMemberName =
-                            (fd.PersonalData!.Title!.ValueAr ?? "") + 
-                            (fd.PersonalData.NameAr ?? ""),
+            var projected = baseQuery.Select(fd => new WritingsReportResponseDTO
+            {
+                FacultyMemberName =
+                    (fd.PersonalData!.Title!.ValueAr ?? "") +
+                    (fd.PersonalData.NameAr ?? ""),
 
-                        Writings = fd.ScientificWritings!
-                        .Where(w => !w.IsDeleted)
+                Writings =
+                    fd.ScientificWritings!
+                        .Where(w =>
+                            !w.IsDeleted &&
+                            (
+                                _roles == null ||
+                                !_roles.Any() ||
+                                _roles.Contains(w.AuthorRoleId)
+                            )
+                        )
                         .GroupBy(w => w.AuthorRole)
                         .Select(g => new FacultyMemberWritingsAnalysisDTO
                         {
@@ -118,7 +130,7 @@ namespace Services.Specifications.ReportsModule.WritingsModule
                             NoOfWritings = g.Count()
                         })
                         .ToList()
-                    }));
+            });
 
             return projected;
         }

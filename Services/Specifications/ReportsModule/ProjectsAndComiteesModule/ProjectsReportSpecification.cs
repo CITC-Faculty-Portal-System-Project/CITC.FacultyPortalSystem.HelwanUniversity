@@ -1,9 +1,9 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
-using Domain.Entities.AcademicDataModule.ProjectsAndCommitteesModule;
 using Microsoft.EntityFrameworkCore;
 using Shared.Dtos.ReportsAndDashboard.ProjectsAndComiteesModule;
 using Shared.Enums.ReportsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Base.ProjectsAndComiteesModule;
+using System.Linq;
 
 namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
 {
@@ -13,6 +13,8 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
         private readonly bool _isPaginated;
         private readonly int _pageIndex;
         private readonly int _pageSize;
+
+        private readonly List<Guid>? _typesOfProject;
 
         public ProjectsReportSpecification(
             BaseProjectsReportSpecificationParameters parameters,
@@ -25,10 +27,14 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
             _pageIndex = pageIndex;
             _pageSize = pageSize;
 
+            if (parameters.TypesOfProject is not null)
+                _typesOfProject = parameters.TypesOfProject;
+
             SetCriteria(fd =>
                 !fd.IsDeleted
 
-                && (
+                &&
+                (
                     (parameters.FacultyIds != null && parameters.FacultyIds.Any()
                         && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
                         && (parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value)
@@ -46,14 +52,16 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
                         && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any()))
                 )
 
-                && (
-                    parameters.TypesOfProject == null
-                    || !parameters.TypesOfProject.Any()
+                &&
+                (
+                    _typesOfProject == null
+                    || !_typesOfProject.Any()
                     || fd.Projects.Any(p =>
-                        parameters.TypesOfProject.Contains(p.TypeOfProjectId))
+                        _typesOfProject.Contains(p.TypeOfProjectId))
                 )
 
-                && (
+                &&
+                (
                     string.IsNullOrWhiteSpace(search)
                     || fd.PersonalData!.NameAr.Contains(search)
                     || fd.PersonalData!.NameEn.Contains(search)
@@ -108,15 +116,23 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
                     (fd.PersonalData!.Title!.ValueAr ?? "") +
                     (fd.PersonalData.NameAr ?? ""),
 
-                Projects = fd.Projects
-                    .Where(p => !p.IsDeleted)
-                    .GroupBy(p => p.TypeOfProject.ValueAr)
-                    .Select(g => new FacultyMemberProjectAnalysisDTO
-                    {
-                        ProjectType = g.Key,
-                        NoOfProjects = g.Count()
-                    })
-                    .ToList()
+                Projects =
+                    fd.Projects
+                        .Where(p =>
+                            !p.IsDeleted &&
+                            (
+                                _typesOfProject == null ||
+                                !_typesOfProject.Any() ||
+                                _typesOfProject.Contains(p.TypeOfProjectId)
+                            )
+                        )
+                        .GroupBy(p => p.TypeOfProject.ValueAr)
+                        .Select(g => new FacultyMemberProjectAnalysisDTO
+                        {
+                            ProjectType = g.Key,
+                            NoOfProjects = g.Count()
+                        })
+                        .ToList()
             });
 
             return projected;

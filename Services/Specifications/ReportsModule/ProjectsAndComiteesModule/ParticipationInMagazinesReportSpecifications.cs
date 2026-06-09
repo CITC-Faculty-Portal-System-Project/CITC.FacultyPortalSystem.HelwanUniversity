@@ -2,7 +2,6 @@
 using Domain.Entities.FacultyMemberDataModule;
 using Microsoft.EntityFrameworkCore;
 using Shared.Dtos.ReportsAndDashboard.ProjectsAndComiteesModule;
-using Shared.Enums.AcademicDataModule.ProjectsAndCommitteesModule;
 using Shared.Enums.ReportsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Base.ProjectsAndComiteesModule;
 
@@ -15,6 +14,8 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
         private readonly int _pageIndex;
         private readonly int _pageSize;
 
+        private readonly List<Guid>? _typesOfParticipation;
+
         public ParticipationInMagazinesReportSpecification(
             BaseParticipationInMagazineReportSpecificationParameters parameters,
             ReportMode mode,
@@ -26,10 +27,14 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
             _pageIndex = pageIndex;
             _pageSize = pageSize;
 
+            if (parameters.TypesOfParticipation is not null)
+                _typesOfParticipation = parameters.TypesOfParticipation;
+
             SetCriteria(fd =>
                 !fd.IsDeleted
 
-                && (
+                &&
+                (
                     (parameters.FacultyIds != null && parameters.FacultyIds.Any()
                         && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
                         && (parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value)
@@ -47,14 +52,16 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
                         && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any()))
                 )
 
-                && (
-                    parameters.TypesOfParticipation == null
-                    || !parameters.TypesOfParticipation.Any()
+                &&
+                (
+                    _typesOfParticipation == null
+                    || !_typesOfParticipation.Any()
                     || fd.ParticipationInMagazines.Any(p =>
-                        parameters.TypesOfParticipation.Contains(p.TypeOfParticipationId))
+                        _typesOfParticipation.Contains(p.TypeOfParticipationId))
                 )
 
-                && (
+                &&
+                (
                     string.IsNullOrWhiteSpace(search)
                     || fd.PersonalData!.NameAr.Contains(search)
                     || fd.PersonalData!.NameEn.Contains(search)
@@ -105,15 +112,23 @@ namespace Services.Specifications.ReportsModule.ProjectsAndComiteesModule
                     (fd.PersonalData!.Title!.ValueAr ?? "") +
                     (fd.PersonalData.NameAr ?? ""),
 
-                Participations = fd.ParticipationInMagazines
-                    .Where(p => !p.IsDeleted)
-                    .GroupBy(p => p.TypeOfParticipation.ValueAr)
-                    .Select(g => new FacultyMemberParticipationInMagazinesReportAnalysisDTO
-                    {
-                        ParticipationType = g.Key,
-                        NoOfParticipations = g.Count()
-                    })
-                    .ToList()
+                Participations =
+                    fd.ParticipationInMagazines
+                        .Where(p =>
+                            !p.IsDeleted &&
+                            (
+                                _typesOfParticipation == null ||
+                                !_typesOfParticipation.Any() ||
+                                _typesOfParticipation.Contains(p.TypeOfParticipationId)
+                            )
+                        )
+                        .GroupBy(p => p.TypeOfParticipation.ValueAr)
+                        .Select(g => new FacultyMemberParticipationInMagazinesReportAnalysisDTO
+                        {
+                            ParticipationType = g.Key,
+                            NoOfParticipations = g.Count()
+                        })
+                        .ToList()
             });
 
             return projected;

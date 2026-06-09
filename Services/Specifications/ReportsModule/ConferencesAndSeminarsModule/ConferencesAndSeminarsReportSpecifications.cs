@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.FacultyMemberDataModule;
 using Shared.Dtos.ReportsAndDashboard.ConferencesAndSeminarsModule;
+using Shared.Enums.AcademicDataModule.MissionsModule;
 using Shared.Enums.ReportsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Base.ConferencesAndSeminarsModule;
 
@@ -11,6 +12,7 @@ namespace Services.Specifications.ReportsModule.ConferencesAndSeminarsModule
         private readonly bool _isPaginated;
         private readonly int _pageIndex;
         private readonly int _pageSize;
+        private readonly ConferenceOrSeminar? _type;
 
         public ConferencesAndSeminarsReportSpecification(
             BaseConferencesAndSeminarsReportSpecifiactionParamters parameters,
@@ -22,6 +24,11 @@ namespace Services.Specifications.ReportsModule.ConferencesAndSeminarsModule
             _isPaginated = mode == ReportMode.Table;
             _pageIndex = pageIndex;
             _pageSize = pageSize;
+            if (parameters.Type.HasValue)
+            {
+                _type = parameters.Type.Value;
+            }
+
 
             SetCriteria(fd =>
                  !fd.IsDeleted
@@ -93,7 +100,20 @@ namespace Services.Specifications.ReportsModule.ConferencesAndSeminarsModule
                         (fd.PersonalData!.Title!.ValueAr ?? "")
                         + (fd.PersonalData.NameAr ?? ""),
 
-                    ConferencesAndSeminars = new List<FacultyMemberConferencesAndSeminarsAnalysisDTO>
+                    ConferencesAndSeminars =
+                    _type != null
+                    ? new List<FacultyMemberConferencesAndSeminarsAnalysisDTO>
+                    {
+                        new FacultyMemberConferencesAndSeminarsAnalysisDTO
+                        {
+                            Type = (Shared.Enums.AcademicDataModule.MissionsModule.ConferenceOrSeminar)_type,
+                            NoOfConferencesOrSeminars = fd.ConferencesAndSeminars!
+                                .Count(c =>
+                                    !c.IsDeleted &&
+                                    c.Type == (Domain.Enums.ConferenceOrSeminar)_type)
+                        }
+                    }
+                    : new List<FacultyMemberConferencesAndSeminarsAnalysisDTO>
                     {
                         new FacultyMemberConferencesAndSeminarsAnalysisDTO
                         {
@@ -109,13 +129,6 @@ namespace Services.Specifications.ReportsModule.ConferencesAndSeminarsModule
                         }
                     }
                 });
-
-            if (_isPaginated)
-            {
-                result = result
-                    .Skip((_pageIndex - 1) * _pageSize)
-                    .Take(_pageSize);
-            }
 
             return result;
         }

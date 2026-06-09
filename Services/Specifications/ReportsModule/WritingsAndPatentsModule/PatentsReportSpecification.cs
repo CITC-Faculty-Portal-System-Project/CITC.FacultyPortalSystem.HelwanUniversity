@@ -1,14 +1,19 @@
-﻿using Domain.Enums;
+﻿using Microsoft.EntityFrameworkCore;
 using Services.Specifications;
 using Shared.Dtos.ReportsAndDashboard.WrtingsAndPatentsModule;
+using Shared.Enums.AcademicDataModule.MissionsModule;
 using Shared.Enums.ReportsModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.Base.WritingsAndPatentsModule;
 
 namespace Services.Specifications.ReportsModule.WritingsAndPatentsModule
 {
     public class PatentsReportSpecification
-    : AggregationSpecification<FacultyMember, PatentsReportReponseDTO>
+        : AggregationSpecification<FacultyMember, PatentsReportReponseDTO>
     {
+        private readonly bool _isPaginated;
+        private readonly int _pageIndex;
+        private readonly int _pageSize;
+        private readonly LocalOrInternational? _localOrInternational;
 
         public PatentsReportSpecification(
             BasePatentsReportSpecificationParameters parameters,
@@ -17,9 +22,17 @@ namespace Services.Specifications.ReportsModule.WritingsAndPatentsModule
             int pageSize = 9,
             string? search = null)
         {
+            _isPaginated = mode == ReportMode.Table;
+            _pageIndex = pageIndex;
+            _pageSize = pageSize;
+
+            if(parameters.LocalOrInternational.HasValue)
+                _localOrInternational = parameters.LocalOrInternational.Value;
+
             SetCriteria(fd =>
                 !fd.IsDeleted
-                 && (
+                &&
+                (
                     parameters.FacultyIds != null && parameters.FacultyIds.Any()
                     && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
                     && (
@@ -27,24 +40,26 @@ namespace Services.Specifications.ReportsModule.WritingsAndPatentsModule
                         || parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId)
                     )
 
-                    || parameters.FacultyIds != null && parameters.FacultyIds.Any()
+                    ||
+                    parameters.FacultyIds != null && parameters.FacultyIds.Any()
                     && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any())
                     && parameters.FacultyIds.Contains(fd.PersonalData!.FacultyId!.Value)
 
-                    || (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
+                    ||
+                    (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
                     && parameters.DepartmentIds != null && parameters.DepartmentIds.Any()
                     && parameters.DepartmentIds.Contains(fd.PersonalData!.DeptId)
 
-                    || (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
+                    ||
+                    (parameters.FacultyIds == null || !parameters.FacultyIds.Any())
                     && (parameters.DepartmentIds == null || !parameters.DepartmentIds.Any())
                 )
-
                 &&
                 (
-                    parameters.LocalOrInternational == null
+                    _localOrInternational == null
                     || fd.Patents!.Any(p =>
                         !p.IsDeleted &&
-                        p.LocalOrInternational == (Domain.Enums.LocalOrInternational)parameters.LocalOrInternational)
+                        p.LocalOrInternational == (Domain.Enums.LocalOrInternational)_localOrInternational)
                 )
                 &&
                 (
@@ -77,7 +92,7 @@ namespace Services.Specifications.ReportsModule.WritingsAndPatentsModule
                     break;
             }
 
-            if (mode == ReportMode.Table)
+            if (_isPaginated)
                 applyPagination(pageSize, pageIndex);
 
             AddIncludes(fd => fd.PersonalData!);
@@ -87,7 +102,7 @@ namespace Services.Specifications.ReportsModule.WritingsAndPatentsModule
 
         public override IQueryable<PatentsReportReponseDTO> Apply(IQueryable<FacultyMember> query)
         {
-            return query
+            var result = query
                 .Where(Criteria!)
                 .Select(fd => new PatentsReportReponseDTO
                 {
@@ -97,22 +112,24 @@ namespace Services.Specifications.ReportsModule.WritingsAndPatentsModule
 
                     Patents = new List<FacultyMemberPatentsAnsalysisDTO>
                     {
-                    new FacultyMemberPatentsAnsalysisDTO
-                    {
-                        Type = (Shared.Enums.AcademicDataModule.MissionsModule.LocalOrInternational)LocalOrInternational.Local,
-                        NoOfPatents = fd.Patents!.Count(p =>
-                            !p.IsDeleted &&
-                            p.LocalOrInternational == LocalOrInternational.Local)
-                    },
-                    new FacultyMemberPatentsAnsalysisDTO
-                    {
-                        Type = (Shared.Enums.AcademicDataModule.MissionsModule.LocalOrInternational)LocalOrInternational.International,
-                        NoOfPatents = fd.Patents!.Count(p =>
-                            !p.IsDeleted &&
-                            p.LocalOrInternational == LocalOrInternational.International)
-                    }
+                        new FacultyMemberPatentsAnsalysisDTO
+                        {
+                            Type = Shared.Enums.AcademicDataModule.MissionsModule.LocalOrInternational.Local,
+                            NoOfPatents = fd.Patents!.Count(p =>
+                                !p.IsDeleted &&
+                                p.LocalOrInternational == Domain.Enums.LocalOrInternational.Local)
+                        },
+                        new FacultyMemberPatentsAnsalysisDTO
+                        {
+                            Type = Shared.Enums.AcademicDataModule.MissionsModule.LocalOrInternational.International,
+                            NoOfPatents = fd.Patents!.Count(p =>
+                                !p.IsDeleted &&
+                                p.LocalOrInternational == Domain.Enums.LocalOrInternational.International)
+                        }
                     }
                 });
+
+            return result;
         }
     }
 }
