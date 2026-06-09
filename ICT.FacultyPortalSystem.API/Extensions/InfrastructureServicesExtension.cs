@@ -129,7 +129,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtOptions?.Issuer,
                     ValidAudience = jwtOptions?.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
                     NameClaimType = ClaimTypes.NameIdentifier
 
                 };
