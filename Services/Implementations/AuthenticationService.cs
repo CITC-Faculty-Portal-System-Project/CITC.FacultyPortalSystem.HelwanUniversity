@@ -88,7 +88,9 @@ public class AuthenticationService(
         var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName ?? ""),
-                new Claim(ClaimTypes.Email, user.Email ?? "")
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+
             };
         var roles = await _userManager.GetRolesAsync(user);
         foreach (var role in roles)
@@ -122,6 +124,7 @@ public class AuthenticationService(
         new Claim("Email", user.Email ?? string.Empty),
         new Claim("UserName", user.UserName ?? string.Empty),
         new Claim("NationalNumber", user.NationalNumber ?? string.Empty),
+        new Claim("Id" , ClaimTypes.NameIdentifier, user.Id.ToString()),
 
         new Claim("TokenType", "Credential")
     };
