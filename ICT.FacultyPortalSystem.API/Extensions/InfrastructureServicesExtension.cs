@@ -138,14 +138,9 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 {
                     OnMessageReceived = context =>
                     {
-                        var path = context.HttpContext.Request.Path;
-
-                        if (path.StartsWithSegments("/notificationHub"))
+                        if (context.Request.Cookies.ContainsKey("jwtToken"))
                         {
-                            if (context.Request.Cookies.ContainsKey("jwtToken"))
-                            {
-                                context.Token = context.Request.Cookies["jwtToken"];
-                            }
+                            context.Token = context.Request.Cookies["jwtToken"];
                         }
 
                         return Task.CompletedTask;

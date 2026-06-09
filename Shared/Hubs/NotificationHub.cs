@@ -8,9 +8,6 @@ namespace Shared.Hubs
         {
             var userId = Context.UserIdentifier;
 
-            Console.WriteLine($"User Connected: {userId}");
-
-
             return base.OnConnectedAsync();
         }
     }
