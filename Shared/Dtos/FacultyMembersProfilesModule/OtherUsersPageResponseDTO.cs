@@ -7,6 +7,7 @@ namespace Shared.Dtos.FacultyMembersProfilesModule
     {
         public Guid Id { get; set; }
         public string FacultyMemberName { get; set; } = string.Empty;
+        public int PersonalDataId { get; set; }
         public string FacultyMemberEmail { get; set; } = string.Empty;
         public string FacultyMemberPosition { get; set; } = string.Empty;
         public string FacultyMemberDepartment { get; set; } = string.Empty;

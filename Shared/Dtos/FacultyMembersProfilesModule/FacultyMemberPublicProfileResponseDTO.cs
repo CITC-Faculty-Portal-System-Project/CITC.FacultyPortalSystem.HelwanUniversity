@@ -12,6 +12,7 @@ namespace Shared.Dtos.FacultyMembersProfilesModule
     {
         public Guid Id { get; set; }
         public string FacultyMemberName { get; set; } = string.Empty;
+        public int PersonalDataId { get; set; }
         public IEnumerable<ExternalResearcherInterestsFetchingDTO>? Interests { get; set; }
         public string BioSummary { get; set; } = string.Empty;
         public string RegisterationId { get; set; } = string.Empty;

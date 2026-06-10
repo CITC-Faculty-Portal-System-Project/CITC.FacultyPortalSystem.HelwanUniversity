@@ -9,6 +9,7 @@ namespace Services.MappingProfiles
         public FacultyMembersPublicProfileMappingProfile() {
             CreateMap<FacultyMember, OtherUsersPageResponseDTO>()
              .ForMember(dest => dest.FacultyMemberName, opt => opt.MapFrom(src => src.PersonalData!.Title.ValueAr + src.PersonalData.NameAr))
+             .ForMember(dest => dest.PersonalDataId, opt => opt.MapFrom(src => src.PersonalData!.Id))
              .ForMember(dest => dest.FacultyMemberEmail, opt => opt.MapFrom(src => src.Email))
              .ForMember(dest => dest.FacultyMemberPosition, opt => opt.MapFrom(src => src.PersonalData!.Title.ValueAr))
              .ForMember(dest => dest.FacultyMemberDepartment, opt => opt.MapFrom(src => src.PersonalData!.Department.NameAR))
@@ -19,6 +20,7 @@ namespace Services.MappingProfiles
             CreateMap<FacultyMember, FacultyMemberPublicProfileResponseDTO>()
              .ForMember(dest => dest.FacultyMemberName, opt => opt.MapFrom(src => src.PersonalData!.Title.ValueAr + src.PersonalData.NameAr))
              .ForMember(dest => dest.Interests, opt => opt.MapFrom(src => src.Researcher!.ResearcherInterests!.Select(i => i.Interest)))
+             .ForMember(dest => dest.PersonalDataId, opt => opt.MapFrom(src => src.PersonalData!.Id))
              .ForMember(dest => dest.BioSummary, opt => opt.MapFrom(src => src.PersonalData!.BioSummary))
              .ForMember(dest => dest.RegisterationId, opt => opt.MapFrom(src => "Mem - " + src.CreatedAt.Date.Year + src.CreatedAt.Date.Month 
                             + src.CreatedAt.Date.Day + src.CreatedAt.Date.Hour + src.CreatedAt.Date.Minute))
