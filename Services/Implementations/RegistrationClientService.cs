@@ -34,7 +34,7 @@ namespace Services.Implementations
 					clientLog.Level = "Information";
 					clientLog.RenderedMessage = $"Successfully retrieved registered user data for national number: {nationalNumber}";
 					clientLog.AdditionalData = $"Retrieved user national number and email after registeration from the endpoint: {_configuration["FarooqExternalSystem"]}/{nationalNumber}";
-					clientLog.UserIP = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString(); ;
+					clientLog.UserIP = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.ToString();
 					_logger.LogInformation("{@LogDetails}", clientLog);
 					#endregion
 					return data;
