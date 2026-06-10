@@ -8,7 +8,7 @@ namespace Services.Abstraction.Contracts.CVGenerationModule
         public Task<CVResponseDTO> GetCVAsync(bool isPublic = false);
         public Task<CVResponseDTO> GetPublicCVAsync(Guid id);
         public Task<CVVisibilitySettingResponseDTO> ManageCVVisibilityAsync(CVVisibilityConfig config);
-        public Task<byte[]> GenerateCVPdfAsync(string templateName , bool isPublic = false);
+        public Task<byte[]> GenerateCVPdfAsync(string templateName, Guid? facultyMemberId, bool isPublic = false);
         public Task<string> PreviewCVAsync(string templateName, bool isPublic = false);
         public Task<string> GetUserPrefferedTemplate(Guid? userId);
     }

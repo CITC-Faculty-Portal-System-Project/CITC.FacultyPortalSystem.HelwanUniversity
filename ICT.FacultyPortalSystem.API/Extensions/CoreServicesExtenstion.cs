@@ -11,6 +11,7 @@ using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Services.Abstraction.Contracts.FacultyMembersPublicProfileModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
 using Services.Abstraction.Contracts.Notification;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
@@ -42,6 +43,7 @@ using Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAndComm
 using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgression;
 using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
 using Services.Implementations.CVGenerationModule.Templates;
+using Services.Implementations.FacultyMembersPublicProfileModule;
 using Services.Implementations.MessagingAndChattingModule;
 using Services.Implementations.Notification;
 using Services.Implementations.ReportsAndDashboards;
@@ -273,6 +275,13 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<Func<INotificationService>>(provider =>
 			() => provider.GetRequiredService<INotificationService>()
 			);
+
+
+
+            services.AddScoped<IFacultyMemberPublicProfileService, FacultyMemberPublicProfileService>();
+            services.AddScoped<Func<IFacultyMemberPublicProfileService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberPublicProfileService>()
+            );
 
             services.AddScoped<INotificationSender, MessagingNotification>();
             services.AddScoped<INotificationSender, SystemNotification>();
