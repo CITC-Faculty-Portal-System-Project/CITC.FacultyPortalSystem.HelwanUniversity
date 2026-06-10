@@ -7,5 +7,6 @@ namespace Services.Abstraction.Contracts.FacultyMembersPublicProfileModule
     {
         public Task<PaginatedResult<OtherUsersPageResponseDTO>> GetAllFacultyMembersProfiles(FacultyMembersProfileSpecificationParamters paramters);
         public Task<FacultyMemberPublicProfileResponseDTO> GetFacultyMemberPublicProfile(Guid facultyMemberId);
+        public Task<IEnumerable<OtherUsersPageResponseDTO>> SearchMemberPublicProfile(BaseFacultyMemberProfileSpecificationParamters paramters);
     }
 }

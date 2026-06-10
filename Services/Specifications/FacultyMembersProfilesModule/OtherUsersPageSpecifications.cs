@@ -7,7 +7,7 @@ namespace Services.Specifications.FacultyMembersProfilesModule
 
     {
         public OtherUsersPageSpecifications
-            (FacultyMembersProfileSpecificationParamters parameters) 
+            (BaseFacultyMemberProfileSpecificationParamters parameters , int pageIndex = 1 , int pageSize = 9 , bool isPaginated = false) 
             : base(fd => !fd.IsDeleted &&
                 (
                     string.IsNullOrEmpty(parameters.Search)
@@ -27,7 +27,8 @@ namespace Services.Specifications.FacultyMembersProfilesModule
             AddOrderByDescending(fd => fd.ResearchContributions!.Count);
 
 
-            applyPagination(parameters.PageSize, parameters.PageIndex);
+            if(isPaginated)
+                applyPagination(pageSize, pageIndex);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace Services.MappingProfiles
         public FacultyMembersPublicProfileMappingProfile() {
             CreateMap<FacultyMember, OtherUsersPageResponseDTO>()
              .ForMember(dest => dest.FacultyMemberName, opt => opt.MapFrom(src => src.PersonalData!.Title.ValueAr + src.PersonalData.NameAr))
+             .ForMember(dest => dest.FacultyMemberEmail, opt => opt.MapFrom(src => src.Email))
              .ForMember(dest => dest.FacultyMemberPosition, opt => opt.MapFrom(src => src.PersonalData!.Title.ValueAr))
              .ForMember(dest => dest.FacultyMemberDepartment, opt => opt.MapFrom(src => src.PersonalData!.Department.NameAR))
              .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => src.PersonalData!.ProfilePicture));

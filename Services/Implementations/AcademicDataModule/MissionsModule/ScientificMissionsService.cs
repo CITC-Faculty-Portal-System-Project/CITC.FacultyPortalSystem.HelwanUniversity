@@ -23,7 +23,7 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 
         public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(
             ScientificMissionSpecificationParamaters parameters,
-            string? facultyMemberEmail = null)
+              string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;

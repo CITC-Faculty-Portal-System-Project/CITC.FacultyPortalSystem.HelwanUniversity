@@ -2,11 +2,10 @@
 
 namespace Shared.SpecificationParameters.FacultyMembersProfilesModule
 {
-    public class FacultyMembersProfileSpecificationParamters
+    public class FacultyMembersProfileSpecificationParamters : BaseFacultyMemberProfileSpecificationParamters
     {
         private const int defaultPageSize = 9;
         private const int maxPageSize = 9;
-        public string? Search { get; set; }
         public int PageIndex { get; set; } = 1;
         private int _pageSize = defaultPageSize;
         public int PageSize

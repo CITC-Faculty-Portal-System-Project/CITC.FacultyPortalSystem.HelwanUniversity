@@ -4,6 +4,7 @@ using Services.Specifications.FacultyMembersProfilesModule;
 using Shared.Dtos.AcademicDataModule.ExperiencesModule;
 using Shared.Dtos.FacultyMembersProfilesModule;
 using Shared.SpecificationParameters.FacultyMembersProfilesModule;
+using Shared.SpecificationParameters.ReportsAndDashboard.PDF.ResearchesModule;
 
 namespace Services.Implementations.FacultyMembersPublicProfileModule
 {
@@ -17,7 +18,7 @@ namespace Services.Implementations.FacultyMembersPublicProfileModule
 
         public async Task<PaginatedResult<OtherUsersPageResponseDTO>> GetAllFacultyMembersProfiles(FacultyMembersProfileSpecificationParamters paramters)
         {
-            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters));
+            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters , paramters.PageIndex , paramters.PageSize, true));
 
             var count = await Repo.CountAsync(new  OtherUsersPageSpecifications(paramters));
 
@@ -38,6 +39,14 @@ namespace Services.Implementations.FacultyMembersPublicProfileModule
 
             return Mapper.Map<FacultyMemberPublicProfileResponseDTO>(member);
             
+        }
+
+        public async Task<IEnumerable<OtherUsersPageResponseDTO>> SearchMemberPublicProfile(BaseFacultyMemberProfileSpecificationParamters paramters)
+        {
+            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters));
+
+            return  Mapper.Map<IEnumerable<OtherUsersPageResponseDTO>>(members);
+
         }
     }
 }
