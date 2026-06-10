@@ -696,7 +696,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(PaginatedResult<CommitteesAndAssociationsResponseDto>), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/CommitteesAndAssociations")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<PaginatedResult<CommitteesAndAssociationsResponseDto>>> GetFacultyMemberCommitteesAndAssociationsAsync(
       [FromQuery] CommitteesAndAssociationsSpecificationsParameters parameters)
       => Ok(await _serviceManager.CommitteesAndAssociationsService
@@ -704,14 +704,14 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/CommitteesAndAssociations/{id:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> GetFacultyMemberCommitteeOrAssociationByIdAsync(int id , string memberEmail)
             => Ok(await _serviceManager.CommitteesAndAssociationsService
                 .GetCommitteeOrAssociationByIdAsync(id , memberEmail));
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
         [HttpPost("FacultyMember/CommitteesAndAssociations")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Create")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Create")]
         public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> CreateFacultyMemberCommitteeOrAssociationAsync(
             [FromQuery] string facultyMemberEmail,
             [FromBody] CommitteeOrAssociationCreateDto committeeOrAssociationCreateDto)
@@ -720,7 +720,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(CommitteesAndAssociationsResponseDto), StatusCodes.Status200OK)]
         [HttpPut("FacultyMember/CommitteesAndAssociations/{committeeOrAssociationId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Update")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Update")]
         public async Task<ActionResult<CommitteesAndAssociationsResponseDto>> UpdateFacultyMemberCommitteeOrAssociationAsync(
             int committeeOrAssociationId, string memberEmail,
             [FromBody] CommitteeOrAssociationUpdateDto committeeOrAssociationUpdateDto)
@@ -729,7 +729,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("FacultyMember/CommitteesAndAssociations/{committeeOrAssociationId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Delete")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Delete")]
         public async Task<IActionResult> DeleteFacultyMemberCommitteeOrAssociationAsync(int committeeOrAssociationId , string memberEmail)
         {
             await _serviceManager.CommitteesAndAssociationsService
@@ -744,7 +744,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(PaginatedResult<ParticipationInMagazinesResponseDto>), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/ParticipationInMagazines")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<PaginatedResult<ParticipationInMagazinesResponseDto>>> GetFacultyMemberParticipationInMagazinesAsync(
             [FromQuery] ParticipationInMagazinesSpecificationsParameters parameters)
             => Ok(await _serviceManager.ParticipationInMagazinesService
@@ -752,14 +752,14 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/ParticipationInMagazines/{id:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<ParticipationInMagazinesResponseDto>> GetFacultyMemberParticipationInMagazineByIdAsync(int id , string memberEmail)
             => Ok(await _serviceManager.ParticipationInMagazinesService
                 .GetParticipationInMagazineByIdAsync(id , memberEmail));
 
         [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
         [HttpPost("FacultyMember/ParticipationInMagazines")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Create")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Create")]
         public async Task<ActionResult<ParticipationInMagazinesResponseDto>> CreateFacultyMemberParticipationInMagazineAsync(
             [FromQuery] string facultyMemberEmail,
             [FromBody] ParticipationInMagazineCreateDto participationInMagazinesCreateDto)
@@ -768,7 +768,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(ParticipationInMagazinesResponseDto), StatusCodes.Status200OK)]
         [HttpPut("FacultyMember/ParticipationInMagazines/{participationInMagazineId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Update")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Update")]
         public async Task<ActionResult<ParticipationInMagazinesResponseDto>> UpdateFacultyMemberParticipationInMagazineAsync(
             int participationInMagazineId,string memberEmail,
             [FromBody] ParticipationInMagazineUpdateDto participationInMagazinesUpdateDto)
@@ -777,7 +777,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("FacultyMember/ParticipationInMagazines/{participationInMagazineId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Delete")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Delete")]
         public async Task<IActionResult> DeleteFacultyMemberParticipationInMagazineAsync(int participationInMagazineId , string memberEmail)
         {
             await _serviceManager.ParticipationInMagazinesService
@@ -792,7 +792,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(PaginatedResult<ProjectsResponseDto>), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/Projects")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<PaginatedResult<ProjectsResponseDto>>> GetFacultyMemberProjectsAsync(
             [FromQuery] ProjectsSpecifcationsParameters parameters)
             => Ok(await _serviceManager.ProjectsService
@@ -800,14 +800,14 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(ProjectsResponseDto), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/Projects/{id:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<ProjectsResponseDto>> GetFacultyMemberProjectByIdAsync(int id, string memberEmail)
             => Ok(await _serviceManager.ProjectsService
                 .GetProjectByIdAsync(id , memberEmail));
 
         [ProducesResponseType(typeof(ProjectsResponseDto), StatusCodes.Status200OK)]
         [HttpPost("FacultyMember/Projects")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Create")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Create")]
         public async Task<ActionResult<ProjectsResponseDto>> CreateFacultyMemberProjectAsync(
             [FromQuery] string facultyMemberEmail,
             [FromBody] ProjectCreateDto projectCreateDto)
@@ -816,7 +816,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(ProjectsResponseDto), StatusCodes.Status200OK)]
         [HttpPut("FacultyMember/Projects/{projectId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Update")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Update")]
         public async Task<ActionResult<ProjectsResponseDto>> UpdateFacultyMemberProjectAsync(
             int projectId, string memberEmail,
             [FromBody] ProjectUpdateDto projectUpdateDto)
@@ -825,7 +825,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("FacultyMember/Projects/{projectId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Delete")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Delete")]
         public async Task<IActionResult> DeleteFacultyMemberProjectAsync(int projectId , string memberEmail)
         {
             await _serviceManager.ProjectsService
@@ -840,7 +840,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(PaginatedResult<ReviewingArticlesDto>), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/ReviewingArticles")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<PaginatedResult<ReviewingArticlesDto>>> GetFacultyMemberReviewingArticlesAsync(
      [FromQuery] ReviewingArticlesSpecificationsParameters parameters)
      => Ok(await _serviceManager.ReviewingArticlesService
@@ -848,14 +848,14 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(ReviewingArticlesDto), StatusCodes.Status200OK)]
         [HttpGet("FacultyMember/ReviewingArticles/{id:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Read")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Read")]
         public async Task<ActionResult<ReviewingArticlesDto>> GetFacultyMemberReviewingArticleByIdAsync(int id, string memberEmail)
             => Ok(await _serviceManager.ReviewingArticlesService
                 .GetReviewingArticleByIdAsync(id , memberEmail));
 
         [ProducesResponseType(typeof(ReviewingArticlesDto), StatusCodes.Status200OK)]
         [HttpPost("FacultyMember/ReviewingArticles")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Create")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Create")]
         public async Task<ActionResult<ReviewingArticlesDto>> CreateFacultyMemberReviewingArticleAsync(
             [FromQuery] string facultyMemberEmail,
             [FromBody] ReviewingArticleCreateDto reviewingArticleCreateDto)
@@ -864,7 +864,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(typeof(ReviewingArticlesDto), StatusCodes.Status200OK)]
         [HttpPut("FacultyMember/ReviewingArticles/{reviewingArticleId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Update")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Update")]
         public async Task<ActionResult<ReviewingArticlesDto>> UpdateFacultyMemberReviewingArticleAsync(
             int reviewingArticleId, string memberEmail,
             [FromBody] ReviewArticleUpdateDto reviewingArticleUpdateDto)
@@ -873,7 +873,7 @@ namespace Presentation.Controllers.AdminModule
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("FacultyMember/ReviewingArticles/{reviewingArticleId:int}")]
-        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComitteesData.Delete")]
+        [Authorize(Policy = "Permission:FacultyMemberProjectsAndComiteesData.Delete")]
         public async Task<IActionResult> DeleteFacultyMemberReviewingArticleAsync(int reviewingArticleId , string memberEmail)
         {
             await _serviceManager.ReviewingArticlesService
