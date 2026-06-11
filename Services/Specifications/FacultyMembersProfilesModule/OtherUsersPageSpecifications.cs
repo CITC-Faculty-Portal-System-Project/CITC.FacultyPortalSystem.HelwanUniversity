@@ -7,7 +7,7 @@ namespace Services.Specifications.FacultyMembersProfilesModule
 
     {
         public OtherUsersPageSpecifications
-            (BaseFacultyMemberProfileSpecificationParamters parameters , int pageIndex = 1 , int pageSize = 9 , bool isPaginated = false) 
+            (BaseFacultyMemberProfileSpecificationParamters parameters , int take = 9 , bool isPaginated = false) 
             : base(fd => !fd.IsDeleted &&
                 (
                     string.IsNullOrEmpty(parameters.Search)
@@ -28,7 +28,8 @@ namespace Services.Specifications.FacultyMembersProfilesModule
 
 
             if(isPaginated)
-                applyPagination(pageSize, pageIndex);
+                ApplyCursorTake(take);
+                AddOrderBy(m => m.Id);
         }
     }
 }

@@ -4,15 +4,18 @@ namespace Shared.SpecificationParameters.FacultyMembersProfilesModule
 {
     public class FacultyMembersProfileSpecificationParamters : BaseFacultyMemberProfileSpecificationParamters
     {
-        private const int defaultPageSize = 9;
-        private const int maxPageSize = 9;
-        public int PageIndex { get; set; } = 1;
-        private int _pageSize = defaultPageSize;
-        public int PageSize
+
+        public Guid? BeforeFacultyMemberId;
+
+        private const int MaxTake = 50;
+        private int take = 20;
+
+        public int Take
         {
-            get { return _pageSize; }
-            set { _pageSize = value > maxPageSize ? maxPageSize : value; }
+            get => take;
+            set => take = value > MaxTake ? MaxTake : value;
         }
+
 
 
     }

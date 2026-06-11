@@ -17,9 +17,9 @@ namespace Presentation.Controllers.FacultyMembersProfilePublicViewModule
     {
         
         
-        [ProducesResponseType(typeof(PaginatedResult<OtherUsersPageResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CursorPaginatedResult<OtherUsersPageResponseDTO, Guid>), StatusCodes.Status200OK)]
         [HttpGet("Profiles")]
-        public async Task<ActionResult<PaginatedResult<OtherUsersPageResponseDTO>>> GetAllFacultyMembersProfiles
+        public async Task<ActionResult<CursorPaginatedResult<OtherUsersPageResponseDTO, Guid>>> GetAllFacultyMembersProfiles
                     ([FromQuery] FacultyMembersProfileSpecificationParamters parameters)
               => Ok(await _serviceManager.FacultyMemberPublicProfileService
                   .GetAllFacultyMembersProfiles(parameters));

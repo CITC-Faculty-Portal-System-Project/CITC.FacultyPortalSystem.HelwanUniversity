@@ -1,8 +1,10 @@
 ﻿using Services.Abstraction.Contracts.FacultyMembersPublicProfileModule;
 using Services.Global;
+using Services.Helpers.PaginationHelpers;
 using Services.Specifications.FacultyMembersProfilesModule;
 using Shared.Dtos.AcademicDataModule.ExperiencesModule;
 using Shared.Dtos.FacultyMembersProfilesModule;
+using Shared.Dtos.ResearchesModule;
 using Shared.SpecificationParameters.FacultyMembersProfilesModule;
 using Shared.SpecificationParameters.ReportsAndDashboard.PDF.ResearchesModule;
 
@@ -16,19 +18,29 @@ namespace Services.Implementations.FacultyMembersPublicProfileModule
     {
         protected override string EntityName => "Faculty Member";
 
-        public async Task<PaginatedResult<OtherUsersPageResponseDTO>> GetAllFacultyMembersProfiles(FacultyMembersProfileSpecificationParamters paramters)
+        public async Task<CursorPaginatedResult<OtherUsersPageResponseDTO, Guid>> GetAllFacultyMembersProfiles(FacultyMembersProfileSpecificationParamters paramters)
         {
-            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters , paramters.PageIndex , paramters.PageSize, true));
+            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters , paramters.Take , true));
 
             var count = await Repo.CountAsync(new  OtherUsersPageSpecifications(paramters));
 
-            var mapped = Mapper.Map <IEnumerable<OtherUsersPageResponseDTO>>(members);
-            
-            return new PaginatedResult<OtherUsersPageResponseDTO>(
-                paramters.PageIndex,
-                mapped.Count(),
-                count,
-                mapped);
+            var (orderedMembers, hasMore, nextCursor) =
+               CursorPaginationHelper.ProcessCursorPagination(
+                   members.ToList(),
+                   paramters.Take,
+                   m => m.Id,
+                   m => m.CreatedAt
+               );
+
+            var mapped = Mapper.Map<IEnumerable<OtherUsersPageResponseDTO>>(members);
+
+            return new CursorPaginatedResult<OtherUsersPageResponseDTO, Guid>
+            {
+                Items = mapped,
+                HasMore = hasMore,
+                NextCursor = nextCursor,
+                Count = count
+            };
         }
 
         public async Task<FacultyMemberPublicProfileResponseDTO> GetFacultyMemberPublicProfile(Guid facultyMemberId)
