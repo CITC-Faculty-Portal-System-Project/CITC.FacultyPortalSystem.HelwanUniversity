@@ -1,5 +1,6 @@
 ﻿using Domain.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using SkiaSharp;
 
 namespace Presistence.Repositories
@@ -48,14 +49,17 @@ namespace Presistence.Repositories
                 .CountAsync();
 
         public async Task<IReadOnlyList<TResult>> ExecuteAggregationAsync<TResult>(
-      IAggregationSpecification<TEntity, TResult> spec)
+     IAggregationSpecification<TEntity, TResult> spec)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
 
             var result = AggregationSpecificationEvaluator
                 .CreateQuery(query, spec);
 
-            return await result.ToListAsync();
+            if (result.Provider is IAsyncQueryProvider)
+                return await result.ToListAsync();
+
+            return result.ToList();
         }
 
         public IQueryable<TEntity> GetQueryable(
