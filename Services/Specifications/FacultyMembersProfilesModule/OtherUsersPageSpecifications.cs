@@ -7,8 +7,8 @@ namespace Services.Specifications.FacultyMembersProfilesModule
 
     {
         public OtherUsersPageSpecifications
-            (BaseFacultyMemberProfileSpecificationParamters parameters , int take = 9 , bool isPaginated = false) 
-            : base(fd => !fd.IsDeleted &&
+            (BaseFacultyMemberProfileSpecificationParamters parameters , Guid currentUserId, int take = 9 , bool isPaginated = false) 
+            : base(fd => !fd.IsDeleted && fd.Id != currentUserId &&
                 (
                     string.IsNullOrEmpty(parameters.Search)
                     || fd.PersonalData!.NameAr.Contains(parameters.Search)

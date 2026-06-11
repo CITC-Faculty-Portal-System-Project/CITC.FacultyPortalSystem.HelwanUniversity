@@ -6,8 +6,8 @@ namespace Services.Specifications.FacultyMembersProfilesModule
     public class FacultyMemberPublicProfileSpecifications : BaseSpecifications<FacultyMember, Guid>
     {
         public FacultyMemberPublicProfileSpecifications
-            (Guid facultyMemberId) 
-            : base(f => !f.IsDeleted && f.Id == facultyMemberId)
+            (Guid facultyMemberId , Guid currentUserId) 
+            : base(f => !f.IsDeleted && f.Id == facultyMemberId && facultyMemberId != currentUserId)
         {
             
             

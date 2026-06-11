@@ -20,9 +20,12 @@ namespace Services.Implementations.FacultyMembersPublicProfileModule
 
         public async Task<CursorPaginatedResult<OtherUsersPageResponseDTO, Guid>> GetAllFacultyMembersProfiles(FacultyMembersProfileSpecificationParamters paramters)
         {
-            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters , paramters.Take , true));
+            var currentUser = await GetCurrentUserAsync();
 
-            var count = await Repo.CountAsync(new  OtherUsersPageSpecifications(paramters));
+
+            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters , currentUser.UserId , paramters.Take , true));
+
+            var count = await Repo.CountAsync(new  OtherUsersPageSpecifications(paramters , currentUser.UserId));
 
             var (orderedMembers, hasMore, nextCursor) =
                CursorPaginationHelper.ProcessCursorPagination(
@@ -45,7 +48,9 @@ namespace Services.Implementations.FacultyMembersPublicProfileModule
 
         public async Task<FacultyMemberPublicProfileResponseDTO> GetFacultyMemberPublicProfile(Guid facultyMemberId)
         {
-            var member = await Repo.GetAsync(new FacultyMemberPublicProfileSpecifications(facultyMemberId))
+            var currentUser = await GetCurrentUserAsync();
+            
+            var member = await Repo.GetAsync(new FacultyMemberPublicProfileSpecifications(facultyMemberId , currentUser.UserId))
                 ?? throw NotFound();
 
 
@@ -55,7 +60,9 @@ namespace Services.Implementations.FacultyMembersPublicProfileModule
 
         public async Task<IEnumerable<OtherUsersPageResponseDTO>> SearchMemberPublicProfile(BaseFacultyMemberProfileSpecificationParamters paramters)
         {
-            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters));
+            var currentUser = await GetCurrentUserAsync();
+
+            var members = await Repo.GetAllAsync(new OtherUsersPageSpecifications(paramters , currentUser.UserId));
 
             return  Mapper.Map<IEnumerable<OtherUsersPageResponseDTO>>(members);
 

@@ -6,8 +6,8 @@ namespace Services.Specifications.FacultyMembersProfilesModule
     public class OtherUsersPageCountSpecifications : BaseSpecifications<FacultyMember, Guid>
     {
         public OtherUsersPageCountSpecifications
-            (FacultyMembersProfileSpecificationParamters parameters) 
-            : base(fd => !fd.IsDeleted &&
+            (FacultyMembersProfileSpecificationParamters parameters, Guid currentUserId) 
+            : base(fd => !fd.IsDeleted && fd.Id != currentUserId &&
                 (
                     string.IsNullOrEmpty(parameters.Search)
                     || fd.PersonalData!.NameAr.Contains(parameters.Search)
