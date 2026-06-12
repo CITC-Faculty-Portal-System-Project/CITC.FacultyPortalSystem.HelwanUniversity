@@ -19,7 +19,7 @@
 		FacultyMemberProjectsAndCommittees = 15,
 		FacultyMemberWritingsAndPatents = 16,
 		FacultyMemberScientificProgression = 17,
-		FacultyMemberResearches = 18,
+		FacultyMemberResearchesAndTheses = 18,
 		FacultyMemberDataService = 19,
 	}
 }
