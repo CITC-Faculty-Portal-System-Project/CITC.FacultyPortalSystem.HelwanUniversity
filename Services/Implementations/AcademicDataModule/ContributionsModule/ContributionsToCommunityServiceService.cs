@@ -29,9 +29,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var contributionsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ContributionsToCommunityServiceActions.ToString(),
 				UserName = currentUser.UserName,
 				UserIP = GetUserIP(),
@@ -44,10 +45,11 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			if (contributions is null)
 			{
 				#region Log
-				contributionsLog.RenderedMessage = $"Contributions to community service not found for user: {currentUser.UserName}.";
+				contributionsLog.RenderedMessage = $"Contributions to community service not found for user: {userOfData.UserName}.";
 				contributionsLog.Level = "Warning";
 				contributionsLog.Timestamp = DateTime.Now;
-				contributionsLog.AdditionalData = $"User tried to get their contributions to community service data, but no contributions to community service data was found in the database for user with email : {email}.";
+				contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their contributions to community service data, but no contributions to community service data was found in the database for user with email: {email}." :
+					$"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} contributions to community service data, but no contributions to community service data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", contributionsLog);
 				#endregion
 				throw NotFound();
@@ -59,10 +61,11 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				new ContributionsToCommunityServiceCountSpecifications(parameters, email));
 
 			#region Log
-			contributionsLog.RenderedMessage = $"Contributions to community service data retrieved for user: {currentUser.UserName}.";
+			contributionsLog.RenderedMessage = $"Contributions to community service data retrieved for user: {userOfData.UserName}.";
 			contributionsLog.Level = "Information";
 			contributionsLog.Timestamp = DateTime.Now;
-			contributionsLog.AdditionalData = $"User retrieved their contributions to community service data successfully, total count of contributions to community service data retrieved: {totalCount}.";
+			contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their contributions to community service data successfully, total count of contributions to community service data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} contributions to community service data successfully, total count of contributions to community service data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", contributionsLog);
 			#endregion
 
@@ -79,9 +82,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var contributionsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ContributionsToCommunityServiceActions.ToString(),
 				UserName = currentUser.UserName,
 				UserIP = GetUserIP(),
@@ -95,8 +99,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				contributionsLog.Timestamp = DateTime.Now;
 				contributionsLog.Level = "Warning";
-				contributionsLog.RenderedMessage = $"Contribution to community service not found for user: {currentUser.UserName}.";
-				contributionsLog.AdditionalData = $"User tried to get their contribution to community service data with id: {id}, but no contribution to community service data with this id was found in the database.";
+				contributionsLog.RenderedMessage = $"Contribution to community service not found for user: {userOfData.UserName}.";
+				contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their contribution to community service data with id: {id}, but no contribution to community service data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} contribution to community service data with id: {id}, but no contribution to community service data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", contributionsLog);
 				#endregion
 				throw NotFound();
@@ -123,8 +128,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionsLog.Timestamp = DateTime.Now;
 			contributionsLog.Level = "Information";
-			contributionsLog.RenderedMessage = $"Contribution to community service data retrieved for user: {currentUser.UserName}.";
-			contributionsLog.AdditionalData = $"User retrieved their contribution to community service data with id: {id} successfully.";
+			contributionsLog.RenderedMessage = $"Contribution to community service data retrieved for user: {userOfData.UserName}.";
+			contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their contribution to community service data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} contribution to community service data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", contributionsLog);
 			#endregion
 			return Mapper.Map<ContributionsToCommunityServiceResponseDTO>(contribution);
@@ -138,9 +144,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var contributionLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ContributionsToCommunityServiceActions.ToString(),
 				UserName = currentUser.UserName,
 				UserIP = GetUserIP()
@@ -158,7 +165,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				contributionLog.Timestamp = DateTime.Now;
 				contributionLog.Level = "Warning";
 				contributionLog.RenderedMessage = $"Faculty Member not found.";
-				contributionLog.AdditionalData = $"User tried to create a contribution to community service for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a contribution to community service for a faculty member that does not exist in database, no faculty member found with email : {email}."
+					: $"Admin: {currentUser.UserName} tried to create a contribution to community service for user: {userOfData.UserName}, but no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", contributionLog);
 				#endregion
 				throw;
@@ -174,8 +182,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionLog.Timestamp = DateTime.Now;
 			contributionLog.Level = "Information";
-			contributionLog.RenderedMessage = $"User: {currentUser.UserName} created a contribution to community service.";
-			contributionLog.AdditionalData = $"User created a contribution to community service with id: {response.Id} and title: {response.ContributionTitle} successfully.";
+			contributionLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a contribution to community service."
+				: $"Admin: {currentUser.UserName} created a contribution to community service for user: {userOfData.UserName}";
+			contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a contribution to community service with id: {response.Id} and title: {response.ContributionTitle} successfully."
+				: $"Admin: {currentUser.UserName} created a contribution to community service with id: {response.Id} and title: {response.ContributionTitle} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", contributionLog);
 			#endregion
 			return response;
@@ -188,9 +198,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var contributionLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ContributionsToCommunityServiceActions.ToString(),
 				UserName = currentUser.UserName,
 				UserIP = GetUserIP()
@@ -208,8 +219,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				contributionLog.Timestamp = DateTime.Now;
 				contributionLog.Level = "Warning";
-				contributionLog.RenderedMessage = $"Contribution to community service not found for user: {currentUser.UserName}.";
-				contributionLog.AdditionalData = $"User tried to update their contribution to community service data with id: {contributionToCommunityServiceId}, but no contribution to community service data with this id was found in the database.";
+				contributionLog.RenderedMessage = $"Contribution to community service not found for user: {userOfData.UserName}.";
+				contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their contribution to community service data with id: {contributionToCommunityServiceId}, but no contribution to community service data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} contribution to community service data with id: {contributionToCommunityServiceId}, but no contribution to community service data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", contributionLog);
 				#endregion
 				throw NotFound();
@@ -243,8 +255,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionLog.Timestamp = DateTime.Now;
 			contributionLog.Level = "Information";
-			contributionLog.RenderedMessage = $"Contribution to community service data updated for user: {currentUser.UserName}.";
-			contributionLog.AdditionalData = $"User updated their contribution to community service data with id: {contributionToCommunityServiceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			contributionLog.RenderedMessage = $"Contribution to community service data updated for user: {userOfData.UserName}.";
+			contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their contribution to community service data with id: {contributionToCommunityServiceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} contribution to community service data with id: {contributionToCommunityServiceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", contributionLog);
 			#endregion
 			return newData;
@@ -256,9 +269,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var contributionLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ContributionsToCommunityServiceActions.ToString(),
 				UserName = currentUser.UserName,
 				UserIP = GetUserIP()
@@ -271,8 +285,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				contributionLog.Timestamp = DateTime.Now;
 				contributionLog.Level = "Warning";
-				contributionLog.RenderedMessage = $"Contribution to community service not found for user: {currentUser.UserName}.";
-				contributionLog.AdditionalData = $"User tried to delete their contribution to community service data with id: {contributionToCommunityServiceId}, but no contribution to community service data with this id was found in the database.";
+				contributionLog.RenderedMessage = $"Contribution to community service not found for user: {userOfData.UserName}.";
+				contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their contribution to community service data with id: {contributionToCommunityServiceId}, but no contribution to community service data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} contribution to community service data with id: {contributionToCommunityServiceId}, but no contribution to community service data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", contributionLog);
 				#endregion
 				throw NotFound();
@@ -303,8 +318,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionLog.Timestamp = DateTime.Now;
 			contributionLog.Level = "Information";
-			contributionLog.RenderedMessage = $"Contribution to community service data deleted for user: {currentUser.UserName}.";
-			contributionLog.AdditionalData = $"User deleted their contribution to community service data with id: {contributionToCommunityServiceId} successfully.";
+			contributionLog.RenderedMessage = $"Contribution to community service data deleted for user: {userOfData.UserName}.";
+			contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their contribution to community service data with id: {contributionToCommunityServiceId} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} contribution to community service data with id: {contributionToCommunityServiceId} successfully.";
 			_logger.LogInformation("{@LogDetails}", contributionLog);
 			#endregion
 		}

@@ -30,9 +30,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var participationsLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ParticipationInQualityWorksActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -45,10 +46,11 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			if (participations is null)
 			{
 				#region Log
-				participationsLog.RenderedMessage = $"Participations in quality works not found for user: {currentUser.UserName}.";
+				participationsLog.RenderedMessage = $"Participations in quality works not found for user: {userOfData.UserName}.";
 				participationsLog.Level = "Warning";
 				participationsLog.Timestamp = DateTime.Now;
-				participationsLog.AdditionalData = $"User tried to get their Participations in quality works data, but no Participations in quality works data was found in the database for user with email : {email}.";
+				participationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their participations in quality works data, but no participations in quality works data was found in the database for user with email : {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} participations in quality works data, but no participations in quality works data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", participationsLog);
 				#endregion
 				throw NotFound();
@@ -60,10 +62,11 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				new ParticipationInQualityWorksCountSpecifications(parameters, email));
 
 			#region Log
-			participationsLog.RenderedMessage = $"Participations in quality works data retrieved for user: {currentUser.UserName}.";
+			participationsLog.RenderedMessage = $"Participations in quality works data retrieved for user: {userOfData.UserName}.";
 			participationsLog.Level = "Information";
 			participationsLog.Timestamp = DateTime.Now;
-			participationsLog.AdditionalData = $"User retrieved their participations in quality works data successfully, total count of Participations in quality works data retrieved: {totalCount}.";
+			participationsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their participations in quality works data successfully, total count of participations in quality works data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} participations in quality works data successfully, total count of participations in quality works data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", participationsLog);
 			#endregion
 
@@ -80,9 +83,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var participationLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ParticipationInQualityWorksActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -97,8 +101,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				participationLog.Timestamp = DateTime.Now;
 				participationLog.Level = "Warning";
-				participationLog.RenderedMessage = $"Participation in quality Work not found for user: {currentUser.UserName}.";
-				participationLog.AdditionalData = $"User tried to get their participation in quality work data with id: {id}, but no participation in quality work data with this id was found in the database.";
+				participationLog.RenderedMessage = $"Participation in quality Work not found for user: {userOfData.UserName}.";
+				participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their participation in quality work data with id: {id}, but no participation in quality work data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} participation in quality work data with id: {id}, but no participation in quality work data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", participationLog);
 				#endregion
 				throw NotFound();
@@ -116,7 +121,7 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				participationLog.Timestamp = DateTime.Now;
 				participationLog.Level = "Warning";
 				participationLog.RenderedMessage = $"User unauthorized to access participation in quality work data.";
-				participationLog.AdditionalData = $"User tried to get participation in quality work data with id: {id} that does not belong to them, contribution to community service data faculty member id: {participation.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				participationLog.AdditionalData = $"User tried to get participation in quality work data with id: {id} that does not belong to them, participation in quality work data faculty member id: {participation.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
 				_logger.LogWarning("{@LogDetails}", participationLog);
 				#endregion
 				throw;
@@ -125,8 +130,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			participationLog.Timestamp = DateTime.Now;
 			participationLog.Level = "Information";
-			participationLog.RenderedMessage = $"Participation in quality work data retrieved for user: {currentUser.UserName}.";
-			participationLog.AdditionalData = $"User retrieved their participation in quality work data with id: {id} successfully.";
+			participationLog.RenderedMessage = $"Participation in quality work data retrieved for user: {userOfData.UserName}.";
+			participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their participation in quality work data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} participation in quality work data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", participationLog);
 			#endregion
 			return Mapper.Map<ParticipationInQualityWorksResponseDTO>(participation);
@@ -140,9 +146,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var participationLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ParticipationInQualityWorksActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -160,7 +167,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				participationLog.Timestamp = DateTime.Now;
 				participationLog.Level = "Warning";
 				participationLog.RenderedMessage = $"Faculty Member not found.";
-				participationLog.AdditionalData = $"User tried to create a participation in quality work for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a participation in quality work for a faculty member that does not exist in database, no faculty member found with email : {email}."
+					: $"Admin: {currentUser.UserName} tried to create a participation in quality work for user: {userOfData.UserName}, but no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", participationLog);
 				#endregion
 				throw;
@@ -175,8 +183,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			participationLog.Timestamp = DateTime.Now;
 			participationLog.Level = "Information";
-			participationLog.RenderedMessage = $"User: {currentUser.UserName} created a participation in quality work.";
-			participationLog.AdditionalData = $"User created a participation in quality work with id: {response.Id} and title: {response.ParticipationTitle} successfully.";
+			participationLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {currentUser.UserName} created a participation in quality work."
+				: $"Admin: {currentUser.UserName} created a participation in quality work for user: {userOfData.UserName}";
+			participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a participation in quality work with id: {response.Id} and title: {response.ParticipationTitle} successfully."
+				: $"Admin: {currentUser.UserName} created a participation in quality work with id: {response.Id} and title: {response.ParticipationTitle} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", participationLog);
 			#endregion
 			return response;
@@ -189,9 +199,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var participationLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ParticipationInQualityWorksActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -210,8 +221,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				participationLog.Timestamp = DateTime.Now;
 				participationLog.Level = "Warning";
-				participationLog.RenderedMessage = $"Participation in quality work not found for user: {currentUser.UserName}.";
-				participationLog.AdditionalData = $"User tried to update their participation in quality work data with id: {participationInQualityWorksId}, but no participation in quality work data with this id was found in the database.";
+				participationLog.RenderedMessage = $"Participation in quality work not found for user: {userOfData.UserName}.";
+				participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their participation in quality work data with id: {participationInQualityWorksId}, but no participation in quality work data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} participation in quality work data with id: {participationInQualityWorksId}, but no participation in quality work data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", participationLog);
 				#endregion
 				throw NotFound();
@@ -245,8 +257,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			participationLog.Timestamp = DateTime.Now;
 			participationLog.Level = "Information";
-			participationLog.RenderedMessage = $"Participation in quality work data updated for user: {currentUser.UserName}.";
-			participationLog.AdditionalData = $"User updated their participation in quality work data with id: {participationInQualityWorksId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			participationLog.RenderedMessage = $"Participation in quality work data updated for user: {userOfData.UserName}.";
+			participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their participation in quality work data with id: {participationInQualityWorksId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} participation in quality work data with id: {participationInQualityWorksId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", participationLog);
 			#endregion
 			return newData;
@@ -258,9 +271,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var participationLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ParticipationInQualityWorksActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -268,13 +282,14 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#endregion
 			var participation = await Repo.GetAsync(
 				new ParticipationInQualityWorksSpecifications(participationInQualityWorksId));
-			if(participation is null)
+			if (participation is null)
 			{
 				#region Log
 				participationLog.Timestamp = DateTime.Now;
 				participationLog.Level = "Warning";
-				participationLog.RenderedMessage = $"Participation in quality work not found for user: {currentUser.UserName}.";
-				participationLog.AdditionalData = $"User tried to delete their participation in quality work data with id: {participationInQualityWorksId}, but no participation in quality work data with this id was found in the database.";
+				participationLog.RenderedMessage = $"Participation in quality work not found for user: {userOfData.UserName}.";
+				participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their participation in quality work data with id: {participationInQualityWorksId}, but no participation in quality work data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} participation in quality work data with id: {participationInQualityWorksId}, but no participation in quality work data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", participationLog);
 				#endregion
 				throw NotFound();
@@ -305,8 +320,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			participationLog.Timestamp = DateTime.Now;
 			participationLog.Level = "Information";
-			participationLog.RenderedMessage = $"Participation in quality work data deleted for user: {currentUser.UserName}.";
-			participationLog.AdditionalData = $"User deleted their participation in quality work data with id: {participationInQualityWorksId} successfully.";
+			participationLog.RenderedMessage = $"Participation in quality work data deleted for user: {userOfData.UserName}.";
+			participationLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their participation in quality work data with id: {participationInQualityWorksId} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} participation in quality work data with id: {participationInQualityWorksId} successfully.";
 			_logger.LogInformation("{@LogDetails}", participationLog);
 			#endregion
 		}
