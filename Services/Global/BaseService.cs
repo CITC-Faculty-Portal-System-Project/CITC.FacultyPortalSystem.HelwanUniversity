@@ -42,8 +42,8 @@ namespace Services.Global
 
 		#region Repository
 		protected string? GetUserIP()
-			=> AuthService.GetUserIP();
-		#endregion
+            => AuthService.GetUserIP();
+        #endregion
 
 		#region Repository
 		protected IGenericRepository<TEntity, TId> Repo

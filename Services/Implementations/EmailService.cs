@@ -203,8 +203,8 @@ namespace Services.Implementations
 			#region Log
 			credentialsEmailLog.Timestamp = DateTime.Now;
 			credentialsEmailLog.Level = "Information";
-			credentialsEmailLog.RenderedMessage = $"Credentials email sent successfully.";
-			credentialsEmailLog.AdditionalData = $"Sent credentials email to {email} for user Id: {userId} with username: {userName} / password: {password} . This email contains the user's login credentials.";
+			credentialsEmailLog.RenderedMessage = $"Credentials email sent successfully to {email} for user {userName}.";
+			credentialsEmailLog.AdditionalData = $"Sent credentials email to {email} for user Id {userId} with username : {userName} / password : {password} . This email contains the user's login credentials.";
 			_logger.LogInformation("{@LogDetails}", credentialsEmailLog);
 			#endregion
 		}
@@ -239,7 +239,7 @@ namespace Services.Implementations
 			otpLog.Timestamp = DateTime.Now;
 			otpLog.Level = "Information";
 			otpLog.RenderedMessage = $"OTP email sent successfully to {email}.";
-			otpLog.AdditionalData = $"Sent OTP email to {email} with OTP: {otp}.";
+			otpLog.AdditionalData = $"Sent OTP email to {email} with OTP: {otp}. This email contains a one-time password for resetting the user's password.";
 			_logger.LogInformation("{@LogDetails}", otpLog);
 			#endregion
 

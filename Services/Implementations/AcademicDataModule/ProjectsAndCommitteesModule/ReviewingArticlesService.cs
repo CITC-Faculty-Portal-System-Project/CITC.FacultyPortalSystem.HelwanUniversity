@@ -30,10 +30,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var articlesLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ReviewingArticlesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -45,11 +44,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			if (reviewingArticles is null)
 			{
 				#region Log
-				articlesLogs.RenderedMessage = $"Reviewing articles not found for user: {userOfData.UserName}.";
+				articlesLogs.RenderedMessage = $"Reviewing articles not found for user: {currentUser.UserName}.";
 				articlesLogs.Level = "Warning";
 				articlesLogs.Timestamp = DateTime.Now;
-				articlesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their reviewing articles data, but no reviewing articles data was found in the database for user with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} reviewing articles data, but no reviewing articles data was found in the database for user: {userOfData.UserName}";
+				articlesLogs.AdditionalData = $"User tried to get their reviewing articles data, but no reviewing articles data was found in the database for user with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", articlesLogs);
 				#endregion
 				throw NotFound();
@@ -61,11 +59,10 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				new ReviewingArticlesCountSpecifications(parameters, email));
 
 			#region Log
-			articlesLogs.RenderedMessage = $"Reviewing articles data retrieved for user: {userOfData.UserName}.";
+			articlesLogs.RenderedMessage = $"Reviewing articles data retrieved for user: {currentUser.UserName}.";
 			articlesLogs.Level = "Information";
 			articlesLogs.Timestamp = DateTime.Now;
-			articlesLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their reviewing articles data successfully, total count of reviewing articles data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} reviewing articles data successfully, total count of reviewing articles data retrieved: {totalCount}.";
+			articlesLogs.AdditionalData = $"User retrieved their reviewing articles data successfully, total count of reviewing articles data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", articlesLogs);
 			#endregion
 
@@ -82,10 +79,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var articleLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ReviewingArticlesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -99,9 +95,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				articleLogs.Timestamp = DateTime.Now;
 				articleLogs.Level = "Warning";
-				articleLogs.RenderedMessage = $"Reviewing article not found for user: {userOfData.UserName}.";
-				articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their reviewing article data with id: {id}, but no reviewing article data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} reviewing article data with id: {id}, but no reviewing article data with this id was found in the database.";
+				articleLogs.RenderedMessage = $"Reviewing article not found for user: {currentUser.UserName}.";
+				articleLogs.AdditionalData = $"User tried to get their reviewing article data with id: {id}, but no reviewing article data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", articleLogs);
 				#endregion
 				throw NotFound();
@@ -128,9 +123,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			articleLogs.Timestamp = DateTime.Now;
 			articleLogs.Level = "Information";
-			articleLogs.RenderedMessage = $"Reviewing article data retrieved for user: {userOfData.UserName}.";
-			articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their reviewing article data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} reviewing article data with id: {id} successfully.";
+			articleLogs.RenderedMessage = $"Reviewing article data retrieved for user: {currentUser.UserName}.";
+			articleLogs.AdditionalData = $"User retrieved their reviewing article data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", articleLogs);
 			#endregion
 			return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
@@ -144,10 +138,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var articleLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ReviewingArticlesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -165,8 +158,7 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				articleLogs.Timestamp = DateTime.Now;
 				articleLogs.Level = "Warning";
 				articleLogs.RenderedMessage = $"Faculty Member not found.";
-				articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a reviewing article for a faculty member that does not exist in database, no faculty member found with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to create a reviewing article for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
+				articleLogs.AdditionalData = $"User tried to create a reviewing article for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", articleLogs);
 				#endregion
 				throw;
@@ -182,10 +174,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			articleLogs.Timestamp = DateTime.Now;
 			articleLogs.Level = "Information";
-			articleLogs.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a reviewing article."
-				: $"Admin: {currentUser.UserName} created a reviewing article for user: {userOfData.UserName}";
-			articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User created a reviewing article with id: {response.Id} and title: {response.TitleOfArticle} successfully."
-				: $"Admin: {currentUser.UserName} created a reviewing article with id: {response.Id} and title: {response.TitleOfArticle} for user: {userOfData.UserName} successfully.";
+			articleLogs.RenderedMessage = $"User: {currentUser.UserName} created a reviewing article.";
+			articleLogs.AdditionalData = $"User created a reviewing article with id: {response.Id} and title: {response.TitleOfArticle} successfully.";
 			_logger.LogInformation("{@LogDetails}", articleLogs);
 			#endregion
 			return response;
@@ -198,10 +188,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var articleLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ReviewingArticlesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -219,9 +208,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				articleLogs.Timestamp = DateTime.Now;
 				articleLogs.Level = "Warning";
-				articleLogs.RenderedMessage = $"Reviewing article not found for user: {userOfData.UserName}.";
-				articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their reviewing article data with id: {id}, but no reviewing article data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} reviewing article data with id: {id}, but no reviewing article data with this id was found in the database.";
+				articleLogs.RenderedMessage = $"Reviewing article not found for user: {currentUser.UserName}.";
+				articleLogs.AdditionalData = $"User tried to update their reviewing article data with id: {id}, but no reviewing article data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", articleLogs);
 				#endregion
 				throw NotFound();
@@ -255,9 +243,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			articleLogs.Timestamp = DateTime.Now;
 			articleLogs.Level = "Information";
-			articleLogs.RenderedMessage = $"Reviewing article data updated for user: {userOfData.UserName}.";
-			articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User updated their reviewing article data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
-				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} reviewing article data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			articleLogs.RenderedMessage = $"Reviewing article data updated for user: {currentUser.UserName}.";
+			articleLogs.AdditionalData = $"User updated their reviewing article data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", articleLogs);
 			#endregion
 			return Mapper.Map<ReviewingArticlesDto>(reviewingArticle);
@@ -269,10 +256,9 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var articleLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberProjectsAndCommittees.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ReviewingArticlesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -285,9 +271,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 				#region Log
 				articleLogs.Timestamp = DateTime.Now;
 				articleLogs.Level = "Warning";
-				articleLogs.RenderedMessage = $"Reviewing article not found for user: {userOfData.UserName}.";
-				articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their reviewing article data with id: {id}, but no reviewing article data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} reviewing article data with id: {id}, but no reviewing article data with this id was found in the database.";
+				articleLogs.RenderedMessage = $"Reviewing article not found for user: {currentUser.UserName}.";
+				articleLogs.AdditionalData = $"User tried to delete their reviewing article data with id: {id}, but no reviewing article data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", articleLogs);
 				#endregion
 				throw NotFound();
@@ -318,9 +303,8 @@ namespace Services.Implementations.AcademicDataModule.ProjectsAndCommitteesModul
 			#region Log
 			articleLogs.Timestamp = DateTime.Now;
 			articleLogs.Level = "Information";
-			articleLogs.RenderedMessage = $"Reviewing article data deleted for user: {userOfData.UserName}.";
-			articleLogs.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their reviewing article data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} reviewing article data with id: {id} successfully.";
+			articleLogs.RenderedMessage = $"Reviewing article data deleted for user: {currentUser.UserName}.";
+			articleLogs.AdditionalData = $"User deleted their reviewing article data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", articleLogs);
 			#endregion
 		}

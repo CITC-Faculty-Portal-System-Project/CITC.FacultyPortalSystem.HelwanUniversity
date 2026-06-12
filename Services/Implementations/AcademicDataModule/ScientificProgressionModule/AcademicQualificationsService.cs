@@ -44,11 +44,10 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			if (qualifications is null)
 			{
 				#region Log
-				qualificationLog.RenderedMessage = $"Academic qualifications not found for user: {userOfData.UserName}.";
+				qualificationLog.RenderedMessage = $"Academic qualifications not found for user: {currentUser.UserName}.";
 				qualificationLog.Level = "Warning";
 				qualificationLog.Timestamp = DateTime.Now;
-				qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their academic qualifications data, but no academic qualifications data was found in the database for user with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} academic qualifications data, but no academic qualifications data was found in the database for user: {userOfData.UserName}";
+				qualificationLog.AdditionalData = $"User tried to get their academic qualifications data, but no academic qualifications data was found in the database for user with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", qualificationLog);
 				#endregion
 				throw NotFound();
@@ -60,11 +59,10 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				new AcademicQualificationsCountSpecifications(parameters, email));
 
 			#region Log
-			qualificationLog.RenderedMessage = $"Academic qualifications data retrieved for user: {userOfData.UserName}.";
+			qualificationLog.RenderedMessage = $"Academic qualifications data retrieved for user: {currentUser.UserName}.";
 			qualificationLog.Level = "Information";
 			qualificationLog.Timestamp = DateTime.Now;
-			qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their academic qualifications data successfully, total count of academic qualifications data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} academic qualifications data successfully, total count of academic qualifications data retrieved: {totalCount}.";
+			qualificationLog.AdditionalData = $"User retrieved their academic qualifications data successfully, total count of academic qualifications data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", qualificationLog);
 			#endregion
 
@@ -75,16 +73,16 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				mapped);
 		}
 
-		public async Task<AcademicQualificationResponseDto> GetAcademicQualificationByIdAsync(
-			int id,
-			string? facultyMemberEmail = null)
-		{
-			#region Log
-			var currentUser = await GetCurrentUserAsync();
+        public async Task<AcademicQualificationResponseDto> GetAcademicQualificationByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            #region Log
+            var currentUser = await GetCurrentUserAsync();
 			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var qualificationLog = new LogEntry
-			{
-				Category = Category.FacultyMemberScientificProgression.ToString(),
+            {
+                Category = Category.FacultyMemberScientificProgression.ToString(),
 				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -98,9 +96,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				#region Log
 				qualificationLog.Timestamp = DateTime.Now;
 				qualificationLog.Level = "Warning";
-				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {userOfData.UserName}.";
-				qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
+				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {currentUser.UserName}.";
+				qualificationLog.AdditionalData = $"User tried to get their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", qualificationLog);
 				#endregion
 				throw NotFound();
@@ -127,9 +124,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			qualificationLog.Timestamp = DateTime.Now;
 			qualificationLog.Level = "Information";
-			qualificationLog.RenderedMessage = $"Academic qualification data retrieved for user: {userOfData.UserName}.";
-			qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their academic qualification data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} academic qualification data with id: {id} successfully.";
+			qualificationLog.RenderedMessage = $"Academic qualification data retrieved for user: {currentUser.UserName}.";
+			qualificationLog.AdditionalData = $"User retrieved their academic qualification data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", qualificationLog);
 			#endregion
 			return Mapper.Map<AcademicQualificationResponseDto>(qualification);
@@ -145,8 +141,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var qualificationLog = new LogEntry
-			{
-				Category = Category.FacultyMemberScientificProgression.ToString(),
+            {
+                Category = Category.FacultyMemberScientificProgression.ToString(),
 				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -164,8 +160,7 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				qualificationLog.Timestamp = DateTime.Now;
 				qualificationLog.Level = "Warning";
 				qualificationLog.RenderedMessage = $"Faculty Member not found.";
-				qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create an academic qualification for a faculty member that does not exist in database, no faculty member found with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to create a academic qualification for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
+				qualificationLog.AdditionalData = $"User tried to create an academic qualification for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", qualificationLog);
 				#endregion
 				throw;
@@ -181,10 +176,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			qualificationLog.Timestamp = DateTime.Now;
 			qualificationLog.Level = "Information";
-			qualificationLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created an academic qualification."
-				: $"Admin: {currentUser.UserName} created a academic qualification for user: {userOfData.UserName}";
-			qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User created an academic qualification with id: {response.Id} successfully."
-				: $"Admin: {currentUser.UserName} created a academic qualification with id: {response.Id} for user: {userOfData.UserName} successfully.";
+			qualificationLog.RenderedMessage = $"User: {currentUser.UserName} created an academic qualification.";
+			qualificationLog.AdditionalData = $"User created an academic qualification with id: {response.Id} successfully.";
 			_logger.LogInformation("{@LogDetails}", qualificationLog);
 			#endregion
 			return Mapper.Map<AcademicQualificationResponseDto>(qualification);
@@ -196,11 +189,11 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			string? facultyMemberEmail = null)
 		{
 			#region Log
-			var currentUser = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
 			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var qualificationLog = new LogEntry
 			{
-				Category = Category.FacultyMemberScientificProgression.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -218,9 +211,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				#region Log
 				qualificationLog.Timestamp = DateTime.Now;
 				qualificationLog.Level = "Warning";
-				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {userOfData.UserName}.";
-				qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
+				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {currentUser.UserName}.";
+				qualificationLog.AdditionalData = $"User tried to update their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", qualificationLog);
 				#endregion
 				throw NotFound();
@@ -267,10 +259,9 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var qualificationLog = new LogEntry
+            var qualificationLog = new LogEntry
 			{
-				Category = Category.FacultyMemberScientificProgression.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.AcademicQualificationsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -283,9 +274,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 				#region Log
 				qualificationLog.Timestamp = DateTime.Now;
 				qualificationLog.Level = "Warning";
-				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {userOfData.UserName}.";
-				qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
+				qualificationLog.RenderedMessage = $"Academic qualification not found for user: {currentUser.UserName}.";
+				qualificationLog.AdditionalData = $"User tried to delete their academic qualification data with id: {id}, but no academic qualification data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", qualificationLog);
 				#endregion
 				throw NotFound();
@@ -316,9 +306,8 @@ namespace Services.Implementations.AcademicDataModule.ScientificProgressionModul
 			#region Log
 			qualificationLog.Timestamp = DateTime.Now;
 			qualificationLog.Level = "Information";
-			qualificationLog.RenderedMessage = $"Academic qualification data deleted for user: {userOfData.UserName}.";
-			qualificationLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their academic qualification data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} academic qualification data with id: {id} successfully.";
+			qualificationLog.RenderedMessage = $"Academic qualification data deleted for user: {currentUser.UserName}.";
+			qualificationLog.AdditionalData = $"User deleted their academic qualification data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", qualificationLog);
 			#endregion
 		}

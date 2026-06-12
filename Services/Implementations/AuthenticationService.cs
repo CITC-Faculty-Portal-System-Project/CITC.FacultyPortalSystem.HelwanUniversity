@@ -161,19 +161,19 @@ public class AuthenticationService(
 		var externalUser = await GetUserInfoFromExternalService(registerDto.NationalNumber);
 		var email = externalUser.Email.Trim().ToLowerInvariant();
 
-		//Check if user already exists
-		var existingUser = await _userManager.FindByEmailAsync(email);
-		if (existingUser is not null)
-		{
-			#region Log
-			registrationLog.Timestamp = DateTime.Now;
-			registrationLog.Level = "Warning";
-			registrationLog.RenderedMessage = $"Registration failed [User Already Exists].";
-			registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} already exists in the database.";
-			_logger.LogWarning("{@LogDetails}", registrationLog);
-			#endregion
-			throw new UserAlreadyExistsException();
-		}
+        //Check if user already exists
+        var existingUser = await _userManager.FindByEmailAsync(email);
+        if (existingUser is not null)
+        {
+            #region Log
+            registrationLog.Timestamp = DateTime.Now;
+            registrationLog.Level = "Warning";
+            registrationLog.RenderedMessage = $"Registration failed [User Already Exists].";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} already exists in the database.";
+            _logger.LogWarning("{@LogDetails}", registrationLog);
+            #endregion
+            throw new UserAlreadyExistsException();
+        }
 
 		//Create Credentials
 		var username = await GenerateUniqueUsernameAsync(email, registerDto.NationalNumber);
@@ -187,37 +187,37 @@ public class AuthenticationService(
 		};
 
 
-		var secification = new FacultyMemberWithEmailSpecifications(email);
-		var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
-		var member = await facultyMemberRepo.GetAsync(secification);
-		if (member is not null)
-		{
-			#region Log
-			registrationLog.Timestamp = DateTime.Now;
-			registrationLog.Level = "Warning";
-			registrationLog.RenderedMessage = $"Registration failed [User Already Exists].";
-			registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} already exists in the database.";
-			_logger.LogWarning("{@LogDetails}", registrationLog);
-			#endregion
-			throw new UserAlreadyExistsException("This Member is Already Registered");
-		}
+        var secification = new FacultyMemberWithEmailSpecifications(email);
+        var facultyMemberRepo = _unitOfWork.GetRepository<FacultyMember, Guid>();
+        var member = await facultyMemberRepo.GetAsync(secification);
+        if (member is not null)
+        {
+            #region Log
+            registrationLog.Timestamp = DateTime.Now;
+            registrationLog.Level = "Warning";
+            registrationLog.RenderedMessage = $"Registration failed [User Already Exists].";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} already exists in the database.";
+            _logger.LogWarning("{@LogDetails}", registrationLog);
+            #endregion
+            throw new UserAlreadyExistsException("This Member is Already Registered");
+        }
 
 
-		var result = await _userManager.CreateAsync(newUser, password);
-		if (!result.Succeeded)
-		{
-			#region Log
-			registrationLog.Timestamp = DateTime.Now;
-			registrationLog.Level = "Error";
-			registrationLog.RenderedMessage = "Failed to register user into the database.";
-			registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} failed to be added to the database.";
-			registrationLog.Exception = string.Join("- ", result.Errors.Select(e => e.Description));
-			registrationLog.ExceptionMessage = "Failed to register user into the database.";
-			_logger.LogError("{@LogDetails}", registrationLog);
-			#endregion
-			var errors = result.Errors.Select(e => e.Description).ToList();
-			throw new ValidationException(errors);
-		}
+        var result = await _userManager.CreateAsync(newUser, password);
+        if (!result.Succeeded)
+        {
+            #region Log
+            registrationLog.Timestamp = DateTime.Now;
+            registrationLog.Level = "Error";
+            registrationLog.RenderedMessage = "Failed to register user into the database.";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} failed to be added to the database.";
+            registrationLog.Exception = string.Join("- ", result.Errors.Select(e => e.Description));
+            registrationLog.ExceptionMessage = "Failed to register user into the database.";
+            _logger.LogError("{@LogDetails}", registrationLog);
+            #endregion
+            var errors = result.Errors.Select(e => e.Description).ToList();
+            throw new ValidationException(errors);
+        }
 
 		var roleName = "Faculty Member";
 		if (!await _roleManager.RoleExistsAsync(roleName))
@@ -231,26 +231,26 @@ public class AuthenticationService(
 		await _cacheService.SetCachedValueAsync($"auth:username:{newUser.Id}", username, TimeSpan.FromMinutes(30));
 		await _cacheService.SetCachedValueAsync($"auth:password:{newUser.Id}", password, TimeSpan.FromMinutes(30));
 
-		//Send Credentials Email
-		if (!string.IsNullOrEmpty(email))
-		{
-			#region Log
-			registrationLog.Timestamp = DateTime.Now;
-			registrationLog.Level = "Information";
-			registrationLog.RenderedMessage = "User registered successfully.";
-			registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} registered successfully.";
-			_logger.LogInformation("{@LogDetails}", registrationLog);
-			#endregion
-			await _emailService.SendCredentialsAsync(newUser.Id, username, password);
+        //Send Credentials Email
+        if (!string.IsNullOrEmpty(email))
+        {
+            #region Log
+            registrationLog.Timestamp = DateTime.Now;
+            registrationLog.Level = "Information";
+            registrationLog.RenderedMessage = "User registered successfully.";
+            registrationLog.AdditionalData = $"User with national number {registerDto.NationalNumber} and email {email} registered successfully.";
+            _logger.LogInformation("{@LogDetails}", registrationLog);
+            #endregion
+            await _emailService.SendCredentialsAsync(newUser.Id, username, password);
 		}
 
 		var facultyMember = new FacultyMember
-		{
-			Id = newUser.Id,  // exact same Id
-			Name = newUser.UserName ?? "",
-			Email = newUser.Email ?? "",
-			NationalNumber = newUser.NationalNumber ?? ""
-		};
+        {
+            Id = newUser.Id,  // exact same Id
+            Name = newUser.UserName ?? "",
+            Email = newUser.Email ?? "",
+            NationalNumber = newUser.NationalNumber ?? ""
+        };
 
 		await facultyMemberRepo.AddAsync(facultyMember);
 		await _unitOfWork.SaveChangesAsync();
@@ -261,65 +261,65 @@ public class AuthenticationService(
 		return new UserResultDto(UserName: newUser.UserName ?? "", newUser.Email ?? "");
 	}
 
-	//Login
-	public async Task<LoginClaims> LoginAsync(LoginDto loginDto)
-	{
-		var LoginLog = new LogEntry
-		{
-			Category = Category.Authentication.ToString(),
-			CategoryAction = CategoryAction.UserLogin.ToString(),
+    //Login
+    public async Task<LoginClaims> LoginAsync(LoginDto loginDto)
+    {
+        var LoginLog = new LogEntry
+        {
+            Category = Category.Authentication.ToString(),
+            CategoryAction = CategoryAction.UserLogin.ToString(),
 			UserIP = GetUserIP()
 		};
 
-		var user = await _userManager.FindByNameAsync(loginDto.Username);
-		if (user is null)
-		{
-			#region Log
-			LoginLog.Timestamp = DateTime.Now;
-			LoginLog.Level = "Warning";
-			LoginLog.RenderedMessage = "Login failed [User Not Found].";
-			LoginLog.AdditionalData = $"Login attempt with Username {loginDto.Username} failed because the user was not found in the database.";
-			_logger.LogWarning("{@LogDetails}", LoginLog);
-			#endregion
-			throw new UnauthorizedException();
-		}
+        var user = await _userManager.FindByNameAsync(loginDto.Username);
+        if (user is null)
+        {
+            #region Log
+            LoginLog.Timestamp = DateTime.Now;
+            LoginLog.Level = "Warning";
+            LoginLog.RenderedMessage = "Login failed [User Not Found].";
+            LoginLog.AdditionalData = $"Login attempt with Username {loginDto.Username} failed because the user was not found in the database.";
+            _logger.LogWarning("{@LogDetails}", LoginLog);
+            #endregion
+            throw new UnauthorizedException();
+        }
 
-		var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
-		var role = await _userManager.GetRolesAsync(user);
-		if (!result)
-		{
-			#region Log
-			LoginLog.Timestamp = DateTime.Now;
-			LoginLog.Level = "Warning";
-			LoginLog.RenderedMessage = "Login failed.";
-			LoginLog.AdditionalData = $"Login attempt with Username {loginDto.Username} and Password {loginDto.Password} failed because the password is incorrect.";
-			_logger.LogWarning("{@LogDetails}", LoginLog);
-			#endregion
-			throw new UnauthorizedException();
-		}
+        var result = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+        var role = await _userManager.GetRolesAsync(user);
+        if (!result)
+        {
+            #region Log
+            LoginLog.Timestamp = DateTime.Now;
+            LoginLog.Level = "Warning";
+            LoginLog.RenderedMessage = "Login failed.";
+            LoginLog.AdditionalData = $"Login attempt with Username {loginDto.Username} and Password {loginDto.Password} failed because the password is incorrect.";
+            _logger.LogWarning("{@LogDetails}", LoginLog);
+            #endregion
+            throw new UnauthorizedException();
+        }
 
 		var token = await CreateTokenAsync(user);
 		var CredintialsToken = await CreateCredentialToken(user);
 
-		var response = new LoginClaims
-		{
-			Email = user.Email ?? "",
-			Roles = role,
-			UserName = user.UserName ?? "",
-			NationalNumber = user.NationalNumber,
-			Token = token,
-			CredintialsToken = CredintialsToken
-		};
-		#region Log
-		LoginLog.Timestamp = DateTime.Now;
-		LoginLog.Level = "Information";
-		LoginLog.RenderedMessage = "Login successful";
-		LoginLog.UserName = loginDto.Username;
-		LoginLog.AdditionalData = $"User with username {loginDto.Username} and role {role.FirstOrDefault()} logged in successfully.";
-		_logger.LogInformation("{@LogDetails}", LoginLog);
-		#endregion
-		return response;
-	}
+        var response = new LoginClaims
+        {
+            Email = user.Email ?? "",
+            Roles = role,
+            UserName = user.UserName ?? "",
+            NationalNumber = user.NationalNumber,
+            Token = token,
+            CredintialsToken = CredintialsToken
+        };
+        #region Log
+        LoginLog.Timestamp = DateTime.Now;
+        LoginLog.Level = "Information";
+        LoginLog.RenderedMessage = "Login successful";
+        LoginLog.UserName = loginDto.Username;
+        LoginLog.AdditionalData = $"User with username {loginDto.Username} and role {role.FirstOrDefault()} logged in successfully.";
+        _logger.LogInformation("{@LogDetails}", LoginLog);
+        #endregion
+        return response;
+    }
 
 	//CheckEmail
 	public async Task<bool> CheckEmailExistAsync(string userEmail)
@@ -337,20 +337,20 @@ public class AuthenticationService(
 			CategoryAction = CategoryAction.SendOTP.ToString(),
 		};
 
-		var checkEmail = await CheckEmailExistAsync(userEmail);
-		if (!checkEmail)
-		{
-			#region Log
-			checkEmailLog.Timestamp = DateTime.Now;
-			checkEmailLog.Level = "Error";
-			checkEmailLog.RenderedMessage = "Failed to send OTP.";
-			checkEmailLog.AdditionalData = $"Attempt to send OTP to {userEmail} failed because the email was not found in the database.";
-			_logger.LogError("{@LogDetails}", checkEmailLog);
-			#endregion
-			throw new UserNotFoundException(userEmail);
-		}
-		await _emailService.SendOTPAsync(userEmail);
-	}
+        var checkEmail = await CheckEmailExistAsync(userEmail);
+        if (!checkEmail)
+        {
+            #region Log
+            checkEmailLog.Timestamp = DateTime.Now;
+            checkEmailLog.Level = "Error";
+            checkEmailLog.RenderedMessage = "Failed to send OTP.";
+            checkEmailLog.AdditionalData = $"Attempt to send OTP to {userEmail} failed because the email was not found in the database.";
+            _logger.LogError("{@LogDetails}", checkEmailLog);
+            #endregion
+            throw new UserNotFoundException(userEmail);
+        }
+        await _emailService.SendOTPAsync(userEmail);
+    }
 
 	//VerifyOTP
 	public async Task<bool> VerifyOTPAsync(OTPSendDTO otpSendDto)
@@ -364,65 +364,65 @@ public class AuthenticationService(
 		return string.Equals(cachedOTP, otpSendDto.Otp, StringComparison.Ordinal);
 	}
 
-	//ResetPassowrd
-	public async Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto)
-	{
-		var resetPasswordLog = new LogEntry
-		{
-			Category = Category.Authentication.ToString(),
-			CategoryAction = CategoryAction.ResetPassword.ToString(),
-			UserIP = GetUserIP(),
+    //ResetPassowrd
+    public async Task<bool> ResetPasswordAsync(ResetPasswordDto passwordDto)
+    {
+        var resetPasswordLog = new LogEntry
+        {
+            Category = Category.Authentication.ToString(),
+            CategoryAction = CategoryAction.ResetPassword.ToString(),
+            UserIP = GetUserIP(),
 		};
 
 		var email = await _cacheService.GetCachedValueAsync($"auth:email:{passwordDto.Email.ToLower()}") ?? "";
 		var user = await _userManager.FindByEmailAsync(passwordDto.Email ?? "");
 		if (user is null) return false;
 
-		var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-		var result = await _userManager.ResetPasswordAsync(user, token, passwordDto.NewPassword);
-		bool isSuccess = result.Succeeded;
-		if (isSuccess)
-		{
-			#region Log
-			resetPasswordLog.Timestamp = DateTime.Now;
-			resetPasswordLog.Level = "Information";
-			resetPasswordLog.RenderedMessage = "Password reset successfully";
-			resetPasswordLog.AdditionalData = $"Password for user with email {passwordDto.Email} was reset successfully to {passwordDto.NewPassword}.";
-			_logger.LogInformation("{@LogDetails}", resetPasswordLog);
-			#endregion
-			return true;
-		}
-		return false;
-	}
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, passwordDto.NewPassword);
+        bool isSuccess = result.Succeeded;
+        if (isSuccess)
+        {
+            #region Log
+            resetPasswordLog.Timestamp = DateTime.Now;
+            resetPasswordLog.Level = "Information";
+            resetPasswordLog.RenderedMessage = "Password reset successfully";
+            resetPasswordLog.AdditionalData = $"Password for user with email {passwordDto.Email} was reset successfully to {passwordDto.NewPassword}.";
+            _logger.LogInformation("{@LogDetails}", resetPasswordLog);
+            #endregion
+            return true;
+        }
+        return false;
+    }
 
-	//GetUserInfoFromExternalService
-	public async Task<UserRegistrationClientDto> GetUserInfoFromExternalService(string nationalNumber)
-	{
-		var clientLog = new LogEntry
-		{
-			Category = Category.Authentication.ToString(),
-			CategoryAction = CategoryAction.CheckNationalNumber.ToString(),
+    //GetUserInfoFromExternalService
+    public async Task<UserRegistrationClientDto> GetUserInfoFromExternalService(string nationalNumber)
+    {
+        var clientLog = new LogEntry
+        {
+            Category = Category.Authentication.ToString(),
+            CategoryAction = CategoryAction.CheckNationalNumber.ToString(),
 			UserIP = GetUserIP()
 		};
-		var user = await _registrationClient.CheckNationalNumber(nationalNumber);
-		if (user is null || string.IsNullOrWhiteSpace(user.NationalNumber))
-		{
-			#region Log
-			clientLog.Timestamp = DateTime.Now;
-			clientLog.Level = "Warning";
-			clientLog.RenderedMessage = $"User with national number {nationalNumber} not found.";
-			clientLog.AdditionalData = $"The external system did not return valid data for national number: {nationalNumber}. This may indicate that the national number is invalid or not registered.";
-			_logger.LogWarning("{@LogDetails}", clientLog);
-			#endregion
-			throw new NotFoundException($"User with National Number {nationalNumber} not Found.");
-		}
-		return new UserRegistrationClientDto
-		{
-			Exists = true,
-			NationalNumber = user.NationalNumber,
-			Email = user.Email
-		};
-	}
+        var user = await _registrationClient.CheckNationalNumber(nationalNumber);
+        if (user is null || string.IsNullOrWhiteSpace(user.NationalNumber))
+        {
+            #region Log
+            clientLog.Timestamp = DateTime.Now;
+            clientLog.Level = "Warning";
+            clientLog.RenderedMessage = $"User with national number {nationalNumber} not found.";
+            clientLog.AdditionalData = $"The external system did not return valid data for national number: {nationalNumber}. This may indicate that the national number is invalid or not registered.";
+            _logger.LogWarning("{@LogDetails}", clientLog);
+            #endregion
+            throw new NotFoundException($"User with National Number {nationalNumber} not Found.");
+        }
+        return new UserRegistrationClientDto
+        {
+            Exists = true,
+            NationalNumber = user.NationalNumber,
+            Email = user.Email
+        };
+    }
 
 	//GetCurrentUser
 	public async Task<UserResultDto> GetCurrentUserAsync(string userEmail)
@@ -440,7 +440,7 @@ public class AuthenticationService(
 
 		return email!;
 
-	}
+    }
 
 	public async Task<UserResultDto> GetUserByIdAsync(Guid userId)
 	{

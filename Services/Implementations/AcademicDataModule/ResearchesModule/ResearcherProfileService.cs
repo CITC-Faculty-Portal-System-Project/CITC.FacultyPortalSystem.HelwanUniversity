@@ -62,7 +62,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			researcherLog.Level = "Information";
 			researcherLog.RenderedMessage = $"Researcher profile data retrieved for user: {userOfData.UserName}.";
 			researcherLog.AdditionalData = (facultyMemberId is null) ? $"User retrieved their researcher profile successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} researcher profile.";
+                : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} researcher profile.";
 			_logger.LogInformation("{@LogDetails}", researcherLog);
 			#endregion
 			return Mapper.Map<ResearcherProfileResponseDTO>(profile);

@@ -29,10 +29,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var teachingExperiencesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberExperiences.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TeachingExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -45,11 +44,10 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			if (teachingExperiences is null)
 			{
 				#region Log
-				teachingExperiencesLog.RenderedMessage = $"Teaching experiences not found for user: {userOfData.UserName}.";
+				teachingExperiencesLog.RenderedMessage = $"Teaching experiences not found for user: {currentUser.UserName}.";
 				teachingExperiencesLog.Level = "Warning";
 				teachingExperiencesLog.Timestamp = DateTime.Now;
-				teachingExperiencesLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their teaching experiences data, but no teaching experiences data was found in the database for user with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} teaching experiences data, but no teaching experiences data was found in the database for user: {userOfData.UserName}";
+				teachingExperiencesLog.AdditionalData = $"User tried to get their teaching experiences data, but no teaching experiences data was found in the database for user with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", teachingExperiencesLog);
 				#endregion
 				throw NotFound();
@@ -61,11 +59,10 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				new TeachingExperiencesCountSpecifications(parameters, email));
 
 			#region Log
-			teachingExperiencesLog.RenderedMessage = $"Teaching experiences data retrieved for user: {userOfData.UserName}.";
+			teachingExperiencesLog.RenderedMessage = $"Teaching experiences data retrieved for user: {currentUser.UserName}.";
 			teachingExperiencesLog.Level = "Information";
 			teachingExperiencesLog.Timestamp = DateTime.Now;
-			teachingExperiencesLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their teaching experiences data successfully, total count of teaching experiences data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} teaching experiences data successfully, total count of teaching experiences data retrieved: {totalCount}.";
+			teachingExperiencesLog.AdditionalData = $"User retrieved their teaching experiences data successfully, total count of teaching experiences data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", teachingExperiencesLog);
 			#endregion
 
@@ -82,10 +79,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var teachingExperienceLog = new LogEntry
 			{
-				Category = Category.FacultyMemberExperiences.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TeachingExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -99,9 +95,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				#region Log
 				teachingExperienceLog.Timestamp = DateTime.Now;
 				teachingExperienceLog.Level = "Warning";
-				teachingExperienceLog.RenderedMessage = $"Teaching experiences not found for user: {userOfData.UserName}.";
-				teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their teaching experiences data with id: {id}, but no teaching experiences data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} teaching experiences data with id: {id}, but no teaching experiences data with this id was found in the database.";
+				teachingExperienceLog.RenderedMessage = $"Teaching experiences not found for user: {currentUser.UserName}.";
+				teachingExperienceLog.AdditionalData = $"User tried to get their teaching experiences data with id: {id}, but no teaching experiences data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", teachingExperienceLog);
 				#endregion
 				throw NotFound();
@@ -128,9 +123,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			teachingExperienceLog.Timestamp = DateTime.Now;
 			teachingExperienceLog.Level = "Information";
-			teachingExperienceLog.RenderedMessage = $"Teaching experiences data retrieved for user: {userOfData.UserName}.";
-			teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their teaching experiences data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} teaching experiences data with id: {id} successfully.";
+			teachingExperienceLog.RenderedMessage = $"Teaching experiences data retrieved for user: {currentUser.UserName}.";
+			teachingExperienceLog.AdditionalData = $"User retrieved their teaching experiences data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", teachingExperienceLog);
 			#endregion
 			return Mapper.Map<TeachingExperiencesResponseDTO>(teachingExperience);
@@ -144,10 +138,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var teachingExperienceLog = new LogEntry
 			{
-				Category = Category.FacultyMemberExperiences.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TeachingExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -165,8 +158,7 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				teachingExperienceLog.Timestamp = DateTime.Now;
 				teachingExperienceLog.Level = "Warning";
 				teachingExperienceLog.RenderedMessage = $"Faculty Member not found.";
-				teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a teaching experience for a faculty member that does not exist in database, no faculty member found with email: {email}."
-					: $"Admin: {currentUser.UserName} tried to create a teaching experience for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
+				teachingExperienceLog.AdditionalData = $"User tried to create a teaching experience for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", teachingExperienceLog);
 				#endregion
 				throw;
@@ -182,10 +174,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			teachingExperienceLog.Timestamp = DateTime.Now;
 			teachingExperienceLog.Level = "Information";
-			teachingExperienceLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a teaching experience."
-				: $"Admin: {currentUser.UserName} created a teaching experience for user: {userOfData.UserName}";
-			teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a teaching experience with id: {response.Id} for course: {response.CourseName} successfully."
-				: $"Admin: {currentUser.UserName} created a teaching experience with id: {response.Id} for course: {response.CourseName} for user: {userOfData.UserName} successfully.";
+			teachingExperienceLog.RenderedMessage = $"User: {currentUser.UserName} created a teaching experience.";
+			teachingExperienceLog.AdditionalData = $"User created a teaching experience with id: {response.Id} for course: {response.CourseName} successfully.";
 			_logger.LogInformation("{@LogDetails}", teachingExperienceLog);
 			#endregion
 			return response;
@@ -198,10 +188,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var teachingExperienceLog = new LogEntry
 			{
-				Category = Category.FacultyMemberExperiences.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TeachingExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -219,9 +208,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				#region Log
 				teachingExperienceLog.Timestamp = DateTime.Now;
 				teachingExperienceLog.Level = "Warning";
-				teachingExperienceLog.RenderedMessage = $"Teaching experience not found for user: {userOfData.UserName}.";
-				teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their teaching experience data with id: {teachingExperienceId}, but no teaching experience data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} teaching experience data with id: {teachingExperienceId}, but no teaching experience data with this id was found in the database.";
+				teachingExperienceLog.RenderedMessage = $"Teaching experience not found for user: {currentUser.UserName}.";
+				teachingExperienceLog.AdditionalData = $"User tried to update their teaching experience data with id: {teachingExperienceId}, but no teaching experience data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", teachingExperienceLog);
 				#endregion
 				throw NotFound();
@@ -254,9 +242,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			teachingExperienceLog.Timestamp = DateTime.Now;
 			teachingExperienceLog.Level = "Information";
-			teachingExperienceLog.RenderedMessage = $"Teaching experience data updated for user: {userOfData.UserName}.";
-			teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their teaching experience data with id: {teachingExperienceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
-				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} teaching experience data with id: {teachingExperienceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			teachingExperienceLog.RenderedMessage = $"Teaching experience data updated for user: {currentUser.UserName}.";
+			teachingExperienceLog.AdditionalData = $"User updated their teaching experience data with id: {teachingExperienceId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", teachingExperienceLog);
 			#endregion
 			return newData;
@@ -268,10 +255,9 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var teachingExperienceLog = new LogEntry
 			{
-				Category = Category.FacultyMemberExperiences.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.TeachingExperiencesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -284,9 +270,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 				#region Log
 				teachingExperienceLog.Timestamp = DateTime.Now;
 				teachingExperienceLog.Level = "Warning";
-				teachingExperienceLog.RenderedMessage = $"Teaching experience not found for user: {userOfData.UserName}.";
-				teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their teaching experience data with id: {teachingExperienceId}, but no teaching experience data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} teaching experience data with id: {teachingExperienceId}, but no teaching experience data with this id was found in the database.";
+				teachingExperienceLog.RenderedMessage = $"Teaching experience not found for user: {currentUser.UserName}.";
+				teachingExperienceLog.AdditionalData = $"User tried to delete their teaching experience data with id: {teachingExperienceId}, but no teaching experience data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", teachingExperienceLog);
 				#endregion
 				throw NotFound();
@@ -317,9 +302,8 @@ namespace Services.Implementations.AcademicDataModule.ExperiencesModule
 			#region Log
 			teachingExperienceLog.Timestamp = DateTime.Now;
 			teachingExperienceLog.Level = "Information";
-			teachingExperienceLog.RenderedMessage = $"Teaching experience data deleted for user: {userOfData.UserName}.";
-			teachingExperienceLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their teaching experience data with id: {teachingExperienceId} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} teaching experience data with id: {teachingExperienceId} successfully.";
+			teachingExperienceLog.RenderedMessage = $"Teaching experience data deleted for user: {currentUser.UserName}.";
+			teachingExperienceLog.AdditionalData = $"User deleted their teaching experience data with id: {teachingExperienceId} successfully.";
 			_logger.LogInformation("{@LogDetails}", teachingExperienceLog);
 			#endregion
 		}

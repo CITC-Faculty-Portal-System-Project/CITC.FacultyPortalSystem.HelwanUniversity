@@ -45,12 +45,12 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			if (contributions is null)
 			{
 				#region Log
-				contributionsLog.RenderedMessage = $"Contributions to university not found for user: {userOfData.UserName}.";
+                contributionsLog.RenderedMessage = $"Contributions to university not found for user: {userOfData.UserName}.";
 				contributionsLog.Level = "Warning";
 				contributionsLog.Timestamp = DateTime.Now;
-				contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their contributions to university data, but no contributions to university data was found in the database for user with email: {email}."
+                contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their contributions to university data, but no contributions to university data was found in the database for user with email: {email}."
 					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} contributions to university data, but no contributions to university data was found in the database for user: {userOfData.UserName}";
-				_logger.LogWarning("{@LogDetails}", contributionsLog);
+                _logger.LogWarning("{@LogDetails}", contributionsLog);
 				#endregion
 				throw NotFound();
 			}
@@ -61,11 +61,10 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				new ContributionsToUniversityCountSpecifications(parameters, email));
 
 			#region Log
-			contributionsLog.RenderedMessage = $"Contributions to university data retrieved for user: {userOfData.UserName}.";
+			contributionsLog.RenderedMessage = $"Contributions to university data retrieved for user: {currentUser.UserName}.";
 			contributionsLog.Level = "Information";
 			contributionsLog.Timestamp = DateTime.Now;
-			contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their contributions to university data successfully, total count of contributions to university data retrieved: {totalCount}."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} contributions to university data successfully, total count of contributions to university data retrieved: {totalCount}.";
+			contributionsLog.AdditionalData = $"User retrieved their contributions to university data successfully, total count of contributions to university data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", contributionsLog);
 			#endregion
 
@@ -76,16 +75,16 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				mapped);
 		}
 
-		public async Task<ContributionsToUniversityResponseDTO> GetContributionToUniversityByIdAsync(
-			int id,
-			string? facultyMemberEmail = null)
-		{
-			#region Log
-			var currentUser = await GetCurrentUserAsync();
+        public async Task<ContributionsToUniversityResponseDTO> GetContributionToUniversityByIdAsync(
+            int id,
+            string? facultyMemberEmail = null)
+        {
+            #region Log
+            var currentUser = await GetCurrentUserAsync();
 			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var contributionsLog = new LogEntry
-			{
-				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
+            {
+                Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -100,9 +99,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				contributionsLog.Timestamp = DateTime.Now;
 				contributionsLog.Level = "Warning";
-				contributionsLog.RenderedMessage = $"Contribution to university not found for user: {userOfData.UserName}.";
-				contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their contribution to university data with id: {id}, but no contribution to university data was found in the database."
-					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} contribution to university data with id: {id}, but no contribution to university data with this id was found in the database.";
+				contributionsLog.RenderedMessage = $"Contribution to university not found for user: {currentUser.UserName}.";
+				contributionsLog.AdditionalData = $"User tried to get their contribution to university data with id: {id}, but no contribution to university data was found in the database.";
 				_logger.LogWarning("{@LogDetails}", contributionsLog);
 				#endregion
 				throw NotFound();
@@ -129,9 +127,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionsLog.Timestamp = DateTime.Now;
 			contributionsLog.Level = "Information";
-			contributionsLog.RenderedMessage = $"Contribution to university data retrieved for user: {userOfData.UserName}.";
-			contributionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their contribution to university data with id: {id} successfully."
-				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} contribution to university data with id: {id} successfully.";
+			contributionsLog.RenderedMessage = $"Contribution to university data retrieved for user: {currentUser.UserName}.";
+			contributionsLog.AdditionalData = $"User retrieved their contribution to university data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", contributionsLog);
 			#endregion
 			return Mapper.Map<ContributionsToUniversityResponseDTO>(contribution);
@@ -147,8 +144,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var contributionLog = new LogEntry
-			{
-				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
+            {
+                Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
 				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -166,8 +163,7 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				contributionLog.Timestamp = DateTime.Now;
 				contributionLog.Level = "Warning";
 				contributionLog.RenderedMessage = $"Faculty Member not found.";
-				contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create contribution to university for a faculty member that does not exist in database, no faculty member found with email : {email}."
-					: $"Admin: {currentUser.UserName} tried to create a contribution to university for user: {userOfData.UserName}, but no faculty member found with email : {email}.";
+				contributionLog.AdditionalData = $"User tried to create contribution to university for a faculty member that does not exist in database, no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", contributionLog);
 				#endregion
 				throw;
@@ -183,10 +179,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionLog.Timestamp = DateTime.Now;
 			contributionLog.Level = "Information";
-			contributionLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a contribution to university."
-				: $"Admin: {currentUser.UserName} created a contribution to university for user: {userOfData.UserName}";
-			contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a contribution to university with id: {response.Id} and title: {response.ContributionTitle} successfully."
-				: $"Admin: {currentUser.UserName} created a contribution to university with id: {response.Id} and title: {response.ContributionTitle} for user: {userOfData.UserName} successfully.";
+			contributionLog.RenderedMessage = $"User: {currentUser.UserName} created a contribution to university.";
+			contributionLog.AdditionalData = $"User created a contribution to university with id: {response.Id} and title: {response.ContributionTitle} successfully.";
 			_logger.LogInformation("{@LogDetails}", contributionLog);
 			#endregion
 			return response;
@@ -199,10 +193,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var contributionLog = new LogEntry
 			{
-				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -220,9 +213,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				contributionLog.Timestamp = DateTime.Now;
 				contributionLog.Level = "Warning";
-				contributionLog.RenderedMessage = $"Contribution to university not found for user: {userOfData.UserName}.";
-				contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their contribution to university data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} contribution to university data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database.";
+				contributionLog.RenderedMessage = $"Contribution to university not found for user: {currentUser.UserName}.";
+				contributionLog.AdditionalData = $"User tried to update their contribution to university data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", contributionLog);
 				#endregion
 				throw NotFound();
@@ -256,9 +248,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionLog.Timestamp = DateTime.Now;
 			contributionLog.Level = "Information";
-			contributionLog.RenderedMessage = $"Contribution to university data updated for user: {userOfData.UserName}.";
-			contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their contribution to university data with id: {contributionToUniversityId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
-				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} contribution to university data with id: {contributionToUniversityId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			contributionLog.RenderedMessage = $"Contribution to university data updated for user: {currentUser.UserName}.";
+			contributionLog.AdditionalData = $"User updated their contribution to university data with id: {contributionToUniversityId} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", contributionLog);
 			#endregion
 			return newData;
@@ -270,10 +261,9 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var contributionLog = new LogEntry
 			{
-				Category = Category.FacultyMemberContributionsAndParticipations.ToString(),
+				Category = Category.FacultyMemberAcademicData.ToString(),
 				CategoryAction = CategoryAction.ContributionsToUniversityActions.ToString(),
 				UserName = currentUser.UserName,
 				UserIP = GetUserIP()
@@ -286,9 +276,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 				#region Log
 				contributionLog.Timestamp = DateTime.Now;
 				contributionLog.Level = "Warning";
-				contributionLog.RenderedMessage = $"Contribution to university not found for user: {userOfData.UserName}.";
-				contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their contribution to university data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database."
-					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} contribution to university data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database.";
+				contributionLog.RenderedMessage = $"Contribution to university not found for user: {currentUser.UserName}.";
+				contributionLog.AdditionalData = $"User tried to delete their contribution touniversity data with id: {contributionToUniversityId}, but no contribution to university data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", contributionLog);
 				#endregion
 				throw NotFound();
@@ -319,9 +308,8 @@ namespace Services.Implementations.AcademicDataModule.ContributionsModule
 			#region Log
 			contributionLog.Timestamp = DateTime.Now;
 			contributionLog.Level = "Information";
-			contributionLog.RenderedMessage = $"Contribution to university data deleted for user: {userOfData.UserName}.";
-			contributionLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their contribution to university data with id: {contributionToUniversityId} successfully."
-				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} contribution to university data with id: {contributionToUniversityId} successfully.";
+			contributionLog.RenderedMessage = $"Contribution to university data deleted for user: {currentUser.UserName}.";
+			contributionLog.AdditionalData = $"User deleted their contribution to university data with id: {contributionToUniversityId} successfully.";
 			_logger.LogInformation("{@LogDetails}", contributionLog);
 			#endregion
 		}
