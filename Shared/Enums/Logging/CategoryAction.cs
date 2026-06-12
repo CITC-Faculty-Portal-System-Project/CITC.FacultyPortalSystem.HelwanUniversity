@@ -24,7 +24,6 @@
 		IdentificationCardDataActions = 20,
 		SocialMediaDataActions = 21,
 		ProfileDashboardDataActions = 22,
-		EnsureOwnership = 23,
 		ContributionsToCommunityServiceActions = 24,
 		ContributionsToUniversityActions = 25,
 		ParticipationInQualityWorksActions = 26,
@@ -50,5 +49,7 @@
 		ResearchesActions = 46,
 		ThesesActions = 47,
 		JobRanksActions = 48,
+		UpdateBioSummary = 49,
+		UpdateProfileSkills = 50,
 	}
 }

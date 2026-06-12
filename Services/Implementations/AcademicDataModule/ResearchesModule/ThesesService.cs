@@ -96,7 +96,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var thesesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ThesesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -170,7 +170,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var thesesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ThesesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -234,7 +234,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var thesesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ThesesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -281,7 +281,13 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			var targetFacultyMemberId = facultyMemberId ?? currentUser.UserId;
 
 			#region Log
-
+			var thesesLog = new LogEntry
+			{
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
+				CategoryAction = CategoryAction.ThesesActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName
+			};
 			#endregion
 
 			var entity = await Repo.GetAsync(
@@ -289,7 +295,11 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			if (entity is null)
 			{
 				#region Log
-
+				thesesLog.Timestamp = DateTime.Now;
+				thesesLog.Level = "Warning";
+				thesesLog.RenderedMessage = $"Thesis not found for user: {currentUser.UserName}.";
+				thesesLog.AdditionalData = $"User tried to get thesis with id: {thesesLog}, but no thesis with this id was found for user with id: {targetFacultyMemberId}.";
+				_logger.LogWarning("{@LogDetails}", thesesLog);
 				#endregion
 				throw NotFound();
 			}
@@ -303,13 +313,21 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			catch (UnauthorizedAccessException)
 			{
 				#region Log
-
+				thesesLog.Timestamp = DateTime.Now;
+				thesesLog.Level = "Warning";
+				thesesLog.RenderedMessage = $"User unauthorized to access a thesis.";
+				thesesLog.AdditionalData = $"User tried to get a thesis with id: {id} for faculty member with id: {targetFacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+				_logger.LogWarning("{@LogDetails}", thesesLog);
 				#endregion
 				throw;
 			}
 
 			#region Log
-
+			thesesLog.Timestamp = DateTime.Now;
+			thesesLog.Level = "Information";
+			thesesLog.RenderedMessage = $"Thesis retrieved for user: {currentUser.UserName}.";
+			thesesLog.AdditionalData = $"User retrieved thesis with id: {id} successfully.";
+			_logger.LogInformation("{@LogDetails}", thesesLog);
 			#endregion
 			return Mapper.Map<ThesesResponseDTO>(entity);
 		}
