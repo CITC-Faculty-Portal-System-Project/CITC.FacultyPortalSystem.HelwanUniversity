@@ -1,8 +1,5 @@
-﻿using Domain.Entities.CVGenerationModule;
-using Domain.Entities.FacultyMemberDataModule;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Services.Global;
-using Services.Specifications.CVGenerationModule;
 using Shared.Dtos.FacultyMemberDataModule;
 using Shared.Enums.Logging;
 using System.Text.Encodings.Web;
@@ -10,46 +7,46 @@ using System.Text.Json;
 
 namespace Services.Implementations
 {
-	public class FacultyMemberDataService(
-	 IUnitOfWork unitOfWork,
-	 IMapper mapper,
-	 IAuthenticationService authenticationService, ILogger<FacultyMemberDataService> _logger)
-	 : BaseService<FacultyMember, Guid>(unitOfWork, authenticationService, mapper),
-	   IFacultyMemberDataService
-	{
-		protected override string EntityName => "Faculty Member";
+    public class FacultyMemberDataService(
+     IUnitOfWork unitOfWork,
+     IMapper mapper,
+     IAuthenticationService authenticationService, ILogger<FacultyMemberDataService> _logger)
+     : BaseService<FacultyMember, Guid>(unitOfWork, authenticationService, mapper),
+       IFacultyMemberDataService
+    {
+        protected override string EntityName => "Faculty Member";
 
-		#region Repos
-		private IGenericRepository<PersonalData, int> PersonalDataRepo
-			=> GetRepository<PersonalData, int>();
+        #region Repos
+        private IGenericRepository<PersonalData, int> PersonalDataRepo
+            => GetRepository<PersonalData, int>();
 
-		private IGenericRepository<ContactData, int> ContactDataRepo
-			=> GetRepository<ContactData, int>();
+        private IGenericRepository<ContactData, int> ContactDataRepo
+            => GetRepository<ContactData, int>();
 
-		private IGenericRepository<IdentificationCard, int> IdentificationCardRepo
-			=> GetRepository<IdentificationCard, int>();
+        private IGenericRepository<IdentificationCard, int> IdentificationCardRepo
+            => GetRepository<IdentificationCard, int>();
 
-		private IGenericRepository<SocialMediaPlatforms, int> SocialMediaPlatformsRepo
-			=> GetRepository<SocialMediaPlatforms, int>();
+        private IGenericRepository<SocialMediaPlatforms, int> SocialMediaPlatformsRepo
+            => GetRepository<SocialMediaPlatforms, int>();
 
-		#endregion
+        #endregion
 
-		#region PersonalData
+        #region PersonalData
 
-		public async Task<PersonalDataResponseDto?> GetPersonalDataAsync(string? facultyMemberEmail = null)
-		{
-			var currentUser = await GetCurrentUserAsync();
-			var email = facultyMemberEmail ?? currentUser.Email;
+        public async Task<PersonalDataResponseDto?> GetPersonalDataAsync(string? facultyMemberEmail = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             #region Log
-            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail); 
+            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
             var personalDateLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.PersonalDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+            };
             #endregion
 
             var personalData = await PersonalDataRepo.GetAsync(
@@ -76,61 +73,61 @@ namespace Services.Implementations
             }
             catch (UnauthorizedAccessException)
             {
-				#region Log
-				personalDateLog.Timestamp = DateTime.Now;
-				personalDateLog.Level = "Warning";
+                #region Log
+                personalDateLog.Timestamp = DateTime.Now;
+                personalDateLog.Level = "Warning";
                 personalDateLog.RenderedMessage = $"User unauthorized to access personal data.";
                 personalDateLog.AdditionalData = $"User tried to get personal data that does not belong to them, personal data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
-				_logger.LogWarning("{@LogDetails}", personalDateLog);
-				#endregion
-				throw;
-			}
+                _logger.LogWarning("{@LogDetails}", personalDateLog);
+                #endregion
+                throw;
+            }
 
-			var result = Mapper.Map<PersonalDataResponseDto>(personalData);
-			result.Faculty = new LookupItemDto();
-			result.Department = new LookupItemDto();
+            var result = Mapper.Map<PersonalDataResponseDto>(personalData);
+            result.Faculty = new LookupItemDto();
+            result.Department = new LookupItemDto();
 
-			result.Faculty.ValueAr = personalData.Faculty?.NameAR ?? string.Empty;
-			result.Faculty.ValueEn = personalData.Faculty?.NameEN ?? string.Empty;
-			result.Department.ValueAr = personalData.Department?.NameAR ?? string.Empty;
-			result.Department.ValueEn = personalData.Department?.NameEN ?? string.Empty;
+            result.Faculty.ValueAr = personalData.Faculty?.NameAR ?? string.Empty;
+            result.Faculty.ValueEn = personalData.Faculty?.NameEN ?? string.Empty;
+            result.Department.ValueAr = personalData.Department?.NameAR ?? string.Empty;
+            result.Department.ValueEn = personalData.Department?.NameEN ?? string.Empty;
 
             result.NationalNumber = personalData.FacultyMember?.NationalNumber ?? string.Empty;
-          
+
             #region Log
             personalDateLog.Timestamp = DateTime.Now;
             personalDateLog.RenderedMessage = $"Personal data retrieved for user: {userOfData.UserName}.";
             personalDateLog.Level = "Information";
             personalDateLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their personal data successfully."
                 : $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} personal data successfully.";
-			_logger.LogInformation("{@LogDetails}", personalDateLog);
+            _logger.LogInformation("{@LogDetails}", personalDateLog);
             #endregion
             return result;
         }
 
-		public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(
-			PersonalDataUpdateDto personalDataUpdateDto,
-			string? facultyMemberEmail = null)
-		{
-			var currentUser = await GetCurrentUserAsync();
+        public async Task<PersonalDataResponseDto?> UpdatePersonalDataAsync(
+            PersonalDataUpdateDto personalDataUpdateDto,
+            string? facultyMemberEmail = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
 
-			var jsonOptions = new JsonSerializerOptions
-			{
-				WriteIndented = true,
-				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-			};
+            var jsonOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
 
             var email = facultyMemberEmail ?? currentUser.Email;
 
             #region Log
             var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var updatePersonalDataLog = new LogEntry
+            var updatePersonalDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.PersonalDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+            };
             #endregion
 
             var personalData = await PersonalDataRepo.GetAsync(
@@ -144,7 +141,7 @@ namespace Services.Implementations
                 updatePersonalDataLog.Level = "Warning";
                 updatePersonalDataLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their personal data, but no personal data was found in the database for user with email: {email}."
                     : $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} personal data, but no personal data was found in the database for user: {userOfData.UserName}.";
-                _logger.LogWarning("{@LogDetails}", updatePersonalDataLog); 
+                _logger.LogWarning("{@LogDetails}", updatePersonalDataLog);
                 #endregion
                 throw new NotFoundException("Personal Data is Not Found.");
             }
@@ -158,33 +155,23 @@ namespace Services.Implementations
             }
             catch (UnauthorizedAccessException)
             {
-				#region Log
-                var ensureOwnershipLog = new LogEntry
-                {
-					Category = Category.FacultyMemberService.ToString(),
-					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-					Timestamp = DateTime.Now,
-					RenderedMessage = $"User unauthorized to update personal data.",
-					AdditionalData = $"User tried to update personal data that does not belong to them. Personal data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
-					Exception = ex.ToString(),
-					ExceptionDetail = ex.StackTrace,
-					ExceptionMessage = ex.Message,
-					UserIP = GetUserIP(),
-					UserName = currentUser.UserName,
-					Level = "Error"
-				};
-				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-				#endregion
-				throw;
-			}
+                #region Log
+                updatePersonalDataLog.Timestamp = DateTime.Now;
+                updatePersonalDataLog.Level = "Warning";
+                updatePersonalDataLog.RenderedMessage = $"User unauthorized to access personal data.";
+                updatePersonalDataLog.AdditionalData = $"User tried to update personal data that does not belong to them, personal data faculty member id: {personalData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+                _logger.LogWarning("{@LogDetails}", updatePersonalDataLog);
+                #endregion
+                throw;
+            }
 
-			Mapper.Map(personalDataUpdateDto, personalData);
+            Mapper.Map(personalDataUpdateDto, personalData);
 
-			PersonalDataRepo.Update(personalData);
-			await SaveChangesAsync();
+            PersonalDataRepo.Update(personalData);
+            await SaveChangesAsync();
 
-			var result = Mapper.Map<PersonalDataResponseDto>(personalData);
-			result.NationalNumber = personalData.FacultyMember?.NationalNumber ?? string.Empty;
+            var result = Mapper.Map<PersonalDataResponseDto>(personalData);
+            result.NationalNumber = personalData.FacultyMember?.NationalNumber ?? string.Empty;
 
             #region Log
             updatePersonalDataLog.Timestamp = DateTime.Now;
@@ -197,25 +184,25 @@ namespace Services.Implementations
             return result;
         }
 
-		#endregion
+        #endregion
 
-		#region ContactData
+        #region ContactData
 
-		public async Task<ContactDataResponseDto?> GetContactDataAsync(string? facultyMemberEmail = null)
-		{
+        public async Task<ContactDataResponseDto?> GetContactDataAsync(string? facultyMemberEmail = null)
+        {
 
             var currentUser = await GetCurrentUserAsync();
-			var email = facultyMemberEmail ?? currentUser.Email;
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             #region Log
             var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var contactDataLog = new LogEntry
+            var contactDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.ContactDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+            };
             #endregion
 
             var contactData = await ContactDataRepo.GetAsync(
@@ -242,25 +229,15 @@ namespace Services.Implementations
             }
             catch (UnauthorizedAccessException)
             {
-				#region Log
-				var ensureOwnershipLog = new LogEntry
-				{
-					Category = Category.FacultyMemberService.ToString(),
-					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-					Timestamp = DateTime.Now,
-					RenderedMessage = $"User unauthorized to access contact data.",
-					AdditionalData = $"User tried to access contatct data that does not belong to them. Contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
-					Exception = ex.ToString(),
-					ExceptionDetail = ex.StackTrace,
-					ExceptionMessage = ex.Message,
-					UserIP = GetUserIP(),
-					UserName = currentUser.UserName,
-					Level = "Error"
-				};
-				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-				#endregion
-				throw;
-			}
+                #region Log
+                contactDataLog.Timestamp = DateTime.Now;
+                contactDataLog.Level = "Warning";
+                contactDataLog.RenderedMessage = $"User unauthorized to access contact data.";
+                contactDataLog.AdditionalData = $"User tried to get contact data that does not belong to them, contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+                _logger.LogWarning("{@LogDetails}", contactDataLog);
+                #endregion
+                throw;
+            }
 
             #region Log
             contactDataLog.Timestamp = DateTime.Now;
@@ -273,29 +250,29 @@ namespace Services.Implementations
             return Mapper.Map<ContactDataResponseDto>(contactData);
         }
 
-		public async Task<ContactDataResponseDto?> UpdateContactDataAsync(
-			ContactDataUpdateDto contactDataUpdateDto,
-			string? facultyMemberEmail = null)
-		{
-			var currentUser = await GetCurrentUserAsync();
+        public async Task<ContactDataResponseDto?> UpdateContactDataAsync(
+            ContactDataUpdateDto contactDataUpdateDto,
+            string? facultyMemberEmail = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
 
-			var jsonOptions = new JsonSerializerOptions
-			{
-				WriteIndented = true,
-				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-			};
+            var jsonOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
 
             var email = facultyMemberEmail ?? currentUser.Email;
 
             #region Log
             var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var updateContactDataLog = new LogEntry
+            var updateContactDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.ContactDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			};
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+            };
             #endregion
 
             var contactData = await ContactDataRepo.GetAsync(
@@ -323,33 +300,23 @@ namespace Services.Implementations
             }
             catch (UnauthorizedAccessException)
             {
-				#region Log
-				var ensureOwnershipLog = new LogEntry
-				{
-					Category = Category.FacultyMemberService.ToString(),
-					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-					Timestamp = DateTime.Now,
-					RenderedMessage = $"User unauthorized to update contact data.",
-					AdditionalData = $"User tried to update contact data that does not belong to them. Contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
-					Exception = ex.ToString(),
-					ExceptionDetail = ex.StackTrace,
-					ExceptionMessage = ex.Message,
-					UserIP = GetUserIP(),
-					UserName = currentUser.UserName,
-					Level = "Error"
-				};
-				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-				#endregion
-				throw;
-			}
+                #region Log
+                updateContactDataLog.Timestamp = DateTime.Now;
+                updateContactDataLog.Level = "Warning";
+                updateContactDataLog.RenderedMessage = $"User unauthorized to access contact data.";
+                updateContactDataLog.AdditionalData = $"User tried to update contact data that does not belong to them, contact data faculty member id: {contactData.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+                _logger.LogWarning("{@LogDetails}", updateContactDataLog);
+                #endregion
+                throw;
+            }
 
-			Mapper.Map(contactDataUpdateDto, contactData);
+            Mapper.Map(contactDataUpdateDto, contactData);
 
-			ContactDataRepo.Update(contactData);
-			await SaveChangesAsync();
+            ContactDataRepo.Update(contactData);
+            await SaveChangesAsync();
 
-			//Map Updated Data and Return It
-			var updatedContactData = Mapper.Map<ContactDataResponseDto>(contactData);
+            //Map Updated Data and Return It
+            var updatedContactData = Mapper.Map<ContactDataResponseDto>(contactData);
 
             #region Log
             updateContactDataLog.Timestamp = DateTime.Now;
@@ -360,28 +327,28 @@ namespace Services.Implementations
             _logger.LogInformation("{@LogDetails}", updateContactDataLog);
             #endregion
 
-			return Mapper.Map<ContactDataResponseDto>(contactData);
-		}
+            return Mapper.Map<ContactDataResponseDto>(contactData);
+        }
 
-		#endregion
+        #endregion
 
-		#region IdentificationCard
+        #region IdentificationCard
 
-		public async Task<IdentificationCardDto> GetIdentificationCardAsync(string? facultyMemberEmail = null)
-		{
+        public async Task<IdentificationCardDto> GetIdentificationCardAsync(string? facultyMemberEmail = null)
+        {
 
-			var currentUser = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
 
-			var email = facultyMemberEmail ?? currentUser.Email;
-			#region Log
-			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var identificationCardDataLog = new LogEntry
+            var email = facultyMemberEmail ?? currentUser.Email;
+            #region Log
+            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
+            var identificationCardDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.IdentificationCardDataActions.ToString(),
                 UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			}; 
+                UserName = currentUser.UserName
+            };
             #endregion
 
             var identificationCard = await IdentificationCardRepo.GetAsync(
@@ -397,25 +364,15 @@ namespace Services.Implementations
                 }
                 catch (UnauthorizedAccessException)
                 {
-					#region Log
-					var ensureOwnershipLog = new LogEntry
-					{
-						Category = Category.FacultyMemberService.ToString(),
-						CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-						Timestamp = DateTime.Now,
-						RenderedMessage = $"User unauthorized to access identification card data.",
-						AdditionalData = $"User tried to access identification card data that does not belong to them. identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
-						Exception = ex.ToString(),
-						ExceptionDetail = ex.StackTrace,
-						ExceptionMessage = ex.Message,
-						UserIP = GetUserIP(),
-						UserName = currentUser.UserName,
-						Level = "Error"
-					};
-					_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-					#endregion
-					throw;
-				}
+                    #region Log
+                    identificationCardDataLog.Timestamp = DateTime.Now;
+                    identificationCardDataLog.Level = "Warning";
+                    identificationCardDataLog.RenderedMessage = $"User unauthorized to access identification card data.";
+                    identificationCardDataLog.AdditionalData = $"User tried to get identification card data that does not belong to them, identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+                    _logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+                    #endregion
+                    throw;
+                }
 
                 #region Log
                 identificationCardDataLog.Timestamp = DateTime.Now;
@@ -428,51 +385,49 @@ namespace Services.Implementations
                 return Mapper.Map<IdentificationCardDto>(identificationCard);
             }
 
-			FacultyMember facultyMember = null!;
-			try
-			{
-				facultyMember = await GetFacultyMemberByEmailAsync(email);
-				await EnsureOwnershipIfClientAsync(
-					   facultyMember.Id,
-					   facultyMemberEmail);
-			}
-			catch (NotFoundException)
-			{
-				#region Log
-				identificationCardDataLog.Timestamp = DateTime.Now;
-				identificationCardDataLog.Level = "Warning";
-				identificationCardDataLog.UserIP = GetUserIP();
-				identificationCardDataLog.UserName = currentUser.UserName;
-				identificationCardDataLog.RenderedMessage = $"Faculty Member Not Found.";
-				identificationCardDataLog.AdditionalData = $"User tried to get identification card data for a faculty member that does not exist in database, No faculty member found with email : {currentUser.Email}.";
-				_logger.LogWarning("{@LogDetails}", identificationCardDataLog);
-				#endregion
-				throw;
-			}
-			catch (UnauthorizedAccessException)
+            FacultyMember facultyMember = null!;
+            try
+            {
+                facultyMember = await GetFacultyMemberByEmailAsync(email);
+                await EnsureOwnershipIfClientAsync(
+                       facultyMember.Id,
+                       facultyMemberEmail);
+            }
+            catch (NotFoundException)
             {
                 #region Log
                 identificationCardDataLog.Timestamp = DateTime.Now;
-				identificationCardDataLog.RenderedMessage = $"User unauthorized to access identification card data.";
-				identificationCardDataLog.AdditionalData = $"User tried to get identification card data that does not belong to them. Identification card faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.";
-				identificationCardDataLog.Level = "Warning";
-				_logger.LogWarning("{@LogDetails}", identificationCardDataLog);
-				#endregion
-				throw;
-			}
+                identificationCardDataLog.Level = "Warning";
+                identificationCardDataLog.RenderedMessage = $"Faculty Member Not Found.";
+                identificationCardDataLog.AdditionalData = $"User tried to get identification card data for a faculty member that does not exist in database, No faculty member found with email: {email}.";
+                _logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+                #endregion
+                throw;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                #region Log
+                identificationCardDataLog.Timestamp = DateTime.Now;
+                identificationCardDataLog.RenderedMessage = $"User unauthorized to access identification card data.";
+                identificationCardDataLog.AdditionalData = $"User tried to get identification card data that does not belong to them. Identification card faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.";
+                identificationCardDataLog.Level = "Warning";
+                _logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+                #endregion
+                throw;
+            }
 
-			var newCard = new IdentificationCard
-			{
-				FacultyMemberId = facultyMember.Id,
-				ORCID = null,
-				EKB = null,
-				ResearcherId = null,
-				ResearcherGate = null,
-				AcademiaEdu = null
-			};
+            var newCard = new IdentificationCard
+            {
+                FacultyMemberId = facultyMember.Id,
+                ORCID = null,
+                EKB = null,
+                ResearcherId = null,
+                ResearcherGate = null,
+                AcademiaEdu = null
+            };
 
-			await IdentificationCardRepo.AddAsync(newCard);
-			await SaveChangesAsync();
+            await IdentificationCardRepo.AddAsync(newCard);
+            await SaveChangesAsync();
 
             #region Log
             identificationCardDataLog.Timestamp = DateTime.Now;
@@ -485,34 +440,34 @@ namespace Services.Implementations
             return Mapper.Map<IdentificationCardDto>(newCard);
         }
 
-		public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(
-			IdentificationCardDto identificationCardDto,
-			string? facultyMemberEmail = null)
-		{
+        public async Task<IdentificationCardDto> UpdateIdentificationCardAsync(
+            IdentificationCardDto identificationCardDto,
+            string? facultyMemberEmail = null)
+        {
 
-			var currentUser = await GetCurrentUserAsync();
+            var currentUser = await GetCurrentUserAsync();
 
-			var jsonOptions = new JsonSerializerOptions
-			{
-				WriteIndented = true,
-				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-			};
+            var jsonOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
 
-			var email = facultyMemberEmail ?? currentUser.Email;
+            var email = facultyMemberEmail ?? currentUser.Email;
 
             #region Log
             var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var identificationCardDataLog = new LogEntry
+            var identificationCardDataLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.IdentificationCardDataActions.ToString(),
-				UserIP = GetUserIP(),
+                UserIP = GetUserIP(),
                 UserName = currentUser.UserName
-			}; 
+            };
             #endregion
 
-			var identificationCard = await IdentificationCardRepo.GetAsync(
-				new IdentificationCardWithFacultyMemberEmailSpecifications(email));
+            var identificationCard = await IdentificationCardRepo.GetAsync(
+                new IdentificationCardWithFacultyMemberEmailSpecifications(email));
 
             if (identificationCard is null)
             {
@@ -536,33 +491,23 @@ namespace Services.Implementations
             }
             catch (UnauthorizedAccessException)
             {
-				#region Log
-				var ensureOwnershipLog = new LogEntry
-				{
-					Category = Category.FacultyMemberService.ToString(),
-					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-					Timestamp = DateTime.Now,
-					RenderedMessage = $"User unauthorized to update identification card data.",
-					AdditionalData = $"User tried to update identification card data that does not belong to them. identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
-					Exception = ex.ToString(),
-					ExceptionDetail = ex.StackTrace,
-					ExceptionMessage = ex.Message,
-					UserIP = GetUserIP(),
-					UserName = currentUser.UserName,
-					Level = "Error"
-				};
-				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-				#endregion
-				throw;
-			}
+                #region Log
+                identificationCardDataLog.Timestamp = DateTime.Now;
+                identificationCardDataLog.Level = "Warning";
+                identificationCardDataLog.RenderedMessage = $"User unauthorized to access identification card data.";
+                identificationCardDataLog.AdditionalData = $"User tried to update identification card data that does not belong to them, identification card data faculty member id: {identificationCard.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+                _logger.LogWarning("{@LogDetails}", identificationCardDataLog);
+                #endregion
+                throw;
+            }
 
-			Mapper.Map(identificationCardDto, identificationCard);
+            Mapper.Map(identificationCardDto, identificationCard);
 
-			IdentificationCardRepo.Update(identificationCard);
-			await SaveChangesAsync();
+            IdentificationCardRepo.Update(identificationCard);
+            await SaveChangesAsync();
 
-			//Return The Updated Data
-			var updatedIdentificationCard = Mapper.Map<IdentificationCardDto>(identificationCard);
+            //Return The Updated Data
+            var updatedIdentificationCard = Mapper.Map<IdentificationCardDto>(identificationCard);
 
             #region Log
             identificationCardDataLog.Timestamp = DateTime.Now;
@@ -575,28 +520,28 @@ namespace Services.Implementations
             return Mapper.Map<IdentificationCardDto>(identificationCard);
         }
 
-		#endregion
+        #endregion
 
-		#region SocialMedia
-		public async Task<SocialMediaPlatformsDto> GetSocialMediaPlatformsAsync(string? facultyMemberEmail = null)
-		{
+        #region SocialMedia
+        public async Task<SocialMediaPlatformsDto> GetSocialMediaPlatformsAsync(string? facultyMemberEmail = null)
+        {
 
             var currentUser = await GetCurrentUserAsync();
-			var email = facultyMemberEmail ?? (currentUser.Email);
+            var email = facultyMemberEmail ?? (currentUser.Email);
 
             #region Log
             var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
-			var socialMediaLog = new LogEntry
+            var socialMediaLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.SocialMediaDataActions.ToString(),
                 UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			};
+                UserName = currentUser.UserName
+            };
             #endregion
 
-			var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
-				new SocialMediaWithFacultyMemberEmailSpecifications(email));
+            var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
+                new SocialMediaWithFacultyMemberEmailSpecifications(email));
 
             if (socialMediaPlatforms is not null)
             {
@@ -608,25 +553,15 @@ namespace Services.Implementations
                 }
                 catch (UnauthorizedAccessException)
                 {
-					#region Log
-					var ensureOwnershipLog = new LogEntry
-					{
-						Category = Category.FacultyMemberService.ToString(),
-						CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-						Timestamp = DateTime.Now,
-						RenderedMessage = $"User unauthorized to access social media platforms data.",
-						AdditionalData = $"User tried to access social media platforms data that does not belong to them. social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
-						Exception = ex.ToString(),
-						ExceptionDetail = ex.StackTrace,
-						ExceptionMessage = ex.Message,
-						UserIP = GetUserIP(),
-						UserName = currentUser.UserName,
-						Level = "Error"
-					};
-					_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-					#endregion
-					throw;
-				}
+                    #region Log
+                    socialMediaLog.Timestamp = DateTime.Now;
+                    socialMediaLog.Level = "Warning";
+                    socialMediaLog.RenderedMessage = $"User unauthorized to access social media platforms data.";
+                    socialMediaLog.AdditionalData = $"User tried to get social media platforms data that does not belong to them, social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+                    _logger.LogWarning("{@LogDetails}", socialMediaLog);
+                    #endregion
+                    throw;
+                }
 
                 #region Log
                 socialMediaLog.Timestamp = DateTime.Now;
@@ -639,62 +574,50 @@ namespace Services.Implementations
                 return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
             }
 
-			FacultyMember facultyMember = null!;
-			try
-			{
-				facultyMember = await GetFacultyMemberByEmailAsync(email);
-				await EnsureOwnershipIfClientAsync(
-						facultyMember.Id,
-						facultyMemberEmail);
-			}
-			catch (NotFoundException)
-			{
-				#region Log
-				socialMediaLog.Timestamp = DateTime.Now;
-				socialMediaLog.Level = "Warning";
-				socialMediaLog.UserIP = GetUserIP();
-				socialMediaLog.UserName = currentUser.UserName;
-				socialMediaLog.RenderedMessage = $"Faculty member not found.";
-				socialMediaLog.AdditionalData = $"User tried to get social media platforms data for a faculty member that does not exist in database, no faculty member found with email : {currentUser.Email}.";
-				_logger.LogWarning("{@LogDetails}", socialMediaLog);
-				#endregion
-				throw;
-			}
-			catch (UnauthorizedAccessException)
+            FacultyMember facultyMember = null!;
+            try
             {
-				#region Log
-				var ensureOwnershipLog = new LogEntry
-				{
-					Category = Category.FacultyMemberService.ToString(),
-					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-					Timestamp = DateTime.Now,
-					RenderedMessage = $"User unauthorized to access social media platforms data.",
-					AdditionalData = $"Faculty member id does not match the logged in user id. social media platforms data faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.",
-					Exception = ex.ToString(),
-					ExceptionDetail = ex.StackTrace,
-					ExceptionMessage = ex.Message,
-					UserIP = GetUserIP(),
-					UserName = currentUser.UserName,
-					Level = "Error"
-				};
-				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-				#endregion
-				throw;
-			}
+                facultyMember = await GetFacultyMemberByEmailAsync(email);
+                await EnsureOwnershipIfClientAsync(
+                        facultyMember.Id,
+                        facultyMemberEmail);
+            }
+            catch (NotFoundException)
+            {
+                #region Log
+                socialMediaLog.Timestamp = DateTime.Now;
+                socialMediaLog.Level = "Warning";
+                socialMediaLog.RenderedMessage = $"Faculty member not found.";
+                socialMediaLog.AdditionalData = $"User tried to get social media platforms data for a faculty member that does not exist in database, no faculty member found with email: {email}.";
+                _logger.LogWarning("{@LogDetails}", socialMediaLog);
+                #endregion
+                throw;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                #region Log
+                socialMediaLog.Timestamp = DateTime.Now;
+                socialMediaLog.RenderedMessage = $"User unauthorized to access social media platforms data.";
+                socialMediaLog.AdditionalData = $"User tried to get social media platforms data that does not belong to them. social media platforms data faculty member id: {facultyMember.Id}, Logged in user id: {currentUser.UserId}.";
+                socialMediaLog.Level = "Warning";
+                _logger.LogWarning("{@LogDetails}", socialMediaLog);
+                #endregion
+                throw;
+            }
 
-			var newSocialMediaPlatforms = new SocialMediaPlatforms
-			{
-				FacultyMemberId = facultyMember.Id,
-				LinkedIn = null,
-				Instagram = null,
-				PersonalWebsite = null,
-				Facebook = null,
-				X = null,
-				YouTube = null
-			};
+            var newSocialMediaPlatforms = new SocialMediaPlatforms
+            {
+                FacultyMemberId = facultyMember.Id,
+                LinkedIn = null,
+                Instagram = null,
+                PersonalWebsite = null,
+                Facebook = null,
+                X = null,
+                YouTube = null
+            };
 
-			await SocialMediaPlatformsRepo.AddAsync(newSocialMediaPlatforms);
-			await SaveChangesAsync();
+            await SocialMediaPlatformsRepo.AddAsync(newSocialMediaPlatforms);
+            await SaveChangesAsync();
 
             #region Log
             socialMediaLog.Timestamp = DateTime.Now;
@@ -713,22 +636,26 @@ namespace Services.Implementations
         {
             var currentUser = await GetCurrentUserAsync();
 
-			var jsonOptions = new JsonSerializerOptions
-			{
-				WriteIndented = true,
-				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-			};
+            var jsonOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
 
-			var updateSocialMediaLog = new LogEntry
+            var email = facultyMemberEmail ?? currentUser.Email;
+
+            #region Log
+            var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
+            var updateSocialMediaLog = new LogEntry
             {
                 Category = Category.FacultyMemberDataService.ToString(),
                 CategoryAction = CategoryAction.SocialMediaDataActions.ToString(),
-				UserIP = GetUserIP(),
-				UserName = currentUser.UserName
-			};
-			#endregion
+                UserIP = GetUserIP(),
+                UserName = currentUser.UserName
+            };
+            #endregion
 
-			var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
+            var socialMediaPlatforms = await SocialMediaPlatformsRepo.GetAsync(
                 new SocialMediaWithFacultyMemberEmailSpecifications(email));
 
             if (socialMediaPlatforms is null)
@@ -753,32 +680,22 @@ namespace Services.Implementations
             }
             catch (UnauthorizedAccessException)
             {
-				#region Log
-				var ensureOwnershipLog = new LogEntry
-				{
-					Category = Category.FacultyMemberService.ToString(),
-					CategoryAction = CategoryAction.EnsureOwnership.ToString(),
-					Timestamp = DateTime.Now,
-					RenderedMessage = $"User unauthorized to update social media platforms data.",
-					AdditionalData = $"User tried to upate social media platforms data that does not belong to them. social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.",
-					Exception = ex.ToString(),
-					ExceptionDetail = ex.StackTrace,
-					ExceptionMessage = ex.Message,
-					UserIP = GetUserIP(),
-					UserName = currentUser.UserName,
-					Level = "Error"
-				};
-				_logger.LogError("{@LogDetails}", ensureOwnershipLog);
-				#endregion
-				throw;
-			}
+                #region Log
+                updateSocialMediaLog.Timestamp = DateTime.Now;
+                updateSocialMediaLog.Level = "Warning";
+                updateSocialMediaLog.RenderedMessage = $"User unauthorized to access social media platforms data.";
+                updateSocialMediaLog.AdditionalData = $"User tried to update social media platforms data that does not belong to them, social media platforms data faculty member id: {socialMediaPlatforms.FacultyMemberId}, Logged in user id: {currentUser.UserId}.";
+                _logger.LogWarning("{@LogDetails}", updateSocialMediaLog);
+                #endregion
+                throw;
+            }
 
-			Mapper.Map(socialMediaPlatformsDto, socialMediaPlatforms);
-			SocialMediaPlatformsRepo.Update(socialMediaPlatforms);
-			await SaveChangesAsync();
+            Mapper.Map(socialMediaPlatformsDto, socialMediaPlatforms);
+            SocialMediaPlatformsRepo.Update(socialMediaPlatforms);
+            await SaveChangesAsync();
 
-			//Return The Updated Data
-			var updatedSocialMediaData = Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
+            //Return The Updated Data
+            var updatedSocialMediaData = Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
 
             #region Log
             updateSocialMediaLog.Timestamp = DateTime.Now;
@@ -791,6 +708,6 @@ namespace Services.Implementations
             return Mapper.Map<SocialMediaPlatformsDto>(socialMediaPlatforms);
         }
 
-		#endregion
-	}
+        #endregion
+    }
 }
