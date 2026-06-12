@@ -224,11 +224,13 @@ namespace Services.Implementations.CVGenerationModule
             return response;
         }
 
-        public async Task<CVResponseDTO> GetCVAsync(bool isPublic = false)
+        public async Task<CVResponseDTO> GetCVAsync(Guid? facultyMemberId , bool isPublic = false)
         {
             var currentUser = await GetCurrentUserAsync();
+            var id = facultyMemberId ?? currentUser.UserId;
 
-            return await BuildCVAsync(currentUser.UserId, currentUser.Email , isPublic);
+
+            return await BuildCVAsync(id, currentUser.Email , isPublic);
         }
 
         public async Task<CVResponseDTO> GetPublicCVAsync(Guid id)
@@ -246,12 +248,14 @@ namespace Services.Implementations.CVGenerationModule
             var currentUser = await _authenticationService.GetCurrentUserAsync(
                 _authenticationService.GetLoggedUserEmail());
 
-            var cv = await GetCVAsync(isPublic);
+            var targetFacultyId = facultyMemberId ?? currentUser.UserId;
+
+
+            var cv = await GetCVAsync(targetFacultyId, isPublic);
             var template = _cVTemplatesFactory.Resolve(templateName);
 
             var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
 
-            var targetFacultyId = facultyMemberId ?? currentUser.UserId;
 
             var selectedTemplate = new SavedCVPreferences
             {
@@ -280,7 +284,7 @@ namespace Services.Implementations.CVGenerationModule
         {
             var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
             
-            var cv = await GetCVAsync(isPublic);
+            var cv = await GetCVAsync(currentUser.UserId, isPublic);
             var template = _cVTemplatesFactory.Resolve(templateName);
 
             var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
