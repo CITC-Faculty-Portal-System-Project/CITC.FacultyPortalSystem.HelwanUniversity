@@ -40,7 +40,6 @@ namespace Services.MappingProfiles
 
             CreateMap<SocialMediaPlatformsDto, SocialMediaPlatforms>().ReverseMap();
 
-            #region Profile Dashboard
             CreateMap<PersonalData, ProfileDashboardResponseDTO>()
                 .ForMember(dest => dest.Title, opt => opt.MapFrom(src => src.Title))
                 .ForMember(dest => dest.University, opt => opt.MapFrom(src => src.University))
@@ -62,7 +61,6 @@ namespace Services.MappingProfiles
                         ? string.Join(";", src.Skills)
                         : string.Empty
                 ));
-            #endregion
         }
     }
 }
