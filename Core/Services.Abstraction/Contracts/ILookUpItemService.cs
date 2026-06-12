@@ -5,6 +5,7 @@ namespace Services.Abstraction.Contracts
     {
         public Task<IEnumerable<LookupItemDto>> GetLookUpItemByType(string type);
         public Task<IEnumerable<FacultyResponseDTO>> GetAllFacultiesAsync();
+        public Task<IEnumerable<FacultyWithDepartmentResposneDTO>> GetAllFacultiesWithDepartmentsAsync();
 
     }
 }

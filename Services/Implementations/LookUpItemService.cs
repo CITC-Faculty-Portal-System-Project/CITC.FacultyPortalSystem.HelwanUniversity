@@ -13,6 +13,14 @@ namespace Services.Implementations
             return _mapper.Map<IEnumerable<FacultyResponseDTO>>(faculties); 
         }
 
+        public async Task<IEnumerable<FacultyWithDepartmentResposneDTO>> GetAllFacultiesWithDepartmentsAsync()
+        {
+            var facultiesRepo = _unitOfWork.GetRepository<Faculty, int>();
+            var faculties = await facultiesRepo.GetAllAsync(new FacultySpecifications());
+
+            return _mapper.Map<IEnumerable<FacultyWithDepartmentResposneDTO>>(faculties);
+        }
+
         public async Task<IEnumerable<LookupItemDto>> GetLookUpItemByType(string type)
         {
             var repo = _unitOfWork.GetRepository<Lookup, Guid>();

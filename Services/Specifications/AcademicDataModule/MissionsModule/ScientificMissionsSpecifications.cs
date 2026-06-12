@@ -44,13 +44,14 @@ namespace Services.Specifications.AcademicDataModule.MissionsModule
 
         }
 
-        public ScientificMissionsSpecifications(SceintificMissionsFetchingDTO sceintificMissionsFetchingDTO) 
+        public ScientificMissionsSpecifications(SceintificMissionsFetchingDTO sceintificMissionsFetchingDTO)
             : base(sm => sm.StartDate == sceintificMissionsFetchingDTO.StartDate && sm.EndDate == sceintificMissionsFetchingDTO.EndDate &&
             sm.MissionName == sceintificMissionsFetchingDTO.Name && sm.UniversityOrFaculty == sceintificMissionsFetchingDTO.UniversityFaculty
-            && sm.CountryOrCity == sceintificMissionsFetchingDTO.CountryCity && sm.Notes == sceintificMissionsFetchingDTO.Description 
+            && sm.CountryOrCity == sceintificMissionsFetchingDTO.CountryCity && sm.Notes == sceintificMissionsFetchingDTO.Description
             && sm.FacultyMember.NationalNumber == sceintificMissionsFetchingDTO.NationalNumber)
         {
 
         }
+
     }
 }

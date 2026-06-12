@@ -22,7 +22,10 @@
 
         Task<int> CountAsync(ISpecifications<TEntity, TKey> specifications);
         Task<IReadOnlyList<TResult>> ExecuteAggregationAsync<TResult>(
-       IAggregationSpecification<TEntity, TResult> spec);  
-            
+       IAggregationSpecification<TEntity, TResult> spec);
+
+        IQueryable<TEntity> GetQueryable(
+    ISpecifications<TEntity, TKey> specifications);
+
     }
 }

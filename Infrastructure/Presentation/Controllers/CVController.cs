@@ -28,9 +28,9 @@ namespace Presentation.Controllers
          => Ok(await _serviceManager.CVGenerationService.GetUserPrefferedTemplate(userId));
 
         [HttpGet("Download-Pdf")]
-        public async Task<IActionResult> DownloadPdf(string template = "modern" , bool isPublic = false)
+        public async Task<IActionResult> DownloadPdf(Guid? facultyMember , string template = "modern" , bool isPublic = false)
         {
-            var pdf = await _serviceManager.CVGenerationService.GenerateCVPdfAsync(template , isPublic);
+            var pdf = await _serviceManager.CVGenerationService.GenerateCVPdfAsync(template , facultyMember , isPublic);
             return File(pdf, "application/pdf", "CV.pdf");
         }
 

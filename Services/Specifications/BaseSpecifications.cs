@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Services.Specifications
 {
-    internal class BaseSpecifications<TEntity, TKey>
+    public class BaseSpecifications<TEntity, TKey>
         : ISpecifications<TEntity, TKey>
         where TEntity : class
         where TKey : notnull
@@ -17,7 +17,7 @@ namespace Services.Specifications
             Criteria = criteria;
         }
 
-        public Expression<Func<TEntity, bool>>? Criteria { get; private set; }
+        public Expression<Func<TEntity, bool>>? Criteria { get; protected set; }
 
         #endregion
 

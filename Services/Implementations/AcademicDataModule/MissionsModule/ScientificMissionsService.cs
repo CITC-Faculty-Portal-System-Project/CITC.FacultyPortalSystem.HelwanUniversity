@@ -21,12 +21,12 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 	{
 		protected override string EntityName => "Scientific Missions";
 
-		public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(
-			ScientificMissionSpecificationParamaters parameters,
-			string? facultyMemberEmail = null)
-		{
-			var currentUser = await GetCurrentUserAsync();
-			var email = facultyMemberEmail ?? currentUser.Email;
+        public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(
+            ScientificMissionSpecificationParamaters parameters,
+              string? facultyMemberEmail = null)
+        {
+            var currentUser = await GetCurrentUserAsync();
+            var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
 			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);

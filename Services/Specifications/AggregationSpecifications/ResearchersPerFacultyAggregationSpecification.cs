@@ -7,12 +7,12 @@ namespace Services.Specifications.AggregationSpecifications
     public class ResearchersPerFacultyAggregationSpecification
         : AggregationSpecification<Research, TopFiveResearchersStatsDTO>
     {
-        private readonly ResearchersPerFacultySpecificationParameters _parameters;
+        private readonly int _facultyId;
 
         public ResearchersPerFacultyAggregationSpecification(
-            ResearchersPerFacultySpecificationParameters parameters)
+            int facultyId)
         {
-            _parameters = parameters;
+            _facultyId = facultyId;
 
             SetCriteria(r => !r.IsDeleted && r.Contributions!.Any(c => c.IsConfirmed));
         }
@@ -33,6 +33,8 @@ namespace Services.Specifications.AggregationSpecifications
                     FacultyId = c.Contributor!.PersonalData!.FacultyId,
                     FacultyAR = c.Contributor.PersonalData.Faculty.NameAR,
                     FacultyEN = c.Contributor.PersonalData.Faculty.NameEN,
+                    DepartmentAR = c.Contributor.PersonalData.Department.NameAR,
+                    DepartmentEN = c.Contributor.PersonalData.Department.NameEN,
                     HIndex = c.Contributor.Researcher!.Hindex
                 })
                 .Select(g => new
@@ -45,13 +47,15 @@ namespace Services.Specifications.AggregationSpecifications
                     g.Key.FacultyAR,
                     g.Key.FacultyEN,
                     g.Key.FacultyId,
+                    g.Key.DepartmentAR,
+                    g.Key.DepartmentEN,
                     HIndex = g.Key.HIndex,
                     TotalPapers = g.Count(),
                     TotalCitations = g
                         .SelectMany(x => x.Research!.Cites!)
                         .Sum(c => (int?)c.NumberOfCites) ?? 0
                 })
-                .Where(x => x.FacultyId == _parameters.FacultyIdTopFiveResearchers);
+                .Where(x => x.FacultyId == _facultyId);
 
             var researchersList = researchersQuery.ToList();
 
@@ -69,6 +73,8 @@ namespace Services.Specifications.AggregationSpecifications
                     ResearcherFacultyAR = x.FacultyAR,
                     ResearcherFacultyEN = x.FacultyEN,
                     TotalResearchesNo = x.TotalPapers,
+                    DepartmentAR = x.DepartmentAR,
+                    DepartmentEN = x.DepartmentEN,
                     Score =
                         (0.5 * (maxH == 0 ? 0 : (double)x.HIndex / maxH)) +
                         (0.3 * (maxC == 0 ? 0 : (double)x.TotalCitations / maxC)) +

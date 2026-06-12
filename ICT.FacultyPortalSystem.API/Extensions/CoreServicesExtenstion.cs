@@ -11,7 +11,10 @@ using Services.Abstraction.Contracts.AdminModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.AttachmentsModule.Helpers;
 using Services.Abstraction.Contracts.CVGenerationModule;
+using Services.Abstraction.Contracts.FacultyMembersPublicProfileModule;
 using Services.Abstraction.Contracts.MessagingAndChattingModule;
+using Services.Abstraction.Contracts.Notification;
+using Services.Abstraction.Contracts.ReportsAndDashboard;
 using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.EncryptionServices;
 using Services.EncryptionServices;
@@ -40,14 +43,15 @@ using Services.Implementations.CVGenerationModule.SectionFilters.ProjectsAndComm
 using Services.Implementations.CVGenerationModule.SectionFilters.ScientificProgression;
 using Services.Implementations.CVGenerationModule.SectionFilters.WritingsAndPatents;
 using Services.Implementations.CVGenerationModule.Templates;
+using Services.Implementations.FacultyMembersPublicProfileModule;
 using Services.Implementations.MessagingAndChattingModule;
 using Services.Implementations.Notification;
+using Services.Implementations.ReportsAndDashboards;
+using Services.Implementations.ReportsAndDashboards.Helpers;
 using Services.Implementations.TicketingModule;
 using Shared.Common;
-using Services.Abstraction.Contracts.Notification;
-using Services.Implementations.Notification;
-using Services.Abstraction.Contracts.ReportsAndDashboard;
-using Services.Implementations.ReportsAndDashboards;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -77,6 +81,13 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<Func<IFacultyMemberDataService>>(provider =>
             () => provider.GetRequiredService<IFacultyMemberDataService>()
             );
+
+
+            services.AddScoped<IReportsDataService, ReportsDataService>();
+            services.AddScoped<Func<IReportsDataService>>(provider =>
+            () => provider.GetRequiredService<IReportsDataService>()
+            );
+
 
             services.AddScoped<ILookUpItemService, LookUpItemService>();
             services.AddScoped<Func<ILookUpItemService>>(provider =>
@@ -249,11 +260,32 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             );
 
 
+            services.AddScoped<IReportsPreviewingService, ReportsPreviewingService>();
+            services.AddScoped<Func<IReportsPreviewingService>>(provider =>
+            () => provider.GetRequiredService<IReportsPreviewingService>()
+            );
+
+
+            services.AddScoped<IReportsPDFGenerationService, ReportsPDFGenerationService>();
+            services.AddScoped<Func<IReportsPDFGenerationService>>(provider =>
+            () => provider.GetRequiredService<IReportsPDFGenerationService>()
+            );
+
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<Func<INotificationService>>(provider =>
 			() => provider.GetRequiredService<INotificationService>()
 			);
 
+
+
+            services.AddScoped<IFacultyMemberPublicProfileService, FacultyMemberPublicProfileService>();
+            services.AddScoped<Func<IFacultyMemberPublicProfileService>>(provider =>
+            () => provider.GetRequiredService<IFacultyMemberPublicProfileService>()
+            );
+
+            services.AddScoped<INotificationSender, MessagingNotification>();
+            services.AddScoped<INotificationSender, SystemNotification>();
+            services.AddScoped<INotificationSender, SystemAlertNotification>();
 
 			services.AddScoped<IGetDataFromExternalServiceGetFacultyMembersAndLookupsHelper, GetFacultyMembersAndLookupsHelper>();
             //services.AddScoped(typeof(IGenericRepository<,>), typeof(GenericRepository<,>));
@@ -298,12 +330,18 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
             services.AddScoped<ICVTemplate, ModernTemplateCV>();
             services.AddScoped<ICVTemplate, AcademicTemplateCV>();
             services.AddScoped<ICVTemplate, ProfessionalTemplateCV>();
-
             services.AddScoped<CVTemplatesFactory>();
+            services.AddScoped<FacultyDepartmentResolver>();
 
-            
-            
-            
+            services.AddSingleton(new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                ReferenceHandler = ReferenceHandler.IgnoreCycles
+            });
+
+
+
+
             services.AddHttpClient<IRegistrationClientService, RegistrationClientService>();
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
 

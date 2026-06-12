@@ -241,36 +241,37 @@ namespace Services.Implementations.CVGenerationModule
             return await BuildCVAsync(faculty.Id, faculty.Email , true);
         }
 
-        public async Task<byte[]> GenerateCVPdfAsync(string templateName , bool isPublic = false)
+        public async Task<byte[]> GenerateCVPdfAsync(string templateName, Guid? facultyMemberId, bool isPublic = false)
         {
-            var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
+            var currentUser = await _authenticationService.GetCurrentUserAsync(
+                _authenticationService.GetLoggedUserEmail());
 
             var cv = await GetCVAsync(isPublic);
             var template = _cVTemplatesFactory.Resolve(templateName);
 
             var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
 
+            var targetFacultyId = facultyMemberId ?? currentUser.UserId;
+
             var selectedTemplate = new SavedCVPreferences
             {
-                FacultyMemberId = currentUser.UserId,
+                FacultyMemberId = targetFacultyId,
                 TemplateName = templateName,
             };
 
-            var existingPrefernces = await SavedCVPreferencesRepo.GetAsync(new CVPrefferedTemplateSpecification(currentUser.UserId));
+            var existingPrefernces = await SavedCVPreferencesRepo
+                .GetAsync(new CVPrefferedTemplateSpecification(targetFacultyId));
+
             if (existingPrefernces is not null)
             {
                 existingPrefernces.TemplateName = templateName;
                 SavedCVPreferencesRepo.Update(existingPrefernces);
                 await _unitOfWork.SaveChangesAsync();
                 return template.GeneratePdf(cv);
-
-
             }
 
             await SavedCVPreferencesRepo.AddAsync(selectedTemplate);
-
             await _unitOfWork.SaveChangesAsync();
-            
 
             return template.GeneratePdf(cv);
         }

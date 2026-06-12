@@ -14,6 +14,8 @@ namespace Services.MappingProfiles
                 .ForMember(dest => dest.ValueEn, opt => opt.MapFrom(src => src.ValueEn));
 
             CreateMap<Faculty, FacultyResponseDTO>();
+            CreateMap<Faculty, FacultyWithDepartmentResposneDTO>();
+            CreateMap<Department, DepartmentResposneDTO>();
     
 
         }

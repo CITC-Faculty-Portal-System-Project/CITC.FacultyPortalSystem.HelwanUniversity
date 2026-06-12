@@ -1,5 +1,7 @@
 ﻿using Domain.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using SkiaSharp;
 
 namespace Presistence.Repositories
 {
@@ -47,15 +49,54 @@ namespace Presistence.Repositories
                 .CountAsync();
 
         public async Task<IReadOnlyList<TResult>> ExecuteAggregationAsync<TResult>(
-            IAggregationSpecification<TEntity, TResult> spec)
+     IAggregationSpecification<TEntity, TResult> spec)
         {
             var query = _dbContext.Set<TEntity>().AsQueryable();
-            var result = spec.Apply(query);
 
-            if (result is IAsyncEnumerable<TResult>)
+            var result = AggregationSpecificationEvaluator
+                .CreateQuery(query, spec);
+
+            if (result.Provider is IAsyncQueryProvider)
                 return await result.ToListAsync();
-            else
-                return result.ToList();
+
+            return result.ToList();
+        }
+
+        public IQueryable<TEntity> GetQueryable(
+     ISpecifications<TEntity, TKey> specifications)
+        {
+            var query = _dbContext.Set<TEntity>().AsQueryable();
+
+            query = query.AsNoTracking();
+
+            if (specifications.IsSplitQuery)
+                query = query.AsSplitQuery();
+
+             
+            if (specifications.Criteria is not null)
+                query = query.Where(specifications.Criteria);
+
+            foreach (var include in specifications.IncludeExpressions)
+                query = query.Include(include);
+
+            foreach (var includeChain in specifications.IncludeChains)
+                query = includeChain(query);
+
+            if (specifications.OrderBy is not null)
+                query = query.OrderBy(specifications.OrderBy);
+
+            if (specifications.OrderByDescending is not null)
+                query = query.OrderByDescending(specifications.OrderByDescending);
+
+            if (specifications.isPaginated)
+            {
+                query = query
+                    .Skip(specifications.Skip)
+                    .Take(specifications.Take);
+            }
+
+
+            return query;
         }
         #endregion
     }
