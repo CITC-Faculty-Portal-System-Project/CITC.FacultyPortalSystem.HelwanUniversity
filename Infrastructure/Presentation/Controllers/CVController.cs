@@ -12,12 +12,8 @@ namespace Presentation.Controllers
         [ProducesResponseType(typeof(CVResponseDTO), StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<CVResponseDTO>> GetProfileDashboardAsync()
-        {
-            var currentUserEmail = _serviceManager.AuthenticationService.GetLoggedUserEmail();
-            var currentUser = await _serviceManager.AuthenticationService.GetCurrentUserAsync(currentUserEmail);
-            return Ok(await _serviceManager.CVGenerationService.GetCVAsync(currentUser.UserId));
-        }
-         
+            => Ok(await _serviceManager.CVGenerationService.GetCVAsync());
+
         [ProducesResponseType(typeof(CVVisibilitySettingResponseDTO), StatusCodes.Status200OK)]
         [HttpPut("Manage-CV-Visibility")]
         public async Task<ActionResult<CVVisibilitySettingResponseDTO>> ManageVisibility(CVVisibilityConfig config)

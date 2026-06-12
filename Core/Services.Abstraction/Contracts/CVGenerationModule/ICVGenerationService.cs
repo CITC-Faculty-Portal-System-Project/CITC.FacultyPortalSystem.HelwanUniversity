@@ -5,7 +5,7 @@ namespace Services.Abstraction.Contracts.CVGenerationModule
 {
     public interface ICVGenerationService
     {
-        public Task<CVResponseDTO> GetCVAsync(Guid? facultyMemberId, bool isPublic = false);
+        public Task<CVResponseDTO> GetCVAsync(bool isPublic = false);
         public Task<CVResponseDTO> GetPublicCVAsync(Guid id);
         public Task<CVVisibilitySettingResponseDTO> ManageCVVisibilityAsync(CVVisibilityConfig config);
         public Task<byte[]> GenerateCVPdfAsync(string templateName, Guid? facultyMemberId, bool isPublic = false);

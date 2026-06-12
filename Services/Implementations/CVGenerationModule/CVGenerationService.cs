@@ -31,6 +31,20 @@ namespace Services.Implementations.CVGenerationModule
                 ?? throw new UnauthorizedAccessException("Unauthorized.");
         }
 
+
+        public async Task<CVResponseDTO> ResolveCvAsync(Guid? facultyMemberId , bool isPublic = false) {
+            if (facultyMemberId is not null)
+            {
+                return await GetPublicCVAsync(facultyMemberId.Value);
+            }
+
+            else
+            {
+                return await GetCVAsync(isPublic);
+            }
+
+        }
+
         protected static void EnsureOwnership(
             Guid entityFacultyMemberId,
             Guid currentUserId,
@@ -224,13 +238,11 @@ namespace Services.Implementations.CVGenerationModule
             return response;
         }
 
-        public async Task<CVResponseDTO> GetCVAsync(Guid? facultyMemberId , bool isPublic = false)
+        public async Task<CVResponseDTO> GetCVAsync(bool isPublic = false)
         {
             var currentUser = await GetCurrentUserAsync();
-            var id = facultyMemberId ?? currentUser.UserId;
 
-
-            return await BuildCVAsync(id, currentUser.Email , isPublic);
+            return await BuildCVAsync(currentUser.UserId, currentUser.Email , isPublic);
         }
 
         public async Task<CVResponseDTO> GetPublicCVAsync(Guid id)
@@ -250,12 +262,13 @@ namespace Services.Implementations.CVGenerationModule
 
             var targetFacultyId = facultyMemberId ?? currentUser.UserId;
 
-
-            var cv = await GetCVAsync(targetFacultyId, isPublic);
+           
             var template = _cVTemplatesFactory.Resolve(templateName);
 
             var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
 
+
+            var cv = await ResolveCvAsync(targetFacultyId, isPublic);
 
             var selectedTemplate = new SavedCVPreferences
             {
@@ -284,7 +297,7 @@ namespace Services.Implementations.CVGenerationModule
         {
             var currentUser = await _authenticationService.GetCurrentUserAsync(_authenticationService.GetLoggedUserEmail());
             
-            var cv = await GetCVAsync(currentUser.UserId, isPublic);
+            var cv = await GetCVAsync(isPublic);
             var template = _cVTemplatesFactory.Resolve(templateName);
 
             var SavedCVPreferencesRepo = _unitOfWork.GetRepository<SavedCVPreferences, int>();
