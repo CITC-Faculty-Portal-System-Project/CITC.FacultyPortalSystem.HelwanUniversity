@@ -20,6 +20,7 @@ namespace Shared.Dtos.FacultyMembersProfilesModule
         public AttachmentResponseDTO? ProfilePicture { get; set; }
         public DateTime IssueDate { get; set; }
         public string System { get; set; } = string.Empty;
+        public string PreferredCv { get; set; } = string.Empty;
         public IEnumerable<ScientificMissionResponseDto>? ScientificMissions { get; set; }
         public IEnumerable<ResearchResponseDTO>? Researches { get; set; }
         public IEnumerable<ExperiencesSummaryDTO>? Experinces { get; set; }
