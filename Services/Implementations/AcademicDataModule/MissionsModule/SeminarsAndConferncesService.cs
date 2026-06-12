@@ -11,78 +11,82 @@ using System.Text.Json;
 
 namespace Services.Implementations.AcademicDataModule.MissionsModule
 {
-    public class SeminarsAndConferncesService(
-       IUnitOfWork unitOfWork,
-       IAuthenticationService authenticationService,
-       IMapper mapper,
-       ILogger<SeminarsAndConferncesService> _logger) 
-       : BaseService<ConferencesAndSeminars, int>(unitOfWork, authenticationService, mapper),
-         ISeminarsAndConferencesService
-    {
-        protected override string EntityName => "Seminars And Conferences";
+	public class SeminarsAndConferncesService(
+	   IUnitOfWork unitOfWork,
+	   IAuthenticationService authenticationService,
+	   IMapper mapper,
+	   ILogger<SeminarsAndConferncesService> _logger)
+	   : BaseService<ConferencesAndSeminars, int>(unitOfWork, authenticationService, mapper),
+		 ISeminarsAndConferencesService
+	{
+		protected override string EntityName => "Seminars And Conferences";
 
 
 		public async Task<PaginatedResult<ConferencesAndSeminarsResponseDto>> GetAllSeminarsAndConferencesAsync(
-            SeminarsAndConferncesSpecificationParameters parameters,
-            string? facultyMemberEmail = null)
-        {
-            var currentUser = await GetCurrentUserAsync();
-            var email = facultyMemberEmail ?? currentUser.Email;
+			SeminarsAndConferncesSpecificationParameters parameters,
+			string? facultyMemberEmail = null)
+		{
+			var currentUser = await GetCurrentUserAsync();
+			var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var conferencesAndSeminarsLogs = new LogEntry
-            {
-                Category = Category.FacultyMemberAcademicData.ToString(),
-                CategoryAction = CategoryAction.ConferencesAndSeminarsActions.ToString(),
-                UserIP = GetUserIP(),
-                UserName = currentUser.UserName,
+			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
+			var conferencesAndSeminarsLogs = new LogEntry
+			{
+				Category = Category.FacultyMemberMissions.ToString(),
+				CategoryAction = CategoryAction.ConferencesAndSeminarsActions.ToString(),
+				UserIP = GetUserIP(),
+				UserName = currentUser.UserName,
 			};
 			#endregion
 
 			var conferencesAndSeminars = await Repo.GetAllAsync(
-                new ConferncesAndSeminarsSpecification(parameters, email));
+				new ConferncesAndSeminarsSpecification(parameters, email));
 
-            if(conferencesAndSeminars is null)
-            {
+			if (conferencesAndSeminars is null)
+			{
 				#region Log
-				conferencesAndSeminarsLogs.RenderedMessage = $"Seminars and Conferences not found for user: {currentUser.UserName}.";
+				conferencesAndSeminarsLogs.RenderedMessage = $"Seminars and Conferences not found for user: {userOfData.UserName}.";
 				conferencesAndSeminarsLogs.Level = "Warning";
 				conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
-				conferencesAndSeminarsLogs.AdditionalData = $"User tried to get their seminars and conferences data, but no seminars and conferences service data was found in the database for user with email : {email}.";
+				conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their seminars and conferences data, but no seminars and conferences service data was found in the database for user with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} seminars and conferences data, but no seminars and conferences data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", conferencesAndSeminarsLogs);
 				#endregion
 				throw NotFound();
 			}
-                
-            var mapped = Mapper.Map<IEnumerable<ConferencesAndSeminarsResponseDto>>(conferencesAndSeminars);
 
-            var totalCount = await Repo.CountAsync(
-                new ConferncesAndSeminarsCountSpecification(parameters, email));
+			var mapped = Mapper.Map<IEnumerable<ConferencesAndSeminarsResponseDto>>(conferencesAndSeminars);
+
+			var totalCount = await Repo.CountAsync(
+				new ConferncesAndSeminarsCountSpecification(parameters, email));
 
 			#region Log
-			conferencesAndSeminarsLogs.RenderedMessage = $"Seminars and conferences data retrieved for user: {currentUser.UserName}.";
+			conferencesAndSeminarsLogs.RenderedMessage = $"Seminars and conferences data retrieved for user: {userOfData.UserName}.";
 			conferencesAndSeminarsLogs.Level = "Information";
 			conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
-			conferencesAndSeminarsLogs.AdditionalData = $"User retrieved their seminars and conferences data successfully, total count of seminars and conferences data retrieved: {totalCount}.";
+			conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their seminars and conferences data successfully, total count of seminars and conferences data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} seminars and conferences data successfully, total count of seminars and conferences data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", conferencesAndSeminarsLogs);
 			#endregion
 
 			return new PaginatedResult<ConferencesAndSeminarsResponseDto>(
-                parameters.PageIndex,
-                mapped.Count(),
-                totalCount,
-                mapped);
-        }
+				parameters.PageIndex,
+				mapped.Count(),
+				totalCount,
+				mapped);
+		}
 
-        public async Task<ConferencesAndSeminarsResponseDto> GetSeminarOrConferenceByIdAsync(
-            int id,
-            string? facultyMemberEmail = null)
-        {
+		public async Task<ConferencesAndSeminarsResponseDto> GetSeminarOrConferenceByIdAsync(
+			int id,
+			string? facultyMemberEmail = null)
+		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var conferencesAndSeminarsLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ConferencesAndSeminarsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -90,27 +94,28 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#endregion
 
 			var conferenceOrSeminar = await Repo.GetAsync(
-                new ConferncesAndSeminarsSpecification(id));
-            if(conferenceOrSeminar is null)
-            {
+				new ConferncesAndSeminarsSpecification(id));
+			if (conferenceOrSeminar is null)
+			{
 				#region Log
 				conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 				conferencesAndSeminarsLogs.Level = "Warning";
-				conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference not found for user: {currentUser.UserName}.";
-				conferencesAndSeminarsLogs.AdditionalData = $"User tried to get their seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database.";
+				conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference not found for user: {userOfData.UserName}.";
+				conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", conferencesAndSeminarsLogs);
 				#endregion
 				throw NotFound();
 			}
 
-            try
-            {
-                await EnsureOwnershipIfClientAsync(
-                        conferenceOrSeminar.FacultyMemberId,
-                        facultyMemberEmail);
-            }
-            catch (UnauthorizedAccessException)
-            {
+			try
+			{
+				await EnsureOwnershipIfClientAsync(
+						conferenceOrSeminar.FacultyMemberId,
+						facultyMemberEmail);
+			}
+			catch (UnauthorizedAccessException)
+			{
 				#region Log
 				conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 				conferencesAndSeminarsLogs.Level = "Warning";
@@ -119,29 +124,31 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				_logger.LogWarning("{@LogDetails}", conferencesAndSeminarsLogs);
 				#endregion
 				throw;
-            }
+			}
 
 			#region Log
 			conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 			conferencesAndSeminarsLogs.Level = "Information";
-			conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference data retrieved for user: {currentUser.UserName}.";
-			conferencesAndSeminarsLogs.AdditionalData = $"User retrieved their seminar or conference data with id: {id} successfully.";
+			conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference data retrieved for user: {userOfData.UserName}.";
+			conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their seminar or conference data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} seminar or conference data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", conferencesAndSeminarsLogs);
 			#endregion
 			return Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
-        }
+		}
 
-        public async Task<ConferencesAndSeminarsResponseDto> CreateSeminarOrConferenceAsync(
-            ConferencesAndSeminarsCreateDto conferencesAndSeminarsCreateDto,
-            string? facultyMemberEmail = null)
-        {
-            var currentUser = await GetCurrentUserAsync();
-            var email = facultyMemberEmail ?? currentUser.Email;
+		public async Task<ConferencesAndSeminarsResponseDto> CreateSeminarOrConferenceAsync(
+			ConferencesAndSeminarsCreateDto conferencesAndSeminarsCreateDto,
+			string? facultyMemberEmail = null)
+		{
+			var currentUser = await GetCurrentUserAsync();
+			var email = facultyMemberEmail ?? currentUser.Email;
 
 			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
 			var conferencesAndSeminarsLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ConferencesAndSeminarsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -149,49 +156,53 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#endregion
 
 			FacultyMember facultyMember = null!;
-            try
-            {
-                facultyMember = await GetFacultyMemberByEmailAsync(email);
-            }
-            catch (UnauthorizedAccessException)
-            {
+			try
+			{
+				facultyMember = await GetFacultyMemberByEmailAsync(email);
+			}
+			catch (UnauthorizedAccessException)
+			{
 				#region Log
 				conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 				conferencesAndSeminarsLogs.Level = "Warning";
 				conferencesAndSeminarsLogs.RenderedMessage = $"Faculty Member not found.";
-				conferencesAndSeminarsLogs.AdditionalData = $"User tried to create a seminar or conference for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a seminar or conference for a faculty member that does not exist in database, no faculty member found with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to create a seminar or conference for user: {userOfData.UserName}, but no faculty member found with email: {email}.";
 				_logger.LogWarning("{@LogDetails}", conferencesAndSeminarsLogs);
 				#endregion
 				throw;
-            }
+			}
 
-            var conferenceOrSeminar = Mapper.Map<ConferencesAndSeminars>(conferencesAndSeminarsCreateDto);
-            conferenceOrSeminar.FacultyMemberId = facultyMember.Id;
+			var conferenceOrSeminar = Mapper.Map<ConferencesAndSeminars>(conferencesAndSeminarsCreateDto);
+			conferenceOrSeminar.FacultyMemberId = facultyMember.Id;
 
-            await Repo.AddAsync(conferenceOrSeminar);
-            await SaveChangesAsync();
+			await Repo.AddAsync(conferenceOrSeminar);
+			await SaveChangesAsync();
 
-            var response = Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
+			var response = Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
 			#region Log
 			conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 			conferencesAndSeminarsLogs.Level = "Information";
-			conferencesAndSeminarsLogs.RenderedMessage = $"User: {currentUser.UserName} created a {response.Type.ToString()}.";
-			conferencesAndSeminarsLogs.AdditionalData = $"User created a {response.Type.ToString()} with id: {response.Id} and Name: {response.Name} successfully.";
+			conferencesAndSeminarsLogs.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a {response.Type.ToString()}."
+				: $"Admin: {currentUser.UserName} created a {response.Type.ToString()} for user: {userOfData.UserName}";
+			conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User created a {response.Type.ToString()} with id: {response.Id} and Name: {response.Name} successfully."
+				: $"Admin: {currentUser.UserName} created a {response.Type.ToString()} with id: {response.Id} and Name: {response.Name} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", conferencesAndSeminarsLogs);
 			#endregion
 			return response;
-        }
+		}
 
-        public async Task<ConferencesAndSeminarsResponseDto> UpdateSeminarOrConferenceAsync(
-            int id,
-            ConferencesAndSeminarsUpdateDto conferencesAndSeminarsUpdateDto,
-            string? facultyMemberEmail = null)
-        {
+		public async Task<ConferencesAndSeminarsResponseDto> UpdateSeminarOrConferenceAsync(
+			int id,
+			ConferencesAndSeminarsUpdateDto conferencesAndSeminarsUpdateDto,
+			string? facultyMemberEmail = null)
+		{
 			#region Log
-            var currentUser = await GetCurrentUserAsync();
+			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var conferencesAndSeminarsLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ConferencesAndSeminarsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -203,27 +214,28 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
 			};
 			var conferenceOrSeminar = await Repo.GetAsync(
-                new ConferncesAndSeminarsSpecification(id));
-            if(conferenceOrSeminar is null)
-            {
+				new ConferncesAndSeminarsSpecification(id));
+			if (conferenceOrSeminar is null)
+			{
 				#region Log
 				conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 				conferencesAndSeminarsLogs.Level = "Warning";
-				conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference not found for user: {currentUser.UserName}.";
-				conferencesAndSeminarsLogs.AdditionalData = $"User tried to update their seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database.";
+				conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference not found for user: {userOfData.UserName}.";
+				conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", conferencesAndSeminarsLogs);
 				#endregion
 				throw NotFound();
 			}
-                
-            try
-            {
-                await EnsureOwnershipIfClientAsync(
-                        conferenceOrSeminar.FacultyMemberId,
-                        facultyMemberEmail);
-            }
-            catch (UnauthorizedAccessException)
-            {
+
+			try
+			{
+				await EnsureOwnershipIfClientAsync(
+						conferenceOrSeminar.FacultyMemberId,
+						facultyMemberEmail);
+			}
+			catch (UnauthorizedAccessException)
+			{
 				#region Log
 				conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 				conferencesAndSeminarsLogs.Level = "Warning";
@@ -232,34 +244,36 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				_logger.LogWarning("{@LogDetails}", conferencesAndSeminarsLogs);
 				#endregion
 				throw;
-            }
+			}
 
-            var oldData = Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
+			var oldData = Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
 			Mapper.Map(conferencesAndSeminarsUpdateDto, conferenceOrSeminar);
 
-            Repo.Update(conferenceOrSeminar);
-            await SaveChangesAsync();
+			Repo.Update(conferenceOrSeminar);
+			await SaveChangesAsync();
 
-            var newData = Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
+			var newData = Mapper.Map<ConferencesAndSeminarsResponseDto>(conferenceOrSeminar);
 			#region Log
 			conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 			conferencesAndSeminarsLogs.Level = "Information";
-			conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference data updated for user: {currentUser.UserName}.";
-			conferencesAndSeminarsLogs.AdditionalData = $"User updated their seminar or conference data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference data updated for user: {userOfData.UserName}.";
+			conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User updated their seminar or conference data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} seminar or conference data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", conferencesAndSeminarsLogs);
 			#endregion
 			return newData;
-        }
+		}
 
-        public async Task DeleteSeminarOrConferenceAsync(
-            int id,
-            string? facultyMemberEmail = null)
-        {
+		public async Task DeleteSeminarOrConferenceAsync(
+			int id,
+			string? facultyMemberEmail = null)
+		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var conferencesAndSeminarsLogs = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ConferencesAndSeminarsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName,
@@ -267,13 +281,14 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#endregion
 			var conferenceOrSeminar = await Repo.GetAsync(
 				new ConferncesAndSeminarsSpecification(id));
-			if(conferenceOrSeminar is null)
+			if (conferenceOrSeminar is null)
 			{
 				#region Log
 				conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 				conferencesAndSeminarsLogs.Level = "Warning";
-				conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference not found for user: {currentUser.UserName}.";
-				conferencesAndSeminarsLogs.AdditionalData = $"User tried to delete their seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database.";
+				conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference not found for user: {userOfData.UserName}.";
+				conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} seminar or conference data with id: {id}, but no seminar or conference data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", conferencesAndSeminarsLogs);
 				#endregion
 				throw NotFound();
@@ -297,17 +312,18 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				throw;
 			}
 
-            conferenceOrSeminar.IsDeleted = true;
+			conferenceOrSeminar.IsDeleted = true;
 
-            Repo.Update(conferenceOrSeminar);
-            await SaveChangesAsync();
+			Repo.Update(conferenceOrSeminar);
+			await SaveChangesAsync();
 			#region Log
 			conferencesAndSeminarsLogs.Timestamp = DateTime.Now;
 			conferencesAndSeminarsLogs.Level = "Information";
-			conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference data deleted for user: {currentUser.UserName}.";
-			conferencesAndSeminarsLogs.AdditionalData = $"User deleted their seminar or conference data with id: {id} successfully.";
+			conferencesAndSeminarsLogs.RenderedMessage = $"Seminar or conference data deleted for user: {userOfData.UserName}.";
+			conferencesAndSeminarsLogs.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their seminar or conference data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} seminar or conference data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", conferencesAndSeminarsLogs);
 			#endregion
 		}
-    }
+	}
 }

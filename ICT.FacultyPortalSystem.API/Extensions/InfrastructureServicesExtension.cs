@@ -2,6 +2,7 @@
 using Domain.Entities.IdentityModule.Users;
 using FtpFileStorage.Factories;
 using FtpFileStorage.Implementation;
+using ICIT.FacultyPortalSystem.API.Logger;
 using Integrations.HttpClientFactory;
 using Integrations.Services;
 using Messaging.AsyncMessaging;
@@ -18,6 +19,7 @@ using Presistence.Data;
 using Presistence.Identity;
 using Presistence.Repositories;
 using QuestPDF.Infrastructure;
+using Serilog;
 using Services.Abstraction.Contracts.AcademicDataModule.ResearchesModule;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.IdentityModule;
@@ -25,11 +27,10 @@ using Services.Implementations.IdnetityModule;
 using Shared.Common;
 using StackExchange.Redis;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using UserRole = Domain.Entities.IdentityModule.Users.Role;
-using Serilog;
-using ICIT.FacultyPortalSystem.API.Logger;
 
 namespace ICIT.FacultyPortalSystem.API.Extensions
 {
@@ -59,7 +60,7 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                 return ConnectionMultiplexer.Connect(configuration.GetConnectionString("RedisConnection")!);
             });
 
-            services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
+			services.AddSingleton<INationalNumberPubClient, NationalNumberPubClient>();
 
 			services.Configure<RabbitMQSettings>(
                 configuration.GetSection("RabbitMQSettings"));
@@ -128,7 +129,9 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtOptions?.Issuer,
                     ValidAudience = jwtOptions?.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.SecretKey)),
+                    NameClaimType = ClaimTypes.NameIdentifier
+
                 };
 
                 options.Events = new JwtBearerEvents
@@ -139,16 +142,19 @@ namespace ICIT.FacultyPortalSystem.API.Extensions
                         {
                             context.Token = context.Request.Cookies["jwtToken"];
                         }
+
                         return Task.CompletedTask;
                     }
                 };
+
+
             });
 
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
             services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-            //services.AddHostedService<IdentitySeedHostedService>();
+            services.AddHostedService<IdentitySeedHostedService>();
             services.AddAuthorization();
             return services;
         }

@@ -11,5 +11,12 @@ namespace Services.Specifications.LookUpItems
                 base(d => !d.IsDeleted && EF.Functions.Like(d.NameAR, facultyName) || EF.Functions.Like(d.NameEN, facultyName))
         {
         }
+
+        public FacultySpecifications
+            () :
+                base(d => !d.IsDeleted)
+        {
+            AddIncludes(f => f.Departments!);
+        }
     }
 }

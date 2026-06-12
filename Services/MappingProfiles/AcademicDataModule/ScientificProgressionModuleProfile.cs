@@ -16,8 +16,6 @@ namespace Services.MappingProfiles.AcademicDataModule
                 
 
             CreateMap<AcademicQualificationCreateDto, AcademicQualifications>();
-            CreateMap<AcademicQualificationsUpdateDto, AcademicQualifications>();
-
             CreateMap<AttachmentReferenceDTO, AcademicQualificationAttachment>();
             CreateMap<AcademicQualificationAttachment, AttachmentResponseDTO>();
 

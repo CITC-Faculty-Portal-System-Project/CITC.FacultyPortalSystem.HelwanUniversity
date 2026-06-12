@@ -4,6 +4,7 @@ namespace Shared.Dtos.Notification
 {
     public record NotificationDTO
     {
+        public Guid Id { get; set; }
         public string Source { get; set; } = string.Empty;
         public NotificationType Type { get; set; }
         public string Title { get; set; } = string.Empty;

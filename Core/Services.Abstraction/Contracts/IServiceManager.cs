@@ -14,6 +14,7 @@ using Services.Abstraction.Contracts.TicketingModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Services.Abstraction.Contracts.Notification;
 using Services.Abstraction.Contracts.ReportsAndDashboard;
+using Services.Abstraction.Contracts.FacultyMembersPublicProfileModule;
 
 
 namespace Services.Abstraction.Contracts
@@ -113,6 +114,16 @@ namespace Services.Abstraction.Contracts
         #region ReportsAndDashboardModule
 
         public IDashboardService DashboardService { get; }
+        public IReportsPreviewingService ReportsPreviewingService { get; }
+        public IReportsPDFGenerationService ReportsPDFGenerationService { get; }
+        public IReportsDataService ReportsDataService { get; }
+
+        #endregion
+
+
+        #region FacultyMembersPublicProfilesModule
+
+        public IFacultyMemberPublicProfileService FacultyMemberPublicProfileService { get; }
 
         #endregion
     }

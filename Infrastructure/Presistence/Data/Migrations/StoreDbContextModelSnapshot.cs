@@ -2681,6 +2681,8 @@ namespace Presistence.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("FacultyMemberId");
+
                     b.ToTable("SavedCVPreferences");
                 });
 
@@ -6891,9 +6893,7 @@ namespace Presistence.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
-
-                    b.ToTable("Notifications", (string)null);
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("Domain.Entities.UniversityFacultiesAndDepartments.Department", b =>
@@ -10772,6 +10772,17 @@ namespace Presistence.Data.Migrations
                     b.Navigation("FacultyMember");
                 });
 
+            modelBuilder.Entity("Domain.Entities.CVGenerationModule.SavedCVPreferences", b =>
+                {
+                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", "FacultyMember")
+                        .WithMany("CVPreferences")
+                        .HasForeignKey("FacultyMemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FacultyMember");
+                });
+
             modelBuilder.Entity("Domain.Entities.EntitesAttachments.AcademicQualificationAttachment", b =>
                 {
                     b.HasOne("Domain.Entities.AcademicDataModule.ScientificProgressionModule.AcademicQualifications", "Qualification")
@@ -11010,15 +11021,6 @@ namespace Presistence.Data.Migrations
                     b.Navigation("Conversation");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Notification", b =>
-                {
-                    b.HasOne("Domain.Entities.FacultyMemberDataModule.FacultyMember", null)
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Domain.Entities.UniversityFacultiesAndDepartments.Department", b =>
                 {
                     b.HasOne("Domain.Entities.UniversityFacultiesAndDepartments.Faculty", "Faculty")
@@ -11104,6 +11106,8 @@ namespace Presistence.Data.Migrations
                     b.Navigation("AcademicQualifications");
 
                     b.Navigation("AdministrativePositions");
+
+                    b.Navigation("CVPreferences");
 
                     b.Navigation("CommitteesAndAssociations");
 

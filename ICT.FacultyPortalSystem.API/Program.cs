@@ -1,26 +1,16 @@
 using ICIT.FacultyPortalSystem.API.Extensions;
-using Microsoft.EntityFrameworkCore;
-using Presistence.Identity;
 using Shared.Hubs;
 using ICIT.FacultyPortalSystem.API.Logger;
 using Serilog;
-using Presistence.Data;
-using Presistence.Identity.Seeding;
 
 namespace ICIT.FacultyPortalSystem.API
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             #region DI Container
             var builder = WebApplication.CreateBuilder(args);
-
-            var fontsPath = Path.Combine(builder.Environment.ContentRootPath, "fonts");
-            foreach (var font in Directory.GetFiles(fontsPath, "*.ttf"))
-            {
-                QuestPDF.Drawing.FontManager.RegisterFont(File.OpenRead(font));
-            }
 
             //WebApi Services
             builder.Services.AddWebApiServices(builder.Configuration);
@@ -40,16 +30,7 @@ namespace ICIT.FacultyPortalSystem.API
                     
 			});
 
-            builder.WebHost.UseSentry(options =>
-            {
-                options.Dsn = "https://bdb6297d52d2d6af53037ef6ca79734a@o4511298747629568.ingest.de.sentry.io/4511299390996560";
-
-                options.Debug = true;
-                options.TracesSampleRate = 1.0;
-                options.MaxQueueItems = 100;
-            });
-
-
+       
             #endregion
 
             #region Pipelines - Middlewares
@@ -57,28 +38,6 @@ namespace ICIT.FacultyPortalSystem.API
             #endregion
 
             var app = builder.Build();
-
-            app.UseSentryTracing();
-            
-            
-            await app.UseIdentityDatabaseInitializerAsync();
-
-
-            using (var scope = app.Services.CreateScope())
-            {
-                var systemdb = scope.ServiceProvider.GetRequiredService<StoreDbContext>();
-                systemdb.Database.Migrate();
-
-                //    var identitydb = scope.ServiceProvider.GetRequiredService<IdentityStoreDbContext>();
-                //    identitydb.Database.Migrate();
-
-                await app.Services.SeedUserPermissionsAsync(
-                Guid.Parse("A9923638-8866-4A89-A9FE-9CF329CFC8F7"),
-                new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-
-                await app.Services.SeedRolePermissionsAsync();
-
-            }
 
             app.UseExceptionHandlingMiddlewares();
 
@@ -88,9 +47,9 @@ namespace ICIT.FacultyPortalSystem.API
             }
             app.UseCookiePolicy(new CookiePolicyOptions
             {
-                MinimumSameSitePolicy = SameSiteMode.None,
-                Secure = CookieSecurePolicy.None,
+                MinimumSameSitePolicy = SameSiteMode.None
             });
+
             //     app.UseHttpsRedirection();
 
             app.UseStaticFiles();

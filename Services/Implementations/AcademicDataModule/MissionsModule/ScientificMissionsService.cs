@@ -11,77 +11,81 @@ using System.Text.Json;
 
 namespace Services.Implementations.AcademicDataModule.MissionsModule
 {
-    public class ScientificMissionsService(
-     IUnitOfWork unitOfWork,
-     IAuthenticationService authenticationService,
-     IMapper mapper,
-     ILogger<ScientificMissionsService> _logger)
-     : BaseService<ScientificMissions, int>(unitOfWork, authenticationService, mapper),
-       IScientificMissionsService
-    {
-        protected override string EntityName => "Scientific Missions";
+	public class ScientificMissionsService(
+	 IUnitOfWork unitOfWork,
+	 IAuthenticationService authenticationService,
+	 IMapper mapper,
+	 ILogger<ScientificMissionsService> _logger)
+	 : BaseService<ScientificMissions, int>(unitOfWork, authenticationService, mapper),
+	   IScientificMissionsService
+	{
+		protected override string EntityName => "Scientific Missions";
 
         public async Task<PaginatedResult<ScientificMissionResponseDto?>> GetAllScientificMissionsAsync(
             ScientificMissionSpecificationParamaters parameters,
-            string? facultyMemberEmail = null)
+              string? facultyMemberEmail = null)
         {
             var currentUser = await GetCurrentUserAsync();
             var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var scientificMissionsLog = new LogEntry
-            {
-                Category = Category.FacultyMemberAcademicData.ToString(),
+			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
+			var scientificMissionsLog = new LogEntry
+			{
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ScientificMissionsActions.ToString(),
 				UserIP = GetUserIP(),
-                UserName = currentUser.UserName
+				UserName = currentUser.UserName
 			};
-            #endregion
+			#endregion
 
-            var scientificMissions = await Repo.GetAllAsync(
-                new ScientificMissionsSpecifications(parameters, email));
+			var scientificMissions = await Repo.GetAllAsync(
+				new ScientificMissionsSpecifications(parameters, email));
 
-            if(scientificMissions is null)
-            {
+			if (scientificMissions is null)
+			{
 				#region Log
-				scientificMissionsLog.RenderedMessage = $"Scientific Missions not found for user: {currentUser.UserName}.";
+				scientificMissionsLog.RenderedMessage = $"Scientific Missions not found for user: {userOfData.UserName}.";
 				scientificMissionsLog.Level = "Warning";
 				scientificMissionsLog.Timestamp = DateTime.Now;
-				scientificMissionsLog.AdditionalData = $"User tried to get their scientific missions data, but no scientific missions data was found in the database for user with email : {email}.";
+				scientificMissionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their scientific missions data, but no scientific missions data was found in the database for user with email: {email}."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} scientific missions data, but no scientific missions data was found in the database for user: {userOfData.UserName}";
 				_logger.LogWarning("{@LogDetails}", scientificMissionsLog);
 				#endregion
 				throw NotFound();
 			}
 
-            var mapped = Mapper.Map<IEnumerable<ScientificMissionResponseDto?>>(scientificMissions);
+			var mapped = Mapper.Map<IEnumerable<ScientificMissionResponseDto?>>(scientificMissions);
 
-            var totalCount = await Repo.CountAsync(
-                new ScientificMissionsCountSpecification(parameters, email));
+			var totalCount = await Repo.CountAsync(
+				new ScientificMissionsCountSpecification(parameters, email));
 
 			#region Log
-			scientificMissionsLog.RenderedMessage = $"Scientific missions data retrieved for user: {currentUser.UserName}.";
+			scientificMissionsLog.RenderedMessage = $"Scientific missions data retrieved for user: {userOfData.UserName}.";
 			scientificMissionsLog.Level = "Information";
 			scientificMissionsLog.Timestamp = DateTime.Now;
-			scientificMissionsLog.AdditionalData = $"User retrieved their scientific missions data successfully, total count of scientific missions data retrieved: {totalCount}.";
+			scientificMissionsLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their scientific missions data successfully, total count of scientific missions data retrieved: {totalCount}."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} scientific missions data successfully, total count of scientific missions data retrieved: {totalCount}.";
 			_logger.LogInformation("{@LogDetails}", scientificMissionsLog);
 			#endregion
 
 			return new PaginatedResult<ScientificMissionResponseDto?>(
-                parameters.PageIndex,
-                mapped.Count(),
-                totalCount,
-                mapped);
-        }
+				parameters.PageIndex,
+				mapped.Count(),
+				totalCount,
+				mapped);
+		}
 
-        public async Task<ScientificMissionResponseDto?> GetScientificMissionByIdAsync(
-            int id,
-            string? facultyMemberEmail = null)
-        {
-            #region Log
-            var currentUser = await GetCurrentUserAsync();
+		public async Task<ScientificMissionResponseDto?> GetScientificMissionByIdAsync(
+			int id,
+			string? facultyMemberEmail = null)
+		{
+			#region Log
+			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var scientificMissionLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ScientificMissionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -89,27 +93,28 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#endregion
 
 			var scientificMission = await Repo.GetAsync(
-                new ScientificMissionsSpecifications(id));
-            if (scientificMission is null)
-            {
+				new ScientificMissionsSpecifications(id));
+			if (scientificMission is null)
+			{
 				#region Log
 				scientificMissionLog.Timestamp = DateTime.Now;
 				scientificMissionLog.Level = "Warning";
-				scientificMissionLog.RenderedMessage = $"Scientific mission not found for user: {currentUser.UserName}.";
-				scientificMissionLog.AdditionalData = $"User tried to get their scientific mission data with id: {id}, but no Scientific mission data with this id was found in the database.";
+				scientificMissionLog.RenderedMessage = $"Scientific mission not found for user: {userOfData.UserName}.";
+				scientificMissionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to get their scientific mission data with id: {id}, but no scientific mission data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to get user: {userOfData.UserName} scientific mission data with id: {id}, but no scientific mission data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", scientificMissionLog);
 				#endregion
 				throw NotFound();
 			}
 
-            try
-            {
-                await EnsureOwnershipIfClientAsync(
-                        scientificMission.FacultyMemberId,
-                        facultyMemberEmail);
-            }
-            catch (UnauthorizedAccessException)
-            {
+			try
+			{
+				await EnsureOwnershipIfClientAsync(
+						scientificMission.FacultyMemberId,
+						facultyMemberEmail);
+			}
+			catch (UnauthorizedAccessException)
+			{
 				#region Log
 				scientificMissionLog.Timestamp = DateTime.Now;
 				scientificMissionLog.Level = "Warning";
@@ -118,29 +123,31 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				_logger.LogWarning("{@LogDetails}", scientificMissionLog);
 				#endregion
 				throw;
-            }
+			}
 
 			#region Log
 			scientificMissionLog.Timestamp = DateTime.Now;
 			scientificMissionLog.Level = "Information";
-			scientificMissionLog.RenderedMessage = $"Scientific mission data retrieved for user: {currentUser.UserName}.";
-			scientificMissionLog.AdditionalData = $"User retrieved their scientific mission data with id: {id} successfully.";
+			scientificMissionLog.RenderedMessage = $"Scientific mission data retrieved for user: {userOfData.UserName}.";
+			scientificMissionLog.AdditionalData = (facultyMemberEmail is null) ? $"User retrieved their scientific mission data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} retrieved user: {userOfData.UserName} scientific mission data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", scientificMissionLog);
 			#endregion
 			return Mapper.Map<ScientificMissionResponseDto?>(scientificMission);
-        }
+		}
 
-        public async Task<ScientificMissionResponseDto> CreateScientificMissionAsync(
-            ScientificMissionCreateDto scientificMissionCreateDto,
-            string? facultyMemberEmail = null)
-        {
-            var currentUser = await GetCurrentUserAsync();
-            var email = facultyMemberEmail ?? currentUser.Email;
+		public async Task<ScientificMissionResponseDto> CreateScientificMissionAsync(
+			ScientificMissionCreateDto scientificMissionCreateDto,
+			string? facultyMemberEmail = null)
+		{
+			var currentUser = await GetCurrentUserAsync();
+			var email = facultyMemberEmail ?? currentUser.Email;
 
-            #region Log
-            var scientificMissionCreationLog = new LogEntry
+			#region Log
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(email);
+			var scientificMissionCreationLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ScientificMissionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -148,49 +155,53 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#endregion
 
 			FacultyMember facultyMember = null!;
-            try
-            {
-                facultyMember = await GetFacultyMemberByEmailAsync(email);
-            }
-            catch (NotFoundException)
-            {
+			try
+			{
+				facultyMember = await GetFacultyMemberByEmailAsync(email);
+			}
+			catch (NotFoundException)
+			{
 				#region Log
 				scientificMissionCreationLog.Timestamp = DateTime.Now;
 				scientificMissionCreationLog.Level = "Warning";
 				scientificMissionCreationLog.RenderedMessage = $"Faculty Member not found.";
-				scientificMissionCreationLog.AdditionalData = $"User tried to create a scientific mission for a faculty member that does not exist in database, no faculty member found with email : {email}.";
+				scientificMissionCreationLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to create a scientific mission for a faculty member that does not exist in database, no faculty member found with email : {email}."
+					: $"Admin: {currentUser.UserName} tried to create a scientific mission for user: {userOfData.UserName}, but no faculty member found with email : {email}.";
 				_logger.LogWarning("{@LogDetails}", scientificMissionCreationLog);
 				#endregion
 				throw;
-            }
+			}
 
-            var scientificMission = Mapper.Map<ScientificMissions>(scientificMissionCreateDto);
-            scientificMission.FacultyMemberId = facultyMember.Id;
+			var scientificMission = Mapper.Map<ScientificMissions>(scientificMissionCreateDto);
+			scientificMission.FacultyMemberId = facultyMember.Id;
 
-            await Repo.AddAsync(scientificMission);
-            await SaveChangesAsync();
+			await Repo.AddAsync(scientificMission);
+			await SaveChangesAsync();
 
-            var response = Mapper.Map<ScientificMissionResponseDto>(scientificMission);
+			var response = Mapper.Map<ScientificMissionResponseDto>(scientificMission);
 			#region Log
 			scientificMissionCreationLog.Timestamp = DateTime.Now;
 			scientificMissionCreationLog.Level = "Information";
-			scientificMissionCreationLog.RenderedMessage = $"User: {currentUser.UserName} created a scientific mission.";
-			scientificMissionCreationLog.AdditionalData = $"User created a scientific mission with id: {response.Id} and Name: {response.MissionName} successfully.";
+			scientificMissionCreationLog.RenderedMessage = (facultyMemberEmail is null) ? $"User: {userOfData.UserName} created a scientific mission."
+				: $"Admin: {currentUser.UserName} created a scientific mission for user: {userOfData.UserName}";
+			scientificMissionCreationLog.AdditionalData = (facultyMemberEmail is null) ? $"User created a scientific mission with id: {response.Id} and name: {response.MissionName} successfully."
+				: $"Admin: {currentUser.UserName} created a scientific mission with id: {response.Id} and name: {response.MissionName} for user: {userOfData.UserName} successfully.";
 			_logger.LogInformation("{@LogDetails}", scientificMissionCreationLog);
 			#endregion
 			return response;
 		}
 
-        public async Task<ScientificMissionResponseDto> UpdateScientificMissionAsync(
-            int id,
-            ScientificMissionUpdateDto mission,
-            string? facultyMemberEmail = null)
-        {
+		public async Task<ScientificMissionResponseDto> UpdateScientificMissionAsync(
+			int id,
+			ScientificMissionUpdateDto mission,
+			string? facultyMemberEmail = null)
+		{
 			#region Log
-            var currentUser = await GetCurrentUserAsync();
+			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var scientificMissionUpdateLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ScientificMissionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -201,28 +212,29 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				WriteIndented = true,
 				Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
 			};
-            var scientificMission = await Repo.GetAsync(
-                new ScientificMissionsSpecifications(id));
-            if(scientificMission is null)
-            {
+			var scientificMission = await Repo.GetAsync(
+				new ScientificMissionsSpecifications(id));
+			if (scientificMission is null)
+			{
 				#region Log
 				scientificMissionUpdateLog.Timestamp = DateTime.Now;
 				scientificMissionUpdateLog.Level = "Warning";
-				scientificMissionUpdateLog.RenderedMessage = $"Scientific mission not found for user: {currentUser.UserName}.";
-				scientificMissionUpdateLog.AdditionalData = $"User tried to update their scientific mission data with id: {id}, but no scientific mission data with this id was found in the database.";
+				scientificMissionUpdateLog.RenderedMessage = $"Scientific mission not found for user: {userOfData.UserName}.";
+				scientificMissionUpdateLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to update their scientific mission data with id: {id}, but no scientific mission data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to update user: {userOfData.UserName} scientific mission data with id: {id}, but no scientific mission data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", scientificMissionUpdateLog);
 				#endregion
 				throw NotFound();
 			}
 
-            try
-            {
-                await EnsureOwnershipIfClientAsync(
-                        scientificMission.FacultyMemberId,
-                        facultyMemberEmail);
-            }
-            catch (UnauthorizedAccessException)
-            {
+			try
+			{
+				await EnsureOwnershipIfClientAsync(
+						scientificMission.FacultyMemberId,
+						facultyMemberEmail);
+			}
+			catch (UnauthorizedAccessException)
+			{
 				#region Log
 				scientificMissionUpdateLog.Timestamp = DateTime.Now;
 				scientificMissionUpdateLog.Level = "Warning";
@@ -231,34 +243,36 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				_logger.LogWarning("{@LogDetails}", scientificMissionUpdateLog);
 				#endregion
 				throw;
-            }
+			}
 
-            var oldData = Mapper.Map<ScientificMissionResponseDto>(scientificMission);
+			var oldData = Mapper.Map<ScientificMissionResponseDto>(scientificMission);
 			Mapper.Map(mission, scientificMission);
 
-            Repo.Update(scientificMission);
-            await SaveChangesAsync();
+			Repo.Update(scientificMission);
+			await SaveChangesAsync();
 
-            var newData = Mapper.Map<ScientificMissionResponseDto>(scientificMission);
+			var newData = Mapper.Map<ScientificMissionResponseDto>(scientificMission);
 			#region Log
 			scientificMissionUpdateLog.Timestamp = DateTime.Now;
 			scientificMissionUpdateLog.Level = "Information";
-			scientificMissionUpdateLog.RenderedMessage = $"Scientific mission data updated for user: {currentUser.UserName}.";
-			scientificMissionUpdateLog.AdditionalData = $"User updated their scientific mission data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
+			scientificMissionUpdateLog.RenderedMessage = $"Scientific mission data updated for user: {userOfData.UserName}.";
+			scientificMissionUpdateLog.AdditionalData = (facultyMemberEmail is null) ? $"User updated their scientific mission data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}."
+				: $"Admin: {currentUser.UserName} updated user: {userOfData.UserName} scientific mission data with id: {id} successfully.\nOld Data: {JsonSerializer.Serialize(oldData, jsonOptions)}\nNew Data: {JsonSerializer.Serialize(newData, jsonOptions)}.";
 			_logger.LogInformation("{@LogDetails}", scientificMissionUpdateLog);
 			#endregion
 			return newData;
 		}
 
-        public async Task DeleteScientificMissionAsync(
-            int id,
-            string? facultyMemberEmail = null)
-        {
+		public async Task DeleteScientificMissionAsync(
+			int id,
+			string? facultyMemberEmail = null)
+		{
 			#region Log
 			var currentUser = await GetCurrentUserAsync();
+			var userOfData = (facultyMemberEmail is null) ? currentUser : await GetUserByEmailAsync(facultyMemberEmail);
 			var scientificMissionDeletionLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberMissions.ToString(),
 				CategoryAction = CategoryAction.ScientificMissionsActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -266,13 +280,14 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 			#endregion
 			var scientificMission = await Repo.GetAsync(
 				new ScientificMissionsSpecifications(id));
-			if(scientificMission is null)
+			if (scientificMission is null)
 			{
 				#region Log
 				scientificMissionDeletionLog.Timestamp = DateTime.Now;
 				scientificMissionDeletionLog.Level = "Warning";
-				scientificMissionDeletionLog.RenderedMessage = $"Scientific mission not found for user: {currentUser.UserName}.";
-				scientificMissionDeletionLog.AdditionalData = $"User tried to delete their scientific mission data with id: {id}, but no scientific mission data with this id was found in the database.";
+				scientificMissionDeletionLog.RenderedMessage = $"Scientific mission not found for user: {userOfData.UserName}.";
+				scientificMissionDeletionLog.AdditionalData = (facultyMemberEmail is null) ? $"User tried to delete their scientific mission data with id: {id}, but no scientific mission data with this id was found in the database."
+					: $"Admin: {currentUser.UserName} tried to delete user: {userOfData.UserName} scientific mission data with id: {id}, but no scientific mission data with this id was found in the database.";
 				_logger.LogWarning("{@LogDetails}", scientificMissionDeletionLog);
 				#endregion
 				throw NotFound();
@@ -296,17 +311,18 @@ namespace Services.Implementations.AcademicDataModule.MissionsModule
 				throw;
 			}
 
-            scientificMission.IsDeleted = true;
+			scientificMission.IsDeleted = true;
 
-            Repo.Update(scientificMission);
-            await SaveChangesAsync();
+			Repo.Update(scientificMission);
+			await SaveChangesAsync();
 			#region Log
 			scientificMissionDeletionLog.Timestamp = DateTime.Now;
 			scientificMissionDeletionLog.Level = "Information";
-			scientificMissionDeletionLog.RenderedMessage = $"Scientific mission data deleted for user: {currentUser.UserName}.";
-			scientificMissionDeletionLog.AdditionalData = $"User deleted their scientific mission data with id: {id} successfully.";
+			scientificMissionDeletionLog.RenderedMessage = $"Scientific mission data deleted for user: {userOfData.UserName}.";
+			scientificMissionDeletionLog.AdditionalData = (facultyMemberEmail is null) ? $"User deleted their scientific mission data with id: {id} successfully."
+				: $"Admin: {currentUser.UserName} deleted user: {userOfData.UserName} scientific mission data with id: {id} successfully.";
 			_logger.LogInformation("{@LogDetails}", scientificMissionDeletionLog);
 			#endregion
 		}
-    }
+	}
 }

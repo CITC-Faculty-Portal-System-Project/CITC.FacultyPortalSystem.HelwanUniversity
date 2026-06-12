@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using QuestPDF.Fluent;
+﻿using QuestPDF.Fluent;
 using Services.Abstraction.Contracts.AttachmentsModule;
 using Services.Abstraction.Contracts.CVGenerationModule;
 using Shared.Dtos.AttachmentsModule;
@@ -8,13 +7,13 @@ using System.Text;
 
 namespace Services.Implementations.CVGenerationModule.Templates
 {
-    public class ModernTemplateCV(IAttachmentService _attachmentService , IWebHostEnvironment _env) : ICVTemplate
+    public class ModernTemplateCV(IAttachmentService _attachmentService) : ICVTemplate
     {
         public string TemplateName => "modern";
 
         public byte[] GeneratePdf(CVResponseDTO cv)
         {
-            return new Pdf.ModernPdfDocumentCV(cv, _env).GeneratePdf();
+            return new Pdf.ModernPdfDocumentCV(cv).GeneratePdf();
         }
 
         public async Task <string> GenerateHtml(CVResponseDTO cv)

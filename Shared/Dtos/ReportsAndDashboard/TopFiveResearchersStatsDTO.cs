@@ -7,6 +7,8 @@
         public string ResearcherNameAR { get; set; } = string.Empty;
         public string ResearcherNameEN { get; set; } = string.Empty;
         public string ResearcherFacultyAR { get; set; } = string.Empty;
+        public string DepartmentAR { get; set; } = string.Empty;
+        public string DepartmentEN { get; set; } = string.Empty;
         public string ResearcherFacultyEN { get; set; } = string.Empty;
         public int TotalResearchesNo { get; set; }
         public double Score { get; set; }

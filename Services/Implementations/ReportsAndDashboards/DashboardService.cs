@@ -55,30 +55,30 @@ namespace Services.Implementations.ReportsAndDashboards
 
         }
 
-        public async Task<IReadOnlyList<DepartmentResearchersStatsDTO>> GetDepartmentResearchersDashboardDataAsync(ResearchersPerDepartmentSpecificationParameters parameters)
+        public async Task<IReadOnlyList<DepartmentResearchersStatsDTO>> GetDepartmentResearchersDashboardDataAsync(int facultyId)
         {
             var departmentsRepo = _unitOfWork.GetRepository<Department, int>();
 
-            var researchesStats = await departmentsRepo.ExecuteAggregationAsync(new ResearchersPerDepartmentSpecification(parameters));
+            var researchesStats = await departmentsRepo.ExecuteAggregationAsync(new ResearchersPerDepartmentSpecification(facultyId));
 
             return researchesStats;
             
         }
 
-        public async Task<IReadOnlyList<ResearchDepartmentStatsDTO>> GetDepartmentResearchesDashboardDataAsync(ResearchesPerDepartmentSpecificationParameters parameters)
+        public async Task<IReadOnlyList<ResearchDepartmentStatsDTO>> GetDepartmentResearchesDashboardDataAsync(int facultyId)
         {
             var departmentsRepo = _unitOfWork.GetRepository<Department, int>();
 
-            var researchesStats = await departmentsRepo.ExecuteAggregationAsync(new ResearchesPerDepartmentSpecification(parameters));
+            var researchesStats = await departmentsRepo.ExecuteAggregationAsync(new ResearchesPerDepartmentSpecification(facultyId));
 
             return researchesStats;
         }
 
-        public async Task<IReadOnlyList<TopFiveResearchersStatsDTO>> GetFacultyTopResearchersDashboardDataAsync(ResearchersPerFacultySpecificationParameters parameters)
+        public async Task<IReadOnlyList<TopFiveResearchersStatsDTO>> GetFacultyTopResearchersDashboardDataAsync(int facultyId)
         {
             var researchesRepo = _unitOfWork.GetRepository<Research, int>();
 
-            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchersPerFacultyAggregationSpecification(parameters));
+            var researchesStats = await researchesRepo.ExecuteAggregationAsync(new ResearchersPerFacultyAggregationSpecification(facultyId));
 
             return researchesStats;
         }
