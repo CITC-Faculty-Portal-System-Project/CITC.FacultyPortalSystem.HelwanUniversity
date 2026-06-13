@@ -19,6 +19,8 @@ namespace Services.MappingProfiles
 
             CreateMap<FacultyMember, FacultyMemberPublicProfileResponseDTO>()
              .ForMember(dest => dest.FacultyMemberName, opt => opt.MapFrom(src => src.PersonalData!.Title.ValueAr + src.PersonalData.NameAr))
+              .ForMember(dest => dest.FacultyMemberEmail, opt => opt.MapFrom(src => src.Email))
+
              .ForMember(dest => dest.Interests, opt => opt.MapFrom(src => src.Researcher!.ResearcherInterests!.Select(i => i.Interest)))
              .ForMember(dest => dest.PersonalDataId, opt => opt.MapFrom(src => src.PersonalData!.Id))
              .ForMember(dest => dest.BioSummary, opt => opt.MapFrom(src => src.PersonalData!.BioSummary))
