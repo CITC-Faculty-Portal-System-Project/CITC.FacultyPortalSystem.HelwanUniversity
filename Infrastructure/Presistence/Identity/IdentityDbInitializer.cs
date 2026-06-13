@@ -1,5 +1,6 @@
 ﻿using Domain.Entities.IdentityModule.Users;
 using Microsoft.AspNetCore.Identity;
+using Presistence.Identity.Seeding;
 
 namespace Presistence.Identity
 {
@@ -18,6 +19,7 @@ namespace Presistence.Identity
             Guid.Parse("A9923638-8866-4A89-A9FE-9CF329CFC8F7");
 
         public static async Task SeedAsync(
+            IdentityStoreDbContext context,
             UserManager<User> userManager,
             RoleManager<Role> roleManager,
             CancellationToken ct = default)
@@ -55,6 +57,10 @@ namespace Presistence.Identity
                 password: "Management@123",
                 role: "ManagementAdmin",
                 ct: ct);
+
+            await RolePermissionSeeder.SeedRolePermissionsAsync(context, ct);
+
+            await UserPermissionSeeder.SeedUserPermissionsAsync(context, ct);
         }
 
         private static async Task EnsureRoleAsync(
@@ -179,5 +185,7 @@ namespace Presistence.Identity
 
         private static string FormatErrors(IdentityResult result)
             => string.Join(" | ", result.Errors.Select(e => $"{e.Code}: {e.Description}"));
+
+
     }
 }

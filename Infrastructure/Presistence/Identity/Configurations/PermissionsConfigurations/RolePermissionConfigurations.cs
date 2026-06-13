@@ -32,35 +32,35 @@ namespace Presistence.Identity.Configurations.PermissionsConfigurations
 
             #region DataSeeding
 
-            var roleId = new Guid("10000000-0000-0000-0000-000000000001");
+            //var roleId = new Guid("10000000-0000-0000-0000-000000000001");
 
-            builder.HasData(
-                new RolePermission
-                {
-                    RoleId = roleId,
-                    PermissionId = 46 // Tickets.Read
-                },
-                new RolePermission
-                {
-                    RoleId = roleId,
-                    PermissionId = 47 // Tickets.Update
-                },
-                new RolePermission
-                {
-                    RoleId = roleId,
-                    PermissionId = 50 // Tickets.Reply
-                },
-                new RolePermission
-                {
-                    RoleId = roleId,
-                    PermissionId = 54 // Tickets.ChangeStatus
-                },
-                new RolePermission
-                {
-                    RoleId = roleId,
-                    PermissionId = 56 // Tickets.ViewAssigned
-                }
-            );
+            //builder.HasData(
+            //    new RolePermission
+            //    {
+            //        RoleId = roleId,
+            //        PermissionId = 46 // Tickets.Read
+            //    },
+            //    new RolePermission
+            //    {
+            //        RoleId = roleId,
+            //        PermissionId = 47 // Tickets.Update
+            //    },
+            //    new RolePermission
+            //    {
+            //        RoleId = roleId,
+            //        PermissionId = 50 // Tickets.Reply
+            //    },
+            //    new RolePermission
+            //    {
+            //        RoleId = roleId,
+            //        PermissionId = 54 // Tickets.ChangeStatus
+            //    },
+            //    new RolePermission
+            //    {
+            //        RoleId = roleId,
+            //        PermissionId = 56 // Tickets.ViewAssigned
+            //    }
+            //);
 
             #endregion
 

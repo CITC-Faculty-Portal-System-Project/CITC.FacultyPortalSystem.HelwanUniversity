@@ -22,7 +22,7 @@ namespace Presistence.Identity
             var userManager = services.GetRequiredService<UserManager<User>>();
             var roleManager = services.GetRequiredService<RoleManager<Role>>();
 
-            await IdentityDbInitializer.SeedAsync(userManager, roleManager);
+            await IdentityDbInitializer.SeedAsync(dbContext , userManager, roleManager);
         }
     }
 }

@@ -20,8 +20,12 @@ namespace Presistence.Identity
 
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+                
+                
+                var context = scope.ServiceProvider.GetRequiredService<IdentityStoreDbContext>();
 
-                await IdentityDbInitializer.SeedAsync(userManager, roleManager, cancellationToken);
+                
+                await IdentityDbInitializer.SeedAsync(context , userManager, roleManager, cancellationToken);
 
                 _logger.LogInformation("Identity seeding completed.");
             }
