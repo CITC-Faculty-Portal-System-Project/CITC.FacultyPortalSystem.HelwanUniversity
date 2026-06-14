@@ -27,7 +27,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			var userOfData = (facultyMemberId is null) ? currentUser : await GetUserByIdAsync(targetFacultyMemberId);
 			var researcherLog = new LogEntry
 			{
-				Category = Category.FacultyMemberResearches.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearcherProfileActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName

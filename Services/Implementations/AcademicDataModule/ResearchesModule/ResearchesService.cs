@@ -78,7 +78,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -172,7 +172,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -232,7 +232,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -295,7 +295,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -356,7 +356,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -406,7 +406,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -447,7 +447,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -488,7 +488,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -547,7 +547,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var researchLog = new LogEntry
 			{
-				Category = Category.FacultyMemberAcademicData.ToString(),
+				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
 				CategoryAction = CategoryAction.ResearchesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName

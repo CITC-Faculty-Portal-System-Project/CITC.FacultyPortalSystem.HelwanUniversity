@@ -27,6 +27,7 @@ namespace Services.Specifications.FacultyMembersProfilesModule
             AddIncludes(f => f.PersonalData!.Title);
             AddIncludes(f => f.PersonalData!);
             AddIncludes(f => f.PersonalData!.ProfilePicture!);
+            AddIncludes(f => f.CVPreferences!);
 
 
             AddIncludes(f => f.ScientificMissions

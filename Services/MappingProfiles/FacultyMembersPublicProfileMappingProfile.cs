@@ -19,8 +19,7 @@ namespace Services.MappingProfiles
 
             CreateMap<FacultyMember, FacultyMemberPublicProfileResponseDTO>()
              .ForMember(dest => dest.FacultyMemberName, opt => opt.MapFrom(src => src.PersonalData!.Title.ValueAr + src.PersonalData.NameAr))
-              .ForMember(dest => dest.FacultyMemberEmail, opt => opt.MapFrom(src => src.Email))
-
+             .ForMember(dest => dest.FacultyMemberEmail, opt => opt.MapFrom(src => src.Email))
              .ForMember(dest => dest.Interests, opt => opt.MapFrom(src => src.Researcher!.ResearcherInterests!.Select(i => i.Interest)))
              .ForMember(dest => dest.PersonalDataId, opt => opt.MapFrom(src => src.PersonalData!.Id))
              .ForMember(dest => dest.BioSummary, opt => opt.MapFrom(src => src.PersonalData!.BioSummary))
@@ -30,6 +29,7 @@ namespace Services.MappingProfiles
              
              .ForMember(dest => dest.IsVerified, opt => opt.MapFrom(src => !src.IsDeleted))
              .ForMember(dest => dest.IssueDate, opt => opt.MapFrom(src => src.CreatedAt.Date))
+             .ForMember(dest => dest.PreferredCv, opt => opt.MapFrom(src => src.CVPreferences!.FirstOrDefault()!.TemplateName))
              .ForMember(dest => dest.Researches, opt => opt.MapFrom(src => src.ResearchContributions!.Select(rc => rc.Research)))
                 .ForMember(
                     dest => dest.Experinces,
