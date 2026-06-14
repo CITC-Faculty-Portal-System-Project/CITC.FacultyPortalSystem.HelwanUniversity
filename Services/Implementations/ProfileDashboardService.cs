@@ -39,7 +39,7 @@ namespace Services.Implementations
 			var bioSummaryLog = new LogEntry
 			{
 				Category = Category.FacultyMemberService.ToString(),
-				CategoryAction = CategoryAction.UpdateBioSummary.ToString()
+				CategoryAction = CategoryAction.ProfileDashboardDataActions.ToString()
 			};
 
 			var currentUser = await GetCurrentUserAsync();
@@ -103,7 +103,7 @@ namespace Services.Implementations
 			var skillsLog = new LogEntry
 			{
 				Category = Category.FacultyMemberService.ToString(),
-				CategoryAction = CategoryAction.UpdateProfileSkills.ToString()
+				CategoryAction = CategoryAction.ProfileDashboardDataActions.ToString()
 			};
 			var currentUser = await GetCurrentUserAsync();
 

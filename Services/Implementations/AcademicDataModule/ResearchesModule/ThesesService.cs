@@ -96,7 +96,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var thesesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
+				Category = Category.FacultyMemberResearches.ToString(),
 				CategoryAction = CategoryAction.ThesesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -170,7 +170,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var thesesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
+				Category = Category.FacultyMemberResearches.ToString(),
 				CategoryAction = CategoryAction.ThesesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -234,7 +234,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var thesesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
+				Category = Category.FacultyMemberResearches.ToString(),
 				CategoryAction = CategoryAction.ThesesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
@@ -283,7 +283,7 @@ namespace Services.Implementations.AcademicDataModule.ResearchesModule
 			#region Log
 			var thesesLog = new LogEntry
 			{
-				Category = Category.FacultyMemberResearchesAndTheses.ToString(),
+				Category = Category.FacultyMemberResearches.ToString(),
 				CategoryAction = CategoryAction.ThesesActions.ToString(),
 				UserIP = GetUserIP(),
 				UserName = currentUser.UserName
